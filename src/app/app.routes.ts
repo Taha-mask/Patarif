@@ -11,7 +11,7 @@ import path from 'path';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'signup', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'games', component: GamesComponent },
@@ -19,5 +19,4 @@ export const routes: Routes = [
   { path: 'learning', component: LearningComponent },
   { path: 'shop', component: ShopComponent },
   { path: 'home', component: HomeComponent },
-
 ];
