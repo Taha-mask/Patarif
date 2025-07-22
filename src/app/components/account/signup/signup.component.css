@@ -6,7 +6,7 @@
   padding: 4px; /* سمك البوردر */
   border-radius: 20px;
   background: linear-gradient(135deg,#FFEE52, #FF006E,#FB5664, #6486FF, #9B57FA,#FFEE52, #FF006E,#FB5664,#6486FF, #9B57FA);
-  max-width: 1208px;
+  width: 1208px;
 }
 
 .register-card {
@@ -15,14 +15,14 @@
   overflow: hidden;
 }
 .row{
-  max-width:1200px;
+  width: 1200px;
   background: white;
   margin: auto;
   padding: 8px;
 }
 .signup-img{
   height: 550px;
-  max-width: 600px;
+  width: 600px;
   margin: 10px;
 }
 .text-img{
@@ -74,26 +74,4 @@ input {
 }
 a{
   cursor: pointer;
-}
-/* Responsive: make inputs smaller on small screens */
-@media (max-width: 992px) {
-  input {
-    font-size: 16px;
-    padding: 10px 12px;
-    height: 44px;
-  }
-}
-@media (max-width: 768px) {
-  input {
-    font-size: 14px;
-    padding: 8px 10px;
-    height: 38px;
-  }
-}
-@media (max-width: 576px) {
-  input {
-    font-size: 12px;
-    padding: 6px 8px;
-    height: 32px;
-  }
 }

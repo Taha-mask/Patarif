@@ -17,5 +17,7 @@ export const routes: Routes = [
   { path: 'games', component: GamesComponent },
   { path: 'stories', component: StoriesComponent },
   { path: 'learning', component: LearningComponent },
-  { path: 'shop', component: ShopComponent }
+  { path: 'shop', component: ShopComponent },
+  { path: 'home', component: HomeComponent },
+
 ];
