@@ -1,0 +1,99 @@
+
+.container{
+  margin: auto;
+}
+.gradient-border-wrapper {
+  padding: 4px; /* سمك البوردر */
+  border-radius: 20px;
+  background: linear-gradient(135deg,#FFEE52, #FF006E,#FB5664, #6486FF, #9B57FA,#FFEE52, #FF006E,#FB5664,#6486FF, #9B57FA);
+  max-width: 1208px;
+}
+
+.register-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.row{
+  max-width:1200px;
+  background: white;
+  margin: auto;
+  padding: 8px;
+}
+.signup-img{
+  height: 550px;
+  max-width: 600px;
+  margin: 10px;
+}
+.text-img{
+  position: absolute;
+  bottom: 105px;
+  font-size: 35px;
+  font-weight: 900;
+  text-align: left;
+}
+.account-header {
+  font-family: 'Satoshi Variable', sans-serif;
+}
+input {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  border-radius: 16px;
+  border: black 1px solid;
+  background-color: #F1F1F1BF ;
+  font-size: 20px;
+  padding: 12px 16px;
+  height: 56px;
+}
+
+
+.btn-create{
+  border-radius: 11px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+
+}
+.defualt-account .btn{
+  width: 500px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #F1F1F1BF;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.defualt-account .btn:hover{
+  background-color: #e0e0e0;
+  color: #000000;
+  box-shadow: 0 4px 16px 0 rgba(100, 134, 255, 0.15);
+  cursor: pointer;
+}
+.line{
+  border-top: rgb(0, 0, 0) 4px solid;
+
+}
+a{
+  cursor: pointer;
+}
+/* Responsive: make inputs smaller on small screens */
+@media (max-width: 992px) {
+  input {
+    font-size: 16px;
+    padding: 10px 12px;
+    height: 44px;
+  }
+}
+@media (max-width: 768px) {
+  input {
+    font-size: 14px;
+    padding: 8px 10px;
+    height: 38px;
+  }
+}
+@media (max-width: 576px) {
+  input {
+    font-size: 12px;
+    padding: 6px 8px;
+    height: 32px;
+  }
+}

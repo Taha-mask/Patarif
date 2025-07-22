@@ -1,1 +1,46 @@
-<p>login works!</p>
+<!-- login.component.html -->
+<div class="container d-flex justify-content-center align-items-center min-vh-100 m-auto">
+  <div class="gradient-border-wrapper">
+  <div class="row shadow-lg rounded-4 overflow-hidden">
+
+    <!-- Left side -->
+    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-white">
+      <img src="images/signup-img.png" alt="Login illustration" class="signup-img img-fluid"  />
+      <p class="text-img fw-bold">Log in to Batarev world and enjoy with us!</p>
+    </div>
+
+    <!-- Right side (form) -->
+    <div class="col-md-6 p-5 mt-5">
+      <h2 class="account-header mb-4 fw-bold text-center">Login</h2>
+      <form>
+        <div class="mb-4">
+          <input type="email" class="form-control" id="loginEmail" placeholder="Email" required>
+        </div>
+        <div class="mb-3">
+          <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn-create btn btn-primary w-100">Login</button>
+        <div class="mt-3 text-center">
+          Don't have an account? <a class="text-primary" href="/signup">Sign up</a>
+        </div>
+      </form>
+      <div class="d-flex align-items-center my-3">
+        <hr class="flex-grow-1 line" >
+        <span class="mx-3 fw-bold" style="font-size: 20px;">or</span>
+        <hr class="flex-grow-1 line" >
+      </div>
+      <div class="another-account mt-3 text-center">
+        <div class="defualt-account d-flex justify-content-center gap-3">
+          <button type="button" class="btn btn-outline-dark d-flex align-items-center gap-2">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" style="width: 24px; height: 24px;">
+            Login with Google
+          </button>
+          <button type="button" class="btn btn-outline-dark d-flex align-items-center gap-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" style="width: 24px; height: 24px;">
+            Login with Apple ID
+          </button>
+        </div>
+      </div>
+    </div>
+
+</div>
