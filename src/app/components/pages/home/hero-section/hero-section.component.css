@@ -1,0 +1,207 @@
+body {
+    overflow-x: hidden;
+}
+
+
+.hero {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    position: relative;
+}
+
+.paper-plane {
+    position: absolute;
+    z-index: -1;
+    margin-top: -250px;
+}
+
+.welcome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 60px;
+}
+
+.welcome-img img {
+    width: 40px;
+    height: auto;
+    animation: spin 5s linear infinite;
+
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(360deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.welcome-message {
+    margin: 0;
+    font-family: "Baloo 2", sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+}
+
+.hero-title {
+    font-family: "Audiowide", sans-serif;
+    font-weight: 600;
+    font-size: 80px;
+    margin-left: 60px;
+    width: 100%;
+}
+
+.line1 {
+    width: 0%;
+    animation: typing 3s forwards;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.line2 {
+    width: 0%;
+    animation: typing 3s 2s forwards;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.line3 {
+    width: 0%;
+    animation: typing 3s 3s forwards;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+@keyframes typing {
+    to {
+        width: 100%;
+    }
+}
+
+.learn-line {
+    position: absolute;
+    top: 230px;
+    left: 80px;
+}
+
+.play-line {
+    position: absolute;
+    top: 240px;
+    left: 550px;
+}
+
+.lets-play img {
+    animation: spin 10s linear infinite;
+    position: absolute;
+    top: 360px;
+    left: 400px;
+}
+
+.collection {
+    position: absolute;
+    top: 320px;
+    left: 640px;
+}
+
+.collection-item {
+    color: white;
+    font-family: "Architects Daughter", cursive;
+    padding: 10px 32px;
+    border-radius: 222px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    min-width: 0;
+    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.10);
+}
+
+.enjoy {
+    animation: moveRotate20 3s ease-in-out infinite alternate;
+    will-change: transform;
+
+}
+
+.book {
+    animation: collectionMoveUpDown 5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    will-change: transform;
+}
+
+.stories {
+    animation: moveRotateMinus20 4s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.love {
+    animation: collectionMoveUpDown 5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    will-change: transform;
+}
+
+.star {
+    animation: collectionMoveUpDown 5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    will-change: transform;
+}
+
+.game {
+    animation: collectionMoveUpDown 5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    will-change: transform;
+}
+
+.learning {
+    animation: moveRotate20 3s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.play {
+    animation: moveRotateMinus20 4s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes moveRotate20 {
+    0% {
+        transform: translate(20px, 20px) rotate(20deg);
+    }
+
+    50% {
+        transform: translate(0px, 0px) rotate(20deg);
+    }
+
+    100% {
+        transform: translate(20px, 20px) rotate(20deg);
+    }
+}
+
+@keyframes collectionMoveUpDown {
+    0% {
+        transform: translate(20px, 20px);
+    }
+
+    50% {
+        transform: translate(0px, 0px);
+    }
+
+    100% {
+        transform: translate(20px, 20px);
+    }
+}
+
+@keyframes moveRotateMinus20 {
+    0% {
+        transform: translate(20px, 20px) rotate(-20deg);
+    }
+
+    50% {
+        transform: translate(0px, 0px) rotate(-20deg);
+    }
+
+    100% {
+        transform: translate(20px, 20px) rotate(-20deg);
+    }
+}
