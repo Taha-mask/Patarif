@@ -2,7 +2,7 @@
   position: relative;
   display: inline-block;
   padding: 0.5em 1.4em;
-  color: #111;
+  color: #000000;
   background: transparent;
   border-radius: 2em;
   font-weight: 500;
@@ -60,6 +60,7 @@
 }
 
 /* تثبيت البوردر على الرابط النشط */
+/* مش شغال: تم التعطيل مؤقتاً */
 .nav-item.active .nav-link-animated::before {
   opacity: 1;
   transform: translateY(0) scale(1);

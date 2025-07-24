@@ -9,22 +9,41 @@
     <div class="collapse navbar-collapse justify-content-center">
       <ul class="navbar-nav gap-3">
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated" routerLink="/home">Home</a>
+          <a class="nav-link nav-link-animated"
+             routerLink="/home"
+             routerLinkActive="active"
+             [routerLinkActiveOptions]="{ exact: true }"
+             >Home</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated" routerLink="/learning">Learning Zone</a>
+          <a class="nav-link nav-link-animated"
+             routerLink="/learning"
+             routerLinkActive="active"
+             >Learning Zone</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated" routerLink="/storytime">Storytime</a>
+          <a class="nav-link nav-link-animated"
+             routerLink="/stories"
+             routerLinkActive="active"
+             >Storytime</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated" routerLink="/games" href="games">Playground</a>
+          <a class="nav-link nav-link-animated"
+             routerLink="/games"
+             routerLinkActive="active"
+             >Playground</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated" routerLink="/shop">Shop</a>
+          <a class="nav-link nav-link-animated"
+             routerLink="/shop"
+             routerLinkActive="active"
+             >Shop</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated" routerLink="/characters">Characters</a>
+          <a class="nav-link nav-link-animated"
+             routerLink="/characters"
+             routerLinkActive="active"
+             >Characters</a>
         </li>
       </ul>
     </div>

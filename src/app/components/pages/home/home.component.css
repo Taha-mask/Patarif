@@ -1,1 +1,15 @@
 
+.home-container {
+    z-index: -1;
+    background-color: rgba(255, 255, 255, 0.301);
+    backdrop-filter: blur(50px);
+}
+
+.circle {
+    width: 250px;
+    height: 250px;
+    top: 540px;
+    z-index: -2;
+    border-radius: 100%;
+    position: absolute;
+}

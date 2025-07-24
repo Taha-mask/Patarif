@@ -1,26 +1,34 @@
 import { Component, Input } from '@angular/core';
-import { NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Card } from '../../interface/card';
 
 @Component({
   selector: 'app-cards',
-  imports: [NgFor],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './cards.component.html',
-  styleUrls: ['./cards.component.css'],
-  standalone: true
+  styleUrls: ['./cards.component.css']
 })
 export class CardsComponent {
   @Input() cards: Card[] = [];
-  currentIndex = 1;
+  currentIndex = 0;
 
-  get leftIndex() { return (this.currentIndex - 1 + this.cards.length) % this.cards.length; }
-  get rightIndex() { return (this.currentIndex + 1) % this.cards.length; }
+  get leftIndex() {
+    if (!this.cards.length) return 0;
+    return (this.currentIndex - 1 + this.cards.length) % this.cards.length;
+  }
+  get rightIndex() {
+    if (!this.cards.length) return 0;
+    return (this.currentIndex + 1) % this.cards.length;
+  }
 
   prevSlide() {
-    this.currentIndex = this.leftIndex;
+    if (!this.cards.length) return;
+    this.currentIndex = (this.currentIndex - 1 + this.cards.length) % this.cards.length;
   }
 
   nextSlide() {
-    this.currentIndex = this.rightIndex;
+    if (!this.cards.length) return;
+    this.currentIndex = (this.currentIndex + 1) % this.cards.length;
   }
 }
