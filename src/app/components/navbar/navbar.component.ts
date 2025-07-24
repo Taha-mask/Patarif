@@ -1,5 +1,5 @@
+import { Story } from './../../interface/story';
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'app-navbar',
   imports: [],
@@ -7,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
+
+
 
 }

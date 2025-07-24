@@ -1,0 +1,30 @@
+
+<div class="games-carousel-container">
+  <nav class="games-navbar">
+    <button *ngFor="let tab of tabs"
+            [class.active]="tab === 'Playground'">{{ tab }}</button>
+    <span class="hug-badge">80 Hug × 22 Hug</span>
+  </nav>
+
+  <div class="carousel">
+    <button class="arrow left" (click)="prevSlide()">&lt;</button>
+    <div class="cards">
+      <div *ngFor="let card of cards; let i = index"
+           class="game-card"
+           [class.center]="i === currentIndex"
+           [class.left]="i === leftIndex"
+           [class.right]="i === rightIndex"
+           [style.background]="card.bg">
+        <img src="assets/puzzle-icon.png" class="puzzle-icon" alt="Puzzle" />
+        <h2>{{ card.title }}</h2>
+        <p>{{ card.subtitle }}</p>
+      </div>
+    </div>
+    <button class="arrow right" (click)="nextSlide()">&gt;</button>
+  </div>
+
+  <div class="dots">
+    <span *ngFor="let card of cards; let i = index"
+          [class.active]="i === currentIndex"></span>
+  </div>
+</div>

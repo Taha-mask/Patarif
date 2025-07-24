@@ -1,10 +1,11 @@
 
 .container{
   margin: auto;
+
 }
 .gradient-border-wrapper {
   padding: 4px; /* سمك البوردر */
-  border-radius: 20px;
+  border-radius: 48px;
   background: linear-gradient(135deg,#FFEE52, #FF006E,#FB5664, #6486FF, #9B57FA,#FFEE52, #FF006E,#FB5664,#6486FF, #9B57FA);
   width: 1208px;
 }
@@ -19,19 +20,22 @@
   background: white;
   margin: auto;
   padding: 8px;
+  border-radius: 45px;
 }
-.signup-img{
+.login-img{
   height: 550px;
   width: 600px;
   margin: 10px;
+  border-radius: 48px;
 }
 .text-img{
   position: absolute;
   bottom: 105px;
-  font-size: 35px;
+  color: #fff;
+  font-size: 20px;
   font-weight: 900;
-  text-align: left;
 }
+
 .account-header {
   font-family: 'Satoshi Variable', sans-serif;
 }
@@ -75,14 +79,6 @@ input {
   max-width: 400px;
 }
 
-.text-img {
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  font-size: 1.1rem;
-  padding: 10px 0 5px 0;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
 
 @media (max-width: 767.98px) {
   .img-wrapper {

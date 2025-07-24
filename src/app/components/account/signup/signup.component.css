@@ -4,21 +4,22 @@
 }
 .gradient-border-wrapper {
   padding: 4px; /* سمك البوردر */
-  border-radius: 20px;
+  border-radius: 48px;
   background: linear-gradient(135deg,#FFEE52, #FF006E,#FB5664, #6486FF, #9B57FA,#FFEE52, #FF006E,#FB5664,#6486FF, #9B57FA);
   width: 1208px;
 }
 
 .register-card {
   background: white;
-  border-radius: 10px;
   overflow: hidden;
 }
+
 .row{
   width: 1200px;
   background: white;
   margin: auto;
   padding: 8px;
+  border-radius: 45px;
 }
 .signup-img{
   height: 550px;

@@ -1,0 +1,73 @@
+.nav-link-animated {
+  position: relative;
+  display: inline-block;
+  padding: 0.5em 1.4em;
+  color: #111;
+  background: transparent;
+  border-radius: 2em;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 0;
+  transition: color 0.3s ease;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.nav-link-animated::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2em;
+  padding: 3px;
+  background: transparent;
+  border: 2px solid #000000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+  transform: translateY(20px) scale(0.8);
+  filter: blur(6px);
+  transition:
+    opacity 0.4s cubic-bezier(0.4,0,0.2,1),
+    transform 0.4s cubic-bezier(0.4,0,0.2,1),
+    filter 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+.nav-link-animated:hover::before,
+.nav-link-animated:focus-visible::before {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+.nav-link-animated::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2em;
+  background: transparent;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.nav-link-animated:hover,
+.nav-link-animated:focus-visible {
+  color: #111;
+}
+
+.nav-item {
+  cursor: pointer;
+}
+
+/* تثبيت البوردر على الرابط النشط */
+.nav-item.active .nav-link-animated::before {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* تغيير لون النص عند التفعيل */
+.nav-item.active .nav-link-animated {
+  font-weight: bold;
+  color: #111;
+}
