@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CardsComponent } from '../../cards/cards.component';
 import { Card } from '../../../interface/card';
+import { BackgroundComponent } from "../../background/background.component";
 @Component({
   selector: 'app-games',
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.css'],
-  imports: [CardsComponent],
+  imports: [CardsComponent, BackgroundComponent],
   standalone: true
 })
 export class GamesComponent {
