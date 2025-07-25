@@ -14,20 +14,17 @@ export class GamesComponent {
     {
       title: 'Connect the dots\nFirst to win!',
       subtitle: 'Try now for free',
-      bg: 'linear-gradient(120deg, #4f8cff, #6be0ff)',
-      image: 'https://cdn-icons-png.flaticon.com/512/3465/3465156.png'
+      img: 'images/card-2.png',
     },
     {
       title: 'Connect the dots\nFirst to win!',
       subtitle: 'Try now for free',
-      bg: 'linear-gradient(120deg, #ff4f8c, #ff6be0)',
-      image: 'https://cdn-icons-png.flaticon.com/512/3465/3465157.png'
+      img: 'images/card-3.png',
     },
     {
       title: 'Connect the dots\nFirst to win!',
       subtitle: 'Try now for free',
-      bg: 'linear-gradient(120deg, #ff4f8c, #ff6be0)',
-      image: 'https://cdn-icons-png.flaticon.com/512/3465/3465157.png'
+      img: 'images/card-1.png',
     }
   ];
 

@@ -13,6 +13,7 @@ export class CardsComponent {
   @Input() cards: Card[] = [];
   currentIndex = 0;
 
+
   get leftIndex() {
     if (!this.cards.length) return 0;
     return (this.currentIndex - 1 + this.cards.length) % this.cards.length;

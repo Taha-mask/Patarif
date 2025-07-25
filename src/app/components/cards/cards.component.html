@@ -8,8 +8,7 @@
              'left': i === leftIndex,
              'right': i === rightIndex
            }"
-           [style.background]="card.bg">
-        <img class="puzzle-icon" [src]="card.image" alt="Puzzle Icon">
+           [style.backgroundImage]="'url(' + card.img + ')'">
         <h3>{{ card.title }}</h3>
         <p>{{ card.subtitle }}</p>
       </div>
