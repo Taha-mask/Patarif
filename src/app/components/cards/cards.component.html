@@ -1,4 +1,4 @@
-<div class="games-carousel-container">
+<div *ngIf="designType === 'carousel'" class="games-carousel-container">
   <div class="carousel">
     <div class="cards">
       <div *ngFor="let card of cards; let i = index"
@@ -16,15 +16,36 @@
   </div>
 
   <div class="scroll d-flex justify-content-center align-items-center gap-3" style="justify-content: center; align-items: center; display: flex;">
-    <button class="arrow" (click)="prevSlide()"> <i class="bi bi-arrow-left"></i>
+    <button *ngIf="designType === 'carousel'" class="arrow" (click)="prevSlide()"> <i class="bi bi-arrow-left"></i>
     </button>
     <div class="dots ">
       <span *ngFor="let card of cards; let i = index"
             [ngClass]="{ 'active': i === currentIndex }"></span>
     </div>
-    <button class="arrow" (click)="nextSlide()">
+    <button *ngIf="designType === 'carousel'" class="arrow" (click)="nextSlide()">
       <i class="bi bi-arrow-right"></i>
     </button>
   </div>
 
+</div>
+
+
+<!-- لو كان النوع list -->
+<div *ngIf="designType === 'list'" class="list-container">
+  <div class="list-header">
+    <h2>New Games</h2>
+    <div class="navigation-buttons">
+      <button class="arrow" (click)="prevSlide()" [disabled]="!canGoPrev()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <button class="arrow" (click)="nextSlide()" [disabled]="!canGoNext()">
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+  <div #listCardsContainer class="list-cards" [class.dragging]="isDragging">
+    <div *ngFor="let card of visibleCards" class="list-card" [style.background-image]="'url(' + card.img + ')'">
+      <span>{{ card.title }}</span>
+    </div>
+  </div>
 </div>

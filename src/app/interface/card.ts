@@ -1,5 +1,5 @@
 export interface Card {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   img: string;
 }

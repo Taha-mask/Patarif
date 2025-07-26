@@ -1,7 +1,14 @@
 <app-background></app-background>
 
-<div class="">
-  <app-cards [cards]="cardSet1"></app-cards>
+<!-- الشكل الأول (Carousel) -->
+<div class="carousel">
+  <app-cards [cards]="cardSet1" designType="carousel"></app-cards>
 </div>
 
-
+<!-- الشكل الثاني (List) -->
+<div class="list">
+  <app-cards [cards]="cardSet2" designType="list"></app-cards>
+</div>
+<div class="list">
+  <app-cards [cards]="cardSet2" designType="list"></app-cards>
+</div>
