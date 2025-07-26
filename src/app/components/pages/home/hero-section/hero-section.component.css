@@ -2,27 +2,22 @@ body {
     overflow-x: hidden;
 }
 
-
-.hero {
-    min-width: 944px;
-    max-width: 100vw;
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-    position: relative;
+.hero{
+    padding: 20px 20px 60px 60px;
 }
+
 
 .paper-plane {
     position: absolute;
     z-index: -1;
-    margin-top: -250px;
+    top: -200px;
+    left: 0;
 }
 
 .welcome {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: 60px;
 }
 
 .welcome-img img {
@@ -52,10 +47,15 @@ body {
 .hero-title {
     font-family: "Audiowide", sans-serif;
     font-weight: 600;
-    font-size: 80px;
-    margin-left: 60px;
-    width: 100%;
+    font-size: clamp(32px, 6vw, 86px);
 }
+
+.logo {
+  width: clamp(200px, 40vw, 500px);
+  height: auto;
+  margin-top: 60px;
+}
+
 
 .line1 {
     width: 0%;
@@ -89,31 +89,32 @@ body {
 
 .learn-line {
     position: absolute;
-    top: 230px;
+    top: 400px;
     left: 80px;
 }
 
 .play-line {
     position: absolute;
-    top: 240px;
-    left: 550px;
+    top: 400px;
+    left: 580px;
 }
 
 .lets-play img {
     animation: spin 10s linear infinite;
     position: absolute;
-    top: 360px;
-    left: 400px;
+    top: 66vh;
+    left: 30vw;  
 }
-
 .collection {
     position: absolute;
-    top: 320px;
-    left: 640px;
+    top: 66vh;
+    left: 50vw; 
+
 }
 
 .collection-item {
     color: white;
+    font-size: 20px;
     font-family: "Architects Daughter", cursive;
     padding: 10px 32px;
     border-radius: 222px;
@@ -179,6 +180,7 @@ body {
         transform: translate(20px, 20px) rotate(20deg);
     }
 }
+
 @keyframes collectionMoveUpDown {
     0% {
         transform: translate(20px, 20px);
@@ -205,9 +207,4 @@ body {
     100% {
         transform: translate(20px, 20px) rotate(-20deg);
     }
-}
-
-:host {
-    display: block;
-    overflow-x: auto;
 }
