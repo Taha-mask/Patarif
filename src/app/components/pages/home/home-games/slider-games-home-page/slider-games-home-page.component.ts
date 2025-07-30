@@ -16,7 +16,7 @@ export class SliderGamesHomePageComponent {
   cards = [
     {
       title: 'Puz\nzles',
-      img: 'images/PataUG3.png',
+      img: 'images/PataUG3.svg',
       raiting: 2.8
 
     },

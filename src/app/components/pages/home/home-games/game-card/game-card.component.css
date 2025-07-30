@@ -2,7 +2,7 @@
     position: relative;
     width: 328px; 
     height: 390px;
-    overflow: visible; /
+    overflow: visible;
 }
 
 .background {
@@ -20,8 +20,9 @@
     z-index: 1;
     width: 333px;
     height: 424px;
-    object-fit: cover;
+    /* object-fit: cover; */
     left: -55px;
+
 }
 
 /* العنوان */
