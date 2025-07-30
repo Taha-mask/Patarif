@@ -1,0 +1,18 @@
+<div 
+  class="card-container" 
+  [style.backgroundColor]="bgColor" 
+  (click)="onCardClick()"
+>
+  <div class="background-icon">
+    <img [src]="bgIcon" alt="bg icon">
+  </div>
+  <div class="main-content">
+    <div class="row align-items-center justify-content-between">
+      <div class="age">3-6 years</div>
+      <div class="open"><img src="images/arrowTopRight.png" alt="open"></div>
+    </div>
+    <h3 class="title">{{ title }}</h3>
+    <img [src]="mainIcon" alt="icon" class="main-icon">
+    
+  </div>
+</div>

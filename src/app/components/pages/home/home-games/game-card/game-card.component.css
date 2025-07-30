@@ -1,0 +1,118 @@
+.card-container {
+    position: relative;
+    width: 328px; 
+    height: 390px;
+    overflow: visible; /
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 328px;
+    height: 390px;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.game-image {
+    position: absolute;
+    z-index: 1;
+    width: 333px;
+    height: 424px;
+    object-fit: cover;
+    left: -55px;
+}
+
+/* العنوان */
+.title {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.start-game-button {
+    position: absolute;
+    padding: 5px;
+    width: 74px;
+    height: 74px;
+    border-radius: 100%;
+    background: white;
+    border: 3px black solid;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 4px #fff, 0 0 12px 2px #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    right: 0;
+    bottom: 0;
+}
+
+
+.start-home {   
+    border: 1px black solid;
+    background: white;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.start-home img {
+    width: 22px;
+    display: block;
+    margin-left: 6px;
+}
+
+.raiting{
+    /* justify-content: center; */
+    align-items: center; 
+    display: flex;
+    position: relative;
+    top: 6px;
+}
+
+.title{
+    font-family: "Audiowide", sans-serif;
+    font-size: 44.16px;
+    font-weight: 400;
+    color: white;
+    position: absolute;
+    top: 112px;
+    left: 220px;
+
+}
+
+.selected-game{
+    position: absolute;
+    top: 8px;
+    right: 18px;
+    width: 38px;
+    height: 38px;
+}
+
+.age{
+    width: 114px;
+    background-color: white;
+    color: #000000;
+    justify-content: center;
+    display: flex;
+    border: 1px black solid;
+    border-radius: 44px;
+    padding: 4px;
+    position: absolute;
+    top: 62px;
+    left: 255px;
+    z-index: 20;
+}
+
+.age h4 {
+    font-family: "Architects Daughter", cursive;
+}
