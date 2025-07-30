@@ -1,0 +1,361 @@
+/* ===== Carousel Styles ===== */
+.games-carousel-container {
+    width: 100vw;
+    max-width: 100vw;
+    margin: 1px 0 0 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100vw;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .cards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 220px;
+    position: relative;
+    margin: 0 auto;
+    gap: 20px;
+  }
+  
+  .game-card {
+    position: relative;
+    width: 160px;
+    height: 180px;
+    transform: scale(0.8);
+    opacity: 0.6;
+    z-index: 1;
+    border-radius: 24px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: flex-end;
+    padding: 28px 32px;
+    transition: all 0.4s cubic-bezier(.7,0,.3,1);
+    background-size: cover;
+    background-position: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  
+  .game-card.center {
+    transform: scale(1);
+    opacity: 1;
+    z-index: 3;
+  }
+  
+
+  
+  /* ===== Arrow Button Styles ===== */
+  .arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 60%;
+    background: #000;
+    padding: 5px 10px;
+    border: none;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  
+  .arrow.prev-arrow {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+  
+  .arrow.prev-arrow i {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .arrow.prev-arrow:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  
+  .arrow i {
+    font-size: 20px;
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 2px 8px #0001;
+    z-index: 2;
+  }
+  
+  .arrow:hover {
+    background: #000;
+  }
+  
+  /* ===== Dots Styles ===== */
+  .dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    margin: 0 4px;
+    padding: 10px;
+    border-radius: 20px;
+  }
+  
+  .dots span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background: #ffffff4d;
+    border-radius: 50%;
+    transition: background 0.2s, width 0.2s;
+    vertical-align: middle;
+  }
+  
+  .dots span.active {
+    background: #fff;
+    width: 30px;
+    border-radius: 10px;
+  }
+  
+  /* ===== Scroll Container ===== */
+  .scroll {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 64px;
+  }
+  
+  /* ===== List Styles (for list mode, not carousel) ===== */
+  .list-container {
+    width: 100vw;
+    margin: 40px 0;
+    padding: 0;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+  
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .list-header h2 {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0;
+    color: #000;
+  }
+  
+  .navigation-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .navigation-buttons .arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #000;
+    color: #fff;
+  }
+  
+  .navigation-buttons .arrow:hover {
+    transform: scale(1.1);
+  }
+  
+  .list-cards {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 20px 10px 20px;
+    width: 100%;
+    cursor: grab;
+    user-select: none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .list-cards.dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+  }
+  
+  .list-cards::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .list-card {
+    width: 244px;
+    height: 320px;
+    border-radius: 16px;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 20px 25px;
+    position: relative;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: slideIn 0.8s ease-out;
+  }
+  
+  .list-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0) 80%);
+    z-index: 0;
+  }
+  
+  .list-card span {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 800;
+  }
+  
+  .list-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
+  
+  /* ===== Responsive Breakpoints ===== */
+  @media (max-width: 900px) {
+    .carousel, .games-carousel-container {
+      max-width: 100vw;
+      width: 100vw;
+    }
+    .cards {
+      width: 95vw;
+      min-width: 0;
+      gap: 15px;
+    }
+    .game-card {
+      width: 140px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .cards {
+      width: 95vw;
+      min-width: 0;
+      gap: 12px;
+    }
+    .game-card {
+      width: 120px;
+      height: 140px;
+      font-size: 1rem;
+      padding: 18px 10px;
+    }
+    .list-card {
+      width: 200px;
+      height: 260px;
+      font-size: 1rem;
+    }
+    .list-header h2 {
+      font-size: 1.5rem;
+    }
+    .list-cards {
+      gap: 15px;
+      padding: 0 15px 10px 15px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .cards {
+      width: 98vw;
+      min-width: 0;
+      height: 120px;
+      gap: 8px;
+    }
+    .game-card {
+      width: 100px;
+      height: 100px;
+      font-size: 0.9rem;
+      padding: 10px 2px;
+    }
+    .list-card {
+      width: 180px;
+      height: 240px;
+      font-size: 0.9rem;
+    }
+    .list-header h2 {
+      font-size: 1.3rem;
+    }
+    .list-cards {
+      gap: 12px;
+      padding: 0 12px 10px 12px;
+    }
+    .list-header {
+      padding: 0 12px 15px 12px;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    .cards {
+      width: 100vw;
+      min-width: 0;
+      height: 90px;
+      gap: 6px;
+    }
+    .game-card {
+      width: 80px;
+      height: 70px;
+      font-size: 0.8rem;
+      padding: 4px 1px;
+    }
+    .list-card {
+      width: 160px;
+      height: 220px;
+      font-size: 0.8rem;
+    }
+    .list-header h2 {
+      font-size: 1.1rem;
+    }
+  }
+  
+  /* ===== Animation for Cards ===== */
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  

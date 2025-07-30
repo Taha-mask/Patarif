@@ -40,7 +40,9 @@
   </div>
 
   <div class="scroll d-flex justify-content-center align-items-center gap-3">
-
+    <button class="arrow" style="background-color: #E3E3E3;" (click)="prevSlide()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
     <div class="dots">
       <span
         *ngFor="let card of cards; let i = index"
