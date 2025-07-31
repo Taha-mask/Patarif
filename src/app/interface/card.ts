@@ -3,3 +3,9 @@ export interface Card {
   subtitle?: string;
   img: string;
 }
+
+export interface CharacterCard {
+  bgIcon: string;
+  character: string;
+  raiting: number;
+}

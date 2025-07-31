@@ -1,1 +1,34 @@
-<p>categories works!</p>
+<h1 class="categories-title">What do we have?</h1>
+
+<!-- <app-background></app-background> -->
+
+<div class="row g-0 justify-content-between" style="margin: 0 20px;">
+  <!-- // Category Card for Learning Corner -->
+  <div class="col-auto"> <app-category-card [bgColor]="'#FF006E'" [bgIcon]="'images/learningCorenetCategory.png'"
+      [mainIcon]="'images/mainlearningCorenetCategory.png'" [title]="'Learning\nCorner'"
+      (cardClick)="onCardClicked('Learning\nCorner')"></app-category-card></div>
+
+
+
+  <!-- Category Card for shopping Corner -->
+  <div class="col-auto"> <app-category-card [bgColor]="'#9B57FA'" [bgIcon]="'images/shoppingCorenerCategory.png'"
+      [mainIcon]="'images/mainShoppingCorenerCategory.png'" [title]="'Shopping\nCorner'"
+      (cardClick)="onCardClicked('Shopping\nCorner')"></app-category-card></div>
+
+
+  <!-- Category Card for shopping Corner -->
+  <div class="col-auto"> <app-category-card [bgColor]="'#FB5664'" [bgIcon]="'images/storyCorenerCategory.png'"
+      [mainIcon]="'images/mainStoryCorenerCategory.png'" [title]="'Stories\nCorner'"
+      (cardClick)="onCardClicked('story\nCorner')"></app-category-card></div>
+
+
+
+      <!-- Category Card for shopping Corner -->
+  <div class="col-auto"> <app-category-card [bgColor]="'#6486FF'" [bgIcon]="'images/gameCorenerCategory.png'"
+      [mainIcon]="'images/mainGameCorenerCategory.png'" [title]="'Games\nCorner'"
+      (cardClick)="onCardClicked('game\nCorner')"></app-category-card></div>
+
+
+
+
+</div>
