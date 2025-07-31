@@ -1,34 +1,38 @@
 
 <div *ngIf="designType === 'carousel'" class="games-carousel-container">
-    <div class="carousel">
-      <div class="cards">
-        <div
-          *ngFor="let card of characters; let i = index"
-          class="game-card"
-          [class.center]="i === currentIndex"
-          [style.textAlign]="'left'"
-        >
-        
-          <app-carachter-card [bgIcon]="card.bgIcon" [character]="card.character"
-          [raiting]="card.raiting"bgIcon></app-carachter-card>
-          
-        </div>
+  <div class="carousel">
+    <div class="cards">
+      <div
+        *ngFor="let card of characters; let i = index"
+        class="game-card"
+        [ngClass]="{
+          'center': i === currentIndex,
+          'left': i === leftIndex,
+          'right': i === rightIndex,
+          'left-2': i === left2Index,
+          'right-2': i === right2Index
+        }"
+        [style.textAlign]="'left'"
+      >
+        <app-carachter-card [bgIcon]="card.bgIcon" [character]="card.character"
+        [raiting]="card.raiting"></app-carachter-card>
       </div>
-    </div>
-  
-    <div class="scroll d-flex justify-content-center align-items-center gap-3">
-      <button class="arrow" style="background-color: #E3E3E3;" (click)="prevSlide()">
-        <i class="bi bi-arrow-left"></i>
-      </button>
-      <div class="dots">
-        <span
-          *ngFor="let card of characters; let i = index"
-          [class.active]="i === currentIndex"
-        ></span>
-      </div>
-      <button class="arrow" (click)="nextSlide()">
-        <i class="bi bi-arrow-right"></i>
-      </button>
     </div>
   </div>
+
+  <div class="scroll d-flex justify-content-center align-items-center gap-3">
+    <button class="arrow" style="background-color: #E3E3E3;" (click)="prevSlide()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <div class="dots">
+      <span
+        *ngFor="let card of characters; let i = index"
+        [ngClass]="{ 'active': i === currentIndex }"
+      ></span>
+    </div>
+    <button class="arrow" (click)="nextSlide()">
+      <i class="bi bi-arrow-right"></i>
+    </button>
+  </div>
+</div>
   

@@ -4,20 +4,22 @@ body {
 
 .hero{
     padding: 20px 20px 60px 60px;
+    animation: fadeInFromTop 1s ease-out;
 }
-
 
 .paper-plane {
     position: absolute;
     z-index: -1;
     top: -200px;
     left: 0;
+    animation: fadeInFromTop 1s ease-out 0.2s both;
 }
 
 .welcome {
     display: flex;
     align-items: center;
     gap: 8px;
+    animation: fadeInFromTop 1s ease-out 0.4s both;
 }
 
 .welcome-img img {
@@ -48,14 +50,27 @@ body {
     font-family: "Audiowide", sans-serif;
     font-weight: 600;
     font-size: clamp(32px, 6vw, 86px);
+    animation: fadeInFromTop 1s ease-out 0.6s both;
 }
 
 .logo {
   width: clamp(200px, 40vw, 500px);
   height: auto;
   margin-top: 60px;
+  animation: fadeInFromTop 1s ease-out 0.8s both;
 }
 
+/* Fade in animation */
+@keyframes fadeInFromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 .line1 {
     width: 0%;
@@ -91,12 +106,14 @@ body {
     position: absolute;
     top: 400px;
     left: 80px;
+    animation: fadeInFromTop 1s ease-out 1s both;
 }
 
 .play-line {
     position: absolute;
     top: 400px;
     left: 580px;
+    animation: fadeInFromTop 1s ease-out 1.2s both;
 }
 
 .lets-play img {

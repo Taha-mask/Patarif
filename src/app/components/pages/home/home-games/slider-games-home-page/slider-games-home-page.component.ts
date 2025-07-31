@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { GameCardComponent } from '../game-card/game-card.component';
 import { CommonModule } from '@angular/common';
+import { StarsBackgroundComponent } from "../../../../stars-background/stars-background.component";
 @Component({
   selector: 'app-slider-games-home-page',
   imports: [
     GameCardComponent,
-    CommonModule
-  ],
+    CommonModule,
+    StarsBackgroundComponent
+],
   templateUrl: './slider-games-home-page.component.html',
   styleUrl: './slider-games-home-page.component.css'
 })
