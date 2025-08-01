@@ -1,0 +1,60 @@
+<div class="game-bg">
+  <div class="game-card" #gameCard>
+    <div class="top-icons">
+      <button class="icon-btn"><i class="bi bi-volume-up"></i></button>
+      <button class="icon-btn"><i class="bi bi-music-note-beamed"></i></button>
+      <button class="icon-btn exit" (click)="toggleFullScreen()"><i class="bi bi-arrows-fullscreen"></i></button>
+    </div>
+
+    <div class="game-header">
+      <div class="level-indicator">LEVEL {{ level.toString().padStart(2, '0') }}</div>
+      <h2 class="orange-heading">{{ questionText }}</h2>
+    </div>
+
+    <div class="game-content">
+      <div class="letters-side">
+        <ng-content select="[game-content]"></ng-content>
+      </div>
+      
+    </div>
+
+    <div class="result" *ngIf="resultMessage && !showResult">{{ resultMessage }}</div>
+
+    <div class="result-modal" *ngIf="showResult">
+      <div class="result-card">
+        <div class="stars">
+          <i class="bi bi-star-fill" [class.active]="stars >= 1"></i>
+          <i class="bi bi-star-fill" [class.active]="stars >= 2"></i>
+          <i class="bi bi-star-fill" [class.active]="stars >= 3"></i>
+        </div>
+        <h3 class="result-title">{{ resultMessage }}</h3>
+        <div class="result-details">
+          <span class="level">level {{ level.toString().padStart(2, '0') }}</span>
+          <div class="score-label">score</div>
+          <div class="score-value">{{ score }}</div>
+          <div class="reward-label">reward</div>
+          <div class="reward-value">
+            <i class="bi bi-coin"></i> {{ reward }}
+          </div>
+        </div>
+        <div class="result-actions">
+          <button class="retry-btn" (click)="onRetry()" *ngIf="stars < 3">Try Again</button>
+          <button class="ok-btn" (click)="onNextWord()">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="level-complete-modal" *ngIf="showLevelComplete">
+      <div class="level-complete-card">
+        <div class="level-complete-stars">
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+        </div>
+        <h3 class="level-complete-title">Level Complete! 🎉</h3>
+        <p class="level-complete-text">Congratulations! You completed Level {{ level }}</p>
+        <button class="next-level-btn" (click)="onNextWord()">Next Level</button>
+      </div>
+    </div>
+  </div>
+</div>

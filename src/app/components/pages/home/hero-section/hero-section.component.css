@@ -56,6 +56,21 @@ body {
   margin-top: 60px;
 }
 
+.play{
+  position: relative;
+  display: inline-block;
+}
+
+.play::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 8px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='8' viewBox='0 0 100 10'><path d='M0 5 Q 25 0, 50 5 T 100 5' fill='transparent' stroke='%23FFD43B' stroke-width='2'/></svg>") repeat-x;
+  background-size: 40px 8px;
+}
 
 .line1 {
     width: 0%;

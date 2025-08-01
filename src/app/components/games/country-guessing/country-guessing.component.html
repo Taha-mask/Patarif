@@ -1,0 +1,74 @@
+<app-game-template
+  [level]="currentLevel"
+  [score]="isCorrect ? 30 : 10"
+  [reward]="isCorrect ? 30 : 10"
+  [stars]="isCorrect ? 3 : 1"
+  [resultMessage]="isCorrect ? 'Correct! Well done! 🌟' : 'Oops! Try again!'"
+  [showResult]="showResult"
+  [showLevelComplete]="showLevelComplete"
+  [imageUrl]="currentQuestion.image"
+  questionText="Which country is this?"
+  (nextWord)="nextQuestion()"
+  (retry)="tryAgain()"
+  (toggleFullScreenEvent)="toggleFullScreen()">
+
+  <div game-content>
+    <!-- Country Image -->
+    <div class="image-container">
+      <img [src]="currentQuestion.image" [alt]="'Guess the country'" class="country-image">
+      <div class="image-overlay">
+        <div class="hint-text">{{ currentQuestion.hint }}</div>
+      </div>
+    </div>
+
+    <!-- Question Text -->
+    <div class="question-text">
+      <h2>Which country is this?</h2>
+    </div>
+
+    <!-- Answer Options -->
+    <div class="options-container">
+      <button
+        *ngFor="let option of currentQuestion.options; let i = index"
+        class="option-btn"
+        [ngClass]="{
+          'selected': selectedAnswer === option,
+          'correct': showResult && option === currentQuestion.correctAnswer,
+          'incorrect': showResult && selectedAnswer === option && option !== currentQuestion.correctAnswer,
+          'disabled': showResult
+        }"
+        (click)="selectAnswer(option)"
+        [disabled]="showResult">
+        <span class="option-text">{{ option }}</span>
+        <span class="result-icon" *ngIf="showResult">
+          <span *ngIf="option === currentQuestion.correctAnswer" class="correct-icon">✓</span>
+          <span *ngIf="selectedAnswer === option && option !== currentQuestion.correctAnswer" class="incorrect-icon">✗</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Level Complete Modal -->
+    <div class="level-complete-modal" *ngIf="showLevelComplete">
+      <div class="level-complete-card">
+        <div class="level-complete-header">
+          <h1>🎉 Level {{ currentLevel }} Complete! 🎉</h1>
+        </div>
+
+        <div class="level-score">
+          <div class="score-circle">
+            <span class="score-number">{{ score }}</span>
+            <span class="score-total">/{{ questionsPerLevel }}</span>
+          </div>
+          <div class="score-percentage">{{ getLevelScorePercentage() }}%</div>
+          <div class="score-message">{{ getScoreMessage() }}</div>
+        </div>
+
+        <div class="level-actions">
+          <button class="action-btn next-level-btn" (click)="nextLevel()">
+            Continue to Level {{ currentLevel + 1 }} 🚀
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-game-template>

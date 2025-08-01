@@ -1,0 +1,70 @@
+<app-game-template
+  [level]="currentLevel"
+  [score]="isCorrect ? 30 : 10"
+  [reward]="isCorrect ? 30 : 10"
+  [stars]="isCorrect ? 3 : 1"
+  [resultMessage]="isCorrect ? 'Bravo! 🎉' : 'Essaie encore !'"
+  [showResult]="showResult"
+  [showLevelComplete]="showLevelComplete"
+  [imageUrl]="currentWord.image"
+  questionText="Quel est le mot correct ?"
+  (nextWord)="nextWord()"
+  (retry)="startNewGame()"
+  (toggleFullScreenEvent)="toggleFullScreen()">
+
+  <div game-content>
+    <div class="fruit-side">
+      <img class="fruit-img" [src]="imageUrl" alt="Game Image" />
+    </div>
+    <div class="letter-tiles"
+         (dragover)="onDragOver($event)"
+         (drop)="onDropAvailable($event)">
+      <span
+        *ngFor="let obj of availableLetters; let i = index"
+        class="letter-tile"
+        [ngClass]="{'dragging': obj.isDragging}"
+        [ngStyle]="{
+          'background': obj.isDragging ? '#cccccc' : obj.color,
+          'left': obj.originalPosition.x + '%',
+          'top': obj.originalPosition.y + '%',
+          'position': 'absolute'
+        }"
+        draggable="true"
+        (dragstart)="onDragStartLetter(i, $event)"
+        (dragend)="onDragEnd()"
+      >
+        {{ obj.letter }}
+      </span>
+      <!-- Placeholder templates for empty positions -->
+      <span
+        *ngFor="let pos of originalPositions; let i = index"
+        class="letter-placeholder"
+        [ngStyle]="{
+          'left': pos.x + '%',
+          'top': pos.y + '%',
+          'position': 'absolute',
+          'background': letterColors[i % letterColors.length]
+        }"
+        [ngClass]="{'hidden': isPositionOccupied(pos)}"
+      ></span>
+    </div>
+    <div class="word-slots">
+      <span
+        *ngFor="let slot of filledSlots; let i = index"
+        class="word-slot"
+        [class.filled]="slot"
+        (dragover)="onDragOver($event)"
+        (drop)="onDropSlot($event, i)"
+      >
+        <span
+          *ngIf="slot"
+          class="slot-letter"
+          draggable="true"
+          (dragstart)="onDragStartSlot(i, $event)"
+          (dragend)="onDragEnd()"
+        >{{ slot.letter }}</span>
+      </span>
+    </div>
+    <button class="done-btn" (click)="checkAnswer()">DONE</button>
+  </div>
+</app-game-template>

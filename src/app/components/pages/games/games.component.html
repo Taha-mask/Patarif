@@ -2,13 +2,13 @@
 
 <!-- الشكل الأول (Carousel) -->
 <div class="carousel">
-  <app-cards [cards]="cardSet1" designType="carousel"></app-cards>
+  <app-cards [cards]="cardSet1" designType="carousel" (cardClick)="onCardClick($event)"></app-cards>
 </div>
 
-<!-- الشكل الثاني (List) -->
 <div class="list">
-  <app-cards [cards]="cardSet2" designType="list"></app-cards>
+  <app-cards [cards]="cardSet2" designType="list" (cardClick)="onCardClick($event)"></app-cards>
 </div>
 <div class="list">
-  <app-cards [cards]="cardSet2" designType="list"></app-cards>
+  <app-cards [cards]="cardSet2" designType="list" (cardClick)="onCardClick($event)"></app-cards>
 </div>
+
