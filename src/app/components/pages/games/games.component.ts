@@ -1,28 +1,50 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { CardsComponent } from '../../cards/cards.component';
 import { Card } from '../../../interface/card';
 import { BackgroundComponent } from "../../background/background.component";
+import { LettersGameComponent } from "../../games/letters-game/letters-game.component";
+import { CountryGuessingComponent } from "../../games/country-guessing/country-guessing.component";
+import { FactGameComponent } from "../../games/fact-game/fact-game.component";
 @Component({
   selector: 'app-games',
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.css'],
-  imports: [CardsComponent, BackgroundComponent],
+  imports: [BackgroundComponent, CardsComponent],
   standalone: true
 })
 export class GamesComponent {
+  constructor(private router: Router) {}
+
+  onCardClick(event: {card: Card, index: number}) {
+    // If first card is clicked, navigate to letters game
+    if (event.index === 0) {
+      this.router.navigate(['/letters-game']);
+    }
+    // If second card is clicked, navigate to country guessing game
+    else if (event.index === 1) {
+      this.router.navigate(['/country-guessing']);
+    }
+    // If third card is clicked, navigate to fact game
+    else if (event.index === 2) {
+      this.router.navigate(['/fact-game']);
+    }
+    // You can add more navigation logic for other cards here
+  }
+
   cardSet1: Card[] = [
     {
-      title: 'Connect the dots\nFirst to win!',
+      title: 'Organiser les lettres\nArrange the letters!',
       subtitle: 'Try now for free',
       img: 'images/card-2.png',
     },
     {
-      title: 'Connect the dots\nFirst to win!',
+      title: 'Guess the Country\nIdentify countries!',
       subtitle: 'Try now for free',
       img: 'images/card-3.png',
     },
     {
-      title: 'Connect the dots\nFirst to win!',
+      title: 'True or False?\nTest your knowledge!',
       subtitle: 'Try now for free',
       img: 'images/card-1.png',
     }

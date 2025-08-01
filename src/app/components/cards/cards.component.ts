@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, ViewChild, AfterViewInit, HostListener, OnChanges } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, AfterViewInit, HostListener, OnChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../interface/card';
 
@@ -12,6 +12,7 @@ import { Card } from '../../interface/card';
 export class CardsComponent implements AfterViewInit, OnChanges {
   @Input() cards: Card[] = [];
   @Input() designType: 'carousel' | 'list' = 'carousel';
+  @Output() cardClick = new EventEmitter<{card: Card, index: number}>();
   @ViewChild('listCardsContainer') listCardsContainer!: ElementRef;
 
   currentIndex = 0;
@@ -73,14 +74,14 @@ export class CardsComponent implements AfterViewInit, OnChanges {
 
   setupDragScroll() {
     const container = this.listCardsContainer.nativeElement;
-    
+
     if (!container) {
       console.warn('Container not found for drag scroll');
       return;
     }
-    
+
     console.log('Setting up drag scroll for container:', container);
-    
+
     // Mouse events
     container.addEventListener('mousedown', (e: MouseEvent) => {
       console.log('Mouse down event triggered');
@@ -208,5 +209,9 @@ export class CardsComponent implements AfterViewInit, OnChanges {
       const gap = 20; // Match the CSS gap
       container.scrollLeft = this.listStartIndex * (cardWidth + gap);
     }
+  }
+
+  onCardClick(card: Card, index: number) {
+    this.cardClick.emit({ card, index });
   }
 }
