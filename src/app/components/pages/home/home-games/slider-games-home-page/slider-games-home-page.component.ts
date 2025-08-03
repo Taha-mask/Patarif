@@ -7,6 +7,7 @@ import { StarsBackgroundComponent } from "../../../../stars-background/stars-bac
   imports: [
     GameCardComponent,
     CommonModule,
+    StarsBackgroundComponent
 ],
   templateUrl: './slider-games-home-page.component.html',
   styleUrl: './slider-games-home-page.component.css'

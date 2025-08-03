@@ -1,0 +1,149 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow: hidden;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.background img {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  display: block;
+}
+
+.main {
+  height: 680px;
+  position: absolute;
+  top: 100px;
+  left: 60px;
+  right: 60px;
+  bottom: 60px;
+  z-index: 10;
+  background-color: rgb(255, 210, 126);
+  border-radius: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  animation: mainBgFadeIn 1s forwards;
+  /* fallback for browsers that don't support animation */
+  -webkit-animation: mainBgFadeIn 5s ;
+}
+
+@keyframes mainBgFadeIn {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: rgb(255, 210, 126);
+  }
+}
+
+@-webkit-keyframes mainBgFadeIn {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: rgba(255, 210, 126, 0.589);
+  }
+}
+
+.item {
+  flex: 1 1 0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  height: 100%;
+  transition: flex 0.5s;
+  opacity: 0;
+  transform: translateY(-40px);
+  animation: fadeInTop 1s forwards;
+}
+
+.item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.item:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.item:nth-child(3) {
+  animation-delay: 0.5s;
+}
+.item:nth-child(4) {
+  animation-delay: 0.7s;
+}
+.item:nth-child(5) {
+  animation-delay: 0.9s;
+}
+
+@keyframes fadeInTop {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.linear-background{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 84%);
+  z-index: 0;
+}
+.item-background{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.item img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item h3{
+  position: absolute;
+  bottom: 100px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  z-index: 1;
+}
+
+/* when hovering */
+
+.item:hover {
+  flex: 1.5 1 0;
+  z-index: 2;
+  transform: scaleX(1);
+  transition: flex 0.5s, transform 0.5s;
+}
+.item:hover .item-background{
+  visibility: hidden;
+}
