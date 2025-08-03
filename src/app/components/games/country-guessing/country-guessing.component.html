@@ -1,12 +1,10 @@
 <app-game-template
   [level]="currentLevel"
   [score]="isCorrect ? 30 : 10"
-  [reward]="isCorrect ? 30 : 10"
   [stars]="isCorrect ? 3 : 1"
   [resultMessage]="isCorrect ? 'Correct! Well done! 🌟' : 'Oops! Try again!'"
   [showResult]="showResult"
   [showLevelComplete]="showLevelComplete"
-  [imageUrl]="currentQuestion.image"
   questionText="Which country is this?"
   (nextWord)="nextQuestion()"
   (retry)="tryAgain()"

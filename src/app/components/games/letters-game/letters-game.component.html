@@ -1,70 +1,179 @@
 <app-game-template
   [level]="currentLevel"
-  [score]="isCorrect ? 30 : 10"
-  [reward]="isCorrect ? 30 : 10"
-  [stars]="isCorrect ? 3 : 1"
-  [resultMessage]="isCorrect ? 'Bravo! 🎉' : 'Essaie encore !'"
+  [score]="score"
+  [totalQuestions]="questionsPerLevel"
+  [stars]="currentStars"
+  [resultMessage]="getResultMessage()"
   [showResult]="showResult"
   [showLevelComplete]="showLevelComplete"
-  [imageUrl]="currentWord.image"
-  questionText="Quel est le mot correct ?"
+  [questionText]="'Composez le mot français !'"
   (nextWord)="nextWord()"
-  (retry)="startNewGame()"
-  (toggleFullScreenEvent)="toggleFullScreen()">
-
+  (retry)="retryLevel()"
+>
   <div game-content>
-    <div class="fruit-side">
-      <img class="fruit-img" [src]="imageUrl" alt="Game Image" />
-    </div>
-    <div class="letter-tiles"
-         (dragover)="onDragOver($event)"
-         (drop)="onDropAvailable($event)">
-      <span
+    <div class="game-container">
+
+      <!-- Game panels -->
+      <div class="game-panels">
+        <!-- Letter tiles panel -->
+         <section class="container">
+        <div class="letters-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <span class="title-icon">🔤</span>
+              Composez le Mot
+            </h2>
+            <div class="question-counter">
+              Question {{ currentQuestionIndex + 1 }} / {{ questionsPerLevel }}
+            </div>
+          </div>
+          <div class="letters-container" (drop)="onDropAvailable($event)" (dragover)="onDragOver($event)">
+      <div
         *ngFor="let obj of availableLetters; let i = index"
         class="letter-tile"
-        [ngClass]="{'dragging': obj.isDragging}"
-        [ngStyle]="{
-          'background': obj.isDragging ? '#cccccc' : obj.color,
-          'left': obj.originalPosition.x + '%',
-          'top': obj.originalPosition.y + '%',
-          'position': 'absolute'
-        }"
+              [ngClass]="{'dragging': obj.isDragging, 'used': obj.used}"
         draggable="true"
         (dragstart)="onDragStartLetter(i, $event)"
         (dragend)="onDragEnd()"
+        [style.background]="obj.color"
       >
-        {{ obj.letter }}
-      </span>
-      <!-- Placeholder templates for empty positions -->
-      <span
-        *ngFor="let pos of originalPositions; let i = index"
-        class="letter-placeholder"
-        [ngStyle]="{
-          'left': pos.x + '%',
-          'top': pos.y + '%',
-          'position': 'absolute',
-          'background': letterColors[i % letterColors.length]
-        }"
-        [ngClass]="{'hidden': isPositionOccupied(pos)}"
-      ></span>
+              <div class="tile-inner">
+                <span class="letter-text">{{ obj.letter }}</span>
+                <div class="tile-glow"></div>
+              </div>
+              <!-- Template overlay when letter is used -->
+              <div class="letter-template" *ngIf="obj.used">
+                <div class="template-inner">
+                  <span class="template-text">{{ obj.letter }}</span>
+                </div>
+              </div>
+            </div>
+      </div>
     </div>
+        <div class="slots-panel">
+
+          <div class="slots-container">
     <div class="word-slots">
-      <span
+      <div
         *ngFor="let slot of filledSlots; let i = index"
         class="word-slot"
-        [class.filled]="slot"
-        (dragover)="onDragOver($event)"
+        [ngClass]="{
+          'filled': slot,
+          'correct': showResult && isCorrect && slot,
+          'incorrect': showResult && !isCorrect && slot,
+          'drag-over': dragOverIndex === i && !slot
+        }"
+        [style.--drag-color]="draggedLetterColor"
         (drop)="onDropSlot($event, i)"
+        (dragover)="onDragOver($event, i)"
+        (dragenter)="onDragOver($event, i)"
+        (dragleave)="dragOverIndex === i && (dragOverIndex = null)"
+        draggable="true"
+        (dragstart)="onDragStartSlot(i, $event)"
+        (dragend)="onDragEnd()"
       >
-        <span
-          *ngIf="slot"
-          class="slot-letter"
-          draggable="true"
-          (dragstart)="onDragStartSlot(i, $event)"
-          (dragend)="onDragEnd()"
-        >{{ slot.letter }}</span>
-      </span>
+        <div *ngIf="slot" class="slot-letter" [style.background]="slot.color">
+                  <div class="tile-inner">
+                    <span class="letter-text">{{ slot.letter }}</span>
+                    <div class="tile-glow"></div>
+                  </div>
+                </div>
+                <div class="slot-placeholder" *ngIf="!slot">
+                  <span class="placeholder-icon">?</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </section>
+
+        <div class="fruit-side">
+          <img class="fruit-img" [src]="currentWord.image" alt="Game Image" />
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="game-actions">
+        <div class="action-buttons">
+          <button class="action-btn check-btn" (click)="checkAnswer()" [disabled]="showResult">
+            <span class="btn-icon">✅</span>
+            <span class="btn-label">Vérifier</span>
+          </button>
+
+          <button class="action-btn hint-btn" (click)="useHint()" [disabled]="availableHints === 0 || hintUsed">
+            <span class="btn-icon">💡</span>
+            <span class="btn-label">Indice</span>
+          </button>
+
+        </div>
+      </div>
     </div>
-    <button class="done-btn" (click)="checkAnswer()">DONE</button>
   </div>
 </app-game-template>
+
+<!-- Result Modal -->
+<div class="result-modal" *ngIf="showResult">
+  <div class="result-card">
+    <div class="result-title">
+      {{ isCorrect ? '🎉 Excellent !' : '😔 Essayez encore !' }}
+    </div>
+
+    <!-- Show correct word when there are mistakes -->
+    <div class="correct" *ngIf="!isCorrect">
+      <div class="correct-text">{{ correctWord }}</div>
+    </div>
+
+    <div class="result-details">
+      <div class="level">Niveau {{ currentLevel }}</div>
+      <div class="score-label">Score</div>
+      <div class="score-value">{{ score }}</div>
+    </div>
+
+    <!-- Stars Display -->
+    <div class="stars">
+      <i class="bi" [ngClass]="currentStars >= 1 ? 'bi-star-fill star-animation' : 'bi-star'"></i>
+      <i class="bi" [ngClass]="currentStars >= 2 ? 'bi-star-fill star-animation' : 'bi-star'"></i>
+      <i class="bi" [ngClass]="currentStars >= 3 ? 'bi-star-fill star-animation' : 'bi-star'"></i>
+    </div>
+
+        <div class="result-actions">
+      <!-- Show retry level button if no stars (0 stars) -->
+      <button class="retry-btn" (click)="retryLevel()" *ngIf="currentStars === 0">
+        Réessayer le Jeu
+      </button>
+
+      <!-- Show retry question and next question buttons if got stars -->
+      <div class="success-actions" *ngIf="currentStars > 0">
+        <button class="retry-question-btn" (click)="retryQuestion()">
+          Réessayer la Question
+        </button>
+        <button class="ok-btn" (click)="nextWord()">
+          {{ currentQuestionIndex >= questionsPerLevel - 1 ? 'Niveau Suivant' : 'Question Suivante' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Final Result Modal -->
+<div *ngIf="showFinalResult" class="final-result-modal">
+  <div class="modal-content">
+    <h2>🎉 Bravo !</h2>
+    <div class="score-container">
+      <div class="score-circle" [style.background]="getScoreColor()">
+        <span class="score-percent">{{ finalScore }}%</span>
+      </div>
+      <p class="score-text">
+        <span class="correct-answers">{{ correctAnswers }}</span> sur {{ totalQuestions }} réponses correctes
+      </p>
+    </div>
+    
+    <div class="message" [innerHTML]="getResultMessage()"></div>
+    
+    <div class="actions">
+      <button class="play-again-btn" (click)="playAgain()">
+        <i class="fas fa-redo"></i> Rejouer
+      </button>
+    </div>
+  </div>
+</div>

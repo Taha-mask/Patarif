@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 .game-bg {
-  width: 60%;
+  width: 70%;
   position: relative;
   overflow: auto;
   margin: auto;
@@ -115,12 +115,6 @@
 
 .fruit-img {
   border-radius: 20px;
-  border: white 5px solid;
-  width: 260px;
-  height: 260px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   box-shadow: 0 2px 16px #0001;
   object-fit: contain;
 }
@@ -130,13 +124,13 @@
   gap: 20px;
   z-index: 2;
   justify-content: end;
-  margin-top: 32px;
   margin-bottom: 12px;
+  margin-right: 12px;
 }
 
 .icon-btn {
-  width: 54px;
-  height: 54px;
+  width: 55px;
+  height: 55px;
   border: none;
   border-radius: 50%;
   display: flex;
@@ -146,13 +140,13 @@
   box-shadow: 0 4px 16px #0001;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
-  background: #fff;
+  background: #ffffff00;
   position: relative;
   outline: none;
 }
 
 .icon-btn i {
-  font-size: 2.2rem;
+  font-size: 2rem;
   color: #fff;
   filter: drop-shadow(0 2px 2px #0002);
 }
@@ -165,6 +159,9 @@
 }
 .icon-btn.exit, .icon-btn:nth-child(3) {
   background: linear-gradient(135deg, #ff8a80 60%, #ffccbc 100%);
+}
+.icon-btn.exit, .icon-btn:nth-child(4) {
+  background: linear-gradient(135deg, #d6200f 60%, #3f1c1c 100%);
 }
 
 .icon-btn:hover, .icon-btn:focus {
@@ -184,58 +181,12 @@
   text-shadow: 0 2px 8px #0002;
 }
 
-.result-modal {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(60, 0, 120, 0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
 
-.result-card {
-  background: #fff;
-  border-radius: 32px;
-  box-shadow: 0 8px 40px 0 #0002;
-  padding: 32px 40px 24px 40px;
-  min-width: 320px;
-  min-height: 340px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
 
-.stars {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.stars .bi-star-fill {
-  font-size: 2.2rem;
-  color: #ffe14d;
-  opacity: 0.3;
-  transition: opacity 0.2s;
-}
-.stars .bi-star-fill.active {
-  opacity: 1;
-}
 
-.result-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #914bf2;
-  margin-bottom: 12px;
-}
 
-.result-details {
-  text-align: center;
-  margin-bottom: 18px;
-}
+
+
 .level {
   color: #fff;
   background: #914bf2;
@@ -251,6 +202,278 @@
   font-weight: bold;
   margin-top: 8px;
 }
+/* Level Complete Overlay */
+.level-complete-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.level-complete-card {
+  background: white;
+  border-radius: 24px;
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.5s ease-out;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Banner */
+.level-banner {
+  background: linear-gradient(135deg, #8e5be8, #5b6ee8);
+  color: white;
+  padding: 15px;
+  border-radius: 15px;
+  margin: -30px -30px 20px -30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-text {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2rem;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.banner-decoration {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.8rem;
+  opacity: 0.8;
+}
+
+/* Result Message */
+.result-message {
+  color: #FFD700;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+}
+
+/* Star animation */
+@keyframes starPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes starGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9));
+  }
+}
+
+.star-animation {
+  animation:
+    starPop 0.8s ease-out forwards,
+    starGlow 2s ease-in-out infinite;
+}
+
+.message {
+  font-size: 1.3rem;
+  color: #555;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+/* Mascot */
+.mascot {
+  margin: 20px 0;
+}
+
+.mascot-image {
+  font-size: 5rem;
+  color: #FF9800;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.retry-btn, .next-level-btn {
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.retry-btn {
+  background: #FF9800;
+  color: white;
+}
+
+.next-level-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.retry-btn:hover, .next-level-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.retry-btn:active, .next-level-btn:active {
+  transform: translateY(1px);
+}
+
+/* Confetti */
+.confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #f00;
+  opacity: 0;
+  animation: confetti 5s ease-in-out infinite;
+}
+
+@keyframes confetti {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Create different confetti pieces */
+.confetti-piece:nth-child(1) {
+  left: 10%;
+  background: #FF5252;
+  animation-delay: 0s;
+  width: 12px;
+  height: 12px;
+}
+
+.confetti-piece:nth-child(2) {
+  left: 20%;
+  background: #4CAF50;
+  animation-delay: 0.5s;
+  width: 8px;
+  height: 8px;
+}
+
+.confetti-piece:nth-child(3) {
+  left: 30%;
+  background: #2196F3;
+  animation-delay: 1s;
+  width: 10px;
+  height: 10px;
+}
+
+.confetti-piece:nth-child(4) {
+  left: 40%;
+  background: #FFC107;
+  animation-delay: 1.5s;
+  width: 12px;
+  height: 12px;
+}
+
+.confetti-piece:nth-child(5) {
+  left: 50%;
+  background: #9C27B0;
+  animation-delay: 2s;
+  width: 8px;
+  height: 8px;
+}
+
+.confetti-piece:nth-child(6) {
+  left: 60%;
+  background: #00BCD4;
+  animation-delay: 0.3s;
+  width: 10px;
+  height: 10px;
+}
+
+.confetti-piece:nth-child(7) {
+  left: 70%;
+  background: #FF5722;
+  animation-delay: 1.2s;
+  width: 12px;
+  height: 12px;
+}
+
+.confetti-piece:nth-child(8) {
+  left: 80%;
+  background: #8BC34A;
+  animation-delay: 0.8s;
+  width: 8px;
+  height: 8px;
+}
+
+.confetti-piece:nth-child(9) {
+  left: 90%;
+  background: #E91E63;
+  animation-delay: 1.7s;
+  width: 10px;
+  height: 10px;
+}
+
+.confetti-piece:nth-child(10) {
+  left: 95%;
+  background: #3F51B5;
+  animation-delay: 0.5s;
+  width: 12px;
+  height: 12px;
+}
+
 .score-value {
   color: #00bcd4;
   font-size: 1.5rem;
@@ -273,96 +496,13 @@
   font-size: 1.7rem;
 }
 
-.ok-btn {
-  background: linear-gradient(90deg, #69f0ae, #00e676);
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  padding: 14px 48px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 8px #69f0ae55;
-  margin-top: 8px;
-  cursor: pointer;
-  font-family: 'Fredoka One', Arial, sans-serif;
-  transition: background 0.2s;
-}
-.ok-btn:hover {
-  background: linear-gradient(90deg, #00e676, #69f0ae);
-}
 
-.result-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  margin-top: 20px;
-}
 
-.retry-btn {
-  background: linear-gradient(90deg, #f56565, #e53e3e);
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  padding: 14px 48px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 8px #f5656555;
-  cursor: pointer;
-  font-family: 'Fredoka One', Arial, sans-serif;
-  transition: background 0.2s;
-}
 
-.retry-btn:hover {
-  background: linear-gradient(90deg, #e53e3e, #f56565);
-}
 
-.level-complete-modal {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(60, 0, 120, 0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
 
-.level-complete-card {
-  background: #fff;
-  border-radius: 32px;
-  box-shadow: 0 8px 40px 0 #0002;
-  padding: 32px 40px 24px 40px;
-  min-width: 320px;
-  text-align: center;
-}
 
-.level-complete-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #914bf2;
-  margin-bottom: 12px;
-}
 
-.level-complete-stars {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-.level-complete-stars .bi-star-fill {
-  font-size: 2.2rem;
-  color: #ffe14d;
-}
-
-.level-complete-text {
-  font-size: 1.2rem;
-  color: #666;
-  margin-bottom: 18px;
-}
 
 .next-level-btn {
   background: linear-gradient(90deg, #914bf2, #9b57fa);

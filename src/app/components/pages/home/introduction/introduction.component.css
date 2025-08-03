@@ -8,7 +8,9 @@
     padding-left: 4%;
     padding-right: 4%;
 }
-
+body{
+    overflow: hidden;
+}
 .intro-image-1{
     width: 44%;
 }

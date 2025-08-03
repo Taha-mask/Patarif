@@ -4,20 +4,22 @@ body {
 
 .hero{
     padding: 20px 20px 60px 60px;
+    animation: fadeInFromTop 1s ease-out;
 }
-
 
 .paper-plane {
     position: absolute;
     z-index: -1;
     top: -200px;
     left: 0;
+    animation: fadeInFromTop 1s ease-out 0.2s both;
 }
 
 .welcome {
     display: flex;
     align-items: center;
     gap: 8px;
+    animation: fadeInFromTop 1s ease-out 0.4s both;
 }
 
 .welcome-img img {
@@ -48,28 +50,27 @@ body {
     font-family: "Audiowide", sans-serif;
     font-weight: 600;
     font-size: clamp(32px, 6vw, 86px);
+    animation: fadeInFromTop 1s ease-out 0.6s both;
 }
 
 .logo {
   width: clamp(200px, 40vw, 500px);
   height: auto;
   margin-top: 60px;
+  animation: fadeInFromTop 1s ease-out 0.8s both;
 }
 
-.play{
-  position: relative;
-  display: inline-block;
-}
 
-.play::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  width: 100%;
-  height: 8px;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='8' viewBox='0 0 100 10'><path d='M0 5 Q 25 0, 50 5 T 100 5' fill='transparent' stroke='%23FFD43B' stroke-width='2'/></svg>") repeat-x;
-  background-size: 40px 8px;
+/* Fade in animation */
+@keyframes fadeInFromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .line1 {
@@ -106,24 +107,26 @@ body {
     position: absolute;
     top: 400px;
     left: 80px;
+    animation: fadeInFromTop 1s ease-out 1s both;
 }
 
 .play-line {
     position: absolute;
     top: 400px;
     left: 580px;
+    animation: fadeInFromTop 1s ease-out 1.2s both;
 }
 
 .lets-play img {
     animation: spin 10s linear infinite;
     position: absolute;
     top: 66vh;
-    left: 30vw;  
+    left: 30vw;
 }
 .collection {
     position: absolute;
     top: 66vh;
-    left: 50vw; 
+    left: 50vw;
 
 }
 
