@@ -2,7 +2,8 @@
     width: 100vw;
     height: 20vw;
     color: white;
-    background-color: #6486FF;
+    /* Use the color input as background via inline style binding in the component */
+    /* background-color: #6486FF; */
     border-top-right-radius: 40px;
     border-top-left-radius: 40px;
     justify-content: space-between;
