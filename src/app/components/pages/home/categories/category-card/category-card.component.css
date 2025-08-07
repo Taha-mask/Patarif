@@ -1,25 +1,27 @@
 .card-container {
-  height: 384px;
-  width: 312px;
+  height: 90%;
+  /* width: 100%; */
   border-radius: 24px;
   overflow: hidden;
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   justify-content: flex-end;
+  align-items: end;
   position: relative;
   transition: 
     transform 0.4s cubic-bezier(.7,0,.3,1), 
     height 0.4s cubic-bezier(.7,0,.3,1);
   cursor: pointer;
-  /* Ensure stacking context for z-index on hover */
   z-index: 1;
   bottom: 0;
 }
 
 .card-container:hover {
+  height: 100%;
+
   /* Scale and height grow from the top edge */
   transform: scale(1.02) translateY(-10px);
-  height: 447px;
+  /* height: 447px; */
   z-index: 10;
   /* Animate origin from the top center */
   transform-origin: bottom center;
@@ -61,7 +63,7 @@
   font-weight: 700;
   font-style: normal;
   white-space: pre-line;
-  font-size: 49.48px;
+    font-size: clamp(1.5rem, 5vw, 3.12rem);
 }
 
 
@@ -79,7 +81,7 @@
   font-size: 14px;
   color: white;
   margin-left: 20px;
-    visibility: hidden;
+    /* visibility: hidden; */
 
 }
 
@@ -87,10 +89,10 @@
   width: fit-content;
   border-radius: 100%;
   border: white 1px solid;
-  padding: 16px;
+  padding: 12px;
   margin-right: 20px;
   margin-top: 10px;
-    visibility: hidden;
+    /* visibility: hidden; */
 
 }
 

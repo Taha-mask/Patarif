@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   trigger,
@@ -33,52 +33,68 @@ import { HomeFooterComponent } from "../../../home/home-footer/home-footer.compo
     ])
   ]
 })
-export class CarotteStoryComponent implements AfterViewInit {
-  @ViewChildren('section') sections!: QueryList<ElementRef>;
-  private currentSectionIndex: number = 0;
-  private isScrolling: boolean = false;
+export class CarotteStoryComponent implements OnInit {
+  sections: string[] = ['section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7', 'section8',
+    'section9'];
+  currentIndex = 0;
+  isScrolling = false;
 
-  ngAfterViewInit(): void {
-    // التمرير إلى القسم الأول عند تحميل الصفحة
-    this.scrollToSection(this.currentSectionIndex);
+  showBox = false;
+
+  discover() {
+    document.getElementById(this.sections[1])?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  @HostListener('window:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if (this.isScrolling) return;
+  toggleBox() {
+    this.showBox = !this.showBox;
+  }
 
-    if (event.key === 'ArrowDown' && this.currentSectionIndex < this.sections.length - 1) {
-      this.currentSectionIndex++;
-      this.scrollToSection(this.currentSectionIndex);
-    } else if (event.key === 'ArrowUp' && this.currentSectionIndex > 0) {
-      this.currentSectionIndex--;
-      this.scrollToSection(this.currentSectionIndex);
+  ngOnInit() {
+    // تأكد من التمركز على أول سكشن عند البداية
+    document.getElementById(this.sections[this.currentIndex])?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  scrollToSection(index: number) {
+    if (index >= 0 && index < this.sections.length) {
+      this.currentIndex = index;
+      this.isScrolling = true;
+
+      document.getElementById(this.sections[this.currentIndex])?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'nearest'
+      });
+
+
+      // نمنع التكرار السريع
+      setTimeout(() => {
+        this.isScrolling = false;
+      }, 1000);
+    }
+  }
+
+  @HostListener('window:keydown.arrowdown', ['$event'])
+  onArrowDown(event: KeyboardEvent) {
+    if (!this.isScrolling) {
+      this.scrollToSection(this.currentIndex + 1);
+    }
+  }
+
+  @HostListener('window:keydown.arrowup', ['$event'])
+  onArrowUp(event: KeyboardEvent) {
+    if (!this.isScrolling) {
+      this.scrollToSection(this.currentIndex - 1);
     }
   }
 
   @HostListener('window:wheel', ['$event'])
-  handleWheelEvent(event: WheelEvent) {
+  onWheel(event: WheelEvent) {
     if (this.isScrolling) return;
 
-    if (event.deltaY > 0 && this.currentSectionIndex < this.sections.length - 1) {
-      // التمرير لأسفل
-      this.currentSectionIndex++;
-      this.scrollToSection(this.currentSectionIndex);
-    } else if (event.deltaY < 0 && this.currentSectionIndex > 0) {
-      // التمرير لأعلى
-      this.currentSectionIndex--;
-      this.scrollToSection(this.currentSectionIndex);
+    if (event.deltaY > 0) {
+      this.scrollToSection(this.currentIndex + 1);
+    } else if (event.deltaY < 0) {
+      this.scrollToSection(this.currentIndex - 1);
     }
-  }
-
-  private scrollToSection(index: number) {
-    this.isScrolling = true;
-    const section = this.sections.toArray()[index].nativeElement;
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    // تأخير لمنع التمرير المتكرر أثناء التمرير السلس
-    setTimeout(() => {
-      this.isScrolling = false;
-    }, 1000); // يمكنك تعديل الوقت حسب الحاجة
   }
 }

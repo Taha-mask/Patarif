@@ -10,6 +10,11 @@
     align-items: center;
     display: flex;
     padding: 0 50px;
+    overflow: hidden;
+        display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* توزيع الأعمدة تلقائيًا */
+    gap: 10rem; /* مسافة بين العناصر */
+    padding: 1rem; /* حواف داخلية */
 }
 
 .section-title {

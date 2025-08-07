@@ -13,15 +13,17 @@
     height: 390px;
     object-fit: cover;
     z-index: 0;
+
 }
 
 .game-image {
     position: absolute;
     z-index: 1;
-    width: 333px;
-    height: 424px;
+    width: 100%;
+    height: auto;
     /* object-fit: cover; */
     left: -55px;
+
 
 }
 

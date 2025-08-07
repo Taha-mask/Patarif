@@ -1,21 +1,24 @@
 <div class="background-color"></div>
 
-<div class="background"><img src="images/learningZone/stories/carotte/background.png" alt="background"></div>
-<div class="cover-title">
+<div id="section1" class="background"><img src="images/learningZone/stories/carotte/background.png" alt="background">
+</div>
+
+<div id="section1" class="cover-title">
     <h3 class="description firstDesc">Moi, c’est</h3>
     <h1 class="title">Caro-Carotte !</h1>
     <h3 class="description">Je suis orange, croquante, et j’aime qu’on<br>me mange !<br>Je vais te raconter plein de
         choses sur moi…<br>de manière amusante ! </h3>
 
-    <button class="btn btn-primary" >Discover</button>
+    <button class="btn btn-primary" (click)="discover()" (mouseover)="toggleBox()">Discover</button>
 
-    <div  class="cloud1">
+    <div *ngIf="showBox" class="cloud1">
         <img class="" src="images/learningZone/stories/carotte/cloud1.png" alt="background">
     </div>
 </div>
 
-<div class="content" >
-    <div #section class="section section2">
+<div *ngIf="showBox" class="content">
+    
+    <div id="section2" #section class="section section2">
         <img src="images/learningZone/stories/carotte/section2.png" alt="section 2">
         <div class="location pays-bas d-flex"><i class="bi bi-arrow-down"></i>
             <p>Pays-Bas</p>
@@ -39,7 +42,7 @@
             <p>J’ai voyagé jusqu’en Grèce, Rome, et<br>puis les Hollandais m’ont rendue<br>orange ! </p>
         </div>
     </div>
-    <div #section class="section section3">
+    <div id="section3" #section class="section section3">
         <img src="images/learningZone/stories/carotte/section3.png" alt="section 3">
         <div class="section3-header">
             <p>Mon nom scientifique :</p>
@@ -60,7 +63,7 @@
             </div>
         </div>
     </div>
-    <div #section class="section section4">
+    <div id="section4" #section class="section section4">
         <img src="images/learningZone/stories/carotte/section4.png" alt="section 4">
         <div class="story first">
             <h1>Nantaise</h1>
@@ -87,7 +90,7 @@
             <p>rouge foncé et magique !</p>
         </div>
     </div>
-    <div #section class="section section5">
+    <div id="section5" #section class="section section5">
         <img src="images/learningZone/stories/carotte/section5.png" alt="section 5">
         <div class="mar">
             <div class="icon"><img src="images/learningZone/stories/carotte/mar.png" alt="mar">
@@ -104,7 +107,7 @@
             <p>De juin à novembre</p>
         </div>
     </div>
-    <div #section class="section section6">
+    <div id="section6" #section class="section section6">
         <img src="images/learningZone/stories/carotte/section6.png" alt="section 6">
         <div class="message message1">
             <img class="img-fluid" src="images/learningZone/stories/carotte/section6-message1.png" alt="message 1">
@@ -120,8 +123,8 @@
         </div>
 
     </div>
-    <div #section class="section section7">
-        <div  class="cloud2">
+    <div id="section7" #section class="section section7">
+        <div class="cloud2">
             <img class="" src="images/learningZone/stories/carotte/cloud2.png" alt="background">
         </div>
         <img src="images/learningZone/stories/carotte/section7.png" alt="section 7">
@@ -146,7 +149,7 @@
             <p>une peau douce et brillante !</p>
         </div>
     </div>
-    <div #section class="section section8">
+    <div id="section8" #section class="section section8">
         <img src="images/learningZone/stories/carotte/section8.png" alt="section 8">
         <div class="list">
             <div class="story l1 d-flex">
@@ -171,10 +174,10 @@
             </div>
         </div>
     </div>
-    <div #section class="section section9">
-            <div  class="cloud3">
-        <img class="" src="images/learningZone/stories/carotte/cloud3.png" alt="background">
-    </div>
+    <div id="section9" #section class="section section9">
+        <div class="cloud3">
+            <img class="" src="images/learningZone/stories/carotte/cloud3.png" alt="background">
+        </div>
         <img src="images/learningZone/stories/carotte/section9.png" alt="section 8">
         <div class="section9-text">
 
@@ -189,7 +192,7 @@
         </div>
     </div>
     <div #section class="section footer">
-    
-           <app-home-footer [color]="'#B68455'"></app-home-footer>
-       </div>
+
+        <app-home-footer [color]="'#B68455'"></app-home-footer>
+    </div>
 </div>

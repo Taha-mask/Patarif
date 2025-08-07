@@ -1,19 +1,24 @@
 <div class="background-color"></div>
-<div class="background"><img src="images/learningZone/stories/tomate/cover.png" alt="background"></div>
-<div class="cover-title">
+
+<div id="section1" class="background"><img src="images/learningZone/stories/tomate/cover.png" alt="background">
+</div>
+
+<div id="section1" class="cover-title">
     <h3 class="description">Il était une fois... une petite boule<br> rouge, joyeuse et juteuse</h3>
     <h1 class="title">Toma Tomate !</h1>
     <!-- <img class="title" src="images/learningZone/stories/tomate/title.png" alt="title"> -->
 
-    <button class="btn btn-primary" (click)="onDiscoverClick()">Discover</button>
+    <button class="btn btn-primary"  (click)="discover()" (mouseover)="toggleBox()">Discover</button>
+    <div  *ngIf="showBox" class="cloud">
+        <img src="images/learningZone/stories/tomate/cloud.png" alt="cloude">
+    </div>
 </div>
 
-<div class="cloud" [class.show-cloud]="showCloud"><img src="images/learningZone/stories/tomate/cloud.png" alt="cloude">
-</div>
 
-<div class="content" [class.show-content]="showContent">
+<div *ngIf="showBox" class="content">
+    <!-- <div class="main"></div> -->
     <!-- first -->
-    <div class="first-shown">
+    <div id="section2" class="section first-shown">
         <div class="story">
             <h3>Née au Pérou, la tomate était<br>autrefois jaune et sauvage,<br>appelée "tomatl" par les<br>Aztèques !
             </h3>
@@ -21,17 +26,17 @@
     </div>
     <div class="fade-first-shown"></div>
     <!-- second -->
-    <div class="second-shown">
+    <div id="section3" class="section second-shown">
         <div class="story">
             <h3>En Europe, on croyait que la tomate était... <span>empoisonnée !</span>
 
             </h3>
-            <br><br>
+            <br>
             <h3 class="end">Mais ce n’était pas sa faute</h3>
         </div><img src="images/learningZone/stories/tomate/second_shown.png" alt="cloude">
     </div>
     <!-- third -->
-    <div class="third-shown">
+    <div id="section4" class="section third-shown">
         <div class="story">
             <h3>Des cuisiniers<br>italiens malins l'ont<br>mise dans leurs<br>pâtes</h3>
         </div>
@@ -41,31 +46,31 @@
         <img src="images/learningZone/stories/tomate/third_shown.png" alt="second-shown">
     </div>
     <!-- forth -->
-    <div class="forth-shown">
+    <div id="section5" class="section forth-shown">
         <div class="story">
             <h3>D’un fruit rejeté à une super<br>star de la cuisine !</h3>
-            <br><br>
+            <br>
             <h3 class="end">Vive Toma-Tomate !</h3>
         </div>
         <img src="images/learningZone/stories/tomate/forth_shown.png" alt="third-shown">
     </div>
     <!-- fifth -->
-    <div class="fifth-shown">
+    <div id="section6" class="section fifth-shown">
         <div class="story">
             <h3>Il existe des tomates de toutes les formes,<br>couleurs et saveurs !</h3>
-            <br><br>
+            <br>
             <h3 class="end">Laquelle est ta préférée ?</h3>
         </div>
         <img src="images/learningZone/stories/tomate/fifth_shown.png" alt="forth-shown">
     </div>
     <!-- sixth -->
-    <div class="sixth-shown">
+    <div id="section7" class="section sixth-shown">
         <div class="story">
             <h3>Sème les graines entre février et avril, plante-les<br>en mai, et savoure-les tout l’été ! ️</h3>
         </div>
         <img src="images/learningZone/stories/tomate/sixth_shown.png" alt="sixth">
         <!-- cloud -->
-        <div class="cloud2" [class.show-cloud]="showCloud"><img src="images/learningZone/stories/tomate/cloud2.png"
+        <div class="cloud2"><img src="images/learningZone/stories/tomate/cloud2.png"
                 alt="cloude">
             <div class="row">
                 <div class="etape col-auto">Étape 1</div>
@@ -76,7 +81,7 @@
 
     </div>
     <!-- seventh -->
-    <div class="seventh-shown">
+    <div id="section8" class="section seventh-shown">
         <img class="first-message-content" src="images/learningZone/stories/tomate/message.png" alt="content">
         <h3 class="first-message">Et chante-leur<br>des chansons<br>douces</h3>
         <div class="story">
@@ -86,7 +91,7 @@
 
     </div>
     <!-- eighth -->
-    <div class="eighth-shown">
+    <div id="section9" class="section eighth-shown">
         <div class="story">
             <h3><span>Toma-Tomate</span><br>
                 est une super-héroïne rouge !</h3>
@@ -96,30 +101,30 @@
         <img src="images/learningZone/stories/tomate/eighth_shown.png" alt="eighth-shown">
     </div>
     <!-- ninth -->
-    <div class="ninth-shown">
+    <div id="section10" class="section ninth-shown">
         <!-- C -->
         <div class="line line1">
-            <img class="" src="images/learningZone/stories/tomate/line.png" alt="eighth-shown">
+            <!-- <img class="" src="images/learningZone/stories/tomate/line.png" alt="eighth-shown"> -->
         </div>
         <div class="item C">C</div>
         <!-- B9 -->
         <div class="line line2">
-            <img class="" src="images/learningZone/stories/tomate/line2.png" alt="eighth-shown">
+            <!-- <img class="" src="images/learningZone/stories/tomate/line2.png" alt="eighth-shown"> -->
         </div>
         <div class="item B9">B9</div>
         <!-- K1 -->
         <div class="line line3">
-            <img class="" src="images/learningZone/stories/tomate/line2.png" alt="eighth-shown">
+            <!-- <img class="" src="images/learningZone/stories/tomate/line2.png" alt="eighth-shown"> -->
         </div>
         <div class="item K1">K1</div>
         <!-- E -->
         <div class="line line4">
-            <img class="" src="images/learningZone/stories/tomate/line.png" alt="eighth-shown">
+            <!-- <img class="" src="images/learningZone/stories/tomate/line.png" alt="eighth-shown"> -->
         </div>
         <div class="item E">E</div>
-        <!-- E -->
+        <!-- A -->
         <div class="line line5">
-            <img class="" src="images/learningZone/stories/tomate/line.png" alt="eighth-shown">
+            <!-- <img class="" src="images/learningZone/stories/tomate/line.png" alt="eighth-shown"> -->
         </div>
         <div class="item A">A</div>
         <!-- benifits -->
@@ -133,7 +138,7 @@
 
     </div>
     <!-- title -->
-    <div class="benifits">
+    <div id="section11" class="section benifits">
         <h3>Les tomates<br>dynamisent le corps</h3>
         <div class="row" style="display: flex; flex-direction: row; justify-content: center; gap: 48px;">
             <!-- 1 -->
@@ -163,7 +168,7 @@
         </div>
 
         <!-- second collection -->
-        <div class="row" style="display: flex; flex-direction: row; justify-content: center; gap: 48px;">
+        <div  id="section12" class="row" style="display: flex; flex-direction: row; justify-content: center; gap: 48px;">
             <!-- 4 -->
             <div class="benifit benifit4 col-auto">
                 <div class="benifit-desc">
@@ -190,12 +195,12 @@
             </div>
         </div>
     </div>
-    <div class="last-shown">
+    <div id="section13" class="section last-shown">
         <div class="story">
             <h3>Ajoute-moi à tes salades, tes sauces<br>ou ton jus…
             </h3>
         </div>
-        
+
         <h3 class="second-message"> Et ton corps dansera la salsa de la santé !</h3>
         <img src="images/learningZone/stories/tomate/tenth_shown.png" alt="last-shown">
     </div>
