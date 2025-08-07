@@ -1,14 +1,41 @@
-
-.container{
-  margin: auto;
-
+body{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
 }
+.container{
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  /* width: 70%; */
+}
+
+
 .gradient-border-wrapper {
-  padding: 4px; /* سمك البوردر */
+  padding: 6px; /* سمك البوردر */
   border-radius: 48px;
-  background: linear-gradient(135deg,#FFEE52, #FF006E,#FB5664, #6486FF, #9B57FA,#FFEE52, #FF006E,#FB5664,#6486FF, #9B57FA);
+  background: linear-gradient(135deg, 
+    #FFEE52, #FF006E, #FB5664, #6486FF, #9B57FA,
+    #FFEE52, #FF006E, #FB5664, #6486FF, #9B57FA);
+  background-size: 400% 400%;
+  animation: moveGradient 10s linear infinite;
   width: 1208px;
 }
+
+/* الحركة */
+@keyframes moveGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 
 .register-card {
   background: white;
@@ -94,6 +121,6 @@ input {
 
 .container{
   margin: auto;
-  width: 500px;
+  width: 80%;
 }
 }

@@ -2,13 +2,19 @@
     width: 100vw;
     height: 20vw;
     color: white;
-    background-color: #6486FF;
+    /* Use the color input as background via inline style binding in the component */
+    /* background-color: #6486FF; */
     border-top-right-radius: 40px;
     border-top-left-radius: 40px;
     justify-content: space-between;
     align-items: center;
     display: flex;
     padding: 0 50px;
+    overflow: hidden;
+        display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* توزيع الأعمدة تلقائيًا */
+    gap: 10rem; /* مسافة بين العناصر */
+    padding: 1rem; /* حواف داخلية */
 }
 
 .section-title {

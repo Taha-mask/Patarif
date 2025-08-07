@@ -10,6 +10,8 @@ import { ShopComponent } from './components/pages/shop/shop.component';
 import { CountryGuessingComponent } from './components/games/country-guessing/country-guessing.component';
 import { LettersGameComponent } from './components/games/letters-game/letters-game.component';
 import { FactGameComponent } from './components/games/fact-game/fact-game.component';
+import { TomateStoryComponent } from './components/pages/learning/stories/tomate-story/tomate-story.component';
+import { CarotteStoryComponent } from './components/pages/learning/stories/carotte-story/carotte-story.component';
 import path from 'path';
 
 
@@ -25,4 +27,6 @@ export const routes: Routes = [
   { path: 'learning', component: LearningComponent },
   { path: 'shop', component: ShopComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'tomate-story', component: TomateStoryComponent },
+  { path: 'carotte-story', component: CarotteStoryComponent },
 ];
