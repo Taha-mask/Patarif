@@ -8,6 +8,8 @@ import { HomeGamesComponent } from './home-games/home-games.component';
 import { CharactersHomeComponent } from "./characters-home/characters-home.component";
 import { HomeFooterComponent } from "./home-footer/home-footer.component";
 import { StarsBackgroundComponent } from '../../stars-background/stars-background.component';
+import { SupabaseService } from '../../../supabase.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
@@ -21,15 +23,23 @@ import { StarsBackgroundComponent } from '../../stars-background/stars-backgroun
     CharactersHomeComponent,
     HomeFooterComponent,
     StarsBackgroundComponent
-],
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 
-  ngOnInit() {
-    // Initialize animations
+
+  constructor(private supabase: SupabaseService) { }
+ngOnInit() {
+  const welcomeMessage = localStorage.getItem('welcomeMessage');
+  if (welcomeMessage) {
+    const { title, text, icon } = JSON.parse(welcomeMessage);
+    Swal.fire({ title, text, icon });
+    localStorage.removeItem('welcomeMessage');
   }
+}
+
 
   ngAfterViewInit() {
     this.initializeScrollAnimations();
