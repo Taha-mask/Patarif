@@ -28,9 +28,9 @@
   transform: translateY(20px) scale(0.8);
   filter: blur(6px);
   transition:
-    opacity 0.4s cubic-bezier(0.4,0,0.2,1),
-    transform 0.4s cubic-bezier(0.4,0,0.2,1),
-    filter 0.4s cubic-bezier(0.4,0,0.2,1);
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-link-animated:hover::before,
@@ -71,4 +71,126 @@
 .nav-item.active .nav-link-animated {
   font-weight: bold;
   color: #111;
+}
+
+
+
+.user-menu {
+  color: #444;
+}
+
+/* أيقونة البحث */
+.search-icon {
+  color: #000000;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.search-icon:hover {
+  color: #1c6db8;
+}
+
+/* صورة المستخدم */
+.user-avatar {
+  position: relative;
+  border: 3px solid #FF006E;
+  padding: 2px;
+  transition: transform 0.3s ease;
+  background: #fff;
+  cursor: pointer;
+  z-index: 1;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.user-avatar:hover {
+  transform: scale(1.15) rotate(3deg);
+   border: 1px solid #FF006E;
+  padding: 0;
+}
+
+/* تأثير دائرة صغيرة متحركة */
+.user-avatar::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 14px;
+  height: 14px;
+  background: #56a0d3;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #56a0d3;
+  animation: pulse-simple 2.5s infinite ease-in-out;
+  z-index: -1;
+}
+
+@keyframes pulse-simple {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 0.45;
+  }
+}
+
+/* قائمة Dropdown */
+.dropdown-menu {
+  border-radius: 12px;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 600;
+  /* box-shadow: 0 8px 20px rgba(26, 115, 232, 0.15); */
+  font-family: "Baloo 2", sans-serif;
+
+}
+
+.dropdown-header {
+  font-size: 1rem;
+  color: #25252563;
+  padding-left: 1.5rem;
+  font-weight: 700;
+}
+
+.dropdown-item {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #0b3d91;
+  transition: background-color 0.25s ease, color 0.25s ease;
+
+}
+
+.dropdown-item i {
+  min-width: 24px;
+  text-align: center;
+  color: #1a73e8;
+
+}
+
+.dropdown-item:hover {
+  background-color: #1a73e86b;
+  color: white;
+  text-decoration: none;
+}
+
+.dropdown-divider {
+  border-color: #9ec5f8;
+  margin: 0.5rem 0;
+}
+
+.logout i {
+  color: red;
+}
+
+.logout:hover {
+  background-color: rgba(255, 0, 0, 0.322);
+
 }
