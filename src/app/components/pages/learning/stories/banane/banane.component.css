@@ -532,14 +532,15 @@ body {
 }
 
 .footer {
-    position: relative  ;
-    top: -12g0px;
+    /* position: relative  ;
+    top: -120px; */
     overflow-x: hidden;
     background-color: #B68455;
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
     animation: none;
-
+    margin-top: -120px;
+    z-index: 200;
 }
 
 
