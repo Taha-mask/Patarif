@@ -1,0 +1,137 @@
+<div class="background-color"></div>
+
+<div id="section1" class="background"><img src="images/learningZone/stories/banane/background.png" alt="background">
+</div>
+
+<div id="section1" class="cover-title">
+    <h3 class="description firstDesc">Moi,&nbsp;&nbsp;&nbsp;&nbsp;c’est</h3>
+    <h1 class="title">La Banane</h1>
+    <h3 class="description">Je ne veux pas finir dans une tarte ! Je veux<br>découvrir le monde !</h3>
+
+    <button class="btn btn-primary" (click)="discover()" (mouseover)="toggleBox()">Discover</button>
+
+    <div *ngIf="showBox" class="cloud1">
+        <img class="" src="images/learningZone/stories/banane/cloud1.png" alt="background">
+    </div>
+</div>
+
+<div *ngIf="showBox" class="content">
+
+
+    <div id="section2" #section class="section section2">
+        <img src="images/learningZone/stories/banane/section2.png" alt="section 2">
+        <div class="story">
+            <p>Banana a voyagé partout<br>: l’Asie, l’Afrique, les<br>Antilles, l’Amérique du<br>Sud… jusqu’à chez toi !
+            </p>
+        </div>
+    </div>
+
+    <div id="section3" #section class="section section3">
+        <img src="images/learningZone/stories/banane/section3.png" alt="section 3">
+        <div class="report-title">
+            Carte d'identité banane
+        </div>
+        <div class="banane-id">
+            <div class="info">
+                <div class="info-title">Nom :</div>
+                <div class="info-value">Banane</div>
+            </div>
+            <div class="info">
+                <div class="info-title">Famille :</div>
+                <div class="info-value">Musacées</div>
+            </div>
+            <div class="info">
+                <div class="info-title">Goût :</div>
+                <div class="info-value">Sucré et moelleux</div>
+            </div>
+            <div class="info">
+                <div class="info-title">Saison :</div>
+                <div class="info-value">Toute l’année !</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section4" #section class="section section4">
+        <img src="images/learningZone/stories/banane/section4.png" alt="section 4">
+        <div class="story types-title">
+            <p>Types de bananes !</p>
+        </div>
+        <div class="story type type1">
+            <p>plantains</p>
+        </div>
+        <div class="story type type2">
+            <p>figues</p>
+        </div>
+        <div class="story type type3">
+            <p>Il y a des bananes<br>rouges</p>
+        </div>
+        <div class="story type type4">
+            <p>et même… bleues<br>comme la glace à la<br>vanille !</p>
+        </div>
+    </div>
+
+    <div id="section5" #section class="section section5">
+        <div class="cloud2">
+            <img class="" src="images/learningZone/stories/banane/cloud2.png" alt="background">
+        </div>
+        <img src="images/learningZone/stories/banane/section5.png" alt="section 5">
+        <div class="story">
+            <p>On ne plante pas de graine,<br>mais un petit rejet magique<br>dans une terre chaude et<br>moelleuse</p>
+        </div>
+    </div>
+
+    <div id="section6" #section class="section section6">
+        <div class="cloud2">
+            <img class="" src="images/learningZone/stories/banane/cloud3.png" alt="background">
+        </div>
+        <img src="images/learningZone/stories/banane/section6.png" alt="section 6">
+        <div class="story">
+            <p>Après 12 mois…</p>
+        </div>
+        <p class="bam">BAM !</p>
+        <p class="diet">Un régime de<br>100 bananes<br>surgit comme<br>par magie !</p>
+    </div>
+
+    <div id="section7" #section class="section section7">
+        <img src="images/learningZone/stories/banane/section7.png" alt="section 7">
+        <div class="story">
+            <p>Grâce à la vitamine <span>B6</span>,<br>ton cerveau devient<br>turbo pour l’école !</p>
+        </div>
+    </div>
+    <div id="section8" #section class="section section8">
+        <img src="images/learningZone/stories/banane/section8.png" alt="section 8">
+        <!-- <div class="muscles"> -->
+
+            <img class="muscle1" src="images/learningZone/stories/banane/muscle1.png" alt="muscle 1">
+            <img class="muscle2" src="images/learningZone/stories/banane/muscle2.png" alt="muscle 2">
+        <!-- </div> -->
+        <div class="story">
+            <p>"Le potassium<br>protège tes muscles<br>et évite les crampes<br>après le sport !"</p>
+        </div>
+    </div>
+
+
+    <div id="section9" #section class="section section9">
+          <div class="cloud2">
+            <img class="" src="images/learningZone/stories/banane/cloud4.png" alt="background">
+        </div>
+        <img src="images/learningZone/stories/banane/section9.png" alt="section 9">
+
+        <div class="story">
+            <p>La banane aide à dormir comme un koala,<br>et chasse le stress !</p>
+        </div>
+    </div>
+
+        <div id="section10" #section class="section section10">
+        <img src="images/learningZone/stories/banane/section10.png" alt="section 10">
+
+        <div class="story">
+            <p>1 banane<br>+ lait végétal<br>+ miel<br>=<br><span>Un sourire<br>magique !</span></p>
+        </div>
+    </div>
+
+    <div #section class="section footer">
+
+        <app-home-footer [color]="'#B68455'"></app-home-footer>
+    </div>
+</div>
