@@ -31,7 +31,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
+    /* height: 100vh; */
     overflow: hidden;
     z-index: -1;
     display: block;
@@ -44,10 +44,10 @@ body {
     height: 100%;
     display: block;
 }
-
 .cover-title {
-    margin-top: 102px;
-    margin-left: 76px;
+
+    margin-top: 10%;
+    margin-left: 5%;
     display: inline-flex;
     flex-direction: column;
     gap: 16px;
@@ -112,9 +112,8 @@ body {
 
 
 .cover-title .btn {
-    visibility: hi;
-    width: 120px;
-    height: 42px;
+       width: 30%;
+    height: 5%;
     background-color: #81BEAE;
     color: white;
     border: none;
@@ -183,7 +182,7 @@ body {
 .cloud1 {
     position: absolute;
     left: 0;
-    bottom: -300px;
+    top: -40%;
     display: block;
     z-index: 10;
     animation: fadeIn 1s ease-in-out;

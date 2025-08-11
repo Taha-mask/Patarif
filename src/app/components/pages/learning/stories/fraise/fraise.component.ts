@@ -10,9 +10,9 @@ import {
 import { HomeFooterComponent } from "../../../home/home-footer/home-footer.component";
 
 @Component({
-  selector: 'app-brocoli',
-  templateUrl: './brocoli.component.html',
-  styleUrl: './brocoli.component.css',
+  selector: 'app-fraise',
+  templateUrl: './fraise.component.html',
+  styleUrl: './fraise.component.css',
   imports: [CommonModule, HomeFooterComponent],
   animations: [
     trigger('boxAnimation', [
@@ -32,8 +32,9 @@ import { HomeFooterComponent } from "../../../home/home-footer/home-footer.compo
       ]),
     ])
   ]
+
 })
-export class BrocoliComponent {
+export class FraiseComponent {
   sections: string[] = ['section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7', 'section8',
     'section9'];
   currentIndex = 0;
@@ -97,5 +98,6 @@ export class BrocoliComponent {
       this.scrollToSection(this.currentIndex - 1);
     }
   }
+
 
 }
