@@ -1,0 +1,105 @@
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* border: red 1px solid; */
+}
+
+.background {
+    position: absolute;
+    /* مش fixed */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    /* طول الشاشة بس */
+    z-index: -1;
+}
+
+.background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.title {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    margin: 0 4%;
+    overflow: hidden;
+    /* padding: 0 60px; */
+    /* border: 1px solid #f00; */
+}
+
+.title .title-background {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* opacity: 0.5; */
+}
+
+.title .title-collectionBackground,
+.title-character,
+.title-sentince {
+    position: absolute;
+}
+
+.title .title-collectionBackground {
+    /* width: 100%; */
+    height: auto;
+    object-fit: cover;
+    /* z-index: -1; */
+    left: -10%;
+    top: -40%;
+
+}
+
+.title .title-character {
+    right: -2%;
+    bottom: -14%;
+}
+
+.title .title-sentince {
+    transform: translateY(-50%);
+    top: 50%;
+    left: 10%;
+}
+
+.title .title-sentince h1 {
+    font-size: clamp(0.8rem, 6vw, 6rem);
+    font-family: var(--mainFont);
+    font-weight: 900;
+    color: #fff;
+    text-align: left;
+    text-shadow:
+        3px 3px 8px rgba(0, 0, 0, 0.7),
+        0px 0px 2px #000;
+    text-wrap: nowrap;
+    z-index: 1;
+}
+
+.title .title-sentince span {
+    color: #FFEE52;
+}
+
+.title .title-sentince p {
+    font-size: clamp(0.7rem, 2vw, 2rem);
+    font-family: var(--comic);
+    font-weight: 400;
+    color: #E3E3E3;
+    text-wrap: nowrap;
+    text-align: left;
+    text-shadow:
+        3px 3px 8px rgba(0, 0, 0, 0.7),
+        0px 0px 2px #000;
+    /* margin-top: -10px; */
+}

@@ -24,18 +24,20 @@ export class SignupComponent {
   }
   submitted = false;
 
+  isLoading = false; // حالة التحميل
+
   public onSubmit() {
     this.submitted = true;
 
     if (this.regirster.invalid) {
       this.regirster.markAllAsTouched();
-
       setTimeout(() => {
         this.submitted = false;
-      }, 20000);
-
+      }, 2000);
       return;
     }
+
+    this.isLoading = true; // بدأ التحميل
 
     const { firstName, lastName, email, password } = this.regirster.value;
 
@@ -49,7 +51,6 @@ export class SignupComponent {
         }).then(() => {
           window.location.replace('/login');
         });
-
       })
       .catch((error) => {
         console.error('حدث خطأ أثناء التسجيل:', error);
@@ -58,8 +59,12 @@ export class SignupComponent {
           text: error,
           icon: "error"
         });
+      })
+      .finally(() => {
+        this.isLoading = false; // انتهى التحميل
       });
   }
+
 
 
 

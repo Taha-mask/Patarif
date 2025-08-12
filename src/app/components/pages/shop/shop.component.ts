@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { BackgroundComponent } from "../../background/background.component";
 
 @Component({
   selector: 'app-shop',
-  imports: [],
+  imports: [BackgroundComponent],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.css'
 })

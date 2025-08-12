@@ -2,3 +2,30 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
+/* ==== Scrollbar موحد وصغير لكل المتصفحات ==== */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 6px;   /* عرض الاسكرول */
+  height: 6px;  /* في حالة الاسكرول الأفقي */
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0; /* لون الخلفية */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #fa458a; /* لون المقبض */
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff1670; /* لون عند المرور */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;               /* حجم رفيع */
+  scrollbar-color: #ff1670 #f0f0f0;     /* لون المقبض ثم الخلفية */
+}
+
