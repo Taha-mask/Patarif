@@ -67,20 +67,29 @@
         </ul>
       </div>
     </div> -->
-
-    <div class="d-flex align-items-center gap-3 user-menu">
+<div class="d-flex align-items-center gap-3 user-menu">
   <i class="bi bi-search fs-5 search-icon"></i>
+
   <div class="dropdown">
-    <img src="images/user-img.png"
-         class="dropdown-toggle rounded-circle user-avatar"
-         style="width:50px; height:50px; cursor:pointer;"
-         data-bs-toggle="dropdown"
-         aria-expanded="false"
-         alt="User" />
+    <img
+      src="images/user-img.png"
+      class="dropdown-toggle rounded-circle user-avatar"
+      style="width:50px; height:50px; cursor:pointer;"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      alt="User"
+    />
     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-      <!-- <li><h6 class="dropdown-header">Account</h6></li> -->
+      
+      <!-- عرض الاسم و الايميل -->
+      <!-- <li class="dropdown-header user-info px-3 py-2">
+        <div class="fw-bold text-muted text-center">{{ displayName }}</div>
+        <div class="small">{{ email }}</div>
+      </li> -->
+      <!-- <li><hr class="dropdown-divider"></li> -->
+
       <li>
-        <a class="dropdown-item d-flex align-items-center gap-2" href="#">
+        <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/profile']">
           <i class="bi bi-person-circle fs-5"></i> Profile
         </a>
       </li>
@@ -89,9 +98,12 @@
           <i class="bi bi-gear fs-5"></i> Settings
         </a>
       </li>
-      <!-- <li><hr class="dropdown-divider"></li> -->
+      <li><hr class="dropdown-divider"></li>
       <li>
-        <a class="dropdown-item logout d-flex align-items-center gap-2 text-danger" href="signup">
+        <a
+          class="dropdown-item logout d-flex align-items-center gap-2 text-danger"
+          href="signup"
+        >
           <i class="bi bi-box-arrow-right fs-5"></i> Logout
         </a>
       </li>

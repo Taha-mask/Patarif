@@ -1,78 +1,100 @@
 .footer-home {
-    width: 100vw;
-    height: 20vw;
+    width: 100%;
     color: white;
-    /* Use the color input as background via inline style binding in the component */
-    /* background-color: #6486FF; */
     border-top-right-radius: 40px;
     border-top-left-radius: 40px;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    padding: 2rem 3rem;
+    box-sizing: border-box;
     align-items: center;
-    display: flex;
-    padding: 0 50px;
-    overflow: hidden;
-        display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* توزيع الأعمدة تلقائيًا */
-    gap: 10rem; /* مسافة بين العناصر */
-    padding: 1rem; /* حواف داخلية */
 }
 
+/* Logo Section */
+.logo-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.logo img {
+    max-width: 100px;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+.logo img:hover {
+    transform: scale(1.05);
+}
+
+/* Section Title */
 .section-title {
-    color: white;
-    font-size: 18px;
+    font-size: clamp(16px, 2vw, 20px);
     font-weight: 600;
     margin-bottom: 15px;
     text-align: center;
 }
 
+/* Links */
 .links {
-    justify-content: space-evenly;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
 }
 .links .link {
     border: 1px solid white;
     border-radius: 20px;
-    padding: 10px 20px;
-    min-width: 160px;
+    padding: 8px 16px;
+    min-width: 140px;
     text-align: center;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
     text-decoration: none;
     color: white;
-    font-size: 14px;
+    font-size: clamp(13px, 1.5vw, 15px);
     transition: all 0.3s ease;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.links .link:hover {
+    background-color: white;
+    color: #006aff;
+    transform: translateY(-2px);
 }
 
+/* Social Media */
 .social-media {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: center;
+    gap: 0.8rem;
 }
-
 .social-link {
     border: 1px solid white;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
     color: white;
     transition: all 0.3s ease;
-    background-color: transparent;
+    font-size: 1.4rem;
 }
-
 .social-link:hover {
     background-color: white;
-    color: rgb(0, 106, 255);
+    color: #006aff;
     transform: scale(1.1);
 }
 
-.social-link i {
-    font-size: 1.5rem;
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .footer-home {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    .links {
+        flex-direction: column;
+        align-items: center;
+    }
+    .links .link {
+        width: 80%;
+    }
 }

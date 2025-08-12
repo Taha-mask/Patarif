@@ -85,10 +85,13 @@
   font-size: 1.4rem;
   cursor: pointer;
   transition: color 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .search-icon:hover {
   color: #1c6db8;
+  transform: scale(1.15) rotate(3deg);
+
 }
 
 /* صورة المستخدم */
@@ -102,12 +105,14 @@
   z-index: 1;
   width: 50px !important;
   height: 50px !important;
+  margin-left: 50%;
+
 }
 
 .user-avatar:hover {
-  transform: scale(1.15) rotate(3deg);
-   border: 1px solid #FF006E;
-  padding: 0;
+  transform: scale(1.05) rotate(3deg);
+  border: 2px solid #FF006E;
+  padding: 1px;
 }
 
 /* تأثير دائرة صغيرة متحركة */

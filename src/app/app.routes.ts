@@ -12,6 +12,10 @@ import { LettersGameComponent } from './components/games/letters-game/letters-ga
 import { FactGameComponent } from './components/games/fact-game/fact-game.component';
 import { TomateStoryComponent } from './components/pages/learning/stories/tomate-story/tomate-story.component';
 import { CarotteStoryComponent } from './components/pages/learning/stories/carotte-story/carotte-story.component';
+import { BananeComponent } from './components/pages/learning/stories/banane/banane.component';
+import { ProfileComponent } from './components/pages/profile/profile.component';
+import { BrocoliComponent } from './components/pages/learning/stories/brocoli/brocoli.component';
+import { FraiseComponent } from './components/pages/learning/stories/fraise/fraise.component';
 import path from 'path';
 
 
@@ -29,4 +33,8 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'tomate-story', component: TomateStoryComponent },
   { path: 'carotte-story', component: CarotteStoryComponent },
+  { path: 'banane-story', component: BananeComponent },
+  { path: 'brocoli-story', component: BrocoliComponent},
+  { path: 'fraise-story', component: FraiseComponent },
+  { path: 'profile', component: ProfileComponent },
 ];
