@@ -1,6 +1,10 @@
-<app-background></app-background>
-
-<div class="background"><img src="images/shopping/background.png" alt="background"></div>
+<div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none;">
+    <app-background></app-background>
+</div>
+<div class="backgrounds">
+    <div class="background"><img src="images/shopping/background.png" alt="background"></div>
+    <!-- <div class="background"><img src="images/shopping/background.png" alt="background"></div> -->
+</div>
 
 <div class="content">
     <div class="title">
@@ -17,4 +21,19 @@
             </div>
         </div>
     </div>
-</div>
+    <!-- <div class="background" style="position: relative;"><img src="images/shopping/background.png" alt="background"></div> -->
+    <div *ngFor="let category of categories; let i = index" class="products">
+        <h1 class="title">{{ category.name }}</h1>
+        <div class="cards-wrapper">
+            <button class="scroll-btn left" (click)="scrollCards('left', i)">
+                <i class="bi bi-arrow-left-short"></i>
+            </button>
+            <div class="cards" #cardsContainer>
+                <app-product-card *ngFor="let p of category.products" [product]="p"></app-product-card>
+            </div>
+            <button class="scroll-btn right" (click)="scrollCards('right', i)">
+                <i class="bi bi-arrow-right-short"></i>
+            </button>
+        </div>
+    </div>
+</div>ه
