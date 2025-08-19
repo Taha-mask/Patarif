@@ -1,24 +1,44 @@
-
-:host{
-  --pink: rgba(255, 0, 110, 1);;
+:host {
+  --pink: rgba(255, 0, 110, 1);
   --blue: rgba(100, 134, 255, 1);
   --orane: rgba(251, 86, 100, 1);
   --purble: rgba(155, 87, 250, 1);
   --yellow: rgba(255, 238, 82, 1);
 }
-
-.home-container{
+body{
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* .super {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+} */
+.super{
+  
+  position: fixed;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  z-index: -2;
+}
+.home-container {
   z-index: -1;
-  background-color: rgba(255, 255, 255, 0.274);
-  backdrop-filter: blur(0px);
+  background-color: rgba(255, 255, 255, 0.247);
+  backdrop-filter: blur(70px);
   width: 100%;
   height: 100%;
 }
 
 .circle {
-  width:30%;
-  height:60%;
-  top: 540px;
+  width: 30%;
+  height: 60%;
   z-index: -200;
   border-radius: 100%;
   position: absolute;
@@ -26,61 +46,277 @@
 }
 
 .circle:nth-of-type(1) {
-  top: 18px;
-  left: 2px;
+  top: 1%;
+  left: 0;
   background-color: var(--blue);
+  animation: first infinite 8s ease-in-out;
+}
+
+@keyframes first {
+  0% {
+    top: 1%;
+    left: 0;
+  }
+
+  25% {
+    top: 50%;
+    left: 1%;
+  }
+
+  50% {
+    top: 100%;
+    left: 20%;
+  }
+
+  75% {
+    top: 55%;
+    left: 30%;
+  }
+
+  100% {
+    top: 1%;
+    left: 0;
+  }
 }
 
 .circle:nth-of-type(2) {
-  top: 540px;
-  left: 140px;
+  top: 70%;
+  left: 8%;
   background-color: var(--orane);
+  animation: second infinite 8s ease-in-out;
+}
+
+@keyframes second {
+  0% {
+    top: 70%;
+    left: 8%;
+  }
+
+  25% {
+    top: -20%;
+    left: 40%;
+  }
+
+  50% {
+    top: 55%;
+    left: 40%;
+  }
+
+  75% {
+    top: 70%;
+    left: 2%;
+  }
+
+  100% {
+    top: 70%;
+    left: 8%;
+  }
 }
 
 .circle:nth-of-type(3) {
-  top: 205px;
-  left: 564px;
+  top: 20%;
+  left: 35%;
   background-color: var(--purble);
+  animation: third infinite 8s ease-in-out;
+}
+
+@keyframes third {
+  0% {
+    top: 20%;
+    left: 35%;
+  }
+
+  25% {
+    top: 90%;
+    left: 4%;
+  }
+
+  50% {
+    top: 20%;
+    left: 8%;
+  }
+
+  75% {
+    top: 0%;
+    left: 0%;
+  }
+
+  100% {
+    top: 20%;
+    left: 35%;
+  }
 }
 
 .circle:nth-of-type(4) {
-  top: 450px;
-  right: 0px;
+  top: 50%;
+  right: 0;
   background-color: var(--pink);
+  animation: forth infinite 8s ease-in-out;
 }
 
+@keyframes forth {
+  0% {
+    top: 50%;
+    right: 0;
+  }
+
+  25% {
+    top: 100%;
+    right: 4%;
+  }
+
+  50% {
+    top: 110%;
+    right: 30%;
+  }
+
+  75% {
+    top: 0%;
+    right: 0%;
+  }
+
+  100% {
+    top: 50%;
+    right: 0;
+  }
+}
+
+
 .circle:nth-of-type(5) {
-  top: -138px;
-  right: 60px;
+  top: -16%;
+  right: 4%;
   background-color: var(--yellow);
+  animation: fifth infinite 8s ease-in-out;
+}
+
+@keyframes fifth {
+  0% {
+    top: -16%;
+    right: 4%;
+  }
+
+  25% {
+    top: 50%;
+    right: 40%;
+  }
+
+  50% {
+    top: 80%;
+    right: 2%;
+  }
+
+  75% {
+    top: 50%;
+    right: 40%;
+  }
+
+  100% {
+    top: -16%;
+    right: 4%;
+  }
 }
 
 .circle:nth-of-type(6) {
-  top: 920px;
-  right: 560px;
+  top: 90%;
+  left: 40%;
   background-color: var(--blue);
+  animation: sixth infinite 8s ease-in-out;
 }
+
+@keyframes sixth {
+  0% {
+    top: 90%;
+    left: 40%;
+  }
+
+  25% {
+    top: 120%;
+    left: 8%;
+  }
+
+  50% {
+    top: 20%;
+    left: 8%;
+  }
+
+  75% {
+    top: 80%;
+    left: 80%;
+  }
+
+  100% {
+    top: 90%;
+    left: 40%;
+  }
+}
+
 
 .circle:nth-of-type(7) {
-  top: 1330px;
-  left: 1004px;
+  top: 130%;
+  left: 12%;
   background-color: var(--yellow);
+  animation: seventh infinite 8s ease-in-out;
 }
+
+@keyframes seventh {
+  0% {
+    top: 130%;
+    left: 12%;
+  }
+
+  25% {
+    top: 130%;
+    left: 80%;
+  }
+
+  50% {
+    top: 4%;
+    left: 4%;
+  }
+
+  75% {
+    top: 50%;
+    left: 50%;
+  }
+
+  100% {
+    top: 130%;
+    left: 12%;
+  }
+}
+
+
 
 .circle:nth-of-type(8) {
-  top: 1500px;
-  left: 0;
-  background-color: var(--blue);
-}
-
-.circle:nth-of-type(9) {
-  top: 1680px;
-  left: 564px;
+  top: 150%;
+  right: 4%;
   background-color: var(--purble);
+  animation: eighth infinite 8s ease-in-out;
 }
 
-.circle:nth-of-type(10) {
-  top: 2015px;
-  left: 140px;
-  background-color: var(--orane);
+@keyframes eighth {
+  0% {
+    top: 150%;
+    right: 4%;
+  }
+
+  25% {
+    top: 100%;
+    right: 8%;
+  }
+
+  50% {
+    top: 0%;
+    right: 0%;
+  }
+
+  75% {
+    top: 50%;
+    right: 0%;
+  }
+
+  100% {
+    top: 150%;
+    right: 4%;
+  }
 }

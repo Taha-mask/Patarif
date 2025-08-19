@@ -18,13 +18,13 @@ export class SliderCharactersHomeComponent {
   characters = [
 
     {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patarif0.png',
+      bgIcon: 'images/characters/purple_Subtract.png',
+      character: 'images/characters/patarif1.png',
       raiting: 4.8
     },
     {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patarif0.png',
+      bgIcon: 'images/characters/yellow_Subtract.png',
+      character: 'images/characters/patarif2.png',
       raiting: 6.0
     },
 
@@ -33,13 +33,13 @@ export class SliderCharactersHomeComponent {
       character: 'images/characters/patarif0.png',
       raiting: 5.2
     }, {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patarif0.png',
+      bgIcon: 'images/characters/blue_Subtract.png',
+      character: 'images/characters/patarif3.png',
       raiting: 5.5
     },
     {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patarif0.png',
+      bgIcon: 'images/characters/yellow_Subtract.png',
+      character: 'images/characters/patarif2.png',
       raiting: 6.0
     },
 
