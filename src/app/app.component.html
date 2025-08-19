@@ -1,4 +1,4 @@
-<app-navbar *ngIf="shouldShowNavbar()"></app-navbar>
+<app-navbar *ngIf="shouldShowNavbar() && !isAdminDashboard()"  ></app-navbar>
 <router-outlet></router-outlet>
 
 

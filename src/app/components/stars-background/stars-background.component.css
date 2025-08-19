@@ -1,7 +1,7 @@
 .home-container {
   z-index: -1;
   width: 100%;
-  height: 100%;
+  height: auto;
   /* Infinity animation for movement */
   animation: infinity-path 200ms linear infinite;
 }

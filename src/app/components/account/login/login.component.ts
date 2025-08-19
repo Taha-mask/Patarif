@@ -33,7 +33,6 @@ export class LoginComponent {
     }, 2000);
   }
 isLoading = false; // حالة التحميل
-
 async onSubmit() {
   this.loginForm.markAllAsTouched();
 
@@ -53,6 +52,7 @@ async onSubmit() {
 
   try {
     const res = await this.auth.signIn(email, password);
+
     if (!res.user) {
       Swal.fire({
         title: "Error",
@@ -62,13 +62,20 @@ async onSubmit() {
       return;
     }
 
+    // حفظ رسالة الترحيب
     localStorage.setItem('welcomeMessage', JSON.stringify({
       title: "Welcome back !",
       text: "go and enjoy",
       icon: "success"
     }));
 
-    window.location.replace('/home');
+    // التوجيه بناءً على الدور
+    if (res.isAdmin) {
+      window.location.replace('/admin-dashboard');
+    } else {
+      window.location.replace('/home');
+    }
+
   } catch (error: any) {
     Swal.fire({
       title: "Error",

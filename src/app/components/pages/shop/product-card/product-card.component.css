@@ -28,7 +28,9 @@
     transition: background 0.2s, transform 0.2s;
     cursor: pointer;
 }
-
+p, h2, button{
+    margin: 0;
+}
 .products .product-card:hover {
     background: #fff;
     transform: translateY(-5px);
@@ -84,7 +86,7 @@
 .products .add-to-cart:hover {
     background: #FF006E;
     color: #fff;
-    border: none;
+    border: transparent 1px solid;
 
 }
 
