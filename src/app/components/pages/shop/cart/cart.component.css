@@ -1,0 +1,158 @@
+:host {
+    --mainFont: 'Baloo 2';
+    --link: #9B57FA;
+    --mainColor: #6486FF;
+    --comic: 'Comic Relief';
+}
+
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.main {
+    margin: auto;
+    padding: 40px;
+    width: 95vw;
+    height: fit-content;
+    /* border: green 1px solid; */
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    text-transform: capitalize;
+    text-align: center;
+    gap: 68px;
+}
+
+.main .title {
+    font-family: "Baloo 2", sans-serif;
+    color: #000;
+    font-weight: 900;
+    text-align: center;
+    text-wrap: nowrap;
+    font-size: clamp(0.7rem, 3vw, 3rem);
+}
+
+.main .links span {
+    font-family: 'Comic Relief';
+
+    font-size: clamp(0.8rem, 1vw, 1rem);
+    color: var(--link);
+}
+
+.products-table {
+    width: 100%;
+    border-radius: 24px;
+    /* text-align: center; */
+    /* border: 1px solid red; */
+    /* border-collapse: separate; */
+    overflow: hidden;
+    padding: 4px;
+    background-color: rgba(255, 255, 255, 0.74);
+    font-size: clamp(0.8rem, 1.5vw, 1.5rem);
+    font-family: 'Comic Relief';
+    /* align-items: center;
+    justify-content: center; */
+}
+
+.products-table thead {
+    background-color: var(--mainColor);
+    text-align: start;
+}
+
+/* tr{
+    padding: 4px;
+    } */
+    .products-table thead th {
+    padding-left: 16px;
+    color: white;
+    font-family: 'Comic Relief';
+    font-weight: 100;
+}
+
+.product-img {
+  width: 8rem; /* بدل 20% */
+    border-radius: 24px;
+    height: auto;
+    /* display: flex; */
+    overflow: hidden;
+    margin-right: 4%;
+}
+
+.product-img img {
+    object-fit: contain;
+    width: 100%;
+
+}
+
+/* *{
+    border: 1px solid green;
+} */
+
+.products-table .product {
+    /* width: fit-content; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    font-weight: 900;
+}
+
+.products-table td {
+    padding: 16px;
+    /* text-align: center; */
+}
+
+.quantity{
+    border: 1px solid var(--mainColor);
+    border-radius: 6px;
+    width: fit-content;
+    height: fit-content;
+    padding: 0px 2px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+.quantity .bi{
+    color: var(--link);
+}
+.quantity button{
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+}
+
+.products-table .remove button{
+    background-color: #FB5664;
+    border-radius: 50%;
+    /* width: 30%; */
+    /* height: 15%; */
+    padding: 16px;
+    border: none;
+}
+.remove .bi{
+    color: white;
+}
+
+
+
+
+.main .section2 {
+    border: red 1px solid;
+    width: 100%;
+    display:flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: end;
+    justify-content: end;
+}
+
+.section2 .invoice{
+    width: 30%;
+}

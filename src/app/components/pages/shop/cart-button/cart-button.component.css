@@ -1,0 +1,55 @@
+
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+}
+/* .super {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid green;
+} */
+ 
+.count{
+    text-align: center;
+    color: #FB5664;
+    font-family: var(--comic);
+    color: FB5664;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: fixed;
+    transform: translateY(-50%);
+    top: 70%;
+    right: 5%;
+    z-index: 100;
+    padding: 16px;
+    background: #ffffff;
+    /* box-shadow: offset-x offset-y blur-radius spread-radius color inset; */
+    box-shadow: 0 8px 16px 0 #FB5664;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+.cart {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: fixed;
+    transform: translateY(-50%);
+    top: 70%;
+    right: 5%;
+    z-index: 1000;
+    padding: 16px;
+    background: #FB5664;
+    /* box-shadow: offset-x offset-y blur-radius spread-radius color inset; */
+    box-shadow: 0 8px 16px 0 #FB5664;
+    border: none;
+}
+.super:hover .count{
+    top: 62%;
+}
+.cart img {
+    object-fit: contain;
+    width: 100%;
+}

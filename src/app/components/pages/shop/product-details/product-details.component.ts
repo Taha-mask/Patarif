@@ -4,15 +4,19 @@ import { ProductsService } from '../../../../services/products.service';
 import { CommonModule } from '@angular/common';
 import { BackgroundComponent } from "../../../background/background.component";
 import { HomeFooterComponent } from "../../home/home-footer/home-footer.component";
+import { CartButtonComponent } from "../cart-button/cart-button.component";
+import Swal from 'sweetalert2';
+import { CartItem, CartService } from '../../../../services/data.service';
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, BackgroundComponent, HomeFooterComponent],
+  imports: [CommonModule, BackgroundComponent, HomeFooterComponent, CartButtonComponent],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css']
 })
 export class ProductDetailsComponent implements OnInit {
+  maxQuantity: number = 0;
 
   // ==========================
   // Product core data
@@ -71,8 +75,9 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
-  selectSize(size: string) {
+  selectSize(size: string, stock: number) {
     this.selectedSize = size;
+    this.maxQuantity = stock;
   }
 
   // ==========================
@@ -104,7 +109,9 @@ export class ProductDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public productsService: ProductsService,
-    private router: Router
+    private router: Router,
+    private dataService: CartService
+
   ) { }
 
   // ==========================
@@ -175,5 +182,47 @@ export class ProductDetailsComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+
+  // ==============
+  // cart
+  // productToCart!: string;
+  // // add id of product to array
+  // addProductToCart(productId: string) {
+  //   if (this.dataService.ids.includes(productId)) {
+  //     Swal.fire("already been added!");
+
+  //   }
+  //   else {
+
+  //     this.productToCart = productId;
+  //     console.log('Cart:', this.productToCart);
+  //     this.dataService.setIds(this.productToCart);
+
+  //   }
+  // }
+
+  addToCart() {
+    console.log('id: ', this.product.id);
+    console.log('title: ', this.product.title);
+    console.log('size: ', this.selectedSize);
+    console.log('price: ', this.product.final_price);
+    console.log('color: ', this.selectedColor);
+    console.log('image: ', this.selectedImage);
+    console.log('quantity: ', this.maxQuantity);
+    console.log(this.dataService.countCart);
+    const newItem: CartItem = {
+      id: this.product.id,
+      name: this.product.title,
+      color: this.selectedColor,
+      size: this.selectedSize || 'null',
+      maxQuantity: this.maxQuantity,
+      price: this.product.final_price,
+      quantity: 1,
+      image: this.selectedImage
+    };
+
+    this.dataService.addToCart(newItem);
   }
 }

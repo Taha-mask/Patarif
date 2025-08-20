@@ -1,10 +1,9 @@
-<div class="background-colors">
     <app-background></app-background>
-    <app-background></app-background>
-</div>
-<div class="background-lines">
+
+<!-- <div class="background-lines">
     <div class="background"><img src="images/shopping/background.png" alt="background"></div>
-</div>
+</div> -->
+<app-cart-button></app-cart-button>
 
 <div class="content">
     <div class="row card-info" id="myTargetDiv">
@@ -81,10 +80,10 @@
 
             </div>
             <div class="sizes" *ngIf="sizes.length > 0">
-                <p>Sizes</p>
+                <p>Size (stock)</p>
                 <div class="sizes-wrapper">
                     <div *ngFor="let size of sizes" class="size" [class.selected]="selectedSize === size.size_name"
-                        (click)="selectSize(size.size_name)">
+                        (click)="selectSize(size.size_name, size.stock)">
                         {{ size.size_name }}
                         <span *ngIf="size.stock > 0"> ({{ size.stock }})</span>
                         <span *ngIf="size.stock === 0" class="out-of-stock"> (Out of stock)</span>
@@ -92,7 +91,7 @@
                 </div>
             </div>
 
-            <button *ngIf="selectedSize != null" class="btn btn-primary">Add to cart <span></span></button>
+            <button (click)="addToCart()" *ngIf="selectedSize != null" class="btn btn-primary" >Add to cart <span></span></button>
             <div *ngIf="selectedSize == null" class="btn btn-primary-outline">select <span *ngIf="selectedColor
              == null">[color] </span> <span *ngIf="selectedSize == null">[size]</span></div>
 

@@ -4,19 +4,22 @@ import { ProductCardComponent } from "./product-card/product-card.component";
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ProductsService } from '../../../services/products.service';
+import Swal from 'sweetalert2';
+import { CartButtonComponent } from "./cart-button/cart-button.component";
+import { CartService } from '../../../services/data.service';
 
 
 @Component({
   standalone: true,
   selector: 'app-shop',
-  imports: [BackgroundComponent, CommonModule, ProductCardComponent, RouterLink, RouterModule],
+  imports: [BackgroundComponent, CommonModule, ProductCardComponent, RouterModule, CartButtonComponent],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css']
 })
 export class ShopComponent implements OnInit {
 
-  loading = true;  
-  constructor(public productsService: ProductsService, private router: Router) {}
+  loading = true;
+  constructor(public productsService: ProductsService, private router: Router, private dataService: CartService) { }
 
   categories = ['t-shirts', 'paints', 'shirts'];
   productsByCategory: Record<string, any[]> = {};
@@ -27,13 +30,18 @@ export class ShopComponent implements OnInit {
     for (const cat of this.categories) {
       this.productsByCategory[cat] = await this.productsService.getProductsByCategory(cat);
     }
-    this.loading = false; 
+    this.loading = false;
   }
 
-  navigateToProduct(productId: string) {
-  this.router.navigate(['/product-details', productId]);
-}
+  //   handleNavigate(productId: string) {
+  //   this.navigateToProduct(productId);
+  // }
 
+  navigateToProduct(productId: string):void {
+    this.router.navigate(['/product-details', productId]);
+  }
+  
+  // handleAction = (id: string) => { navigateToProduct(id) };
 
   scrollCards(direction: 'left' | 'right', index: number) {
     const container = this.cardsContainers.toArray()[index]?.nativeElement;

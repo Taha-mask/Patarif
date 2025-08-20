@@ -1,0 +1,61 @@
+<app-background></app-background>
+
+<div class="main">
+    <div class="pageTitle">
+
+        <h1 class="title">Shop Cart</h1>
+        <p class="links"><span>home</span> > <span>shop</span> > cart</p>
+    </div>
+
+    <table border="0" class="products-table">
+        <thead>
+            <tr>
+                <th>product</th>
+                <th>size</th>
+                <th>price</th>
+                <th>color</th>
+                <th>quantity</th>
+                <th>subtotal</th>
+                <th>remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of cart">
+                <td class="product">
+                    <div class="product-img"> <img [src]="item.image"></div>
+
+                    {{ item.name }}
+                </td>
+                <td>{{ item.size }}</td>
+                <td>{{ item.price }}$</td>
+                <td>
+                    <div [style.background]="item.color"
+                        style="width: 25px; height: 25px; border-radius: 50%; border:1px solid #ccc;">
+                    </div>
+                </td>
+                <td class="">
+                    <div class="quantity"><button (click)="decreaseQuantity(item)"><i
+                                class="bi bi-dash-square"></i></button> {{item.quantity}} <button
+                            (click)="increaseQuantity(item)"><i class="bi bi-plus-square-fill"></i></button></div>
+                </td>
+                <td>{{ getSubtotal(item) }}$</td>
+                <td class="remove"><button (click)="removeItem(item)"><i class="bi bi-trash3"></i></button></td>
+            </tr>
+        </tbody>
+    </table>
+<div class="section2">
+     <div class="invoice">
+        <div class="discount-code">
+            <form action="">
+
+                <input type="text" placeholder="discount code">
+                <button type="submit">applay</button>
+            </form>
+        </div>
+        <div class="checkout">
+            fa;lsdkjfa;dslkfja;sdlfkja;sdlfkjasd;lkfjas;dlfkjad;kfjad;slkfj
+        </div>
+    </div>
+</div>
+   
+</div>
