@@ -5,111 +5,91 @@
       <img src="images/logo-patarif.png" alt="Logo" class="logo-img w-50" />
     </a>
 
+    <!-- زر التوجّل (الهامبورجر) -->
+    <!--   <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button> -->
+    
+    <!-- القائمة الجانبية -->
+    <div id="sideMenu" class="side-menu">
+      <button class="close-btn" onclick="document.getElementById('sideMenu').classList.remove('open')"><i
+          class="bi bi-x-lg"></i></button>
+      <ul>
+        <li><a routerLink="/home">Home</a></li>
+        <li><a routerLink="/learning">Learning Zone</a></li>
+        <!-- <li><a routerLink="/stories">Storytime</a></li> -->
+        <li><a routerLink="/games">Playground</a></li>
+        <li><a routerLink="/shop">Shop</a></li>
+        <!-- <li><a routerLink="/characters">Characters</a></li> -->
+      </ul>
+    </div>
     <!-- Navigation Links -->
-    <div class="collapse navbar-collapse justify-content-center">
-      <ul class="navbar-nav gap-3">
+    <div class="collapse navbar-collapse justify-content-center" id="mainNavbar">
+      <ul class="navbar-nav gap-4">
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated"
-             routerLink="/home"
-             routerLinkActive="active"
-             [routerLinkActiveOptions]="{ exact: true }"
-             >Home</a>
+          <a class="nav-link nav-link-animated" routerLink="/home" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">Home</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated"
-             routerLink="/learning"
-             routerLinkActive="active"
-             >Learning Zone</a>
+          <a class="nav-link nav-link-animated" routerLink="/learning" routerLinkActive="active">Learning Zone</a>
+        </li>
+        <!-- <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link nav-link-animated" routerLink="/stories" routerLinkActive="active">Storytime</a>
+        </li> -->
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link nav-link-animated" routerLink="/games" routerLinkActive="active">Playground</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated"
-             routerLink="/stories"
-             routerLinkActive="active"
-             >Storytime</a>
+          <a class="nav-link nav-link-animated" routerLink="/shop" routerLinkActive="active">Shop</a>
         </li>
-        <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated"
-             routerLink="/games"
-             routerLinkActive="active"
-             >Playground</a>
-        </li>
-        <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated"
-             routerLink="/shop"
-             routerLinkActive="active"
-             >Shop</a>
-        </li>
-        <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link nav-link-animated"
-             routerLink="/characters"
-             routerLinkActive="active"
-             >Characters</a>
-        </li>
+        <!-- <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link nav-link-animated" routerLink="/characters" routerLinkActive="active">Characters</a>
+        </li> -->
       </ul>
     </div>
 
     <!-- Right Side (Search + Avatar) -->
-    <!-- <div class="d-flex align-items-center gap-3">
-      <i class="bi bi-search fs-5"></i>
+    <div class="d-flex align-items-center gap-3 user-menu">
+      <i class="bi bi-search fs-5 search-icon"></i>
+
       <div class="dropdown">
-        <img src="images/user-img.png"
-             class="dropdown-toggle rounded-circle"
-             style="width:50px; height:50px; cursor:pointer;"
-             data-bs-toggle="dropdown"
-             aria-expanded="false"
-             alt="User" />
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><h6 class="dropdown-header">Account</h6></li>
-          <li><a class="dropdown-item" href="#">Profile</a></li>
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="signup">Logout</a></li>
+        <img src="images/account.png" class="dropdown-toggle rounded-circle user-avatar"
+          style="width:50px; height:50px; cursor:pointer;" data-bs-toggle="dropdown" aria-expanded="false" alt="User" />
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/profile']">
+              <i class="bi bi-person-circle fs-5"></i> Profile
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" href="#">
+              <i class="bi bi-gear fs-5"></i> Settings
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider" />
+          </li>
+          <li>
+            <a class="dropdown-item logout d-flex align-items-center gap-2 text-danger" href="signup">
+              <i class="bi bi-box-arrow-right fs-5"></i> Logout
+            </a>
+          </li>
         </ul>
       </div>
-    </div> -->
-<div class="d-flex align-items-center gap-3 user-menu">
-  <i class="bi bi-search fs-5 search-icon"></i>
 
-  <div class="dropdown">
-    <img
-      src="images/user-img.png"
-      class="dropdown-toggle rounded-circle user-avatar"
-      style="width:50px; height:50px; cursor:pointer;"
-      data-bs-toggle="dropdown"
-      aria-expanded="false"
-      alt="User"
-    />
-    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-      
-      <!-- عرض الاسم و الايميل -->
-      <!-- <li class="dropdown-header user-info px-3 py-2">
-        <div class="fw-bold text-muted text-center">{{ displayName }}</div>
-        <div class="small">{{ email }}</div>
-      </li> -->
-      <!-- <li><hr class="dropdown-divider"></li> -->
+      <!-- زرار يفتح القائمة -->
+      <button class="menu-btn d-lg-none" onclick="document.getElementById('sideMenu').classList.add('open')">
+        <i class="bi bi-list"></i> </button>
 
-      <li>
-        <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/profile']">
-          <i class="bi bi-person-circle fs-5"></i> Profile
-        </a>
-      </li>
-      <li>
-        <a class="dropdown-item d-flex align-items-center gap-2" href="#">
-          <i class="bi bi-gear fs-5"></i> Settings
-        </a>
-      </li>
-      <li><hr class="dropdown-divider"></li>
-      <li>
-        <a
-          class="dropdown-item logout d-flex align-items-center gap-2 text-danger"
-          href="signup"
-        >
-          <i class="bi bi-box-arrow-right fs-5"></i> Logout
-        </a>
-      </li>
-    </ul>
-  </div>
-</div>
 
+    </div>
   </div>
 </nav>

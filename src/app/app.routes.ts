@@ -16,11 +16,14 @@ import { BananeComponent } from './components/pages/learning/stories/banane/bana
 import { ProfileComponent } from './components/pages/profile/profile.component';
 import { BrocoliComponent } from './components/pages/learning/stories/brocoli/brocoli.component';
 import { FraiseComponent } from './components/pages/learning/stories/fraise/fraise.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AddProductComponent } from './admin-dashboard/add-product/add-product.component';
+import { ProductDetailsComponent } from './components/pages/shop/product-details/product-details.component';
 import path from 'path';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'games', component: GamesComponent },
@@ -37,4 +40,8 @@ export const routes: Routes = [
   { path: 'brocoli-story', component: BrocoliComponent},
   { path: 'fraise-story', component: FraiseComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'add-product', component: AddProductComponent },
+  { path: 'admin-dashboard', component: AdminDashboardComponent },
+  { path: 'product-details/:id', component: ProductDetailsComponent }
+
 ];
