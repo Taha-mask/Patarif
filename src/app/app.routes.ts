@@ -19,6 +19,7 @@ import { FraiseComponent } from './components/pages/learning/stories/fraise/frai
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AddProductComponent } from './admin-dashboard/add-product/add-product.component';
 import { ProductDetailsComponent } from './components/pages/shop/product-details/product-details.component';
+import { CartComponent } from './components/pages/shop/cart/cart.component';
 import path from 'path';
 
 
@@ -42,6 +43,7 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'add-product', component: AddProductComponent },
   { path: 'admin-dashboard', component: AdminDashboardComponent },
-  { path: 'product-details/:id', component: ProductDetailsComponent }
+  { path: 'product-details/:id', component: ProductDetailsComponent },
+  { path: 'cart', component: CartComponent },
 
 ];

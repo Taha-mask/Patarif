@@ -1,7 +1,13 @@
 <app-background></app-background>
-<!-- <div class="backgrounds">
-  <div class="background"><img src="images/shopping/background.png" alt="background"></div>
-</div> -->
+<app-lines-background></app-lines-background>
+<app-lines-background [top]="100"></app-lines-background>
+<app-stars-background></app-stars-background>
+<app-stars-background [top]="100"></app-stars-background>
+
+
+
+
+<!-- cart -->
 <app-cart-button></app-cart-button>
 
 <div class="content">
@@ -64,4 +70,8 @@
     </div>
 
   </ng-container>
+</div>
+<div *ngIf="!loading">
+
+  <app-home-footer></app-home-footer>
 </div>

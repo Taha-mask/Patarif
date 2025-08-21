@@ -7,12 +7,15 @@ import { ProductsService } from '../../../services/products.service';
 import Swal from 'sweetalert2';
 import { CartButtonComponent } from "./cart-button/cart-button.component";
 import { CartService } from '../../../services/data.service';
+import { LinesBackgroundComponent } from "../../lines-background/lines-background.component";
+import { StarsBackgroundComponent } from "../../stars-background/stars-background.component";
+import { HomeFooterComponent } from "../home/home-footer/home-footer.component";
 
 
 @Component({
   standalone: true,
   selector: 'app-shop',
-  imports: [BackgroundComponent, CommonModule, ProductCardComponent, RouterModule, CartButtonComponent],
+  imports: [BackgroundComponent, CommonModule, ProductCardComponent, RouterModule, CartButtonComponent, LinesBackgroundComponent, StarsBackgroundComponent, HomeFooterComponent],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css']
 })

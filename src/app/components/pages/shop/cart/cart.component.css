@@ -65,7 +65,7 @@ body {
 /* tr{
     padding: 4px;
     } */
-    .products-table thead th {
+.products-table thead th {
     padding-left: 16px;
     color: white;
     font-family: 'Comic Relief';
@@ -73,7 +73,8 @@ body {
 }
 
 .product-img {
-  width: 8rem; /* بدل 20% */
+    width: 8rem;
+    /* بدل 20% */
     border-radius: 24px;
     height: auto;
     /* display: flex; */
@@ -105,7 +106,7 @@ body {
     /* text-align: center; */
 }
 
-.quantity{
+.quantity {
     border: 1px solid var(--mainColor);
     border-radius: 6px;
     width: fit-content;
@@ -117,10 +118,12 @@ body {
     justify-content: center;
     gap: 16px;
 }
-.quantity .bi{
+
+.quantity .bi {
     color: var(--link);
 }
-.quantity button{
+
+.quantity button {
     width: fit-content;
     height: fit-content;
     padding: 0;
@@ -128,31 +131,264 @@ body {
     border: none;
 }
 
-.products-table .remove button{
+.products-table .remove button {
     background-color: #FB5664;
     border-radius: 50%;
-    /* width: 30%; */
-    /* height: 15%; */
-    padding: 16px;
+    padding: 4px 8px;
     border: none;
-}
-.remove .bi{
-    color: white;
+    transition: all 0.3s ease-in-out;
 }
 
+.bi {
+    color: rgba(255, 255, 255, 0.74);
+    width: 100%;
+    transform: rotate(0deg);
+}
 
+.products-table .remove button:hover {
+    background-color: red;
+    transform: scale(1.5);
+    animation: remove 0.5s infinite alternate;
+}
 
+@keyframes remove {
+    0% {
+        transform: rotate(20deg);
+    }
+
+    25% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(-20deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
 
 .main .section2 {
-    border: red 1px solid;
+    /* border: red 1px solid; */
     width: 100%;
-    display:flex;
+    display: flex;
     flex-direction: column;
     gap: 16px;
     align-items: end;
     justify-content: end;
 }
 
-.section2 .invoice{
+.section2 .invoice {
     width: 30%;
+    /* border: green 1px solid; */
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+}
+
+.section2 .invoice .discount-code {
+    width: 100%;
+    /* border: black 1px solid; */
+    position: relative;
+}
+
+.section2 .invoice .discount-code form {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+}
+
+
+.section2 .invoice .discount-code form input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding-left: 16px;
+}
+
+.section2 .invoice .discount-code form input:focus {
+    outline: none;
+    /* border: #9B57FA 1px solid; */
+
+}
+
+.section2 .invoice .discount-code form button {
+    position: absolute;
+    right: 0;
+    border: none;
+    border-radius: 12px;
+    background-color: #E3E3E3;
+    color: #474747;
+    font-family: 'Comic Relief';
+    font-family: 1rem;
+    text-transform: capitalize;
+    height: 100%;
+    width: 24%;
+    transition: all 0.3s ease-in-out;
+}
+
+.section2 .invoice .discount-code form button:hover {
+    background-color: #9B57FA;
+    color: white;
+}
+
+.section2 .invoice .checkout {
+    border-radius: 12px;
+    padding: 22px 18px;
+    background-color: white;
+    width: 100%;
+    position: relative;
+}
+
+.checkout .part {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+}
+
+.checkout p {
+    margin: 0;
+}
+
+.checkout .part .part-title {
+    color: #474747ab;
+    font-family: 'Comic Relief';
+    font-family: 0.9rem;
+    text-transform: capitalize;
+}
+
+.checkout .part .value {
+    color: #000000;
+    font-family: 'Comic Relief';
+    font-family: 1.1rem;
+    text-transform: capitalize;
+    font-weight: 800;
+}
+
+.checkout .divider {
+    width: 100%;
+    height: 0.5px;
+    background-color: rgba(156, 156, 156, 0.582);
+    margin: 8px 0;
+}
+
+.checkout button {
+    margin-top: 33px;
+    width: 100%;
+    background-color: #9B57FA;
+    border-radius: 4px;
+    color: white;
+    font-family: 'Comic Relief';
+    font-family: 1rem;
+    text-transform: capitalize;
+    text-align: center;
+    padding: 12px 0;
+    border: none;
+    font-weight: 600;
+}
+
+.checkout .no-products {
+    color: grey;
+    font-family: 'Comic Relief';
+    font-family: 3rem;
+    font-weight: 800;
+    text-transform: capitalize;
+    text-align: center;
+}
+
+.before-footer {
+    height: 82px;
+}
+
+
+/* resposive */
+/* mobile */
+@media (max-width: 480px) {
+    .main {
+        padding: 20px;
+        gap: 32px;
+    }
+
+    .products-table {
+        font-size: 0.8rem;
+        display: block;
+        overflow-x: auto; 
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .products-table thead {
+        display: none;
+    }
+
+    .products-table tr {
+        display: block;
+        margin-bottom: 16px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 12px;
+        background-color: #fff;
+    }
+
+    .products-table td {
+        display: flex;
+        justify-content: space-between;
+        text-align: left;
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+
+    .products-table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #474747;
+    }
+
+    .product-img {
+        width: 20%;
+        /* max-width: 150px; */
+        margin: 0 auto 12px;
+    }
+
+    .section2 .invoice {
+        width: 100%;
+    }
+
+    .checkout {
+        padding: 16px;
+    }
+
+    .checkout button {
+        padding: 10px;
+        font-size: 1rem;
+    }
+}
+
+/* tablet */
+@media (min-width: 481px) and (max-width: 968px) {
+    .section2 .invoice {
+        width: 70%;
+    }
+
+    .products-table {
+        font-size: 1rem;
+    }
+
+    .product-img {
+        width: 6rem;
+    }
+}
+
+/* laptop */
+@media (min-width: 969px) {
+    .section2 .invoice {
+        width: 30%;
+    }
 }

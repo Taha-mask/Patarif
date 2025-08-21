@@ -3,10 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductsService } from '../../../../services/products.service';
 import { CommonModule } from '@angular/common';
 import { BackgroundComponent } from "../../../background/background.component";
-import { HomeFooterComponent } from "../../home/home-footer/home-footer.component";
 import { CartButtonComponent } from "../cart-button/cart-button.component";
 import Swal from 'sweetalert2';
 import { CartItem, CartService } from '../../../../services/data.service';
+import { ɵEmptyOutletComponent } from "../../../../../../node_modules/@angular/router/router_module.d-Bx9ArA6K";
+import { HomeFooterComponent } from '../../home/home-footer/home-footer.component';
 
 @Component({
   selector: 'app-product-details',
@@ -68,7 +69,6 @@ export class ProductDetailsComponent implements OnInit {
   async onColorClick(colorId: string) {
     this.selectedSize = null;
     try {
-      // Fetch sizes for this specific color
       this.sizes = await this.productsService.getSizesByColorId(colorId);
     } catch (err) {
       console.error(err);
@@ -96,11 +96,11 @@ export class ProductDetailsComponent implements OnInit {
   // ==========================
   calcOffer(final_price: number, old_price: number): string {
     const offer = ((old_price - final_price) / old_price) * 100;
-    return offer.toFixed(); // return percentage as string
+    return offer.toFixed();
   }
 
   convertFinalPriceTo99(final_price: number): number {
-    return Math.floor(final_price - 1) + 0.99; // format price like x.99
+    return Math.floor(final_price - 1) + 0.99;
   }
 
   // ==========================
@@ -111,7 +111,6 @@ export class ProductDetailsComponent implements OnInit {
     public productsService: ProductsService,
     private router: Router,
     private dataService: CartService
-
   ) { }
 
   // ==========================
@@ -133,47 +132,36 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     try {
+      this.loading = true;
       const product = await this.productsService.getProductById(id);
 
       if (product) {
         this.product = product;
-        console.log('Fetched product:', this.product);
 
-        // Extract colors with both id and color_code
         this.colors = this.product?.product_colors?.map((c: any) => ({
           id: c.id,
           color_code: c.color_code
         })) || [];
 
-        // Initially sizes are empty until a color is selected
         this.sizes = [];
-
-        // Calculate total stock (across all colors and sizes)
         this.productStock = 0;
 
-        // Check if product has colors
         if (this.product?.product_colors?.length) {
           for (const color of this.product.product_colors) {
-            // Check if this color has sizes
             if (color?.product_sizes?.length) {
               for (const size of color.product_sizes) {
-                // Make sure stock exists and is a number
                 this.productStock += Number(size.stock) || 0;
               }
             }
           }
         }
-        // update main image [selected]
+
         this.selectedImage = this.product?.images[0];
-        // Update availability flag
         this.isProductStockAvailable = this.productStock > 0;
 
-
-        // Setup rating stars if product has rating
         if (this.product.rate !== undefined && this.product.rate !== null) {
           this.setStars(this.product.rate);
         }
-
       } else {
         console.error('Product not found');
       }
@@ -184,34 +172,10 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
-
-  // ==============
-  // cart
-  // productToCart!: string;
-  // // add id of product to array
-  // addProductToCart(productId: string) {
-  //   if (this.dataService.ids.includes(productId)) {
-  //     Swal.fire("already been added!");
-
-  //   }
-  //   else {
-
-  //     this.productToCart = productId;
-  //     console.log('Cart:', this.productToCart);
-  //     this.dataService.setIds(this.productToCart);
-
-  //   }
-  // }
-
+  // ==========================
+  // Cart
+  // ==========================
   addToCart() {
-    console.log('id: ', this.product.id);
-    console.log('title: ', this.product.title);
-    console.log('size: ', this.selectedSize);
-    console.log('price: ', this.product.final_price);
-    console.log('color: ', this.selectedColor);
-    console.log('image: ', this.selectedImage);
-    console.log('quantity: ', this.maxQuantity);
-    console.log(this.dataService.countCart);
     const newItem: CartItem = {
       id: this.product.id,
       name: this.product.title,
@@ -222,7 +186,6 @@ export class ProductDetailsComponent implements OnInit {
       quantity: 1,
       image: this.selectedImage
     };
-
     this.dataService.addToCart(newItem);
   }
 }
