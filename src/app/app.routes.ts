@@ -7,19 +7,24 @@ import { StoriesComponent } from './components/pages/stories/stories.component';
 import { LearningComponent } from './components/pages/learning/learning.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ShopComponent } from './components/pages/shop/shop.component';
-import { CountryGuessingComponent } from './components/games/country-guessing/country-guessing.component';
-import { LettersGameComponent } from './components/games/letters-game/letters-game.component';
-import { FactGameComponent } from './components/games/fact-game/fact-game.component';
+import { CountryGuessingComponent } from './components/pages/games/country-guessing/country-guessing.component';
+import { LettersGameComponent } from './components/pages/games/letters-game/letters-game.component';
+import { FactGameComponent } from './components/pages/games/fact-game/index.js';
 import { TomateStoryComponent } from './components/pages/learning/stories/tomate-story/tomate-story.component';
 import { CarotteStoryComponent } from './components/pages/learning/stories/carotte-story/carotte-story.component';
 import { BananeComponent } from './components/pages/learning/stories/banane/banane.component';
 import { ProfileComponent } from './components/pages/profile/profile.component';
 import { BrocoliComponent } from './components/pages/learning/stories/brocoli/brocoli.component';
 import { FraiseComponent } from './components/pages/learning/stories/fraise/fraise.component';
-import path from 'path';
-
-
+import { GalleryComponent } from './components/pages/games/paint/gallery/gallery.component';
+import { CanvasComponent } from './components/pages/games/paint/canvas/canvas.component';
+// import { MapComponent } from './components/pages/games/map/map.component';
+import { GuessEemojiComponent } from './components/pages/games/guess-eemoji/guess-eemoji.component';
+import { SortWordsComponent } from './components/pages/games/sort-words/sort-words.component';
 export const routes: Routes = [
+  { path: 'guess-eemoji', component: GuessEemojiComponent },
+  { path: 'gallery', component: GalleryComponent },
+  { path: 'canvas/:imageUrl', component: CanvasComponent },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
@@ -36,5 +41,7 @@ export const routes: Routes = [
   { path: 'banane-story', component: BananeComponent },
   { path: 'brocoli-story', component: BrocoliComponent},
   { path: 'fraise-story', component: FraiseComponent },
+  // { path: 'map', component: MapComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'sort-words', component: SortWordsComponent },
 ];

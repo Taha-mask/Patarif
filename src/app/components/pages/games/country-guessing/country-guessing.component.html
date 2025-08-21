@@ -1,0 +1,116 @@
+<app-game-template>
+  <div class="container py-4" [@fadeIn]>
+    <!-- Game Header with Timer and Stats -->
+    <div class="game-header">
+      <div class="level-progress">
+        <div class="level-info">
+<span class="level-text">Level {{ currentLevel }}</span>
+          <span class="progress-text">{{ questionsCorrectInLevel }}/5 completed</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / 5) * 100"></div>
+        </div>
+      </div>
+      
+      <div class="timer-section">
+        <div class="timer" [ngClass]="getTimeDisplayClass()">
+          <i class="timer-icon">⏱️</i>
+          <span>{{ formatTime(timeElapsed) }}</span>
+        </div>
+      </div>
+      
+     <div class="difficulty-badge" [ngClass]="getDifficultyClass()">
+  {{ currentQuestion.difficulty.toUpperCase() }}
+</div>
+
+      
+      <div class="bonus-points" *ngIf="bonusPoints > 0">
+        <span class="bonus-label">Bonus:</span>
+        <span class="bonus-value">+{{ bonusPoints }}</span>
+      </div>
+    </div>
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner-border text-primary" role="status"></div>
+      <div class="loading-text mt-3">Loading Countries...</div>
+    </div>
+
+    <!-- Game Content -->
+    <div *ngIf="!isLoading && !showLevelComplete">
+
+ 
+      <!-- Image + Hint -->
+      <div class="image-container mb-4" [@fadeIn]>
+        <img [src]="currentQuestion.image" class="img-fluid rounded" alt="Country Image">
+        <div class="image-overlay p-3">
+          <p class="hint-text">{{ currentQuestion.hint }}</p>
+        </div>
+      </div>
+
+      <!-- Question -->
+      <div class="question-text text-center mb-4">
+        <h2>Which country is this?</h2>
+      </div>
+
+      <!-- Options -->
+      <div class="row">
+        <div *ngFor="let option of currentQuestion.options" class="col-12 col-md-6 mb-2">
+          <button
+            class="option-btn w-100"
+            [ngClass]="{
+              'selected': selectedAnswer === option,
+              'btn-success': showResult && isCorrect && selectedAnswer === option,
+              'btn-danger': showResult && !isCorrect && selectedAnswer === option
+            }"
+            [disabled]="showResult"
+            (click)="selectAnswer(option)">
+            {{ option }}
+            <span *ngIf="showResult && selectedAnswer === option" class="result-icon">
+              <span *ngIf="isCorrect">✓</span>
+              <span *ngIf="!isCorrect">✗</span>
+            </span>
+          </button>
+        </div>
+
+        <!-- Correct answer display -->
+        <div class="col-12 text-center mt-2" *ngIf="showResult && !isCorrect">
+          <div class="alert alert-info">
+            The correct answer is: <strong>{{ currentQuestion.correctAnswer }}</strong>
+          </div>
+        </div>
+
+        <!-- Next -->
+        <div class="col-12 text-center" *ngIf="showResult">
+          <button class="btn btn-success mt-3" (click)="nextQuestion()">
+            {{ currentQuestionIndex + 1 < questions.length ? 'Next Question' : 'Finish Level' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Complete -->
+    <div *ngIf="showLevelComplete" class="modal d-block" style="background: rgba(0, 0, 0, 0.8);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content level-complete-card">
+          <div class="modal-header">
+            <h1 class="modal-title fs-3">🎉 Level {{ currentLevel }} Complete! 🎉</h1>
+          </div>
+          <div class="modal-body text-center">
+            <div class="score-circle mx-auto mb-3">
+              <div class="score-number">{{ score }}</div>
+              <div class="score-total">/{{ questionsPerLevel }}</div>
+            </div>
+            <div class="score-percentage">{{ getLevelScorePercentage() }}%</div>
+            <div class="score-message">{{ getScoreMessage() }}</div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success next-level-btn" (click)="nextLevel()">
+              Continue to Level {{ currentLevel + 1 }} 🚀
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</app-game-template>

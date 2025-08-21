@@ -1,0 +1,191 @@
+.map-wrapper {
+    width: 100%;
+  }
+  
+  .map-canvas {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain; /* خريطة كاملة داخل الإطار */
+    border: 1px dashed #d0d7de;
+    border-radius: 12px;
+    margin: 0 auto;
+  }
+  
+  /* العلامة (Pin) */
+  .marker {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    pointer-events: none; /* لا تستقبل النقرات */
+  }
+  
+  .marker .pin {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 16px solid #0d6efd; /* Bootstrap primary */
+    margin: 0 auto;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+  }
+  
+  .marker .dot {
+    width: 12px;
+    height: 12px;
+    background: #0d6efd;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin: 0 auto;
+    transform: translateY(-4px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  }
+  
+  /* أزرار الإجابات */
+  button.btn {
+    text-align: left;
+    font-weight: 600;
+    border-width: 2px;
+  }
+  
+  /* تحسينات بطاقة */
+  .card {
+    border-radius: 16px;
+  }
+  .card-body {
+    padding: 1rem 1.1rem;
+  }
+  /* Game Header Styles */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .level-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+  }
+  
+  .level-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .level-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #374151;
+  }
+  
+  .progress-text {
+    font-size: 0.9rem;
+    color: #6b7280;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(156, 163, 175, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  
+  .timer-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .timer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .timer.time-good {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: white;
+  }
+  
+  .timer.time-warning {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+  }
+  
+  .timer.time-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    animation: pulse 1s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  .difficulty-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .difficulty-easy {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: white;
+  }
+  
+  .difficulty-medium {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+  }
+  
+  .difficulty-hard {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+  }
+  
+  .bonus-points {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+    border-radius: 2rem;
+    font-weight: bold;
+    animation: bounceIn 0.5s ease-out;
+  }
+  
+  @keyframes bounceIn {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }

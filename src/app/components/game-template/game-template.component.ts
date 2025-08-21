@@ -10,7 +10,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./game-template.component.css']
 })
 export class GameTemplateComponent {
-  constructor(private router: Router) {
+  constructor(
+    private router: Router
+  ) {
     // Initialize stars array with 3 empty stars
     this.starsArray = Array(3).fill(0).map(() => ({
       filled: false,

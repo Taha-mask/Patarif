@@ -1,0 +1,75 @@
+<app-game-template>
+    <div class="big-container mx-auto w-100 p-4">
+    <div class="game-header">
+        <div class="level-progress">
+          <div class="level-info">
+            <span class="level-text">Level {{ level }}</span>
+            <span class="progress-text">{{ questionsCorrectInLevel }}/5 completed</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / 5) * 100"></div>
+          </div>
+        </div>
+        
+        <div class="timer-section">
+          <div class="timer" [ngClass]="getTimeDisplayClass()">
+            <i class="timer-icon">⏱️</i>
+            <span>{{ formatTime(timeElapsed) }}</span>
+          </div>
+        </div>
+        
+        <div class="difficulty-badge" [ngClass]="getDifficultyClass()">
+          {{ currentWord.difficulty.toUpperCase() }}
+        </div>
+        
+        <div class="bonus-points" *ngIf="bonusPoints > 0">
+          <span class="bonus-label">Bonus:</span>
+          <span class="bonus-value">+{{ bonusPoints }}</span>
+        </div>
+      </div>
+
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card text-center shadow-lg game-card">
+          <div class="card-body">
+            <h4 class="card-title mb-3">Arrange the Sentence</h4>
+      
+            <!-- Shuffled Words -->
+            <div class="mb-3">
+              <button *ngFor="let word of shuffledWords"
+                      class="btn btn-outline-primary m-1"
+                      (click)="selectWord(word)">
+                {{ word }}
+              </button>
+            </div>
+      
+            <!-- Selected Words -->
+            <div class="mb-3">
+              <span *ngFor="let word of selectedWords" class="badge bg-secondary me-1">
+                {{ word }}
+              </span>
+            </div>
+      
+            <!-- Check Button -->
+            <button class="btn btn-success w-100 mb-2"
+                    (click)="checkAnswer()"
+                    [disabled]="feedback !== null || selectedWords.length === 0">
+              Check
+            </button>
+      
+            <!-- Feedback -->
+            <div *ngIf="feedback" class="alert"
+                 [ngClass]="{'alert-success': isCorrect, 'alert-danger': !isCorrect}">
+              {{ feedback }}
+            </div>
+      
+            <!-- Next Button -->
+            <button class="btn btn-secondary w-100"
+                    (click)="nextSentence()"
+                    [disabled]="feedback === null">
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+      </div>
+</app-game-template>

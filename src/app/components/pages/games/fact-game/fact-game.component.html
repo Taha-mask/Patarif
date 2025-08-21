@@ -1,0 +1,76 @@
+<app-game-template>
+  <div class="container py-4">
+    <!-- Game Header -->
+    <div class="game-header">
+      <div class="level-progress">
+        <div class="level-info">
+          <span class="level-text">Level {{ level }}</span>
+          <span class="progress-text">{{ questionsCorrectInLevel }}/5 completed</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / 5) * 100"></div>
+        </div>
+      </div>
+      
+      <div class="timer-section">
+        <div class="timer" [ngClass]="getTimeDisplayClass()">
+          <i class="timer-icon">⏱️</i>
+          <span>{{ formatTime(timeElapsed) }}</span>
+        </div>
+      </div>
+      
+      <div class="difficulty-badge" [ngClass]="getDifficultyClass()">
+        {{ currentWord.difficulty.toUpperCase() }}
+      </div>
+      
+      <div class="bonus-points" *ngIf="bonusPoints > 0">
+        <span class="bonus-label">Bonus:</span>
+        <span class="bonus-value">+{{ bonusPoints }}</span>
+      </div>
+    </div>
+
+    <!-- Question Container -->
+    <div class="question-container p-4 shadow-sm mb-4">
+      <h2 class="question-text text-center mb-5 fw-bold ">
+        {{ currentQuestion.text }}
+      </h2>
+
+      <!-- Answer Options -->
+      <div class="answer-options row g-3 mx-auto w-100 justify-content-center align-items-center">
+        <div *ngFor="let option of currentQuestion.options; let i = index" 
+             class="col-12 col-md-6">
+          <div class="answer-option p-3  border cursor-pointer h-50 d-flex align-items-center"
+               [ngClass]="{
+                 'bg-success bg-opacity-10 border-success': answered && answerStatus[i] === 'correct',
+                 'bg-danger bg-opacity-10 border-danger': answered && answerStatus[i] === 'wrong',
+                 'hover:bg-light': !answered
+               }"
+               (click)="!answered && checkAnswer(option.isCorrect, i)">
+            <div class="d-flex align-items-center w-100">
+              <div class="option-letter me-3 d-flex align-items-center justify-content-center rounded-circle bg-primary text-white fw-bold"
+                   style="width: 32px; height: 32px;">
+                {{ getOptionLetter(i) }}
+              </div>
+              <span class="option-text">{{ option.text }}</span>
+              <div class="ms-auto">
+                <i *ngIf="answered && answerStatus[i] === 'correct'" class="bi bi-check-circle-fill text-success"></i>
+                <i *ngIf="answered && answerStatus[i] === 'wrong'" class="bi bi-x-circle-fill text-danger"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Next Button -->
+    <div class="text-center mt-4">
+      <button class="btn btn-primary btn-lg px-5 py-2 fw-medium" 
+              [disabled]="!answered" 
+              (click)="nextQuestion()"
+              [ngClass]="{'btn-success': answered}">
+        {{ isLastQuestion ? 'Finish Game' : 'Next Question' }}
+        <i class="bi ms-2" [ngClass]="{'bi-arrow-right': !isLastQuestion, 'bi-trophy': isLastQuestion}"></i>
+      </button>
+    </div>
+  </div>
+</app-game-template>
