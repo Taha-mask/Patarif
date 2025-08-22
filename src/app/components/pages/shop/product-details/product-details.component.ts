@@ -3,16 +3,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductsService } from '../../../../services/products.service';
 import { CommonModule } from '@angular/common';
 import { BackgroundComponent } from "../../../background/background.component";
-import { HomeFooterComponent } from "../../home/home-footer/home-footer.component";
+import { CartButtonComponent } from "../cart-button/cart-button.component";
+import Swal from 'sweetalert2';
+import { CartItem, CartService } from '../../../../services/data.service';
+import { ɵEmptyOutletComponent } from "../../../../../../node_modules/@angular/router/router_module.d-Bx9ArA6K";
+import { HomeFooterComponent } from '../../home/home-footer/home-footer.component';
+import { StarsBackgroundComponent } from "../../../stars-background/stars-background.component";
+import { LinesBackgroundComponent } from "../../../lines-background/lines-background.component";
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, BackgroundComponent, HomeFooterComponent],
+  imports: [CommonModule, BackgroundComponent, HomeFooterComponent, CartButtonComponent, StarsBackgroundComponent, LinesBackgroundComponent],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css']
 })
 export class ProductDetailsComponent implements OnInit {
+  maxQuantity: number = 0;
 
   // ==========================
   // Product core data
@@ -64,15 +71,15 @@ export class ProductDetailsComponent implements OnInit {
   async onColorClick(colorId: string) {
     this.selectedSize = null;
     try {
-      // Fetch sizes for this specific color
       this.sizes = await this.productsService.getSizesByColorId(colorId);
     } catch (err) {
       console.error(err);
     }
   }
 
-  selectSize(size: string) {
+  selectSize(size: string, stock: number) {
     this.selectedSize = size;
+    this.maxQuantity = stock;
   }
 
   // ==========================
@@ -91,11 +98,11 @@ export class ProductDetailsComponent implements OnInit {
   // ==========================
   calcOffer(final_price: number, old_price: number): string {
     const offer = ((old_price - final_price) / old_price) * 100;
-    return offer.toFixed(); // return percentage as string
+    return offer.toFixed();
   }
 
   convertFinalPriceTo99(final_price: number): number {
-    return Math.floor(final_price - 1) + 0.99; // format price like x.99
+    return Math.floor(final_price - 1) + 0.99;
   }
 
   // ==========================
@@ -104,7 +111,8 @@ export class ProductDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public productsService: ProductsService,
-    private router: Router
+    private router: Router,
+    private dataService: CartService
   ) { }
 
   // ==========================
@@ -126,47 +134,36 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     try {
+      this.loading = true;
       const product = await this.productsService.getProductById(id);
 
       if (product) {
         this.product = product;
-        console.log('Fetched product:', this.product);
 
-        // Extract colors with both id and color_code
         this.colors = this.product?.product_colors?.map((c: any) => ({
           id: c.id,
           color_code: c.color_code
         })) || [];
 
-        // Initially sizes are empty until a color is selected
         this.sizes = [];
-
-        // Calculate total stock (across all colors and sizes)
         this.productStock = 0;
 
-        // Check if product has colors
         if (this.product?.product_colors?.length) {
           for (const color of this.product.product_colors) {
-            // Check if this color has sizes
             if (color?.product_sizes?.length) {
               for (const size of color.product_sizes) {
-                // Make sure stock exists and is a number
                 this.productStock += Number(size.stock) || 0;
               }
             }
           }
         }
-        // update main image [selected]
+
         this.selectedImage = this.product?.images[0];
-        // Update availability flag
         this.isProductStockAvailable = this.productStock > 0;
 
-
-        // Setup rating stars if product has rating
         if (this.product.rate !== undefined && this.product.rate !== null) {
           this.setStars(this.product.rate);
         }
-
       } else {
         console.error('Product not found');
       }
@@ -175,5 +172,22 @@ export class ProductDetailsComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+  // ==========================
+  // Cart
+  // ==========================
+  addToCart() {
+    const newItem: CartItem = {
+      id: this.product.id,
+      name: this.product.title,
+      color: this.selectedColor,
+      size: this.selectedSize || 'null',
+      maxQuantity: this.maxQuantity,
+      price: this.product.final_price,
+      quantity: 1,
+      image: this.selectedImage
+    };
+    this.dataService.addToCart(newItem);
   }
 }

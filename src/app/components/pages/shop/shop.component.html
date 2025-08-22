@@ -1,9 +1,14 @@
-<div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none;">
-  <app-background></app-background>
-</div>
-<div class="backgrounds">
-  <div class="background"><img src="images/shopping/background.png" alt="background"></div>
-</div>
+<app-background></app-background>
+<app-lines-background></app-lines-background>
+<app-lines-background [top]="100"></app-lines-background>
+<app-stars-background></app-stars-background>
+<app-stars-background [top]="100"></app-stars-background>
+
+
+
+
+<!-- cart -->
+<app-cart-button></app-cart-button>
 
 <div class="content">
   <!-- ✅ Loading Spinner -->
@@ -41,10 +46,17 @@
 
           <div class="cards" #cardsContainer>
             <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let product of productsByCategory[category]">
-              <div (click)="navigateToProduct(product.id)" class="product-card">
-                <app-product-card [title]="product.title" [img]="product.images[0]" [price]="product.final_price"
-                  [rate]="product.rate">
-                </app-product-card>
+              <div class="merge-card">
+
+                <div class="product-card">
+                  <app-product-card [title]="product.title" [img]="product.images[0]" [price]="product.final_price"
+                    [rate]="product.rate">
+
+                  </app-product-card>
+                </div>
+                <button class="btn btn-primary add-to-cart" (click)="navigateToProduct(product.id)">
+                  Add to Cart <i class="bi bi-cart"></i>
+                </button>
               </div>
 
             </div>
@@ -58,4 +70,8 @@
     </div>
 
   </ng-container>
+</div>
+<div *ngIf="!loading">
+
+  <app-home-footer></app-home-footer>
 </div>

@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environment/environment.developer';
+import { CartItem } from './services/data.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,34 +32,34 @@ export class SupabaseService {
     return data.session;
   }
 
-async signIn(email: string, password: string) {
-  const { data, error } = await this.getClient().auth.signInWithPassword({
-    email,
-    password,
-  });
+  async signIn(email: string, password: string) {
+    const { data, error } = await this.getClient().auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) throw error;
+    if (error) throw error;
 
-  const user = data.user;
-  if (!user) throw new Error('User not found');
+    const user = data.user;
+    if (!user) throw new Error('User not found');
 
-  // جلب الدور من جدول profiles
-  const { data: profile, error: profileError } = await this.getClient()
-    .from('profiles')
-    .select('role')
-    .eq('user_id', user.id)
-    .single();
+    // جلب الدور من جدول profiles
+    const { data: profile, error: profileError } = await this.getClient()
+      .from('profiles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single();
 
-  if (profileError) throw profileError;
+    if (profileError) throw profileError;
 
-  // تحقق إذا Admin أو لا
-  if (profile.role === 'admin') {
-    // لو Admin → رجع قيمة أو نفذ توجيه
-    return { ...data, isAdmin: true };
-  } else {
-    return { ...data, isAdmin: false };
+    // تحقق إذا Admin أو لا
+    if (profile.role === 'admin') {
+      // لو Admin → رجع قيمة أو نفذ توجيه
+      return { ...data, isAdmin: true };
+    } else {
+      return { ...data, isAdmin: false };
+    }
   }
-}
 
   signUp(email: string, password: string, firstName: string, lastName: string) {
     return this.getClient().auth.signUp({
@@ -72,6 +73,37 @@ async signIn(email: string, password: string) {
     });
   }
 
-  // 🔹 Add product with colors & sizes
-  
+  // add new record in carts , cart_items [insert to supabase]  
+
+  async createCart(userEmail: string, subtotal: number, count: number) {
+    const { data, error } = await this.getClient()
+      .from('carts')
+      .insert([
+        {
+          user_email: userEmail,
+          subtotal,
+          shipping: 0,
+          total: subtotal,
+          count,
+          estimate_for: '3 days',
+          isDelivered: false
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async addCartItems(cartId: string, items: any[]) {
+    const { error } = await this.getClient()
+      .from('cart_items')
+      .insert(items);
+
+    if (error) throw error;
+  }
 }
+
+
+

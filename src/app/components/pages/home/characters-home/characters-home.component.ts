@@ -3,10 +3,11 @@ import { CarachterCardComponent } from "./carachter-card/carachter-card.componen
 import { CardsComponent } from "../../../cards/cards.component";
 import { CharacterCard } from "../../../../interface/card";
 import { SliderCharactersHomeComponent } from "./slider-characters-home/slider-characters-home.component";
+import { StarsBackgroundComponent } from "../../../stars-background/stars-background.component";
 
 @Component({
   selector: 'app-characters-home',
-  imports: [CarachterCardComponent, CardsComponent, SliderCharactersHomeComponent],
+  imports: [CarachterCardComponent, CardsComponent, SliderCharactersHomeComponent, StarsBackgroundComponent],
   templateUrl: './characters-home.component.html',
   styleUrl: './characters-home.component.css'
 })

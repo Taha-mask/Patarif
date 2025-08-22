@@ -1,9 +1,19 @@
-
 :host {
-    --mainFont: 'Baloo 2';
-    --comic: 'Comic Relief';
-      --pink: rgb(255, 0, 55);
+  --mainFont: 'Baloo 2';
+  --comic: 'Comic Relief';
+  --pink: rgb(255, 0, 55);
   --orane: rgb(252, 71, 86);
+}
+.navbar{
+
+  /* border: 1px solid red; */
+}
+.navbar-brand {
+  width: 7%;
+}
+.navbar-brand img{
+  width: 100%;
+  object-fit: contain;
 }
 
 .nav-link-animated {
@@ -22,11 +32,12 @@
   font-family: var(--comic);
 }
 
-.nav-link{
+.nav-link {
   border: 0.5px solid #00000063;
   color: #00000063;
   /* padding: 10px; */
 }
+
 .nav-link-animated::before {
   content: '';
   position: absolute;
@@ -110,7 +121,7 @@
 /* صورة المستخدم */
 .user-avatar {
   position: relative;
-  border: 3px solid #FF006E;
+  border: 1px solid #FF006E;
   /* padding: 2px; */
   transition: transform 0.3s ease;
   background: #fff;
@@ -124,8 +135,8 @@
 
 .user-avatar:hover {
   transform: scale(1.05) rotate(3deg);
-  border: 2px solid #FF006E;
-  padding: 1px;
+  border: 1.5px solid #FF006E;
+  padding: 2px;
 }
 
 /* تأثير دائرة صغيرة متحركة */
@@ -221,23 +232,26 @@
 .side-menu {
   position: fixed;
   top: 0;
-  left: -260px; /* برة الشاشة */
+  left: -260px;
+  /* برة الشاشة */
   width: 260px;
   height: 100vh;
-  background:linear-gradient(180deg, var(--pink), var(--orane));
-  box-shadow: 2px 0 15px rgba(0,0,0,0.3);
+  background: linear-gradient(180deg, var(--pink), var(--orane));
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
   padding: 20px;
   transition: left 0.3s ease;
   z-index: 2000;
   border-radius: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* يخلي العناصر في النص */
+  justify-content: center;
+  /* يخلي العناصر في النص */
   align-items: center;
 }
 
 .side-menu.open {
-  left: 0; /* يدخل من الجنب */
+  left: 0;
+  /* يدخل من الجنب */
 }
 
 .side-menu .close-btn {
@@ -262,14 +276,14 @@
   border-radius: 24px;
   padding: 12px 0;
   background: rgba(255, 255, 255, 0.479);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .side-menu li:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
 .side-menu a {

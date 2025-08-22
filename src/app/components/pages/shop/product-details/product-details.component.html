@@ -1,115 +1,131 @@
-<div class="background-colors">
-    <app-background></app-background>
-    <app-background></app-background>
-</div>
-<div class="background-lines">
+<app-background></app-background>
+<app-stars-background></app-stars-background>
+<app-stars-background [top]="80"></app-stars-background>
+<app-lines-background></app-lines-background>
+<app-lines-background [top]="80"></app-lines-background>
+
+<!-- <div class="background-lines">
     <div class="background"><img src="images/shopping/background.png" alt="background"></div>
-</div>
+</div> -->
+<app-cart-button></app-cart-button>
 
 <div class="content">
-    <div class="row card-info" id="myTargetDiv">
-        <div class="imgs col-12 col-md-6">
-            <!-- main image -->
-            <div class="main-img">
-                <div class="collection">
-                    <button class="add-to-favourite" (click)="isFavourite = !isFavourite">
-                        <i class="bi" [ngClass]="isFavourite ? 'bi-heart-fill' : 'bi-heart'"></i>
-                    </button>
-                    <!-- <div *ngIf="!isProductStockAvailable" class="is-available">salled</div> -->
-                </div>
 
-                <img class="img-fluid" [src]="selectedImage" alt="product details">
-            </div>
-            <!-- other images -->
-            <div class="other-imgs">
-                <img *ngFor="let img of product?.images" class="img-fluid" [src]="img" alt="product details"
-                    (mouseenter)="selectedImage = img">
-            </div>
-
+    <!-- ✅ Loading Spinner -->
+    <div *ngIf="loading" class="loading-overlay">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <p>Loading products...</p>
         </div>
+    </div>
 
-        <div class="details col-12 col-md-6">
-            <div class="title">
-                <h5>{{product?.subtitle}}</h5>
-                <h1>{{product?.title}}</h1>
-                <div class="stars">
-                    <ng-container *ngFor="let star of fullStars">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#E8B931"
-                            class="bi bi-star-fill" viewBox="0 0 16 16">
-                            <path
-                                d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg>
-                    </ng-container>
+    <ng-container *ngIf="!loading">
 
-                    <ng-container *ngIf="hasHalfStar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#E8B931"
-                            class="bi bi-star-half" viewBox="0 0 16 16">
-                            <path
-                                d="M5.354 5.119 7.538.792A.52.52 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.54.54 0 0 1 16 6.32a.55.55 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.5.5 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.6.6 0 0 1 .085-.302.51.51 0 0 1 .37-.245zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.56.56 0 0 1 .162-.505l2.907-2.77-4.052-.576a.53.53 0 0 1-.393-.288L8.001 2.223 8 2.226z" />
-                        </svg>
-                    </ng-container>
-
-                    <ng-container *ngFor="let star of emptyStars">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="transparent"
-                            class="bi bi-star" viewBox="0 0 16 16">
-                            <path
-                                d="M2.866 14.85c-.078.444.36.791.746.593L8 13.187l4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.33-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.119l-4.898.696c-.441.062-.612.636-.282.95l3.522 3.356-.83 4.73z" />
-                        </svg>
-                    </ng-container>
-                </div>
-                <!-- rate -->
-            </div>
-            <div class="price">
-                <h2 class="old-price">{{product?.price}}$</h2>
-                <h2 class="final-price">{{convertFinalPriceTo99(product?.final_price)}}$</h2>
-                <div class="offer">
-                    <p>offer {{calcOffer(product?.final_price, product?.price)}}%</p>
-                </div>
-            </div>
-            <div class="colors">
-                <p>Colors</p>
-                <div class="colors-wrapper">
-                    <div *ngFor="let color of colors" class="color" [style.background-color]="color.color_code"
-                        (click)="selectColor(color.color_code); onColorClick(color.id)">
-
-                        <i *ngIf="selectedColor === color.color_code" class="bi bi-check"></i>
+        <div class="row card-info" id="myTargetDiv">
+            <div class="imgs col-12 col-md-6">
+                <!-- main image -->
+                <div class="main-img">
+                    <div class="collection">
+                        <button class="add-to-favourite" (click)="isFavourite = !isFavourite">
+                            <i class="bi" [ngClass]="isFavourite ? 'bi-heart-fill' : 'bi-heart'"></i>
+                        </button>
+                        <!-- <div *ngIf="!isProductStockAvailable" class="is-available">salled</div> -->
                     </div>
 
-
-
+                    <img class="img-fluid" [src]="selectedImage" alt="product details">
+                </div>
+                <!-- other images -->
+                <div class="other-imgs">
+                    <img *ngFor="let img of product?.images" class="img-fluid" [src]="img" alt="product details"
+                        (mouseenter)="selectedImage = img">
                 </div>
 
             </div>
-            <div class="sizes" *ngIf="sizes.length > 0">
-                <p>Sizes</p>
-                <div class="sizes-wrapper">
-                    <div *ngFor="let size of sizes" class="size" [class.selected]="selectedSize === size.size_name"
-                        (click)="selectSize(size.size_name)">
-                        {{ size.size_name }}
-                        <span *ngIf="size.stock > 0"> ({{ size.stock }})</span>
-                        <span *ngIf="size.stock === 0" class="out-of-stock"> (Out of stock)</span>
+
+            <div class="details col-12 col-md-6">
+                <div class="title">
+                    <h5>{{product?.subtitle}}</h5>
+                    <h1>{{product?.title}}</h1>
+                    <div class="stars">
+                        <ng-container *ngFor="let star of fullStars">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#E8B931"
+                                class="bi bi-star-fill" viewBox="0 0 16 16">
+                                <path
+                                    d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                            </svg>
+                        </ng-container>
+
+                        <ng-container *ngIf="hasHalfStar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#E8B931"
+                                class="bi bi-star-half" viewBox="0 0 16 16">
+                                <path
+                                    d="M5.354 5.119 7.538.792A.52.52 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.54.54 0 0 1 16 6.32a.55.55 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.5.5 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.6.6 0 0 1 .085-.302.51.51 0 0 1 .37-.245zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.56.56 0 0 1 .162-.505l2.907-2.77-4.052-.576a.53.53 0 0 1-.393-.288L8.001 2.223 8 2.226z" />
+                            </svg>
+                        </ng-container>
+
+                        <ng-container *ngFor="let star of emptyStars">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="transparent"
+                                class="bi bi-star" viewBox="0 0 16 16">
+                                <path
+                                    d="M2.866 14.85c-.078.444.36.791.746.593L8 13.187l4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.33-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.119l-4.898.696c-.441.062-.612.636-.282.95l3.522 3.356-.83 4.73z" />
+                            </svg>
+                        </ng-container>
+                    </div>
+                    <!-- rate -->
+                </div>
+                <div class="price">
+                    <h2 class="old-price">{{product?.price}}$</h2>
+                    <h2 class="final-price">{{convertFinalPriceTo99(product?.final_price)}}$</h2>
+                    <div class="offer">
+                        <p>offer {{calcOffer(product?.final_price, product?.price)}}%</p>
                     </div>
                 </div>
-            </div>
+                <div class="colors">
+                    <p>Colors</p>
+                    <div class="colors-wrapper">
+                        <div *ngFor="let color of colors" class="color" [style.background-color]="color.color_code"
+                            (click)="selectColor(color.color_code); onColorClick(color.id)">
 
-            <button *ngIf="selectedSize != null" class="btn btn-primary">Add to cart <span></span></button>
-            <div *ngIf="selectedSize == null" class="btn btn-primary-outline">select <span *ngIf="selectedColor
+                            <i *ngIf="selectedColor === color.color_code" class="bi bi-check"></i>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+                <div class="sizes" *ngIf="sizes.length > 0">
+                    <p>Size (stock)</p>
+                    <div class="sizes-wrapper">
+                        <div *ngFor="let size of sizes" class="size" [class.selected]="selectedSize === size.size_name"
+                            (click)="selectSize(size.size_name, size.stock)">
+                            {{ size.size_name }}
+                            <span *ngIf="size.stock > 0"> ({{ size.stock }})</span>
+                            <span *ngIf="size.stock === 0" class="out-of-stock"> (Out of stock)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button (click)="addToCart()" *ngIf="selectedSize != null" class="btn btn-primary">Add to cart
+                    <span></span></button>
+                <div *ngIf="selectedSize == null" class="btn btn-primary-outline">select <span *ngIf="selectedColor
              == null">[color] </span> <span *ngIf="selectedSize == null">[size]</span></div>
 
-        </div>
+            </div>
 
-        <!-- <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima voluptatem dicta iste corporis? Nemo corrupti
+            <!-- <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima voluptatem dicta iste corporis? Nemo corrupti
                 blanditiis dolor, sapiente enim soluta maiores harum possimus recusandae inventore deserunt quia dolorum
                 autem ratione!</p> -->
-    </div>
-    <h1 class="category">{{product?.category}}</h1>
-    <div class="description">
-        <!-- {{product?.category | titlecase}} - {{product?.title}}<br> -->
-        {{product?.description}}
-    </div>
+        </div>
+        <h1 class="category">{{product?.category}}</h1>
+        <div class="description">
+            <!-- {{product?.category | titlecase}} - {{product?.title}}<br> -->
+            {{product?.description}}
+        </div>
+    </ng-container>
 </div>
 
-<div class="footer">
+<div *ngIf="!loading">
 
     <app-home-footer></app-home-footer>
 </div>
