@@ -19,7 +19,28 @@
 
 
 .super{
-    width: 100vw;
+    width: 100%;
     overflow: hidden;
+    /* z-index: -10; */
+    position: relative;
 }
 
+
+.paper-plane {
+    position: absolute;
+    z-index: -1;
+    /* transform: translateY(-50%); */
+    /* top: -50%; */
+    /* right: -50%; */
+    /* animation: fadeInFromTop 1s ease-out 0.2s both; */
+    height: auto;
+    width: 100%;
+    bottom: 50%;
+    right: -50%;
+    rotate: 90deg;
+}
+.paper-plane img{
+    object-fit: contain;
+    width: 100%;
+    height: 100%
+}
