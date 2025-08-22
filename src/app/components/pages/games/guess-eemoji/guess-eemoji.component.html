@@ -1,37 +1,10 @@
-<app-game-template>
-    <div class="big-container mx-auto w-100 p-4">
-  <div class="game-header">
-    <!-- Level Progress -->
-    <div class="level-progress">
-      <div class="level-info">
-        <span class="level-text">Level {{ level }}</span>
-        <span class="progress-text">{{ questionsCorrectInLevel }}/5 completed</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / 5) * 100"></div>
-      </div>
-    </div>
-    
-    <!-- Timer -->
-    <div class="timer-section">
-      <div class="timer" [ngClass]="getTimeDisplayClass()">
-        <i class="timer-icon">⏱️</i>
-        <span>{{ formatTime(timeElapsed) }}</span>
-      </div>
-    </div>
-    
-    <!-- Difficulty -->
-    <div class="difficulty-badge" [ngClass]="getDifficultyClass()">
-      {{ currentWord.difficulty.toUpperCase() }}
-    </div>
-    
-    <!-- Bonus Points -->
-    <div class="bonus-points" *ngIf="bonusPoints > 0">
-      <span class="bonus-label">Bonus:</span>
-      <span class="bonus-value">+{{ bonusPoints }}</span>
-    </div>
-  </div>
-  
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentWord?.correct || ''"
+  [difficulty]="currentDifficulty"
+>    <div class="big-container mx-auto w-100 p-4">
+ 
   <!-- Game Content -->
   <div class="container d-flex justify-content-center align-items-center ">
     <div class="card text-center shadow-lg game-card">

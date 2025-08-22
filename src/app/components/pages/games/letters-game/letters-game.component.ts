@@ -255,11 +255,12 @@ export class LettersGameComponent implements OnInit, OnDestroy {
     ]
   };
 
-  currentWord: GameWord = this.wordsByLevel[1][0];
+  currentWord: GameWord | null = null;
   currentWordIndex: number = 0;
   availableLetters: LetterTile[] = [];
   wordSlots: (LetterTile | null)[] = [];
   letterColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#FF9F43', '#A29BFE', '#6C5CE7'];
+  currentDifficulty: 'easy' | 'medium' | 'hard' = 'easy';
 
   ngOnInit() {
     this.resetForNewWord();
@@ -289,45 +290,42 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   resetForNewWord() {
-    const currentLevelWords = this.wordsByLevel[this.level];
-    
-    if (!currentLevelWords || this.currentWordIndex >= currentLevelWords.length) {
-      this.completeGame();
-      return;
+    if (this.wordsByLevel[this.level] && this.wordsByLevel[this.level].length > 0) {
+      this.currentWord = this.wordsByLevel[this.level][this.currentWordIndex % this.wordsByLevel[this.level].length];
+      this.currentDifficulty = this.currentWord?.difficulty || 'easy';
     }
     
-    // Reset game stats for new word
-    this.gameStats = {
-      totalTime: 0,
-      hintsUsed: 0,
-      firstAttempt: true,
-      attempts: 0
-    };
-    
-    this.showHint = false;
     this.showSuccess = false;
-    this.shakeAnimation = false;
+    this.showHint = false;
+    this.availableLetters = [];
+    this.wordSlots = [];
+    this.draggedItem = null;
+    this.draggedFromSlot = -1;
+    this.draggedFromAvailable = -1;
+
+    // Get a random word from the current level
+    const levelWords = this.wordsByLevel[this.level] || this.wordsByLevel[1];
+    this.currentWord = levelWords[Math.floor(Math.random() * levelWords.length)];
     
-    // Get the current word based on the word index
-    this.currentWord = currentLevelWords[this.currentWordIndex];
-    
-    // Create letter tiles with unique IDs and enhanced properties
-    this.availableLetters = this.currentWord.scrambled.map((letter, index) => ({
-      id: `letter-${index}-${Date.now()}`,
-      letter,
-      color: this.letterColors[index % this.letterColors.length],
-      isDragging: false,
-      used: false,
-      isCorrect: false,
-      animationState: 'idle'
-    }));
-    
-    // Shuffle the available letters for better gameplay
-    this.shuffleArray(this.availableLetters);
-    
-    // Initialize word slots as empty
-    this.wordSlots = Array(this.currentWord.correct.length).fill(null);
-    
+    // Set current difficulty from the word
+    if (this.currentWord) {
+      this.currentDifficulty = this.currentWord.difficulty || 'easy';
+      
+      // Create letter tiles for the scrambled word
+      this.currentWord.scrambled.forEach((letter, index) => {
+        this.availableLetters.push({
+          id: `letter-${index}-${Date.now()}`,
+          letter,
+          color: this.letterColors[Math.floor(Math.random() * this.letterColors.length)],
+          isDragging: false,
+          used: false,
+          animationState: 'idle'
+        });
+      });
+
+      // Create empty slots for the word
+      this.wordSlots = Array(this.currentWord.correct.length).fill(null);
+    }
     this.startTimer();
   }
 
@@ -448,6 +446,8 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   checkWord() {
+    if (!this.currentWord) return;
+    
     this.gameStats.attempts++;
     const formedWord = this.wordSlots.map(slot => slot?.letter || '').join('');
     
@@ -459,6 +459,8 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
     handleCorrectAnswer() {
+    if (!this.currentWord) return;
+    
     this.stopTimer();
     this.gameStats.totalTime += this.timeElapsed;
     this.questionsCorrectInLevel++;
@@ -488,7 +490,9 @@ export class LettersGameComponent implements OnInit, OnDestroy {
       'medium': 20,
       'hard': 50
     };
-    bonus += difficultyBonus[this.currentWord.difficulty];
+    
+    const wordDifficulty = this.currentWord.difficulty || 'easy';
+    bonus += difficultyBonus[wordDifficulty];
     
     this.score += basePoints + bonus;
     this.bonusPoints += bonus;
@@ -530,6 +534,8 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   handleIncorrectAnswer() {
+    if (!this.currentWord) return;
+    
     this.gameStats.firstAttempt = false;
     this.shakeAnimation = true;
     
@@ -554,7 +560,7 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   showHintDialog() {
-    if (this.currentWord.hint) {
+    if (this.currentWord?.hint) {
       this.showHint = true;
       this.gameStats.hintsUsed++;
       this.gameStats.firstAttempt = false;
@@ -583,7 +589,7 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   getDifficultyClass(): string {
-    return `difficulty-${this.currentWord.difficulty}`;
+    return `difficulty-${this.currentWord?.difficulty || 'easy'}`;
   }
 
   getTimeDisplayClass(): string {

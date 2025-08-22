@@ -1,0 +1,50 @@
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentWord.correct"
+  [difficulty]="currentDifficulty"
+> 
+    <div class="game-card mx-auto">
+             <h2 class="card-title">Match the Words with Emojis</h2>          
+          <div class="matching-area">
+            <!-- Words Column -->
+            <div class="column">
+              <h3>Words</h3>
+              <div class="items-container">
+                <div *ngFor="let word of words" 
+                     class="word-box"
+                     [class.selected]="selectedWord === word"
+                     [class.matched]="word.matched"
+                     (click)="selectWord(word)">
+                  {{ word.word }}
+                </div>
+              </div>
+            </div>
+      
+            <!-- Emojis Column -->
+            <div class="column">
+              <h3>Emojis</h3>
+              <div class="items-container">
+                <div *ngFor="let emoji of emojis" 
+                     class="emoji-box"
+                     [class.matched]="emoji.matched"
+                     (click)="selectEmoji(emoji)">
+                  {{ emoji.emoji }}
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Feedback Message -->
+          <div *ngIf="feedback" class="feedback" [class.success]="gameComplete">
+            {{ feedback }}
+          </div>
+      
+          <!-- Game Complete Overlay -->
+          <div *ngIf="gameComplete" class="game-complete">
+            <h2>🎉 Game Complete! 🎉</h2>
+            <p>Your final score: {{ score }}</p>
+            <button class="play-again-btn" (click)="resetGame()">Play Again</button>
+          </div>
+    </div>          
+</app-game-template>

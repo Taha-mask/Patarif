@@ -1,8 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
+interface CurrentWord {
+  difficulty: 'easy' | 'medium' | 'hard';
+  sentence: string;
+  correct: string;
+}
+
 interface Sentence {
   words: string[];
+  difficulty?: 'easy' | 'medium' | 'hard';
 }
 @Component({
   selector: 'app-sort-words',
@@ -28,10 +35,15 @@ export class SortWordsComponent {
     level: number = 1;
     questionsCorrectInLevel: number = 0;
     timeElapsed: number = 0;
-    currentWord = {
+    currentWord: CurrentWord = {
       difficulty: 'easy',
-      sentence: ''
+      sentence: '',
+      correct: ''
     };
+    
+    get currentDifficulty() {
+      return this.currentWord.difficulty;
+    }
     bonusPoints: number = 0;
     private timer: any;
     
@@ -97,15 +109,17 @@ export class SortWordsComponent {
   
     loadSentence() {
       const current = this.sentences[this.currentIndex];
+      const correctSentence = current.words.join(' ');
       this.shuffledWords = this.shuffle([...current.words]);
       this.selectedWords = [];
       this.feedback = null;
       this.isCorrect = null;
       
-      // Update current word with difficulty based on level
+      // Update current word with all required properties
       this.currentWord = {
-        difficulty: this.getDifficultyText(),
-        sentence: current.words.join(' ')
+        difficulty: this.getDifficultyText() as 'easy' | 'medium' | 'hard',
+        sentence: correctSentence,
+        correct: correctSentence
       };
     }
   
@@ -113,6 +127,16 @@ export class SortWordsComponent {
       if (this.feedback) return; // disable after check
       this.selectedWords.push(word);
       this.shuffledWords = this.shuffledWords.filter(w => w !== word);
+    }
+  
+    removeWord(word: string, index: number) {
+      // Remove the word from selected words
+      this.selectedWords.splice(index, 1);
+      // Add it back to the shuffled words
+      this.shuffledWords = [...this.shuffledWords, word];
+      // Clear any previous feedback
+      this.feedback = null;
+      this.isCorrect = null;
     }
   
     checkAnswer() {

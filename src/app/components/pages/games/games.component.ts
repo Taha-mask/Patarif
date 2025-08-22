@@ -39,6 +39,10 @@ export class GamesComponent {
     else if (event.index === 5) {
       this.router.navigate(['/guess-eemoji']);
     }
+    else if (event.index === 6) {
+      this.router.navigate(['/matchint-words']);
+    }
+
     
     // You can add more navigation logic for other cards here
   }

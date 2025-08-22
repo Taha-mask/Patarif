@@ -4,7 +4,6 @@
   max-width: 100%;
   margin: 0 auto;
   padding: 1rem;
-  min-height: 500px;
   position: relative;
 }
 
@@ -18,193 +17,49 @@
   75% { transform: translateX(5px); }
 }
 
-/* Game Header Styles */
-.game-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-  border-radius: 1rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.level-progress {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 200px;
-}
-
-.level-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.level-text {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #374151;
-}
-
-.progress-text {
-  font-size: 0.9rem;
-  color: #6b7280;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background: rgba(156, 163, 175, 0.3);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4ade80, #22c55e);
-  border-radius: 4px;
-  transition: width 0.5s ease;
-}
-
-.timer-section {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.timer {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  font-weight: bold;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-}
-
-.timer.time-good {
-  background: linear-gradient(135deg, #4ade80, #22c55e);
-  color: white;
-}
-
-.timer.time-warning {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: white;
-}
-
-.timer.time-danger {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.difficulty-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  font-weight: bold;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.difficulty-easy {
-  background: linear-gradient(135deg, #4ade80, #22c55e);
-  color: white;
-}
-
-.difficulty-medium {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: white;
-}
-
-.difficulty-hard {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-}
-
-.bonus-points {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-  border-radius: 2rem;
-  font-weight: bold;
-  animation: bounceIn 0.5s ease-out;
-}
-
-@keyframes bounceIn {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
 
 /* Main Game Area */
 .game-main {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  align-items: start;
-}
-
-/* Image Section */
-.image-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  position: sticky;
-  top: 2rem;
-}
-
-.image-container {
-  position: relative;
-  border-radius: 1.5rem;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-}
-
-.image-container:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
-}
-
-.word-image {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  transition: all 0.3s ease;
-}
-
-.word-image.correct {
-  filter: brightness(1.2) saturate(1.3);
-  transform: scale(1.02);
-}
-
-.image-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(16, 185, 129, 0.3));
-  display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.5s ease-out;
+  
+}
+
+.image-container img {
+  width: 100%;
+  height: 50vh;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+.image-container{
+margin: 1rem;
+}
+
+.image-section{
+width:100%;
+}
+  
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+
+.success-icon {
+  font-size: 4rem;
+  color: #10b981;
+  animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  text-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
 }
 
 .success-icon {
@@ -243,16 +98,14 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-.container{
-  flex-direction: column;
-  gap: 0px;
-}
+
 /* Letters Section */
 .letters-section {
   display: flex;
   flex-direction: column;
   padding: 1rem;
   gap: 1rem;
+
 }
 
 
@@ -275,8 +128,8 @@
 
 .word-slot {
   position: relative;
-  width: 70px;
-  height: 70px;
+  width: 55px;
+  height: 55px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -311,8 +164,8 @@
 }
 
 .slot-letter-tile {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -360,8 +213,8 @@
 
 
 .letter-tile {
-  width: 65px;
-  height: 65px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -451,26 +304,23 @@
   margin-top: 1rem;
 }
 
-.check-btn,
-.clear-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 2rem;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+
 
 .check-btn {
-  background: linear-gradient(135deg, #10b981, #059669);
+  margin: 0 auto;
   color: white;
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  margin: 0.3rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.938);
+  border-radius: 50px;
+  background: linear-gradient(13deg, #5EDC7D, #49D06A, #A8FFBE);
 }
 
 .check-btn:hover:not(:disabled) {

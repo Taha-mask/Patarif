@@ -1,33 +1,10 @@
-<app-game-template>
-  <div class="container py-4">
-    <!-- Game Header -->
-    <div class="game-header">
-      <div class="level-progress">
-        <div class="level-info">
-          <span class="level-text">Level {{ level }}</span>
-          <span class="progress-text">{{ questionsCorrectInLevel }}/5 completed</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / 5) * 100"></div>
-        </div>
-      </div>
-      
-      <div class="timer-section">
-        <div class="timer" [ngClass]="getTimeDisplayClass()">
-          <i class="timer-icon">⏱️</i>
-          <span>{{ formatTime(timeElapsed) }}</span>
-        </div>
-      </div>
-      
-      <div class="difficulty-badge" [ngClass]="getDifficultyClass()">
-        {{ currentWord.difficulty.toUpperCase() }}
-      </div>
-      
-      <div class="bonus-points" *ngIf="bonusPoints > 0">
-        <span class="bonus-label">Bonus:</span>
-        <span class="bonus-value">+{{ bonusPoints }}</span>
-      </div>
-    </div>
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentWord.correct || ''"
+  [difficulty]="currentDifficulty"
+>  <div class="container py-4">
+    
 
     <!-- Question Container -->
     <div class="question-container p-4 shadow-sm mb-4">

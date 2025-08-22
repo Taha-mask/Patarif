@@ -3,6 +3,12 @@ import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GameTemplateComponent } from "../../../game-template/game-template.component";
 
+interface CurrentWord {
+  difficulty: 'easy' | 'medium' | 'hard';
+  text: string;
+  correct: string;
+}
+
 interface Question {
   emojis: string;
   answer: string;
@@ -49,10 +55,15 @@ export class GuessEemojiComponent {
   level: number = 1;
   questionsCorrectInLevel: number = 0;
   timeElapsed: number = 0;
-  currentWord = {
+  currentWord: CurrentWord = {
     difficulty: 'easy',
-    text: ''
+    text: '',
+    correct: ''
   };
+
+  get currentDifficulty() {
+    return this.currentWord.difficulty;
+  }
   bonusPoints: number = 0;
   private timer: any;
 
@@ -127,8 +138,9 @@ export class GuessEemojiComponent {
       
       // Update current word
       this.currentWord = {
-        difficulty: this.getDifficultyText(),
-        text: this.currentQuestion.answer
+        difficulty: this.getDifficultyText() as 'easy' | 'medium' | 'hard',
+        text: this.currentQuestion.answer,
+        correct: this.currentQuestion.answer
       };
       
       // Move to next question after a delay

@@ -21,11 +21,14 @@ import { CanvasComponent } from './components/pages/games/paint/canvas/canvas.co
 // import { MapComponent } from './components/pages/games/map/map.component';
 import { GuessEemojiComponent } from './components/pages/games/guess-eemoji/guess-eemoji.component';
 import { SortWordsComponent } from './components/pages/games/sort-words/sort-words.component';
+import { MatchintWordsComponent } from './components/pages/games/matchint-words/matchint-words.component';
 export const routes: Routes = [
   { path: 'guess-eemoji', component: GuessEemojiComponent },
+  { path: 'matchint-words', component: MatchintWordsComponent },
   { path: 'gallery', component: GalleryComponent },
   { path: 'canvas/:imageUrl', component: CanvasComponent },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
+  
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'games', component: GamesComponent },

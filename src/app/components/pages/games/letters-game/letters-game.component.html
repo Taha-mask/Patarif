@@ -1,58 +1,32 @@
 <app-game-template
-  [level]="level"
-  [score]="score"
-  [stars]="stars"
-  [questionText]="questionText"
-  [totalQuestions]="totalQuestions"
-  (nextWord)="resetForNewWord()"
-  (retry)="retry()"
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentWord?.correct || ''"
+  [difficulty]="currentDifficulty"
 >
   <div class="enhanced-game-content" [class.shake]="shakeAnimation">
     
-    <!-- Game Header with Timer and Stats -->
-    <div class="game-header">
-      <div class="level-progress">
-        <div class="level-info">
-          <span class="level-text">Level {{ level }}</span>
-          <span class="progress-text">{{ questionsCorrectInLevel }}/5 completed</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / 5) * 100"></div>
-        </div>
-      </div>
-      
-      <div class="timer-section">
-        <div class="timer" [ngClass]="getTimeDisplayClass()">
-          <i class="timer-icon">⏱️</i>
-          <span>{{ formatTime(timeElapsed) }}</span>
-        </div>
-      </div>
-      
-      <div class="difficulty-badge" [ngClass]="getDifficultyClass()">
-        {{ currentWord.difficulty.toUpperCase() }}
-      </div>
-      
-      <div class="bonus-points" *ngIf="bonusPoints > 0">
-        <span class="bonus-label">Bonus:</span>
-        <span class="bonus-value">+{{ bonusPoints }}</span>
-      </div>
-    </div>
-
     <!-- Main Game Area -->
-    <div class="game-main">
-      
+    <div class="game-main ">
       <!-- Image Section -->
-     
-
+      <div class="image-section">
+        <div class="image-container">
+          <img [src]="currentWord?.image || ''" 
+               alt="Guess this word" 
+               class="word-image"
+               [class.correct]="showSuccess">
+       
+        </div>
+      </div>
       <!-- Letters Section -->
-      <div class="letters-section">
+      <div class="letters-section ">
 
-        <div class="container">
           
           <div class="available-area">
           <div class="letter-bank"
                (dragover)="onDragOver($event)"
                (drop)="onDropToAvailable($event)">
+               
             <div class="letter-tile" 
                  *ngFor="let item of availableLetters; let i = index; trackBy: trackByLetterId" 
                  draggable="true"
@@ -63,7 +37,6 @@
               <span class="letter-text">{{ item.letter }}</span>
             </div>
           </div>
-        </div>
 
         <!-- Word Slots -->
         <div class="word-area">
@@ -88,77 +61,21 @@
         </div>
 
       </div>
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <button class="check-btn" 
-                  [disabled]="isCheckButtonDisabled()" 
-                  (click)="checkWord()">
-            <i class="check-icon">✓</i>
-            <span>Check</span>
-          </button>
-          
-          <button class="clear-btn" 
-                  (click)="retry()"
-                  title="Clear and try again">
-            <i class="clear-icon">↺</i>
-            <span>Clear</span>
-          </button>
-        </div>
+     
       </div>
-
-      <div class="image-section">
-        <div class="image-container">
-          <img [src]="currentWord.image" 
-               alt="Guess this word" 
-               class="word-image"
-               [class.correct]="showSuccess">
-          <div class="image-overlay" *ngIf="showSuccess">
-            <div class="success-icon">✨</div>
-          </div>
-        </div>
-        
-        <!-- Hint Button -->
-        <button class="hint-btn" 
-                (click)="showHintDialog()" 
-                [disabled]="showHint"
-                title="Get a hint">
-          <i class="hint-icon">💡</i>
-          <span>Hint</span>
-          <span class="hint-count" *ngIf="gameStats.hintsUsed > 0">({{ gameStats.hintsUsed }})</span>
-        </button>
-      </div>
+  
     </div>
+ <!-- Action Buttons -->
+ <div class="action-buttons">
+  <button class="check-btn" 
+          [disabled]="isCheckButtonDisabled()" 
+          (click)="checkWord()">
+    <i class="check-icon">✓</i>
+    <span>Done</span>
+  </button>
+  
 
-    <!-- Hint Modal -->
-    <div class="hint-modal" *ngIf="showHint" (click)="hideHint()">
-      <div class="hint-content" (click)="$event.stopPropagation()">
-        <div class="hint-header">
-          <h3>💡 Hint</h3>
-          <button class="close-btn" (click)="hideHint()">×</button>
-        </div>
-        <p class="hint-text">{{ currentWord.hint }}</p>
-        <button class="got-it-btn" (click)="hideHint()">Got it!</button>
-      </div>
-    </div>
 
-    <!-- Success Overlay -->
-    <div class="success-overlay" *ngIf="showSuccess">
-      <div class="success-content">
-        <div class="success-animation">🎉</div>
-        <h2>Excellent!</h2>
-        <p>You spelled "{{ currentWord.correct }}" correctly!</p>
-        <div class="success-stats">
-          <div class="stat">
-            <span class="stat-label">Time:</span>
-            <span class="stat-value">{{ formatTime(timeElapsed) }}</span>
-          </div>
-          <div class="stat" *ngIf="bonusPoints > 0">
-            <span class="stat-label">Bonus:</span>
-            <span class="stat-value">+{{ bonusPoints }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
+</div>
   </div>
 </app-game-template>

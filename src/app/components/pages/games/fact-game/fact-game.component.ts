@@ -7,10 +7,15 @@ interface Option {
   isCorrect: boolean;
 }
 
+interface CurrentWord {
+  difficulty: 'easy' | 'medium' | 'hard';
+  correct: string;
+}
+
 interface Question {
   text: string;
   options: Option[];
-  difficulty: string;
+  difficulty: 'easy' | 'medium' | 'hard';
 }
 
 @Component({
@@ -72,9 +77,15 @@ export class FactGameComponent implements OnInit {
     return this.questions[this.currentIndex];
   }
 
-  get currentWord() {
-    // Template expects this
-    return { difficulty: this.currentQuestion.difficulty };
+  get currentWord(): CurrentWord {
+    return { 
+      difficulty: this.currentQuestion.difficulty,
+      correct: this.currentQuestion.options.find(opt => opt.isCorrect)?.text || ''
+    };
+  }
+
+  get currentDifficulty() {
+    return this.currentQuestion.difficulty;
   }
 
   ngOnInit() {

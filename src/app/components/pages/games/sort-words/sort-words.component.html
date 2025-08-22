@@ -1,75 +1,71 @@
-<app-game-template>
-    <div class="big-container mx-auto w-100 p-4">
-    <div class="game-header">
-        <div class="level-progress">
-          <div class="level-info">
-            <span class="level-text">Level {{ level }}</span>
-            <span class="progress-text">{{ questionsCorrectInLevel }}/5 completed</span>
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentWord?.correct || ''"
+  [difficulty]="currentDifficulty"
+>
+  <div class="container d-flex justify-content-center align-items-center py-4">
+    <div class="game-card">
+      <div class="card-body">
+        <h2 class="card-title">Arrange the Sentence</h2>
+        
+        <!-- Instructions -->
+        <!-- <p class="text-muted mb-4">Click on the words below to arrange them into a correct sentence</p> -->
+        
+        <!-- Shuffled Words -->
+        <div class="mb-3">
+          <button 
+            *ngFor="let word of shuffledWords"
+            class="btn"
+            (click)="selectWord(word)">
+            {{ word }}
+          </button>
+        </div>
+        
+        <!-- Selected Words -->
+        <div class="selected-words mb-4">
+          <div *ngIf="selectedWords.length === 0" class="text-muted h-100 d-flex align-items-center justify-content-center">
+            <!-- <div class="text-center">
+              <i class="bi bi-arrow-up-circle fs-1 d-block mb-2"></i>
+              <span>Click on the words above to build your sentence</span>
+            </div> -->
           </div>
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / 5) * 100"></div>
+          <div *ngIf="selectedWords.length > 0" class="selected-sentence">
+            <span *ngFor="let word of selectedWords; let i = index; let last = last" 
+                  class="selected-word"
+                  (click)="removeWord(word, i)"
+                  [title]="'Click to remove ' + word">
+              {{ word }}<span *ngIf="!last"> </span>
+            </span>
           </div>
         </div>
         
-        <div class="timer-section">
-          <div class="timer" [ngClass]="getTimeDisplayClass()">
-            <i class="timer-icon">⏱️</i>
-            <span>{{ formatTime(timeElapsed) }}</span>
-          </div>
+        <!-- Feedback -->
+        <div *ngIf="feedback" class="feedback" 
+             [ngClass]="{'correct': isCorrect, 'wrong': !isCorrect}">
+          <i class="bi" [ngClass]="isCorrect ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+          {{ feedback }}
         </div>
         
-        <div class="difficulty-badge" [ngClass]="getDifficultyClass()">
-          {{ currentWord.difficulty.toUpperCase() }}
-        </div>
-        
-        <div class="bonus-points" *ngIf="bonusPoints > 0">
-          <span class="bonus-label">Bonus:</span>
-          <span class="bonus-value">+{{ bonusPoints }}</span>
-        </div>
-      </div>
-
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card text-center shadow-lg game-card">
-          <div class="card-body">
-            <h4 class="card-title mb-3">Arrange the Sentence</h4>
-      
-            <!-- Shuffled Words -->
-            <div class="mb-3">
-              <button *ngFor="let word of shuffledWords"
-                      class="btn btn-outline-primary m-1"
-                      (click)="selectWord(word)">
-                {{ word }}
-              </button>
-            </div>
-      
-            <!-- Selected Words -->
-            <div class="mb-3">
-              <span *ngFor="let word of selectedWords" class="badge bg-secondary me-1">
-                {{ word }}
-              </span>
-            </div>
-      
-            <!-- Check Button -->
-            <button class="btn btn-success w-100 mb-2"
-                    (click)="checkAnswer()"
-                    [disabled]="feedback !== null || selectedWords.length === 0">
-              Check
-            </button>
-      
-            <!-- Feedback -->
-            <div *ngIf="feedback" class="alert"
-                 [ngClass]="{'alert-success': isCorrect, 'alert-danger': !isCorrect}">
-              {{ feedback }}
-            </div>
-      
-            <!-- Next Button -->
-            <button class="btn btn-secondary w-100"
-                    (click)="nextSentence()"
-                    [disabled]="feedback === null">
-              Next
-            </button>
-          </div>
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn " 
+                  (click)="checkAnswer()"
+                  [disabled]="selectedWords.length === 0"
+                  [class.btn-success]="isCorrect"
+                  [class.btn-danger]="feedback && !isCorrect">
+            <i class="bi bi-check-lg me-1"></i>
+            {{ isCorrect ? 'Correct!' : 'Check Answer' }}
+          </button>
+          
+          <button class="btn " 
+                  (click)="nextSentence()"
+                  *ngIf="isCorrect || feedback">
+            <i class="bi bi-arrow-right me-1"></i>
+            Next
+          </button>
         </div>
       </div>
-      </div>
+    </div>
+  </div>
 </app-game-template>
