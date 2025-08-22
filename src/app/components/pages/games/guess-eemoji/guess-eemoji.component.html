@@ -1,0 +1,49 @@
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentWord?.correct || ''"
+  [difficulty]="currentDifficulty"
+>    <div class="big-container mx-auto w-100 p-4">
+ 
+  <!-- Game Content -->
+  <div class="container d-flex justify-content-center align-items-center ">
+    <div class="card text-center shadow-lg game-card">
+      <div class="card-body">
+        <h4 class="card-title">Guess the Meaning!</h4>
+        <p class="display-4 mb-4">{{ currentQuestion.emojis }}</p>
+        
+        <!-- Options -->
+        <div class="options-container mb-4">
+          <button *ngFor="let option of currentQuestion.options"
+                  class="btn option-btn"
+                  (click)="checkAnswer(option)"
+                  [disabled]="feedback !== null"
+                  [class.btn-success]="feedback !== null && option === currentQuestion.answer"
+                  [class.btn-danger]="feedback !== null && option === selectedOption && option !== currentQuestion.answer"
+                  [class.btn-outline-secondary]="feedback !== null && option !== selectedOption && option !== currentQuestion.answer">
+            {{ option }}
+          </button>
+        </div>
+  
+        <!-- Feedback -->
+        <div *ngIf="feedback" class="alert mb-3"
+             [ngClass]="{'alert-success': isCorrect, 'alert-danger': !isCorrect}">
+          {{ feedback }}
+        </div>
+  
+      
+      </div>
+      
+    </div>
+    
+  </div>
+    <!-- Next/Play Again Button -->
+<div class=" align-items-center justify-content-center d-flex mt-4 mx-auto w-100 ">
+    <button class="btn btn-primary px-5 py-2 fw-medium"
+    (click)="nextQuestion()"
+    [disabled]="!selectedOption">
+{{ currentIndex < questions.length - 1 ? 'Next' : 'Play Again' }}
+</button>
+</div>
+</div>
+</app-game-template>

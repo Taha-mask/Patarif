@@ -1,0 +1,81 @@
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentWord?.correct || ''"
+  [difficulty]="currentDifficulty"
+>
+  <div class="enhanced-game-content" [class.shake]="shakeAnimation">
+    
+    <!-- Main Game Area -->
+    <div class="game-main ">
+      <!-- Image Section -->
+      <div class="image-section">
+        <div class="image-container">
+          <img [src]="currentWord?.image || ''" 
+               alt="Guess this word" 
+               class="word-image"
+               [class.correct]="showSuccess">
+       
+        </div>
+      </div>
+      <!-- Letters Section -->
+      <div class="letters-section ">
+
+          
+          <div class="available-area">
+          <div class="letter-bank"
+               (dragover)="onDragOver($event)"
+               (drop)="onDropToAvailable($event)">
+               
+            <div class="letter-tile" 
+                 *ngFor="let item of availableLetters; let i = index; trackBy: trackByLetterId" 
+                 draggable="true"
+                 [style.background-color]="item.color"
+                 [class.dragging]="item.isDragging"
+                 (dragstart)="onDragStart($event, item, undefined, i)"
+                 (dragend)="onDragEnd($event, item)">
+              <span class="letter-text">{{ item.letter }}</span>
+            </div>
+          </div>
+
+        <!-- Word Slots -->
+        <div class="word-area">
+          <div class="word-slots">
+            <div class="word-slot" 
+                 *ngFor="let slot of wordSlots; let i = index" 
+                 [class.filled]="slot"
+                 [class.correct]="slot?.isCorrect"
+                 (dragover)="onDragOver($event)"
+                 (drop)="onDropToSlot($event, i)">
+              <div *ngIf="slot" 
+                   draggable="true"
+                   [style.background-color]="slot.color"
+                   class="slot-letter-tile"
+                   (dragstart)="onDragStart($event, slot, i)"
+                   (dragend)="onDragEnd($event, slot)">
+                {{ slot.letter }}
+              </div>
+              <span class="slot-placeholder" *ngIf="!slot">{{ i + 1 }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+     
+      </div>
+  
+    </div>
+ <!-- Action Buttons -->
+ <div class="action-buttons">
+  <button class="check-btn" 
+          [disabled]="isCheckButtonDisabled()" 
+          (click)="checkWord()">
+    <i class="check-icon">✓</i>
+    <span>Done</span>
+  </button>
+  
+
+
+</div>
+  </div>
+</app-game-template>
