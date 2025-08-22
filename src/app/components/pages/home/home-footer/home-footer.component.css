@@ -9,19 +9,36 @@
     padding: 2rem 3rem;
     box-sizing: border-box;
     align-items: center;
+    border-radius: 24px 24px 0 0;
+    margin: 0;
+    
 }
 
 /* Logo Section */
 .logo-section {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    flex-direction: column;
+    height: 100%;
 }
+
+.logo-section p {
+    width: 100%;
+    text-align: start;
+    font-family: 'Comic Relief';
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 200;
+    margin: 0;
+}
+
 .logo img {
     max-width: 100px;
     height: auto;
     transition: transform 0.3s ease;
 }
+
 .logo img:hover {
     transform: scale(1.05);
 }
@@ -41,6 +58,7 @@
     justify-content: center;
     gap: 0.7rem;
 }
+
 .links .link {
     border: 1px solid white;
     border-radius: 20px;
@@ -53,10 +71,12 @@
     transition: all 0.3s ease;
     background-color: rgba(255, 255, 255, 0.1);
 }
+
 .links .link:hover {
     background-color: white;
     color: #006aff;
     transform: translateY(-2px);
+    cursor: pointer;
 }
 
 /* Social Media */
@@ -65,6 +85,7 @@
     justify-content: center;
     gap: 0.8rem;
 }
+
 .social-link {
     border: 1px solid white;
     border-radius: 50%;
@@ -77,6 +98,7 @@
     transition: all 0.3s ease;
     font-size: 1.4rem;
 }
+
 .social-link:hover {
     background-color: white;
     color: #006aff;
@@ -90,10 +112,12 @@
         text-align: center;
         gap: 1.5rem;
     }
+
     .links {
         flex-direction: column;
         align-items: center;
     }
+
     .links .link {
         width: 80%;
     }

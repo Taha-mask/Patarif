@@ -1,0 +1,91 @@
+<app-background></app-background>
+<app-stars-background></app-stars-background>
+
+<div class="main">
+    <div class="pageTitle">
+
+        <h1 class="title">Shop Cart</h1>
+        <p class="links"><span>home</span> > <span>shop</span> > cart</p>
+    </div>
+
+    <table border="0" class="products-table">
+        <thead>
+            <tr>
+                <th>product</th>
+                <th>size</th>
+                <th>price</th>
+                <th>color</th>
+                <th>quantity</th>
+                <th>subtotal</th>
+                <th>remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of cart">
+                <td class="product" data-label="product">
+                    <div class="product-img"><img [src]="item.image"></div>
+                    {{ item.name }}
+                </td>
+                <td data-label="size">{{ item.size }}</td>
+                <td data-label="price">{{ item.price }}$</td>
+                <td data-label="color">
+                    <div [style.background]="item.color"
+                        style="width: 25px; height: 25px; border-radius: 50%; border:1px solid #ccc;">
+                    </div>
+                </td>
+                <td data-label="quantity">
+                    <div class="quantity">
+                        <button (click)="decreaseQuantity(item)"><i class="bi bi-dash-square"></i></button>
+                        {{item.quantity}}
+                        <button (click)="increaseQuantity(item)"><i class="bi bi-plus-square-fill"></i></button>
+                    </div>
+                </td>
+                <td data-label="subtotal">{{ getSubtotal(item) }}$</td>
+                <td data-label="remove" class="remove">
+                    <button (click)="removeItem(item)"><i class="bi bi-trash3"></i></button>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+    <div class="section2">
+        <div class="invoice">
+            <div class="discount-code">
+                <form action="">
+
+                    <input type="text" placeholder="Discount Code">
+                    <button type="submit">applay</button>
+                </form>
+            </div>
+            <div class="checkout">
+                <p class="no-products" *ngIf="total == 0">select products first</p>
+                <div class="cart-details" *ngIf="total != 0">
+                    <div class="part">
+                        <p class="part-title">Subtotal</p>
+                        <p class="value">$274.59</p>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="part">
+                        <p class="part-title">Shipping</p>
+                        <p class="value">Free</p>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="part">
+                        <p class="part-title">Estimate for</p>
+                        <p class="value">United Kingdom</p>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="part">
+                        <p class="part-title">Total</p>
+                        <p class="value">${{total}}</p>
+                    </div>
+                    <button class="checkout-button" (click)="verifyCheckout()">Proceed To CheckOut</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<div class="before-footer"></div>
+<app-home-footer></app-home-footer>

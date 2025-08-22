@@ -1,26 +1,48 @@
 body {
     overflow-x: hidden;
+    position: relative;
 }
 
-.hero{
+.hero {
     padding: 20px 20px 60px 60px;
     animation: fadeInFromTop 1s ease-out;
+    position: relative;
+    width: 100vw;
 }
 
 .paper-plane {
     position: absolute;
     z-index: -1;
-    top: -200px;
+    top: 20%;
     left: 0;
     animation: fadeInFromTop 1s ease-out 0.2s both;
+    width: 100vw;
 }
-
-.welcome {
+.paper-plane img{
+    object-fit: contain;
+    width: 100%;
+    height: 100%
+}
+.wand{
+    position: absolute;
+    top: 92%;
+    left: 8%;
+    width: 16%;
+}
+*{
+    /* border: red 1px solid; */
+}
+.wand img{
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+/* .play-line .welcome {
     display: flex;
     align-items: center;
     gap: 8px;
     animation: fadeInFromTop 1s ease-out 0.4s both;
-}
+} */
 
 .welcome-img img {
     width: 40px;
@@ -54,10 +76,10 @@ body {
 }
 
 .logo {
-  width: clamp(200px, 40vw, 500px);
-  height: auto;
-  margin-top: 60px;
-  animation: fadeInFromTop 1s ease-out 0.8s both;
+    width: clamp(200px, 40vw, 500px);
+    height: auto;
+    margin-top: 60px;
+    animation: fadeInFromTop 1s ease-out 0.8s both;
 }
 
 
@@ -67,6 +89,7 @@ body {
         opacity: 0;
         transform: translateY(-30px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -103,38 +126,44 @@ body {
     }
 }
 
-.learn-line {
+.learn-line,
+.play-line {
+    width: 15%;
     position: absolute;
-    top: 400px;
-    left: 80px;
+    top: 57%;
     animation: fadeInFromTop 1s ease-out 1s both;
 }
 
-.play-line {
-    position: absolute;
-    top: 400px;
-    left: 580px;
-    animation: fadeInFromTop 1s ease-out 1.2s both;
+/* المكان الأساسي */
+.learn-line {
+    left: 6%;
 }
 
-.lets-play{
-     position: absolute;
-    top: 9%;
-    left: 33%;
-    width: 20%;
-    /* height: 20%; */
-    /* border: red 1px solid; */
+.play-line {
+    left: 41%;
 }
+
+.lets-play {
+    position: absolute;
+    top: 70%;
+    left: 33%;
+    width: fit-content;
+
+}
+
 .lets-play img {
     animation: spin 10s linear infinite;
     object-fit: cover;
 }
+
 .collection {
     position: absolute;
-    top: 10%;
-    left: 50%;
-
+    width: fit-content;
+    top: 70%;
+    left: 55%;
 }
+
+
 
 .collection-item {
     color: white;
@@ -186,10 +215,10 @@ body {
     will-change: transform;
 }
 
-/* .play {
+.play {
     animation: moveRotateMinus20 4s ease-in-out infinite alternate;
     will-change: transform;
-} */
+}
 
 @keyframes moveRotate20 {
     0% {
@@ -233,35 +262,84 @@ body {
     }
 }
 
-
-
 /* resposive */
-
-/* mobile */
+/* Mobile (up to 480px) */
 @media (max-width: 480px) {
-    .collection{
-        top: 6%;
-        left: 46%;
+    .lets-play {
+        /* width: 20%; */
+        left: 4%;
     }
-    .collection-item{
-    padding: 7px 16px;
+    .wand{
+        left: 70%;
+        width: 30%;
+    }
+   .collection{
+    display: none;
+   }
 
+    .hero-title {
+        text-align: center;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .learn-line,
+    .play-line {
+        top: 60%;
+    }
+
+    .learn-line {
+        left: 24%;
+    }
+
+    .play-line {
+        left: 75%;
     }
 }
 
-/* tablet */
-@media (min-width: 481px) and (max-width: 968px) {
-    .collection{
-        top: 6%;
-        left: 46%;
+/* Tablet (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .collection {
+        left: 70%;
+        top: 77%;
     }
-    .collection-item{
-    padding: 7px 16px;
+    .wand{
+        transform: translateX(-50%);
+        left: 50%;
+    }
+    .lets-play {
+        left: 4%;
+    }
 
+    .hero-title {
+        text-align: center;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .collection-item {
+        padding: 7px 16px;
+        margin: -30px;
+    }
+
+    .learn-line {
+        left: 30%;
+    }
+
+    .play-line {
+        left: 64%;
     }
 }
 
-/* laptob */
+/* Laptop & above (769px+) */
 @media (min-width: 769px) {
 
+    /* رجّع الديفولت أو اعمل ستايل خاص باللابتوب */
+    .logo {
+        display: block;
+    }
 }

@@ -23,7 +23,17 @@ import { GuessEemojiComponent } from './components/pages/games/guess-eemoji/gues
 import { SortWordsComponent } from './components/pages/games/sort-words/sort-words.component';
 import { MatchintWordsComponent } from './components/pages/games/matchint-words/matchint-words.component';
 export const routes: Routes = [
-  { path: 'guess-eemoji', component: GuessEemojiComponent },
+
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AddProductComponent } from './admin-dashboard/add-product/add-product.component';
+import { ProductDetailsComponent } from './components/pages/shop/product-details/product-details.component';
+import { CartComponent } from './components/pages/shop/cart/cart.component';
+import path from 'path';
+
+
+export const routes: Routes = [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'guess-eemoji', component: GuessEemojiComponent },
   { path: 'matchint-words', component: MatchintWordsComponent },
   { path: 'gallery', component: GalleryComponent },
   { path: 'canvas/:imageUrl', component: CanvasComponent },
@@ -47,4 +57,9 @@ export const routes: Routes = [
   // { path: 'map', component: MapComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'sort-words', component: SortWordsComponent },
+  { path: 'add-product', component: AddProductComponent },
+  { path: 'admin-dashboard', component: AdminDashboardComponent },
+  { path: 'product-details/:id', component: ProductDetailsComponent },
+  { path: 'cart', component: CartComponent },
+
 ];

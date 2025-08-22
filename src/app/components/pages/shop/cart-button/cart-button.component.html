@@ -1,0 +1,8 @@
+<!-- go to cart -->
+<!--  -->
+<div class="super" *ngIf="this.dataService.countCart !=0 ">
+  <button (click)="goToCart()" class="cart">
+    <img class="" src="images/shopping/cart.png" alt="cart">
+  </button>
+    <div class="count">{{this.dataService.countCart}}</div>
+</div>

@@ -1,92 +1,25 @@
 .home-container {
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  /* Infinity animation for movement */
-  animation: infinity-path 200ms linear infinite;
-}
-
-@keyframes infinity-path {
-  0% {
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  10% {
-    transform: translate(30px, 20px) scale(1.02) rotate(10deg);
-  }
-  20% {
-    transform: translate(60px, 40px) scale(1.04) rotate(20deg);
-  }
-  30% {
-    transform: translate(90px, 20px) scale(1.02) rotate(10deg);
-  }
-  40% {
-    transform: translate(120px, 0px) scale(1) rotate(0deg);
-  }
-  50% {
-    transform: translate(90px, -20px) scale(0.98) rotate(-10deg);
-  }
-  60% {
-    transform: translate(60px, -40px) scale(0.96) rotate(-20deg);
-  }
-  70% {
-    transform: translate(30px, -20px) scale(0.98) rotate(-10deg);
-  }
-  80% {
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  100% {
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-}
-
-.stars-container {
-  position: fixed;
+  position: absolute; 
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -2;
+  width: 100%;
+  height: 100%; 
   overflow: hidden;
-  pointer-events: none;
+  z-index: -1;
 }
 
-.star {
-  z-index: -2;
-  border-radius: 100%;
-  position: absolute;
-  transition: all 0.3s ease;
-  opacity: 0.8;
-  animation: twinkle 3s infinite ease-in-out;
-  will-change: transform, opacity;
-  pointer-events: none;
+.home-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: stars 4s alternate infinite ;
 }
 
-.star:hover {
-  transform: scale(1.1);
-  opacity: 1;
-}
-
-@keyframes twinkle {
-  0%, 100% {
-    opacity: 0.6;
-    transform: scale(1);
+@keyframes stars {
+  0% {
+    transform: translate(0, 0) scale(0.8);
   }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
+  25% {
+    transform: translate(25px, 20px) scale(1.02);
   }
 }
-
-/* Parallax effect for different star layers */
-.star:nth-child(3n) {
-  animation-duration: 4s;
-}
-
-.star:nth-child(3n+1) {
-  animation-duration: 5s;
-}
-
-.star:nth-child(3n+2) {
-  animation-duration: 6s;
-}
-  

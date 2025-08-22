@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { CategoryCardComponent } from './category-card/category-card.component';
 import { BackgroundComponent } from "../../../background/background.component";
+import { StarsBackgroundComponent } from "../../../stars-background/stars-background.component";
 @Component({
   selector: 'app-categories',
   imports: [
     CategoryCardComponent,
-    BackgroundComponent
+    BackgroundComponent,
+    StarsBackgroundComponent
 ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.css'

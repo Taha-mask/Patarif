@@ -1,22 +1,16 @@
-body{
-    overflow: hidden;
-}
-.home-container {
-    z-index: -1;
-    background-color: rgba(255, 255, 255, 0.301);
-    backdrop-filter: blur(50px);
+body {
+    overflow-y: hidden;
 }
 
-
-.circle {
-    width: 250px;
-    height: 250px;
-    top: 540px;
-    z-index: -2;
-    border-radius: 100%;
-    position: absolute;
-}
-
+/* .background {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+} */
+/* *{
+    border:  green 1px solid;
+} */
 /* Component animation styles */
 .component-animation {
     opacity: 0;
@@ -35,6 +29,7 @@ body{
         opacity: 0;
         transform: translateY(50px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -56,7 +51,8 @@ body{
     opacity: 1;
     transform: translateY(0);
 }
-.footer{
+
+.footer {
     background-color: #6486FF;
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;

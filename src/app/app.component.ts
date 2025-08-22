@@ -8,14 +8,17 @@ import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, NavbarComponent, NgIf],
-  templateUrl:'./app.component.html',
+  templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   hiddenRoutes: string[] = ['/login', '/signup'];
 
-  constructor(public router: Router) {}
+  constructor(public router: Router) { }
 
+  isAdminDashboard(): boolean {
+    return this.router.url.startsWith('/admin-dashboard') || this.router.url.startsWith('/add-product');
+  }
   shouldShowNavbar(): boolean {
     return !this.hiddenRoutes.includes(this.router.url);
   }

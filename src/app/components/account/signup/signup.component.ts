@@ -3,18 +3,22 @@ import { FormBuilder, Validators, FormGroup, ReactiveFormsModule, FormsModule } 
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../../supabase.service';
 import Swal from 'sweetalert2';
+import { StarsBackgroundComponent } from "../../stars-background/stars-background.component";
+import { BackgroundComponent } from "../../background/background.component";
+import { LinesBackgroundComponent } from "../../lines-background/lines-background.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, StarsBackgroundComponent, BackgroundComponent, LinesBackgroundComponent],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
   regirster!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private auth: SupabaseService) {
+  constructor(private formBuilder: FormBuilder, private auth: SupabaseService, private router: Router) {
     this.regirster = this.formBuilder.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
       lastName: ['', [Validators.minLength(2), Validators.maxLength(20)]],
@@ -75,4 +79,11 @@ export class SignupComponent {
     this.showPassword = !this.showPassword;
   }
 
+
+
+    // google sign in
+
+  async signUPWithGoogle() {
+   await this.auth.signInWithGoogle();
+  }
 }
