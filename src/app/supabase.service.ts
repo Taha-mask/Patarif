@@ -3,14 +3,17 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environment/environment.developer';
 import { CartItem } from './services/data.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupabaseService {
+  constructor(private router: Router) {
+  }
   private supabase_client?: SupabaseClient;
 
-  // 🔹 Get client instance
+  //  Get client instance
   private getClient(): SupabaseClient {
     if (!this.supabase_client) {
       this.supabase_client = createClient(
@@ -21,7 +24,7 @@ export class SupabaseService {
     return this.supabase_client;
   }
 
-  // 🔹 Auth
+  //  Auth
   async getCurrentUser() {
     const { data } = await this.getClient().auth.getUser();
     return data.user;
@@ -72,7 +75,40 @@ export class SupabaseService {
       }
     });
   }
+  // providers [google]
+// login with Google
+async signInWithGoogle() {
+  try {
+    const { data, error } = await this.getClient().auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/home` // المكان اللي هيتم إعادة التوجيه ليه بعد Google login
+      }
+    });
 
+    if (error) {
+      console.error('Error:', error.message);
+      return null;
+    }
+
+    // بعد redirect، Supabase هيملأ session تلقائيًا
+    return data;
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    return null;
+  }
+}
+
+
+  // get user data
+  getUser() {
+    return this.getClient().auth.getSession();
+  }
+
+
+  signOut() {
+    return this.getClient().auth.signOut();
+  }
   // add new record in carts , cart_items [insert to supabase]  
 
   async createCart(userEmail: string, subtotal: number, count: number) {
