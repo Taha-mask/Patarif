@@ -1,3 +1,7 @@
+<!-- <app-background></app-background> -->
+<!-- <app-stars-background></app-stars-background> -->
+<!-- <app-lines-background></app-lines-background> -->
+
 <!-- register.component.html -->
 <div class="container">
   <img class="logo" src="images/logo-patarif.png" alt="logo" width="100">
@@ -51,7 +55,7 @@
         </div>
         <div class="another-account mt-3 text-center">
           <div class="defualt-account d-flex justify-content-center gap-3">
-            <button type="button" class="btn btn-outline-dark d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-outline-dark d-flex align-items-center gap-2" (click)="signUPWithGoogle()">
               <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google"
                 style="width: 24px; height: 24px;">
               sign up with Google
