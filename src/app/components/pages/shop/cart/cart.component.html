@@ -21,7 +21,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let item of cart">
+            <tr *ngFor="let item of cart; let i = index"
+                [style.background-color]="i % 2 !== 0 ? '#ffffffd8' : ' #ffffffb4'">
                 <td class="product" data-label="product">
                     <div class="product-img"><img [src]="item.image"></div>
                     {{ item.name }}
