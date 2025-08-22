@@ -12,14 +12,6 @@ export interface CartItem {
   image: string;
 }
 
-export interface releaseCart {
-  productId: string;
-  productTitle: string;
-  productSize: string;
-  productColor: string;
-  quantity: number;
-  
-}
 @Injectable({
   providedIn: 'root'
 })
@@ -60,8 +52,8 @@ export class CartService {
   getTotal(): number {
     return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }
+
   get countCart(): number {
     return this.cart.reduce((sum, item) => sum + item.quantity, 0);
   }
-
 }

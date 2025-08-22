@@ -8,11 +8,13 @@ import Swal from 'sweetalert2';
 import { CartItem, CartService } from '../../../../services/data.service';
 import { ɵEmptyOutletComponent } from "../../../../../../node_modules/@angular/router/router_module.d-Bx9ArA6K";
 import { HomeFooterComponent } from '../../home/home-footer/home-footer.component';
+import { StarsBackgroundComponent } from "../../../stars-background/stars-background.component";
+import { LinesBackgroundComponent } from "../../../lines-background/lines-background.component";
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, BackgroundComponent, HomeFooterComponent, CartButtonComponent],
+  imports: [CommonModule, BackgroundComponent, HomeFooterComponent, CartButtonComponent, StarsBackgroundComponent, LinesBackgroundComponent],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css']
 })
