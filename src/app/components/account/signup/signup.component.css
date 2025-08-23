@@ -79,7 +79,8 @@ body {
 }
 
 .account-header {
-  font-family: 'Satoshi Variable', sans-serif;
+  font-family: 'Baloo 2';
+  font-size: 2.5rem;  
 }
 
 input {
@@ -87,12 +88,17 @@ input {
   border-radius: 16px;
   border: black 1px solid;
   background-color: #F1F1F1BF;
-  font-size: 20px;
-  padding: 12px 16px;
-  height: 56px;
+  /* font-size: 20px; */
+  padding: 12px ;
+  /* height: 56px; */
 }
 
+form .btn span{
+  font-family: 'Baloo 2';
+  font-weight: 700;
+  font-size: 1.3rem;
 
+}
 .btn-create {
   border-radius: 11px;
   font-family: 'Comic Sans MS', cursive, sans-serif;
