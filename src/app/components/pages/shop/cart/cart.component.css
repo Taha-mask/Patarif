@@ -50,7 +50,7 @@ body {
     /* border-collapse: separate; */
     overflow: hidden;
     padding: 4px;
-    background-color: rgba(255, 255, 255, 0.74);
+    /* background-color: #ffffffd8; */
     font-size: clamp(0.8rem, 1.5vw, 1.5rem);
     font-family: 'Comic Relief';
     /* align-items: center;

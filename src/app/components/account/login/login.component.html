@@ -24,7 +24,7 @@
               <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
             </span>
           </div>
-          <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
+          <button type="submit" class="btn btn-primary w-100 p-2" [disabled]="isLoading">
             <span *ngIf="!isLoading">Login</span>
             <span *ngIf="isLoading">
               <i class="fa fa-spinner fa-spin"></i> Logging in...

@@ -1,0 +1,141 @@
+/* products */
+
+
+
+.product-card {
+    background: #ffffff8c;
+    border-radius: 12px;
+    padding: 16px 18px;
+    width: 100%;
+    height: 120px;
+    transform: translateY(0);
+    transition: background 0.2s, transform 0.2s;
+    cursor: normal;
+    display: flex;
+    flex-direction: row;
+    gap: 2%;
+    position: relative;
+}
+
+.animated-love {
+    position: absolute;
+    height: fit-content;
+    width: 6%;
+    right: 4%;
+    top: 50%;
+    animation: dod;
+    /* border: red 1px solid; */
+    overflow: hidden;
+}
+
+.animated-love img {
+    object-fit: contain;
+    width: 100%;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    /* gap: 8px; */
+    justify-content: start;
+    align-items: start;
+    width: 60%;
+    /* border: 2px solid green; */
+}
+
+.card-img {
+    height: 100%;
+    width: 30%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+* {
+    /* border: 1px solid red; */
+}
+
+.title {
+    font-family: var(--mainFont);
+    font-weight: 900;
+    font-size: clamp(0.7rem, 3vw, 3rem);
+    color: #000;
+    text-wrap: nowrap;
+    text-align: left;
+    margin-bottom: 16px;
+}
+
+p,
+h2,
+button {
+    margin: 0;
+}
+
+.product-card:hover {
+    background: #fff;
+    transform: translateY(-5px);
+}
+
+.product-card img {
+    width: 100%;
+    /* height: auto; */
+    object-fit: cover;
+    /* border-radius: 8px; */
+    /* margin-bottom: 8px; */
+}
+
+.product-title {
+    font-family: var(--comic);
+    font-size: clamp(0.7rem, 1.5vw, 1.5rem);
+    font-weight: 900;
+    color: #000;
+    /* margin-bottom: 4px; */
+    text-align: left;
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.3rem;
+    color: #E8B931;
+}
+
+.product-price {
+    font-family: var(--mainFont);
+    font-size: clamp(0.7rem, 2vw, 2rem);
+    font-weight: 900;
+    color: #000;
+}
+
+.add-to-cart {
+    visibility: hidden;
+    margin-top: auto;
+    padding: 8px 18px;
+    font-size: clamp(0.7rem, 1vw, 1rem);
+    border-radius: 24px;
+    background: transparent;
+    color: #222;
+    border: black 1px solid;
+    cursor: pointer;
+    font-family: var(--comic);
+    font-weight: 700;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.add-to-cart:hover {
+    background: #FF006E;
+    color: #fff;
+    border: transparent 1px solid;
+
+}
+
+
+/* half star */
+/* <span class="half-star" *ngIf="hasHalfStar">&#9733;</span> */
+.stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 8px;
+}

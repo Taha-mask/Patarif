@@ -30,8 +30,8 @@ body{
 }
 .home-container {
   z-index: -1;
-  background-color: rgba(255, 255, 255, 0.247);
-  backdrop-filter: blur(70px);
+  background-color: rgba(255, 255, 255, 0.185);
+  backdrop-filter: blur(90px);
   width: 100%;
   height: 100%;
 }
@@ -49,7 +49,7 @@ body{
   top: 1%;
   left: 0;
   background-color: var(--blue);
-  animation: first infinite 8s ease-in-out;
+  animation: first infinite 12s ease-in-out;
 }
 
 @keyframes first {
@@ -83,7 +83,7 @@ body{
   top: 70%;
   left: 8%;
   background-color: var(--orane);
-  animation: second infinite 8s ease-in-out;
+  animation: second infinite 12s ease-in-out;
 }
 
 @keyframes second {
@@ -117,7 +117,7 @@ body{
   top: 20%;
   left: 35%;
   background-color: var(--purble);
-  animation: third infinite 8s ease-in-out;
+  animation: third infinite 12s ease-in-out;
 }
 
 @keyframes third {
@@ -151,7 +151,7 @@ body{
   top: 50%;
   right: 0;
   background-color: var(--pink);
-  animation: forth infinite 8s ease-in-out;
+  animation: forth infinite 12s ease-in-out;
 }
 
 @keyframes forth {
@@ -186,7 +186,7 @@ body{
   top: -16%;
   right: 4%;
   background-color: var(--yellow);
-  animation: fifth infinite 8s ease-in-out;
+  animation: fifth infinite 12s ease-in-out;
 }
 
 @keyframes fifth {
@@ -220,7 +220,7 @@ body{
   top: 90%;
   left: 40%;
   background-color: var(--blue);
-  animation: sixth infinite 8s ease-in-out;
+  animation: sixth infinite 12s ease-in-out;
 }
 
 @keyframes sixth {
@@ -255,7 +255,7 @@ body{
   top: 130%;
   left: 12%;
   background-color: var(--yellow);
-  animation: seventh infinite 8s ease-in-out;
+  animation: seventh infinite 12s ease-in-out;
 }
 
 @keyframes seventh {
@@ -291,7 +291,7 @@ body{
   top: 150%;
   right: 4%;
   background-color: var(--purble);
-  animation: eighth infinite 8s ease-in-out;
+  animation: eighth infinite 12s ease-in-out;
 }
 
 @keyframes eighth {
