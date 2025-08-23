@@ -1,42 +1,35 @@
 // supabase.service.ts
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { environment } from '../../environment/environment.developer';
+import { environment } from '../../environment/environment';
 import { CartItem } from './services/data.service';
 import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
+  
 })
 export class SupabaseService {
   constructor(private router: Router) {
   }
   private supabase_client?: SupabaseClient;
 
-  //  Get client instance
-  private getClient(): SupabaseClient {
-    if (!this.supabase_client) {
-      this.supabase_client = createClient(
-        environment.supabase.url,
-        environment.supabase.key
-      );
-    }
-    return this.supabase_client;
-  }
+  supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+
 
   //  Auth
   async getCurrentUser() {
-    const { data } = await this.getClient().auth.getUser();
+    const { data } = await this.supabase.auth.getUser();
     return data.user;
   }
 
   async getSession() {
-    const { data } = await this.getClient().auth.getSession();
+    const { data } = await this.supabase.auth.getSession();
     return data.session;
   }
 
   async signIn(email: string, password: string) {
-    const { data, error } = await this.getClient().auth.signInWithPassword({
+    const { data, error } = await this.supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -47,7 +40,7 @@ export class SupabaseService {
     if (!user) throw new Error('User not found');
 
     // جلب الدور من جدول profiles
-    const { data: profile, error: profileError } = await this.getClient()
+    const { data: profile, error: profileError } = await this.supabase
       .from('profiles')
       .select('role')
       .eq('user_id', user.id)
@@ -65,7 +58,7 @@ export class SupabaseService {
   }
 
   signUp(email: string, password: string, firstName: string, lastName: string) {
-    return this.getClient().auth.signUp({
+    return this.supabase.auth.signUp({
       email,
       password,
       options: {
@@ -76,43 +69,53 @@ export class SupabaseService {
     });
   }
   // providers [google]
-// login with Google
-async signInWithGoogle() {
-  try {
-    const { data, error } = await this.getClient().auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/home` // المكان اللي هيتم إعادة التوجيه ليه بعد Google login
-      }
-    });
+  // login with Google
+  async signInWithGoogle() {
+    try {
+      const { data, error } = await this.supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/home` // المكان اللي هيتم إعادة التوجيه ليه بعد Google login
+        }
+      });
 
-    if (error) {
-      console.error('Error:', error.message);
+      if (error) {
+        console.error('Error:', error.message);
+        return null;
+      }
+
+      // بعد redirect، Supabase هيملأ session تلقائيًا
+      return data;
+    } catch (err) {
+      console.error('Unexpected error:', err);
       return null;
     }
-
-    // بعد redirect، Supabase هيملأ session تلقائيًا
-    return data;
-  } catch (err) {
-    console.error('Unexpected error:', err);
-    return null;
   }
-}
 
 
   // get user data
   getUser() {
-    return this.getClient().auth.getSession();
+    return this.supabase.auth.getSession();
   }
+
+  // change password
+  async changePassword(newPassword: string) {
+  const { data, error } = await this.supabase.auth.updateUser({
+    password: newPassword
+  });
+
+  if (error) throw error;
+  return data;
+}
 
 
   signOut() {
-    return this.getClient().auth.signOut();
+    return this.supabase.auth.signOut();
   }
   // add new record in carts , cart_items [insert to supabase]  
 
   async createCart(userEmail: string, subtotal: number, count: number) {
-    const { data, error } = await this.getClient()
+    const { data, error } = await this.supabase
       .from('carts')
       .insert([
         {
@@ -133,12 +136,57 @@ async signInWithGoogle() {
   }
 
   async addCartItems(cartId: string, items: any[]) {
-    const { error } = await this.getClient()
+    const { error } = await this.supabase
       .from('cart_items')
       .insert(items);
 
     if (error) throw error;
   }
+
+  // add to favourites:
+
+  async addToFavourites(userEmail: string, productId: string) {
+    const { data, error } = await this.supabase
+      .from('favourites')
+      .insert([
+        {
+          user_email: userEmail,
+          product_id: productId
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async removeFromFavourites(userEmail: string, productId: string) {
+    const { data, error } = await this.supabase
+      .from('favourites')
+      .delete()
+      .eq('user_email', userEmail)
+      .eq('product_id', productId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async isInFavourites(userEmail: string, productId: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from('favourites')
+      .select('id')
+      .eq('user_email', userEmail)
+      .eq('product_id', productId)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    return data !== null; // true لو لقى، false لو مش موجود
+  }
+
 }
 
 

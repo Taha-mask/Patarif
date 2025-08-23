@@ -1,3 +1,55 @@
-<p>profile works!</p>
-<p>{{displayName}}</p>
-<p>{{email}}</p>
+<app-background></app-background>
+
+<div class="main">
+    <div class="image-section">
+        <div class="profile-cover">
+            <img src="images/profileBackground4.jpg" alt="cover">
+        </div>
+        <div class="profile-image">
+            <img src="images/profile.jpg" alt="">
+        </div>
+    </div>
+
+    <div class="profile-data">
+        <div class="data">
+            <h1>name</h1>
+            <div class="divider"></div>
+            <p>{{displayName}}</p>
+        </div>
+        <div class="data">
+            <h1>email</h1>
+            <div class="divider"></div>
+            <p>{{email}}</p>
+        </div>
+        <div class="data password">
+            <h1>password</h1>
+            <div class="divider"></div>
+            <p>change password</p>
+            <div class="change-password">
+                <input type="password" placeholder="New password" [(ngModel)]="newPassword">
+                <input type="password" placeholder="Confirm password" [(ngModel)]="confirmPassword">
+                <button class="btn btn-outline-primary" (click)="onChangePassword()">change passwrod</button>
+            </div>
+
+        </div>
+        <div class="data">
+            <h1>last sign in</h1>
+            <div class="divider"></div>
+            <p>{{lastSignIn}}</p>
+        </div>
+        <div class="data">
+            <h1>created in</h1>
+            <div class="divider"></div>
+            <p>{{createdAt}}</p>
+        </div>
+        <div class="data">
+            <h1>provider</h1>
+            <div class="divider"></div>
+            <p>{{provider}}</p>
+        </div>
+    </div>
+
+    <div class="favourites">
+
+    </div>
+</div>

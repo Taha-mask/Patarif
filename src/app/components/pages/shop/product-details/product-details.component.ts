@@ -10,6 +10,7 @@ import { ɵEmptyOutletComponent } from "../../../../../../node_modules/@angular/
 import { HomeFooterComponent } from '../../home/home-footer/home-footer.component';
 import { StarsBackgroundComponent } from "../../../stars-background/stars-background.component";
 import { LinesBackgroundComponent } from "../../../lines-background/lines-background.component";
+import { SupabaseService } from '../../../../supabase.service';
 
 @Component({
   selector: 'app-product-details',
@@ -110,6 +111,7 @@ export class ProductDetailsComponent implements OnInit {
   // ==========================
   constructor(
     private route: ActivatedRoute,
+    private supabaseServices: SupabaseService,
     public productsService: ProductsService,
     private router: Router,
     private dataService: CartService
@@ -118,13 +120,12 @@ export class ProductDetailsComponent implements OnInit {
   // ==========================
   // On Init
   // ==========================
+  email: string = '';
   async ngOnInit() {
-    setTimeout(() => {
-      const el = document.getElementById('myTargetDiv');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 0);
+    const user = await this.supabaseServices.getCurrentUser();
+    if (user) {
+      this.email = user.email ?? 'email not found';
+    }
 
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
@@ -158,21 +159,25 @@ export class ProductDetailsComponent implements OnInit {
           }
         }
 
-        this.selectedImage = this.product?.images[0];
-        this.isProductStockAvailable = this.productStock > 0;
-
-        if (this.product.rate !== undefined && this.product.rate !== null) {
-          this.setStars(this.product.rate);
-        }
-      } else {
-        console.error('Product not found');
+        // ✅ دلوقتي بعد ما عندك email و product.id
+        const checkFav = await this.supabaseServices.isInFavourites(this.email, this.product.id);
+        this.isFavourite = checkFav === true;
       }
     } catch (err) {
-      console.error('Unexpected error:', err);
+      console.error('Error loading product:', err);
     } finally {
       this.loading = false;
     }
+    this.selectedImage = this.product.images[0];
+
+    setTimeout(() => {
+      const el = document.getElementById('myTargetDiv');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 0);
   }
+
 
   // ==========================
   // Cart
@@ -189,5 +194,23 @@ export class ProductDetailsComponent implements OnInit {
       image: this.selectedImage
     };
     this.dataService.addToCart(newItem);
+  }
+
+  // ==========================
+  // favourites
+  // ==========================
+
+
+  addToFav() {
+    if (this.isFavourite == false) {
+
+      this.supabaseServices.addToFavourites(this.email, this.product.id);
+      this.isFavourite = !this.isFavourite;
+
+    } else {
+      this.supabaseServices.removeFromFavourites(this.email, this.product.id);
+
+      this.isFavourite = !this.isFavourite;
+    }
   }
 }
