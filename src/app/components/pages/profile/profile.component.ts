@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';   // 👈 استورد FormsModule
+import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../../supabase.service';
 import { BackgroundComponent } from "../../background/background.component";
 import Swal from 'sweetalert2';
+import { ProductCardComponent } from "../shop/product-card/product-card.component";
+import { CommonModule } from '@angular/common';
+import { FavProCardComponent } from "./fav-pro-card/fav-pro-card.component";
+import { HomeFooterComponent } from "../home/home-footer/home-footer.component";
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [BackgroundComponent, FormsModule],   // 👈 أضف FormsModule هنا
+  imports: [BackgroundComponent, FormsModule, ProductCardComponent, CommonModule, FavProCardComponent, HomeFooterComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -17,22 +21,38 @@ export class ProfileComponent implements OnInit {
   lastSignIn: string = '';
   createdAt: string = '';
   provider: string = '';
-
-  // الحقول الخاصة بالباسورد
+  userId: string = '';
   newPassword: string = '';
   confirmPassword: string = '';
 
   constructor(private supabaseService: SupabaseService) { }
 
+  favouriteProducts: any[] = [];
+  profileImageUrl: string | null = null;
+
+
+  async onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      const url = await this.supabaseService.uploadProfileImage(file, this.userId);
+      if (url) {
+        this.profileImageUrl = url;
+      }
+    }
+  }
+
   async ngOnInit() {
     const user = await this.supabaseService.getCurrentUser();
     if (user) {
+      this.userId = user.id;
       this.displayName = user.user_metadata?.['display_name'] ?? 'name not found';
       this.email = user.email ?? 'email not found';
       this.lastSignIn = this.formatDate(user.last_sign_in_at);
       this.createdAt = this.formatDate(user.created_at);
       this.provider = user.app_metadata?.provider ?? 'not available';
     }
+    this.favouriteProducts = await this.supabaseService.loadUserFavourites(this.email);
+    console.log(this.favouriteProducts);
   }
 
   async onChangePassword() {

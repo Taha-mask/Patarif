@@ -6,7 +6,7 @@
 .main {
     /* border: 2px solid green; */
     width: 100%;
-    height: 100vh;
+    height: fit-content;
     padding: 32px;
     display: flex;
     flex-direction: column;
@@ -17,7 +17,7 @@
 
 .image-section {
     /* border: 2px solid red; */
-    height: 20%;
+    height: 150px;
     width: 100%;
     position: relative;
 }
@@ -43,15 +43,38 @@
     top: 90%;
     left: 50%;
     /* border: black 2px solid; */
-
-
     width: 120px;
     height: 120px;
-
     border-radius: 50%;
     overflow: hidden;
     background: #ffffff7e;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease-in-out;
+}
+
+
+.upload-btn {
+    position: absolute;
+    z-index: 100;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    /* background: #4CAF50; */
+    width: 100%;
+    height: 100%;
+    color: white;
+    padding: 8px 16px;
+    background-color: rgba(0, 0, 0, 0.452);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 32px;
+    display: none;
+    transition: all 0.3s ease-in-out;
+    
+}
+.image-section .profile-image:hover .upload-btn{
+    display: block;
 }
 
 .image-section .profile-image img {
@@ -115,7 +138,8 @@
 
     margin: 0;
 }
-.profile-data .data .btn{
+
+.profile-data .data .btn {
     border: none;
     background-color: #ffffff;
     color: #8a58fd;
@@ -123,19 +147,24 @@
     width: 50%;
     transition: all 0.3s ease-in-out;
 }
-.profile-data .data .btn:hover{
+
+.profile-data .data .btn:hover {
     width: 80%;
 }
+
 .password {
     height: fit-content;
 }
-.password:hover .change-password{
+
+.password:hover .change-password {
     display: flex;
 }
-.password:hover p{
+
+.password:hover p {
     display: none;
 }
-.change-password{
+
+.change-password {
     transition: all 0.3s ease-in-out;
     display: none;
     flex-direction: column;
@@ -144,7 +173,7 @@
     justify-content: center;
 }
 
-.change-password input{
+.change-password input {
     width: 90%;
     background-color: rgba(255, 255, 255, 0.521);
     border-radius: 12px;
@@ -155,18 +184,55 @@
     border: #ffffffa9 1px solid;
 
 }
-.change-password input:focus{
-    outline :none;
+
+.change-password input:focus {
+    outline: none;
 }
+
+/* favs */
+.favourites {
+    background-color: rgba(255, 255, 255, 0.616);
+    padding: 16px;
+    width: 100%;
+    border-radius: 24px;
+    margin-bottom: 40px;
+}
+
+.favourites h1 {
+    text-align: center;
+    font-family: var(--mainFont);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+}
+
+.favs-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    justify-items: center;
+    align-items: center;
+}
+
 
 @media (max-width: 992px) {
     .profile-data {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .favs-items {
+        grid-template-columns: repeat(2, 1fr);
+
     }
 }
 
 @media (max-width: 576px) {
     .profile-data {
         grid-template-columns: 1fr;
+    }
+
+    .favs-items {
+        grid-template-columns: repeat(1, 1fr);
+
     }
 }

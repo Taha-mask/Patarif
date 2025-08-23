@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
-  
+
 })
 export class SupabaseService {
   constructor(private router: Router) {
@@ -100,13 +100,13 @@ export class SupabaseService {
 
   // change password
   async changePassword(newPassword: string) {
-  const { data, error } = await this.supabase.auth.updateUser({
-    password: newPassword
-  });
+    const { data, error } = await this.supabase.auth.updateUser({
+      password: newPassword
+    });
 
-  if (error) throw error;
-  return data;
-}
+    if (error) throw error;
+    return data;
+  }
 
 
   signOut() {
@@ -185,6 +185,130 @@ export class SupabaseService {
     if (error) throw error;
 
     return data !== null; // true لو لقى، false لو مش موجود
+  }
+
+  //get products from favourites
+
+  async getUserFavouriteProductIds(userEmail: string): Promise<string[]> {
+    const { data, error } = await this.supabase
+      .from('favourites')
+      .select('product_id')
+      .eq('user_email', userEmail);
+
+    if (error) {
+      console.error('Error fetching favourite product ids:', error);
+      return [];
+    }
+
+    return data.map((fav: any) => fav.product_id);
+  }
+
+  async getProductsByIds(productIds: string[]) {
+    if (productIds.length === 0) return [];
+
+    const { data, error } = await this.supabase
+      .from('products')
+      .select('*')
+      .in('id', productIds);
+
+    if (error) {
+      console.error('Error fetching products:', error);
+      return [];
+    }
+
+    return data;
+  }
+
+  async loadUserFavourites(userEmail: string) {
+    const productIds = await this.getUserFavouriteProductIds(userEmail);
+    return this.getProductsByIds(productIds);
+  }
+  // profile image
+  async uploadProfileImage(file: File, userId: string): Promise<string | null> {
+    try {
+      const folderPath = `avatars/${userId}`;
+      const filePath = `${folderPath}/${Date.now()}_${file.name}`;
+
+      // geting folder which have images
+      const { data: files, error: listError } = await this.supabase.storage
+        .from('avatars')
+        .list(folderPath);
+
+      if (listError) {
+        console.error('Error listing files:', listError.message);
+      } else if (files && files.length > 0) {
+        // delete old image
+        const filesToRemove = files.map(f => `${folderPath}/${f.name}`);
+        const { error: removeError } = await this.supabase.storage
+          .from('avatars')
+          .remove(filesToRemove);
+
+        if (removeError) {
+          console.error('Error deleting old files:', removeError.message);
+        } else {
+          console.log('Old files deleted:', filesToRemove);
+        }
+      }
+
+      // upload new image
+      const { error: uploadError } = await this.supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError.message);
+        return null;
+      }
+
+      // get img url
+      const { data } = this.supabase.storage.from('avatars').getPublicUrl(filePath);
+      return data.publicUrl;
+
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      return null;
+    }
+  }
+
+  // get profile image for navbar , ..etc
+
+  // get profile image by userId
+  async getProfileImage(userId: string): Promise<string> {
+    try {
+      const folderPath = `avatars/${userId}`;
+
+      // 1️⃣ جيب كل الملفات اللي موجودة
+      const { data: files, error } = await this.supabase.storage
+        .from('avatars')
+        .list(folderPath);
+
+      if (error) {
+        console.error("Error listing files:", error.message);
+        return "images/background.png"; 
+      }
+
+      if (!files || files.length === 0) {
+        return "images/background.png"; 
+      }
+
+      const latestFile = files.sort((a, b) =>
+        (b.created_at || "").localeCompare(a.created_at || "")
+      )[0];
+
+      const filePath = `${folderPath}/${latestFile.name}`;
+
+      const { data: publicData } = this.supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      return publicData.publicUrl || "images/background.png";
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      return "images/background.png";
+    }
   }
 
 }

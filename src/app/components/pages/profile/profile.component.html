@@ -3,11 +3,20 @@
 <div class="main">
     <div class="image-section">
         <div class="profile-cover">
-            <img src="images/profileBackground4.jpg" alt="cover">
+            <img src="images/profileBackground.jpg" alt="cover">
         </div>
         <div class="profile-image">
-            <img src="images/profile.jpg" alt="">
+            <img *ngIf="profileImageUrl; else noImg" [src]="noImg" alt="Profile Image" />
+            <ng-template #noImg>
+                <img src="images/account.png" alt="no image">
+            </ng-template>
+            <button type="button" class="upload-btn" (click)="fileInput.click()">
+                <i class="bi bi-exposure"></i> </button>
+
+            <input type="file" accept="image/*" #fileInput style="display: none;" (change)="onFileSelected($event)" />
         </div>
+
+
     </div>
 
     <div class="profile-data">
@@ -50,6 +59,15 @@
     </div>
 
     <div class="favourites">
+        <h1>Favourites</h1>
 
+        <div class="favs-items">
+            <app-fav-pro-card *ngFor="let product of favouriteProducts" [title]="product.title"
+                [img]="product.images[0]" [price]="product.final_price" [rate]="product.rate">
+            </app-fav-pro-card>
+        </div>
     </div>
+
 </div>
+
+<!-- <app-home-footer></app-home-footer> -->
