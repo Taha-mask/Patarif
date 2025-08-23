@@ -1,0 +1,57 @@
+.game-card {
+  max-width: 500px;
+  width: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+color: white;
+}
+
+.options-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0;
+
+}
+
+.option-btn {
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+color: white;
+  border: 2px solid rgba(255, 255, 255, 0.473);
+}
+
+.option-btn:disabled {
+  opacity: 1;
+}
+
+.option-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.alert {
+  border-radius: 8px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.display-4 {
+  font-size: 3rem;
+  margin: 20px 0;
+}
+
+@media (max-width: 576px) {
+  .options-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .display-4 {
+    font-size: 2.5rem;
+  }
+}
+

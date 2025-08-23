@@ -3,9 +3,9 @@ import { Router } from '@angular/router';
 import { CardsComponent } from '../../cards/cards.component';
 import { Card } from '../../../interface/card';
 import { BackgroundComponent } from "../../background/background.component";
-import { LettersGameComponent } from "../../games/letters-game/letters-game.component";
-import { CountryGuessingComponent } from "../../games/country-guessing/country-guessing.component";
-import { FactGameComponent } from "../../games/fact-game/fact-game.component";
+import { LettersGameComponent } from "../../pages/games/letters-game/letters-game.component";
+// import { CountryGuessingComponent } from "../../games/country-guessing/country-guessing.component";
+// import { FactGameComponent } from "../../games/fact-game/fact-game.component";
 @Component({
   selector: 'app-games',
   templateUrl: './games.component.html',
@@ -29,6 +29,26 @@ export class GamesComponent {
     else if (event.index === 2) {
       this.router.navigate(['/fact-game']);
     }
+    else if (event.index === 3) {
+      this.router.navigate(['/gallery']);
+    }
+   
+    else if (event.index === 4) {
+      this.router.navigate(['/sort-words']);
+    }
+    else if (event.index === 5) {
+      this.router.navigate(['/guess-eemoji']);
+    }
+    else if (event.index === 6) {
+      this.router.navigate(['/matchint-words']);
+    }
+    else if (event.index === 7) {
+      this.router.navigate(['/math-ladder']);
+    }
+    else if (event.index === 8) {
+      this.router.navigate(['/geo-quiz']);
+    }
+    
     // You can add more navigation logic for other cards here
   }
 
@@ -36,7 +56,7 @@ export class GamesComponent {
     {
       title: 'Organiser les lettres\nArrange the letters!',
       subtitle: 'Try now for free',
-      img: 'images/card-2.png',
+      img: '/images/sort.png',
     },
     {
       title: 'Guess the Country\nIdentify countries!',

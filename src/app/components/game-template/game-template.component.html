@@ -1,22 +1,38 @@
 <div class="game-bg">
-    <div class="game-card" #gameCard>
-      <div class="top-icons">
-        <button class="icon-btn" (click)="toggleFullScreen()">
-          <i class="material-icons">fullscreen</i>
-        </button>
-        <button class="icon-btn"><i class="material-icons">volume_up</i></button>
-        <button class="icon-btn"><i class="material-icons">settings</i></button>
-        <button class="icon-btn exit" (click)="closeGame()"><i class="material-icons">close</i></button>
-      </div>
-      <div class="game-header">
-        <div class="level-indicator">NIVEAU {{ level.toString().padStart(2, '0') }}</div>
-        <h2 class="orange-heading">{{ questionText }}</h2>
-      </div>
-      <div class="game-content">
-        <div class="letters-side">
-          <ng-content select="[game-content]"></ng-content>
-        </div>
+  <div class="top-icons px-3">
+   <div class="btns">
+    <button class="icon-btn" (click)="toggleFullScreen()">
+      <img src="/images/fullscreen.svg" />
+    </button>
+    <button class="icon-btn">
+      <img src="/images/music.svg" />
+    </button>
+    <button class="action-btn icon-btn">
+      <img src="/images/sound.svg"/>
+    </button>
+   </div>
+    <button class="icon-btn exit" (click)="closeGame()">
+      <img src="/images/close.svg" width="24" height="24"/>
+    </button>
+  </div>
+  <div class="game-card p-4" 
+  #gameCard
+  [class.no-bg]="noCardBackground">
 
-      </div>
+    <app-game-header *ngIf="shouldShowGameHeader()"
+      [level]="level"
+      [questionsCorrectInLevel]="questionsCorrectInLevel || 0"
+      [timeElapsed]="timeElapsed || 0"
+      [currentWord]="currentWord || ''"
+      [bonusPoints]="bonusPoints || 0"
+      [difficulty]="difficulty || 'easy'"
+    ></app-game-header>
 
-      
+    <div class="game-content">
+
+      <ng-content></ng-content>
+    </div>
+
+   
+  </div>
+</div>

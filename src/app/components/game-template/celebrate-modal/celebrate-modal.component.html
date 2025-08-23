@@ -1,0 +1,24 @@
+   <!-- Level Complete -->
+   <div *ngIf="showLevelComplete" class="modal d-block" style="background: rgba(0, 0, 0, 0.8);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content level-complete-card">
+        <div class="modal-header">
+          <h1 class="modal-title fs-3">🎉 Niveau {{ currentLevel }} terminé ! 🎉</h1>
+        </div>
+        <div class="modal-body text-center">
+          <div class="score-circle mx-auto mb-3">
+            <div class="score-number">{{ score }}</div>
+            <p>Vous avez répondu correctement à {{ questionsCorrectInLevel }} questions sur {{ questionsPerLevel }} !</p>
+          </div>
+          <p>Votre score : {{ score }}</p>
+          <div class="score-percentage">{{ getLevelScorePercentage() }}%</div>
+          <div class="score-message">{{ getScoreMessage() }}</div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success next-level-btn" (click)="nextLevel()">
+            Continuer au niveau {{ currentLevel + 1 }} 🚀
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

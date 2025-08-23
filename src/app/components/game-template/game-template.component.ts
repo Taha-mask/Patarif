@@ -1,16 +1,27 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
+import { GameHeaderComponent } from './game-header/game-header.component';
 @Component({
   selector: 'app-game-template',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, GameHeaderComponent],
   templateUrl: './game-template.component.html',
   styleUrls: ['./game-template.component.css']
 })
 export class GameTemplateComponent {
-  constructor(private router: Router) {
+  hiddenRoutes: string[] = ['/gallery', '/canvas/:imageUrl', '/paint'];
+  @Input() showHeader: boolean = true;
+  @Input() showTopIcons: boolean = true;
+  @Input() noCardBackground: boolean = false;
+
+
+  shouldShowGameHeader(): boolean {
+    return this.showHeader && this.router.url !== '/canvas' && this.router.url !== '/gallery';
+  }
+  constructor(
+    private router: Router
+  ) {
     // Initialize stars array with 3 empty stars
     this.starsArray = Array(3).fill(0).map(() => ({
       filled: false,
@@ -22,6 +33,11 @@ export class GameTemplateComponent {
 
   @Input() level: number = 1;
   @Input() score: number = 0;
+  @Input() questionsCorrectInLevel: number = 0;
+  @Input() timeElapsed: number = 0;
+  @Input() currentWord: string = '';
+  @Input() bonusPoints: number = 0;
+  @Input() difficulty: 'easy' | 'medium' | 'hard' = 'easy';
   private _stars: number = 0;
   starsArray: {filled: boolean, animated: boolean}[] = [];
 

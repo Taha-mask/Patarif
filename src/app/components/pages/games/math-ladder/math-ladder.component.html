@@ -1,0 +1,97 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="card shadow rounded-4 p-3 p-md-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="mb-0">لعبة السلم الحسابي 🪜</h2>
+          <button class="btn btn-outline-secondary" (click)="startNewGame()">
+            <i class="bi bi-arrow-clockwise"></i> إعادة تشغيل
+          </button>
+        </div>
+
+        <div class="row g-4">
+          <!-- Ladder -->
+          <div class="col-md-6">
+            <div class="ladder-wrapper">
+              <div class="ladder">
+                <!-- Ladder rails -->
+                <div class="rail left"></div>
+                <div class="rail right"></div>
+                
+                <!-- Ladder steps -->
+                <div *ngFor="let step of [].constructor(10); let i = index" 
+                     class="step" 
+                     [style.bottom.px]="(i * 40) + 20">
+                </div>
+                
+                <!-- Player -->
+                <div class="player" 
+                     [class.climbing]="isClimbing"
+                     [style.transform]="'translateY(' + (100 - (state.currentStep * 10)) + '%)'">
+                  🧒
+                </div>
+              </div>
+              
+              <!-- Progress -->
+              <div class="progress mt-3" style="height: 1.5rem;">
+                <div class="progress-bar bg-success" 
+                     role="progressbar" 
+                     [style.width.%]="state.currentStep * 10"
+                     [attr.aria-valuenow]="state.currentStep" 
+                     aria-valuemin="0" 
+                     aria-valuemax="10">
+                  {{ state.currentStep }} / 10
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Game Panel -->
+          <div class="col-md-6">
+            <div class="card h-100">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-center mb-4">حل المسألة:</h5>
+                
+                <div class="display-1 fw-bold text-center my-4 py-4">
+                  {{ problemText }}
+                </div>
+                
+                <div class="mt-auto">
+                  <div class="input-group input-group-lg mb-3">
+                    <input type="number" 
+                          class="form-control form-control-lg text-center" 
+                          [(ngModel)]="userInput"
+                          (keyup.enter)="onSubmit()"
+                          [disabled]="state.isGameOver"
+                          placeholder="أدخل الإجابة">
+                    <button class="btn btn-primary" 
+                            (click)="onSubmit()"
+                            [disabled]="!userInput || state.isGameOver">
+                      تحقق
+                    </button>
+                  </div>
+                  
+                  <!-- Feedback -->
+                  <div *ngIf="showFeedback" class="alert text-center" 
+                      [ngClass]="{
+                        'alert-success': feedback.includes('صحيحة'),
+                        'alert-danger': feedback.includes('مرة')
+                      }">
+                    {{ feedback }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Win Message -->
+        <div *ngIf="state.isGameOver" class="alert alert-success text-center mt-4">
+          <h4 class="alert-heading">🎉 مبروك! 🎉</h4>
+          <p class="mb-0">لقد وصلت إلى قمة السلم! النتيجة النهائية: {{ state.score }} نقطة</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  

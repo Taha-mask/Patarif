@@ -14,4 +14,17 @@ h1{
   color: #333;
   margin-bottom: 20px;
 }
-
+.card-title {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
+  color: white;
+  font-family: 'Fredoka One', sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  border-radius: 40px;
+  border: 3px solid #ffffff;
+  padding: 1rem;
+  text-align: center;
+}

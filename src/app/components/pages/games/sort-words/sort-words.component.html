@@ -1,0 +1,71 @@
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentWord?.correct || ''"
+  [difficulty]="currentDifficulty"
+>
+  <div class="container d-flex justify-content-center align-items-center py-4">
+    <div class="game-card">
+      <div class="card-body">
+        <h2 class="card-title">Arrange the Sentence</h2>
+        
+        <!-- Instructions -->
+        <!-- <p class="text-muted mb-4">Click on the words below to arrange them into a correct sentence</p> -->
+        
+        <!-- Shuffled Words -->
+        <div class="mb-3">
+          <button 
+            *ngFor="let word of shuffledWords"
+            class="btn"
+            (click)="selectWord(word)">
+            {{ word }}
+          </button>
+        </div>
+        
+        <!-- Selected Words -->
+        <div class="selected-words mb-4">
+          <div *ngIf="selectedWords.length === 0" class="text-muted h-100 d-flex align-items-center justify-content-center">
+            <!-- <div class="text-center">
+              <i class="bi bi-arrow-up-circle fs-1 d-block mb-2"></i>
+              <span>Click on the words above to build your sentence</span>
+            </div> -->
+          </div>
+          <div *ngIf="selectedWords.length > 0" class="selected-sentence">
+            <span *ngFor="let word of selectedWords; let i = index; let last = last" 
+                  class="selected-word"
+                  (click)="removeWord(word, i)"
+                  [title]="'Click to remove ' + word">
+              {{ word }}<span *ngIf="!last"> </span>
+            </span>
+          </div>
+        </div>
+        
+        <!-- Feedback -->
+        <div *ngIf="feedback" class="feedback" 
+             [ngClass]="{'correct': isCorrect, 'wrong': !isCorrect}">
+          <i class="bi" [ngClass]="isCorrect ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+          {{ feedback }}
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn " 
+                  (click)="checkAnswer()"
+                  [disabled]="selectedWords.length === 0"
+                  [class.btn-success]="isCorrect"
+                  [class.btn-danger]="feedback && !isCorrect">
+            <i class="bi bi-check-lg me-1"></i>
+            {{ isCorrect ? 'Correct!' : 'Check Answer' }}
+          </button>
+          
+          <button class="btn " 
+                  (click)="nextSentence()"
+                  *ngIf="isCorrect || feedback">
+            <i class="bi bi-arrow-right me-1"></i>
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-game-template>

@@ -1,0 +1,380 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Nunito:wght@400;700&display=swap');
+
+:host, body, .country-guessing-root {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(120deg, #f0f4f8 0%, #e0e7ff 100%);
+  min-height: 100vh;
+}
+
+/* ----------------- Game Header ----------------- */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+}
+
+.level-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 200px;
+}
+
+.level-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.level-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #374151;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.timer-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.timer.time-good {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  color: white;
+}
+
+.timer.time-warning {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: white;
+}
+
+.timer.time-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.difficulty-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.difficulty-easy {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  color: white;
+}
+
+.difficulty-medium {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: white;
+}
+
+.difficulty-hard {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.bonus-points {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  border-radius: 2rem;
+  font-weight: bold;
+  animation: bounceIn 0.5s ease-out;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+
+/* ----------------- Game Main Content ----------------- */
+.image-container {
+  position: relative;
+  max-width: 420px;
+  margin: 1rem auto 2rem;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(60, 60, 120, 0.15);
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.image-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px rgba(60, 60, 120, 0.25);
+}
+.image-container img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(36, 42, 70, 0.8));
+  padding: 0.8rem;
+  color: #fff;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* Question Text */
+.question-text h2 {
+  font-family: 'Montserrat', sans-serif;
+  color: #1e293b;
+  font-size: 1.9rem;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+/* Answer Buttons */
+.option-btn {
+  font-family: 'Montserrat', sans-serif;
+  background: #fff;
+  color: #374151;
+  border: 2px solid #6366f1;
+  border-radius: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.option-btn:hover:not([disabled]) {
+  background: #6366f1;
+  color: #fff;
+  border-color: #6366f1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.option-btn:active:not([disabled]) {
+  transform: scale(0.98) translateY(-1px);
+}
+
+.option-btn:disabled {
+  opacity: 0.9;
+  cursor: not-allowed;
+}
+
+/* Correct answer styling */
+.option-btn.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-color: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transform: scale(1.02);
+}
+
+/* Wrong answer styling */
+.option-btn.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Correct answer that wasn't selected */
+.option-btn.correct-answer {
+  background: linear-gradient(135deg, #84cc16, #65a30d);
+  color: white;
+  border-color: #65a30d;
+  box-shadow: 0 4px 12px rgba(132, 204, 22, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.correct-answer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.3) 50%, transparent 55%);
+  background-size: 200% 200%;
+  animation: shine 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% { background-position: -100% -100%; }
+  100% { background-position: 100% 100%; }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+  40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
+.result-icon {
+  margin-left: 8px;
+  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  animation: popIn 0.3s ease-out;
+}
+
+/* ----------------- Level Complete Modal ----------------- */
+.level-complete-card {
+  font-family: 'Montserrat', sans-serif;
+  background: #fff;
+  border-radius: 1.8rem;
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+  padding: 2rem;
+  text-align: center;
+  max-width: 420px;
+  margin: auto;
+  animation: popIn 0.4s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.score-circle {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #6366f1, #60a5fa);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+}
+.score-number {
+  font-size: 2.3rem;
+  color: white;
+  font-weight: 700;
+}
+.score-total {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+.score-message {
+  font-family: 'Nunito', sans-serif;
+  color: #6366f1;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+.next-level-btn {
+  background: linear-gradient(90deg, #6366f1, #60a5fa);
+  color: #fff;
+  border: none;
+  border-radius: 1rem;
+  padding: 0.7rem 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+  transition: background 0.25s;
+}
+.next-level-btn:hover {
+  background: linear-gradient(90deg, #60a5fa, #6366f1);
+}
+
+/* ----------------- Loading State ----------------- */
+.loading-container {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.loading-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  color: #6366f1;
+  font-size: 1.1rem;
+}
+
+/* ----------------- Responsive ----------------- */
+@media (max-width: 600px) {
+  .game-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .image-container {
+    max-width: 100%;
+    border-radius: 1rem;
+  }
+  .level-complete-card {
+    padding: 1.2rem;
+    border-radius: 1rem;
+  }
+  .score-circle {
+    width: 80px;
+    height: 80px;
+  }
+}

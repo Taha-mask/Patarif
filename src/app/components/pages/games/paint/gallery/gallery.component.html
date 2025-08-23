@@ -1,0 +1,59 @@
+<app-game-template>
+  <div class="gallery-container">
+    <!-- Gallery Header -->
+    <div class="gallery-header">
+      <h1 class="gallery-title">🎨 Paint & Color Gallery</h1>
+      <div class="gallery-info">
+        <span class="image-count">{{ totalImages }} images available</span>
+        <div class="loading-indicator" *ngIf="isLoading">
+          <div class="spinner"></div>
+          <span>Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loop through categories -->
+    <div *ngFor="let category of categories" class="category-section">
+      <h2 class="category-title">{{ category.name }}</h2>
+      
+      <div class="category-scroll"
+           #scrollContainer
+           (mousedown)="onMouseDown($event, scrollContainer)"
+           (mouseleave)="onMouseLeave(scrollContainer)"
+           (mouseup)="onMouseUp(scrollContainer)"
+           (mousemove)="onMouseMove($event, scrollContainer)">
+        <div 
+          *ngFor="let image of category.images; let i = index" 
+          class="image-card"
+          [class.selected]="isImageSelected(image.img)"
+          (click)="selectImage(image)"
+          [attr.aria-label]="'Paint ' + image.title">
+
+          <div class="image-wrapper">
+            <img 
+              [src]="image.img" 
+              [alt]="image.title + ' coloring page'"
+              class="thumbnail"
+              loading="lazy">
+            <div class="image-overlay">
+              <div class="paint-icon">🎨</div>
+              <span class="paint-text">Paint Me!</span>
+            </div>
+          </div>
+          
+          <div class="image-info">
+            <h3 class="image-title">{{ image.title }}</h3>
+            <span class="image-number">#{{ i + 1 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery Footer -->
+    <div class="gallery-footer">
+      <p class="footer-text">
+        🖌️ Click any image to start your creative journey!
+      </p>
+    </div>
+  </div>
+</app-game-template>

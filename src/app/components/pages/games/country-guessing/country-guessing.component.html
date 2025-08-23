@@ -1,0 +1,95 @@
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentQuestion?.correctAnswer || ''"
+  [difficulty]="currentDifficulty"
+>  <div class="container py-4" [@fadeIn]>
+    <!-- Game Header with Timer and Stats -->
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner-border text-primary" role="status"></div>
+      <div class="loading-text mt-3">Chargement des pays...</div>
+    </div>
+
+    <!-- Game Content -->
+    <div *ngIf="!isLoading && !showLevelComplete">
+
+ 
+      <!-- Image + Hint -->
+      <div class="image-container mb-4" [@fadeIn]>
+        <img [src]="currentQuestion.image" class="img-fluid rounded" alt="Country Image">
+        <div class="image-overlay p-3">
+          <p class="hint-text">{{ currentQuestion.hint }}</p>
+        </div>
+      </div>
+
+      <!-- Question -->
+      <div class="question-text text-center mb-4">
+        <h2>Quel est ce pays ?</h2>
+      </div>
+
+      <!-- Options -->
+      <div class="row">
+        <div *ngFor="let option of currentQuestion.options" class="col-12 col-md-6 mb-3">
+          <button
+            class="option-btn w-100"
+            [ngClass]="{
+              'selected': selectedAnswer === option && !showResult,
+              'btn-success': showResult && option === currentQuestion.correctAnswer,
+              'btn-danger': showResult && selectedAnswer === option && !isCorrect,
+              'correct-answer': showResult && option === currentQuestion.correctAnswer && !isCorrect && selectedAnswer !== option
+            }"
+            [disabled]="showResult"
+            (click)="selectAnswer(option)">
+            {{ option }}
+            <span *ngIf="showResult" class="result-icon">
+              <span *ngIf="option === currentQuestion.correctAnswer">✓</span>
+              <span *ngIf="selectedAnswer === option && !isCorrect">✗</span>
+            </span>
+          </button>
+        </div>
+
+        <!-- Correct answer display -->
+        <div class="col-12 text-center mt-2" *ngIf="showResult && !isCorrect">
+          <div class="alert alert-info">
+            La bonne réponse est : <strong>{{ currentQuestion.correctAnswer }}</strong>
+          </div>
+        </div>
+
+        <!-- Next -->
+        <div class="col-12 text-center" *ngIf="showResult">
+          <button class="btn btn-primary" (click)="nextQuestion()">
+            {{ currentQuestionIndex + 1 < questions.length ? 'Question suivante' : 'Terminer le niveau' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Complete -->
+    <div *ngIf="showLevelComplete" class="modal d-block" style="background: rgba(0, 0, 0, 0.8);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content level-complete-card">
+          <div class="modal-header">
+            <h1 class="modal-title fs-3">🎉 Niveau {{ currentLevel }} terminé ! 🎉</h1>
+          </div>
+          <div class="modal-body text-center">
+            <div class="score-circle mx-auto mb-3">
+              <div class="score-number">{{ score }}</div>
+              <p>Vous avez répondu correctement à {{ questionsCorrectInLevel }} questions sur {{ questionsPerLevel }} !</p>
+            </div>
+            <p>Votre score : {{ score }}</p>
+            <div class="score-percentage">{{ getLevelScorePercentage() }}%</div>
+            <div class="score-message">{{ getScoreMessage() }}</div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success next-level-btn" (click)="nextLevel()">
+              Continuer au niveau {{ currentLevel + 1 }} 🚀
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</app-game-template>
