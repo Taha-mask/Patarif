@@ -44,12 +44,21 @@
       </button>
     </div>
   </div>
-  <div #listCardsContainer class="list-cards" [class.dragging]="isDragging">
-    <div *ngFor="let card of visibleCards; let i = index"
-         class="list-card"
-         [style.background-image]="'url(' + card.img + ')'"
-         (click)="onCardClick(card, i)">
-      <span>{{ card.title }}</span>
-    </div>
+ <div #listCardsContainer class="list-cards" [class.dragging]="isDragging">
+  <div *ngFor="let card of visibleCards; let i = index"
+       class="list-card"
+       (click)="onCardClick(card, i)">
+       
+    <!-- Image stays visible -->
+    <img [src]="card.img" alt="{{card.title}}" class="card-image" />
+
+    <!-- Gradient overlay on top -->
+    <div class="gradient-overlay" [style.background]="card.gradient"></div>
+
+    <!-- Card title -->
+    <span class="card-title">{{ card.title }}</span>
   </div>
+</div>
+
+  
 </div>
