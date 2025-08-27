@@ -1,6 +1,7 @@
 import { Component, Input, ElementRef, ViewChild, AfterViewInit, HostListener, OnChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../interface/card';
+
 @Component({
   selector: 'app-cards',
   standalone: true,
@@ -29,32 +30,24 @@ export class CardsComponent implements AfterViewInit, OnChanges {
     this.updateCardsPerPage();
   }
 
- ngAfterViewInit() {
-  this.updateCardsPerPage();
-  // Add a small delay to ensure the DOM is fully rendered
-  setTimeout(() => {
-    if (this.designType === 'list' && this.listCardsContainer) {
-      this.setupDragScroll();
-
-      // ✅ Generate gradient overlays for list cards
-      this.visibleCards.forEach(card => this.generateGradient(card));
-    }
-  }, 100);
-}
-
-
-
-ngOnChanges() {
-  if (this.designType === 'list' && this.listCardsContainer) {
+  ngAfterViewInit() {
+    this.updateCardsPerPage();
+    // Add a small delay to ensure the DOM is fully rendered
     setTimeout(() => {
-      this.setupDragScroll();
-
-      // ✅ Generate gradient overlays for list cards
-      this.visibleCards.forEach(card => this.generateGradient(card));
+      if (this.designType === 'list' && this.listCardsContainer) {
+        this.setupDragScroll();
+      }
     }, 100);
   }
-}
 
+  // Watch for changes in designType
+  ngOnChanges() {
+    if (this.designType === 'list' && this.listCardsContainer) {
+      setTimeout(() => {
+        this.setupDragScroll();
+      }, 100);
+    }
+  }
 
   updateCardsPerPage() {
     if (typeof window !== 'undefined') {
@@ -221,40 +214,4 @@ ngOnChanges() {
   onCardClick(card: Card, index: number) {
     this.cardClick.emit({ card, index });
   }
-
-
-   generateGradient(card: Card) {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.src = card.img;
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx?.drawImage(img, 0, 0, img.width, img.height);
-
-      const imageData = ctx?.getImageData(0, 0, img.width, img.height);
-      if (!imageData) return;
-
-      const data = imageData.data;
-      const colorCount: Record<string, number> = {};
-
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const key = `${r},${g},${b}`;
-        colorCount[key] = (colorCount[key] || 0) + 1;
-      }
-
-      // Sort colors by count (most frequent)
-      const sortedColors = Object.keys(colorCount).sort((a, b) => colorCount[b] - colorCount[a]);
-      const topColors = sortedColors.slice(0, 3).map(c => `rgb(${c})`);
-
-      card.gradient = `linear-gradient(to bottom, ${topColors.join(', ')})`;
-    };
-  }
-
-
 }

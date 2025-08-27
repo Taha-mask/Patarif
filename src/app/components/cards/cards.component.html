@@ -34,7 +34,7 @@
 <!-- لو كان النوع list -->
 <div *ngIf="designType === 'list'" class="list-container">
   <div class="list-header">
-    <h2>All Games</h2>
+    <h2>New Games</h2>
     <div class="navigation-buttons">
       <button class="arrow" (click)="prevSlide()" [disabled]="!canGoPrev()">
         <i class="bi bi-arrow-left"></i>
@@ -44,21 +44,12 @@
       </button>
     </div>
   </div>
- <div #listCardsContainer class="list-cards" [class.dragging]="isDragging">
-  <div *ngFor="let card of visibleCards; let i = index"
-       class="list-card"
-       (click)="onCardClick(card, i)">
-       
-    <!-- Image stays visible -->
-    <img [src]="card.img" alt="{{card.title}}" class="card-image" />
-
-    <!-- Gradient overlay on top -->
-    <div class="gradient-overlay" [style.background]="card.gradient"></div>
-
-    <!-- Card title -->
-    <span class="card-title">{{ card.title }}</span>
+  <div #listCardsContainer class="list-cards" [class.dragging]="isDragging">
+    <div *ngFor="let card of visibleCards; let i = index"
+         class="list-card"
+         [style.background-image]="'url(' + card.img + ')'"
+         (click)="onCardClick(card, i)">
+      <span>{{ card.title }}</span>
+    </div>
   </div>
-</div>
-
-  
 </div>

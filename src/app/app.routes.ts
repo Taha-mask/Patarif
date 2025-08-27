@@ -30,7 +30,12 @@ import { MatchintWordsComponent } from './components/pages/games/matchint-words/
 import { MathLadderComponent } from './components/pages/games/math-ladder/math-ladder.component';
 import { GeoQuizComponent } from './components/pages/games/geo-quiz/geo-quiz.component';
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { 
+    path: '', 
+    redirectTo: 'login', 
+    pathMatch: 'full',
+    data: { renderMode: 'client' }
+  },
 {path: 'math-ladder', component: MathLadderComponent},
 {path: 'geo-quiz', component: GeoQuizComponent},
   { path: 'guess-eemoji', component: GuessEemojiComponent },
@@ -58,7 +63,11 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'add-product', component: AddProductComponent },
   { path: 'admin-dashboard', component: AdminDashboardComponent },
-  { path: 'product-details/:id', component: ProductDetailsComponent },
+  { 
+    path: 'product-details/:id', 
+    loadComponent: () => import('./components/pages/shop/product-details/product-details.component').then(m => m.ProductDetailsComponent),
+    data: { renderMode: 'client' }
+  },
   { path: 'cart', component: CartComponent },
   { path: 'sort-words', component: SortWordsComponent },
 ];

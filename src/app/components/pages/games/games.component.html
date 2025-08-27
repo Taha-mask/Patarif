@@ -1,6 +1,7 @@
 <app-background></app-background>
 
-<!-- الشكل الأول (Carousel) -->
+<div class="container">
+  <!-- الشكل الأول (Carousel) -->
 <div class="carousel">
   <app-cards [cards]="cardSet1" designType="carousel" (cardClick)="onCardClick($event)"></app-cards>
 </div>
@@ -9,4 +10,5 @@
   <app-cards [cards]="cardSet2" designType="list" (cardClick)="onCardClick($event)"></app-cards>
 </div>
 
+</div>
 

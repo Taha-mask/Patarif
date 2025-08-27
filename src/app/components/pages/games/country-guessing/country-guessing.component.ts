@@ -118,23 +118,22 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
 
   selectAnswer(option: string) {
     if (this.showResult) return;
+
     this.selectedAnswer = option;
     this.isCorrect = option === this.currentQuestion.correctAnswer;
     this.showResult = true;
-
+  
     if (this.isCorrect) {
+      this.playSound('assets/sounds/correct.mp3');
       this.score++;
       this.questionsCorrectInLevel++;
-      this.calculateBonus();
     } else {
-      this.bonusPoints = 0;
+      this.playSound('assets/sounds/wrong.mp3');
     }
   }
-
-  calculateBonus() {
-    const timeBonus = Math.max(0, 10 - this.timeElapsed); // quicker answers = more bonus
-    this.bonusPoints = timeBonus;
-    this.score += this.bonusPoints;
+  playSound(filePath: string) {
+    const audio = new Audio(filePath);
+    audio.play().catch(err => console.error('Error playing sound:', err));
   }
 
   nextQuestion() {

@@ -1,176 +1,136 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { GameTemplateComponent } from "../../../game-template/game-template.component";
 
-type MathOperation = '+' | '-' | '×' | '÷';
+type Op = '+' | '-' | '×' | '÷';
 
-interface MathProblem {
-  num1: number;
-  num2: number;
-  operation: MathOperation;
+interface Question {
+  a: number;
+  b: number;
+  op: Op;
   answer: number;
-  text: string;
-  userAnswer?: number | null;
-  isCorrect?: boolean;
+  choices: number[];
+  correctAnswer: number; // Add this line
 }
 
-interface GameState {
-  currentStep: number;
-  score: number;
-  totalAttempts: number;
-  isGameOver: boolean;
+function makeQuestion(level: number): Question {
+  const ops: Op[] = ['+', '-', '×', '÷'];
+  // زوّد الصعوبة تدريجيًا مع المستوى
+  const max = Math.min(10 + level * 2, 99);
+
+  const op = ops[Math.floor(Math.random() * ops.length)];
+  let a = 1 + Math.floor(Math.random() * max);
+  let b = 1 + Math.floor(Math.random() * Math.max(2, Math.floor(max / 2)));
+
+  let answer = 0;
+
+  switch (op) {
+    case '+': answer = a + b; break;
+    case '-':
+      if (b > a) [a, b] = [b, a];
+      answer = a - b; 
+      break;
+    case '×':
+      a = Math.floor(Math.random() * Math.min(12, max)) + 1;
+      b = Math.floor(Math.random() * Math.min(12, max)) + 1;
+      answer = a * b; 
+      break;
+    case '÷':
+      // نولّد قسمة بدون كسور: (a*b) ÷ b = a
+      a = Math.floor(Math.random() * Math.min(12, max)) + 2;
+      b = Math.floor(Math.random() * Math.min(12, max)) + 2;
+      answer = a;
+      const dividend = a * b;
+      a = dividend;
+      // الآن السؤال: a ÷ b = answer
+      break;
+  }
+
+  // اختيارات متعددة (منها الصحيحة)
+  const choices = new Set<number>([answer]);
+  while (choices.size < 4) {
+    const wrongAnswer = answer + (Math.floor(Math.random() * 10) - 5);
+    if (wrongAnswer > 0 && wrongAnswer !== answer) {
+      choices.add(wrongAnswer);
+    }
+  }
+
+  const choicesArray = Array.from(choices).sort(() => Math.random() - 0.5);
+  return {
+    a,
+    b,
+    op,
+    answer,
+    choices: choicesArray,
+    correctAnswer: answer
+  };
 }
 
 @Component({
-  selector: 'app-math-ladder',
+  selector: 'app-math-stairs',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, GameTemplateComponent],
   templateUrl: './math-ladder.component.html',
   styleUrls: ['./math-ladder.component.css']
 })
-export class MathLadderComponent implements OnInit {
-  // Game state
-  state: GameState = {
-    currentStep: 0,
-    score: 0,
-    totalAttempts: 0,
-    isGameOver: false
-  };
+export class MathLadderComponent {
+  // إعدادات اللعبة
+  totalSteps = 7;        // عدد درجات السلم للوصول للنجمة
+  level = signal(1);     // مستوى الصعوبة
+  step = signal(0);      // الدرجة الحالية (0..totalSteps)
+  questionsCorrectInLevel = 0;  // عدد الإجابات الصحيحة في المستوى الحالي
+  timeElapsed = 0;               // الوقت المنقضي بالثواني
+  currentDifficulty: 'easy' | 'medium' | 'hard' = 'easy'; // مستوى الصعوبة الحالي
+  
+  question = signal<Question>(makeQuestion(this.level()));
+  currentQuestion = this.question(); // Initialize after question signal
+  isLocked = signal(false);
+  isWin = computed(() => this.step() >= this.totalSteps);
 
-  // Game settings
-  totalSteps = 10;
-  minNumber = 1;
-  maxNumber = 10;
-  operations = new Set<MathOperation>(['+', '-', '×', '÷']);
-
-  // Current problem
-  currentProblem: MathProblem = this.generateProblem();
-  userInput: number | null = null;
-  feedback: string = '';
-  showFeedback: boolean = false;
-  isClimbing: boolean = false;
-
-  ngOnInit(): void {
-    this.startNewGame();
-  }
-
-  // Generate a random math problem based on current settings
-  private generateProblem(): MathProblem {
-    const operation = this.getRandomOperation();
-    let num1: number, num2: number, answer: number;
-    
-    switch (operation) {
-      case '+':
-        num1 = this.getRandomNumber(this.minNumber, this.maxNumber);
-        num2 = this.getRandomNumber(this.minNumber, this.maxNumber);
-        answer = num1 + num2;
-        break;
-      case '-':
-        num1 = this.getRandomNumber(this.minNumber, this.maxNumber * 0.7);
-        num2 = this.getRandomNumber(0, num1);
-        answer = num1 - num2;
-        break;
-      case '×':
-        num1 = this.getRandomNumber(1, Math.min(10, this.maxNumber));
-        num2 = this.getRandomNumber(1, Math.min(10, this.maxNumber / num1));
-        answer = num1 * num2;
-        break;
-      case '÷':
-        answer = this.getRandomNumber(1, Math.min(10, this.maxNumber));
-        num2 = this.getRandomNumber(1, Math.min(10, this.maxNumber / answer));
-        num1 = answer * num2;
-        break;
-    }
-
-    return {
-      num1,
-      num2,
-      operation,
-      answer,
-      text: `${num1} ${operation} ${num2} = ?`
-    };
-  }
-
-  // Get a random number between min and max (inclusive)
-  private getRandomNumber(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  // Get a random operation
-  private getRandomOperation(): MathOperation {
-    const operations = Array.from(this.operations);
-    return operations[Math.floor(Math.random() * operations.length)];
-  }
-
-  // Start a new game
-  startNewGame(): void {
-    this.state = {
-      currentStep: 0,
-      score: 0,
-      totalAttempts: 0,
-      isGameOver: false
-    };
-    this.currentProblem = this.generateProblem();
-    this.userInput = null;
-    this.feedback = '';
-    this.showFeedback = false;
-    this.isClimbing = false;
-  }
-
-  // Handle form submission
-  async onSubmit(): Promise<void> {
-    if (this.userInput === null || this.state.isGameOver) return;
-
-    this.state.totalAttempts++;
-    const isCorrect = Math.abs(Number(this.userInput) - this.currentProblem.answer) < 0.01;
-    
-    if (isCorrect) {
-      this.state.score += 10;
-      this.feedback = 'إجابة صحيحة! +10 نقاط';
-      this.showFeedback = true;
-      
-      // Climb the ladder
-      this.isClimbing = true;
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for animation
-      
-      this.state.currentStep++;
-      this.isClimbing = false;
-      
-      // Check if game is won
-      if (this.state.currentStep >= this.totalSteps) {
-        this.state.isGameOver = true;
-        return;
+  constructor() {
+    // كل ما نكسب: نزود المستوى شوية
+    effect(() => {
+      if (this.isWin()) {
+        this.level.set(this.level() + 1);
       }
-      
-      // Generate new problem after a short delay
-      setTimeout(() => {
-        this.currentProblem = this.generateProblem();
-        this.userInput = null;
-        this.showFeedback = false;
-      }, 500);
-    }
+    });
   }
 
-  // Handle incorrect answer
-  private handleIncorrectAnswer(): void {
-    this.feedback = 'حاول مرة أخرى! ';
-    // Optional: Decrease score or add other penalties
+  pick(choice: number) {
+  if (this.isLocked() || this.isWin()) return;
+  this.isLocked.set(true);
+
+  const correct = choice === this.question().answer;
+
+  if (correct) {
+    // نطلع درجة
+    this.step.set(Math.min(this.totalSteps, this.step() + 1));
+
+    // نضيف كلاس jump للولد
+    const boyEl = document.querySelector('.boy');
+    boyEl?.classList.add('jump');
+    setTimeout(() => boyEl?.classList.remove('jump'), 500);
+
+    setTimeout(() => {
+      if (!this.isWin()) this.nextQuestion();
+      this.isLocked.set(false);
+    }, 600);
+  } else {
+    setTimeout(() => {
+      this.nextQuestion();
+      this.isLocked.set(false);
+    }, 400);
+  }
+}
+
+
+  nextQuestion() {
+    this.question.set(makeQuestion(this.level()));
   }
 
-  // Get the current problem text for display
-  get problemText(): string {
-    return this.currentProblem?.text || '';
-  }
-
-  // Get the current progress percentage
-  get progressPercentage(): number {
-    return (this.state.currentStep / this.totalSteps) * 100;
-  }
-
-  // Handle keyboard input
-  onKeyPress(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      this.onSubmit();
-    }
+  resetGame() {
+    this.step.set(0);
+    this.isLocked.set(false);
+    this.nextQuestion();
   }
 }
