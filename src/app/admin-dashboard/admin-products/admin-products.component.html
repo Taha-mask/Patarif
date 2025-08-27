@@ -1,0 +1,32 @@
+<!-- <app-background></app-background> -->
+
+<div class="p-0 m-0">
+    <div class="row g-0">
+
+        <!-- Sidebar -->
+        <div class="col-1">
+            <app-admin-navbar></app-admin-navbar>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-11 main min-vh-100">
+            <h1>Products</h1>
+            <div class="top-bar m-2 pb-1  row align-items-end justify-content-between gap-3">
+                <div class="sort row align-items-center justify-content-start gap-3">
+                    <span> Sort <i class="bi bi-filter"></i></span>
+                    <button class="btn btn-outline-primary type col-auto">category</button>
+                    <button class="btn btn-outline-primary type col-auto">stock</button>
+                    <button class="btn btn-outline-primary type col-auto">price</button>
+                </div>
+
+                <button class="btn btn-outline-primary add col-auto">Add <span><i class="bi bi-plus-lg"></i></span></button>
+            </div>
+
+                <div class="" *ngFor="let product of products">
+                    <app-admin-prodoucts-product-card [img]="product.images[0]" [title]="product.title"
+                        [price]="product.final_price" [stock]="product.product_stock"
+                        [category]="product.category"></app-admin-prodoucts-product-card>
+                </div>
+        </div>
+    </div>
+</div>

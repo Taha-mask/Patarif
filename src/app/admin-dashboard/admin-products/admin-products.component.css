@@ -1,0 +1,62 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+    --mainColor: rgb(255, 0, 106);
+}
+
+h1 {
+    font-family: var(--mainFont);
+    font-weight: 900;
+    text-align: center;
+    margin: 28px 12px 0 0;
+    
+}
+
+
+/* ===========================
+   Main Layout
+=========================== */
+.main {
+    padding: 2%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.top-bar{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.267);
+}
+.btn.add {
+    width: 8%;
+    transition: all 0.2s;
+    border-radius: 12px;
+}
+
+.btn span {
+    display: none;
+}
+
+.btn:hover span {
+    display: inline;
+}
+
+.btn.add:hover:hover {
+    width: 12%;
+    border-radius: 24px;
+    transition: all 0.3s ease-in-out;
+
+}
+.sort{
+    width: fit-content;
+}
+
+/* .sort-types{
+    transition: all 0.3s ease-in-out;
+} */
