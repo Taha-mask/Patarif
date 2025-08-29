@@ -4,8 +4,8 @@
     <button class="icon-btn" (click)="toggleFullScreen()">
       <img src="/images/fullscreen.svg" />
     </button>
-    <button class="icon-btn">
-      <img src="/images/music.svg" />
+    <button class="icon-btn" (click)="toggleMusic()" [class.playing]="isMusicPlaying">
+      <img [src]="isMusicPlaying ? '/images/music.svg' : '/images/music-off.svg'" alt="Music" />
     </button>
     <button class="action-btn icon-btn">
       <img src="/images/sound.svg"/>
@@ -23,8 +23,6 @@
       [level]="level"
       [questionsCorrectInLevel]="questionsCorrectInLevel || 0"
       [timeElapsed]="timeElapsed || 0"
-      [currentWord]="currentWord || ''"
-      [bonusPoints]="bonusPoints || 0"
       [difficulty]="difficulty || 'easy'"
     ></app-game-header>
 

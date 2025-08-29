@@ -1,0 +1,8 @@
+<div class="main" [ngClass]="{ 'out-of-stock': stock === 0 }">
+    <div class="image"><img [src]="img" [alt]="img"></div>
+    <h1><span>name</span>{{title}}</h1>
+    <h1><span>category</span>{{category}}</h1>
+    <h1><span>stock</span>{{stock}}</h1>
+    <h1><span>price</span>{{price}} $</h1>
+    <button class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
+</div>
