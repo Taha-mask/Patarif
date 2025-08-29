@@ -1,0 +1,49 @@
+<app-game-template
+  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [timeElapsed]="timeElapsed"
+  [currentWord]="currentQuestion ? currentQuestion.correctAnswer.toString() : ''"
+  [difficulty]="currentDifficulty"
+> 
+  <div class="game-wrap" [class.win]="isWin()">
+  <div class="hud">
+    <!-- <img src="/images/logo-patarif.png" alt="logo" class="brand"> -->
+  </div>
+
+  <div class="stage">
+    <!-- السلم -->
+    <div class="ladder">
+      <img src="images/math-stairs/Stairs.png" alt="ladder">
+      <!-- النجمة أعلى السلم -->
+      <!-- <img class="star" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="star"> -->
+      <!-- الولد -->
+      <img class="boy"
+           [style.--p]="(step()/totalSteps)"
+           src="images/math-stairs/the_kid.png"
+           alt="boy">
+    </div>
+
+    <!-- صندوق السؤال -->
+    <div class="question-card" [class.locked]="isLocked()">
+      <div class="qtext">
+        {{ question().a }} {{ question().op }} {{ question().b }} = ؟
+      </div>
+
+      <div class="choices">
+        <button class="choice"
+                *ngFor="let c of question().choices"
+                (click)="pick(c)">
+          {{ c }}
+        </button>
+      </div>
+<div class="actions">
+      <button class="done" (click)="nextQuestion()" *ngIf="!isWin()">Done</button>
+      <div class="win-box" *ngIf="isWin()">
+        أحسنت! أخذت النجمة ⭐
+        <button class="again" (click)="resetGame()">إعادة</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</app-game-template>

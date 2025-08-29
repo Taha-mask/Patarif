@@ -14,10 +14,10 @@ interface LetterTile {
 
 interface GameWord {
   correct: string;
-  scrambled: string[];
   image: string;
   difficulty: 'easy' | 'medium' | 'hard';
   hint?: string;
+  scrambled?: string[]; // Made optional since we'll generate it
 }
 
 interface GameStats {
@@ -31,7 +31,7 @@ interface GameStats {
   selector: 'app-letters-game',
   standalone: true,
   imports: [CommonModule, GameTemplateComponent],
-  templateUrl: './letters-game.component.html',
+  templateUrl:'./letters-game.component.html',
   styleUrls: ['./letters-game.component.css']
 })
 export class LettersGameComponent implements OnInit, OnDestroy {
@@ -67,193 +67,7 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   draggedFromAvailable: number = -1;
 
   // Enhanced words with difficulty levels and hints - 5 words per level minimum
-  wordsByLevel: { [key: number]: GameWord[] } = {
-    1: [ // Level 1: Simple 3-5 letter words
-      { 
-        correct: 'CAT', 
-        scrambled: ['T', 'A', 'C'], 
-        image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'A furry pet that says meow!'
-      },
-      { 
-        correct: 'DOG', 
-        scrambled: ['G', 'O', 'D'], 
-        image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'A loyal pet that barks!'
-      },
-      { 
-        correct: 'FISH', 
-        scrambled: ['H', 'F', 'S', 'I'], 
-        image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'It swims in water!'
-      },
-      { 
-        correct: 'BIRD', 
-        scrambled: ['R', 'I', 'D', 'B'], 
-        image: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'It flies in the sky!'
-      },
-      { 
-        correct: 'HORSE', 
-        scrambled: ['S', 'R', 'O', 'E', 'H'], 
-        image: 'https://images.unsplash.com/photo-1553284966-19b8815c7817?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'A big animal you can ride!'
-      }
-    ],
-    2: [ // Level 2: Fruits 4-6 letters
-      { 
-        correct: 'APPLE', 
-        scrambled: ['P', 'A', 'L', 'P', 'E'], 
-        image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'A red or green fruit that keeps the doctor away!'
-      },
-      { 
-        correct: 'BANANA', 
-        scrambled: ['A', 'N', 'B', 'A', 'A', 'N'], 
-        image: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'Yellow fruit that monkeys love to eat!'
-      },
-      { 
-        correct: 'ORANGE', 
-        scrambled: ['O', 'R', 'A', 'N', 'G', 'E'], 
-        image: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'Round citrus fruit, same name as a color!'
-      },
-      { 
-        correct: 'GRAPE', 
-        scrambled: ['G', 'A', 'P', 'R', 'E'], 
-        image: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'Purple fruit that grows in bunches!'
-      },
-      { 
-        correct: 'CHERRY', 
-        scrambled: ['R', 'C', 'H', 'E', 'Y', 'R'], 
-        image: 'https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'Small red fruit, often on top of ice cream!'
-      }
-    ],
-    3: [ // Level 3: Colors 4-6 letters
-      { 
-        correct: 'RED', 
-        scrambled: ['E', 'D', 'R'], 
-        image: 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'The color of fire and roses!'
-      },
-      { 
-        correct: 'BLUE', 
-        scrambled: ['L', 'U', 'E', 'B'], 
-        image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'The color of the sky and ocean!'
-      },
-      { 
-        correct: 'GREEN', 
-        scrambled: ['R', 'E', 'E', 'N', 'G'], 
-        image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'The color of grass and leaves!'
-      },
-      { 
-        correct: 'YELLOW', 
-        scrambled: ['W', 'O', 'L', 'L', 'E', 'Y'], 
-        image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'The color of the sun and bananas!'
-      },
-      { 
-        correct: 'PURPLE', 
-        scrambled: ['R', 'P', 'L', 'E', 'U', 'P'], 
-        image: 'https://images.unsplash.com/photo-1541678736381-fac9ddfebcaa?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'The color of grapes and lavender!'
-      }
-    ],
-    4: [ // Level 4: Body parts 3-5 letters
-      { 
-        correct: 'EYE', 
-        scrambled: ['Y', 'E', 'E'], 
-        image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'You use this to see!'
-      },
-      { 
-        correct: 'HAND', 
-        scrambled: ['A', 'N', 'D', 'H'], 
-        image: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'You use this to grab things!'
-      },
-      { 
-        correct: 'FOOT', 
-        scrambled: ['O', 'T', 'O', 'F'], 
-        image: 'https://images.unsplash.com/photo-1574361195575-b79b6542ff45?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'You use this to walk!'
-      },
-      { 
-        correct: 'MOUTH', 
-        scrambled: ['O', 'U', 'T', 'H', 'M'], 
-        image: 'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'You use this to eat and talk!'
-      },
-      { 
-        correct: 'NOSE', 
-        scrambled: ['S', 'E', 'O', 'N'], 
-        image: 'https://images.unsplash.com/photo-1559757146-99d42e1b4e7e?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'You use this to smell!'
-      }
-    ],
-    5: [ // Level 5: Vehicles 3-6 letters
-      { 
-        correct: 'CAR', 
-        scrambled: ['A', 'R', 'C'], 
-        image: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'A vehicle with four wheels!'
-      },
-      { 
-        correct: 'BUS', 
-        scrambled: ['U', 'S', 'B'], 
-        image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'A big vehicle that carries many people!'
-      },
-      { 
-        correct: 'PLANE', 
-        scrambled: ['A', 'N', 'E', 'L', 'P'], 
-        image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'It flies in the sky with people inside!'
-      },
-      { 
-        correct: 'BOAT', 
-        scrambled: ['O', 'A', 'T', 'B'], 
-        image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=300&fit=crop',
-        difficulty: 'easy',
-        hint: 'It travels on water!'
-      },
-      { 
-        correct: 'TRAIN', 
-        scrambled: ['R', 'A', 'I', 'N', 'T'], 
-        image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=300&h=300&fit=crop',
-        difficulty: 'medium',
-        hint: 'It runs on tracks and has many cars!'
-      }
-    ]
-  };
+ 
 
   currentWord: GameWord | null = null;
   currentWordIndex: number = 0;
@@ -261,10 +75,21 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   wordSlots: (LetterTile | null)[] = [];
   letterColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#FF9F43', '#A29BFE', '#6C5CE7'];
   currentDifficulty: 'easy' | 'medium' | 'hard' = 'easy';
+  wordsByLevel: { [key: number]: GameWord[] } = {};;
+
+  // Function to scramble letters of a word
+  private scrambleWord(word: string): string[] {
+    const letters = word.split('');
+    for (let i = letters.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [letters[i], letters[j]] = [letters[j], letters[i]];
+    }
+    return letters;
+  }
 
   ngOnInit() {
-    this.resetForNewWord();
     this.startTimer();
+    this.resetForNewWord();
   }
 
   ngOnDestroy() {
@@ -290,43 +115,33 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   resetForNewWord() {
-    if (this.wordsByLevel[this.level] && this.wordsByLevel[this.level].length > 0) {
-      this.currentWord = this.wordsByLevel[this.level][this.currentWordIndex % this.wordsByLevel[this.level].length];
-      this.currentDifficulty = this.currentWord?.difficulty || 'easy';
-    }
-    
-    this.showSuccess = false;
+    // Reset game state for a new word
     this.showHint = false;
-    this.availableLetters = [];
-    this.wordSlots = [];
-    this.draggedItem = null;
-    this.draggedFromSlot = -1;
-    this.draggedFromAvailable = -1;
-
+    this.gameStats.firstAttempt = true;
+    this.gameStats.attempts = 0;
+    this.shakeAnimation = false;
+    this.showSuccess = false;
+    
     // Get a random word from the current level
-    const levelWords = this.wordsByLevel[this.level] || this.wordsByLevel[1];
+    const levelWords = this.wordsByLevel[this.level] || [];
     this.currentWord = levelWords[Math.floor(Math.random() * levelWords.length)];
     
-    // Set current difficulty from the word
-    if (this.currentWord) {
-      this.currentDifficulty = this.currentWord.difficulty || 'easy';
-      
-      // Create letter tiles for the scrambled word
-      this.currentWord.scrambled.forEach((letter, index) => {
-        this.availableLetters.push({
-          id: `letter-${index}-${Date.now()}`,
-          letter,
-          color: this.letterColors[Math.floor(Math.random() * this.letterColors.length)],
-          isDragging: false,
-          used: false,
-          animationState: 'idle'
-        });
-      });
-
-      // Create empty slots for the word
-      this.wordSlots = Array(this.currentWord.correct.length).fill(null);
-    }
-    this.startTimer();
+    if (!this.currentWord) return;
+    
+    // Generate scrambled letters from the correct word
+    const scrambledLetters = this.scrambleWord(this.currentWord.correct);
+    
+    // Initialize available letters from the scrambled word
+    this.availableLetters = scrambledLetters.map((letter, index) => ({
+      id: `letter-${index}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      letter,
+      color: this.letterColors[Math.floor(Math.random() * this.letterColors.length)],
+      isDragging: false,
+      used: false
+    }));
+    
+    // Initialize empty word slots
+    this.wordSlots = Array(this.currentWord.correct.length).fill(null);
   }
 
   shuffleArray(array: any[]) {

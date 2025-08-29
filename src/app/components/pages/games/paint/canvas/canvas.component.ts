@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, HostListener, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GameTemplateComponent } from '../../../../game-template/game-template.component';
 type Tool = 'pen' | 'eraser';
@@ -38,8 +38,26 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private isBrowser: boolean;
 
+  downloadImage(): void {
+    if (!this.isBrowser) return;
+    
+    const canvas = this.canvasRef.nativeElement;
+    const dataUrl = canvas.toDataURL('image/png');
+    
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.download = `painting-${new Date().toISOString().slice(0, 10)}.png`;
+    link.href = dataUrl;
+    
+    // Trigger the download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object,
     private elementRef: ElementRef
   ) {
@@ -51,7 +69,51 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.setupCanvas();
       this.saveState();
       this.setupCursor();
+      
+      // Check for image URL in query parameters
+      this.route.queryParams.subscribe(params => {
+        if (params['image']) {
+          const imageUrl = decodeURIComponent(params['image']);
+          this.loadImageToCanvas(imageUrl);
+        }
+      });
     }
+  }
+
+  private loadImageToCanvas(imageUrl: string): void {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous'; // Handle CORS if needed
+    img.onload = () => {
+      // Clear the canvas
+      this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+      
+      // Calculate dimensions to maintain aspect ratio
+      const canvas = this.canvasRef.nativeElement;
+      const hRatio = canvas.width / img.width;
+      const vRatio = canvas.height / img.height;
+      const ratio = Math.min(hRatio, vRatio, 1);
+      
+      const centerX = (canvas.width - img.width * ratio) / 2;
+      const centerY = (canvas.height - img.height * ratio) / 2;
+      
+      // Draw the image centered on the canvas
+      this.ctx.drawImage(
+        img, 
+        0, 0, img.width, img.height,
+        centerX, centerY, 
+        img.width * ratio, 
+        img.height * ratio
+      );
+      
+      // Save the initial state
+      this.saveState();
+    };
+    
+    img.onerror = () => {
+      console.error('Error loading image');
+    };
+    
+    img.src = imageUrl;
   }
 
   private setupCursor(): void {
@@ -64,17 +126,21 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (!this.cursorElement?.nativeElement) return;
     
     const cursor = this.cursorElement.nativeElement;
-    const size = this.brushSize * 2; // Double the size for better visibility
+    const size = this.brushSize;
     
+    // Set cursor size
     cursor.style.width = `${size}px`;
     cursor.style.height = `${size}px`;
     
+    // Update cursor classes and styles
     if (this.isEraser) {
+      cursor.className = 'cursor eraser';
       cursor.style.border = '2px solid #ff0000';
       cursor.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
     } else {
+      cursor.className = 'cursor pen';
       cursor.style.backgroundColor = this.selectedColor;
-      cursor.style.opacity = '0.5';
+      cursor.style.border = 'none';
     }
   }
 
@@ -109,14 +175,17 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       clientY >= rect.top &&
       clientY <= rect.bottom
     ) {
+      // Calculate the position relative to canvas
       const x = clientX - rect.left;
       const y = clientY - rect.top;
       
-      this.cursorElement.nativeElement.style.left = `${x}px`;
-      this.cursorElement.nativeElement.style.top = `${y}px`;
+      // Position the cursor at the exact drawing point
+      const cursor = this.cursorElement.nativeElement;
+      cursor.style.left = `${Math.round(x)}px`;
+      cursor.style.top = `${Math.round(y)}px`;
       
       if (!this.cursorVisible) {
-        this.cursorElement.nativeElement.style.display = 'block';
+        cursor.style.display = 'block';
         this.cursorVisible = true;
       }
     } else {
@@ -163,45 +232,86 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   startDrawing(e: MouseEvent | TouchEvent): void {
     e.preventDefault();
     this.isDrawing = true;
-    this.points = [];
-    const pos = this.getMousePos(e);
-    this.points.push(pos);
     
-    this.ctx.globalCompositeOperation = this.currentTool === 'eraser' ? 'destination-out' : 'source-over';
+    // Get the current cursor position directly from the cursor element
+    const cursor = this.cursorElement?.nativeElement;
+    if (!cursor) return;
+    
+    const rect = this.canvasRef.nativeElement.getBoundingClientRect();
+    const x = parseFloat(cursor.style.left) || 0;
+    const y = parseFloat(cursor.style.top) || 0;
+    
+    // Only start drawing if within canvas bounds
+    if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
+      this.points = [{ x, y }];
+      
+      // Set the initial drawing style
+      this.ctx.strokeStyle = this.isEraser ? 'rgba(0, 0, 0, 1)' : this.selectedColor;
+      this.ctx.globalCompositeOperation = this.isEraser ? 'destination-out' : 'source-over';
+      this.ctx.lineWidth = this.brushSize;
+      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = 'round';
+      
+      // Draw the first point
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, this.brushSize / 2, 0, Math.PI * 2);
+      this.ctx.fillStyle = this.isEraser ? 'rgba(0, 0, 0, 1)' : this.selectedColor;
+      this.ctx.fill();
+    }
   }
 
   draw(e: MouseEvent | TouchEvent): void {
     if (!this.isDrawing) return;
     e.preventDefault();
     
-    const pos = this.getMousePos(e);
-    this.points.push(pos);
+    // Get the current cursor position directly from the cursor element
+    const cursor = this.cursorElement?.nativeElement;
+    if (!cursor) return;
     
-    if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
-    this.animationFrameId = requestAnimationFrame(() => this.drawSmooth());
+    const rect = this.canvasRef.nativeElement.getBoundingClientRect();
+    const x = parseFloat(cursor.style.left) || 0;
+    const y = parseFloat(cursor.style.top) || 0;
+    
+    // Ensure we're within canvas bounds
+    if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
+      this.points.push({ x, y });
+      
+      if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = requestAnimationFrame(() => this.drawSmooth());
+    }
   }
 
   private drawSmooth(): void {
-    if (this.points.length < 3) return;
+    if (this.points.length < 2) return;
+    
     const ctx = this.ctx;
-    ctx.beginPath();
-    ctx.moveTo(this.points[0].x, this.points[0].y);
-
-    for (let i = 1; i < this.points.length - 2; i++) {
-      const xc = (this.points[i].x + this.points[i + 1].x) / 2;
-      const yc = (this.points[i].y + this.points[i + 1].y) / 2;
-      ctx.quadraticCurveTo(this.points[i].x, this.points[i].y, xc, yc);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    // Set the drawing style based on current tool
+    if (this.isEraser) {
+      ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+      ctx.globalCompositeOperation = 'destination-out';
+    } else {
+      ctx.strokeStyle = this.selectedColor;
+      ctx.globalCompositeOperation = 'source-over';
     }
-
-    const last = this.points.length - 1;
-    ctx.quadraticCurveTo(
-      this.points[last - 1].x,
-      this.points[last - 1].y,
-      this.points[last].x,
-      this.points[last].y
-    );
-
+    
+    ctx.lineWidth = this.brushSize;
+    
+    // Draw a line between the last two points
+    const p1 = this.points[this.points.length - 2];
+    const p2 = this.points[this.points.length - 1];
+    
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
     ctx.stroke();
+    
+    // Keep the last point for the next line segment
+    if (this.points.length > 2) {
+      this.points.shift();
+    }
   }
 
   stopDrawing(): void {

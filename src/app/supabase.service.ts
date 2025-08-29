@@ -311,6 +311,89 @@ export class SupabaseService {
     }
   }
 
+
+
+
+    // ==========================
+  // Games & Questions Methods
+  // ==========================
+
+  // جلب كل الألعاب
+  async getGames() {
+    const { data, error } = await this.supabase
+      .from('games')
+      .select('*');
+
+    if (error) throw error;
+    return data;
+  }
+
+  // جلب لعبة واحدة بالـ id
+  async getGameById(gameId: number) {
+    const { data, error } = await this.supabase
+      .from('games')
+      .select('*')
+      .eq('id', gameId)
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // جلب الأسئلة الخاصة بلعبة + مستوى
+  async getQuestions(gameId: number, level: number) {
+    const { data, error } = await this.supabase
+      .from('questions')
+      .select('*')
+      .eq('game_id', gameId)
+      .eq('level', level);
+
+    if (error) throw error;
+    return data;
+  }
+
+  // إضافة لعبة جديدة
+  async addGame(name: string, gameType: string, levelCount: number) {
+    const { data, error } = await this.supabase
+      .from('games')
+      .insert([{ name, game_type: gameType, level_count: levelCount }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // إضافة سؤال للعبة
+  async addQuestion(
+    gameId: number,
+    level: number,
+    difficulty: string,
+    questionText: string,
+    imageUrl: string,
+    correctAnswer: string,
+    timeLimit: number
+  ) {
+    const { data, error } = await this.supabase
+      .from('questions')
+      .insert([
+        {
+          game_id: gameId,
+          level,
+          difficulty,
+          question_text: questionText,
+          image_url: imageUrl,
+          correct_answer: correctAnswer,
+          time_limit: timeLimit
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
 }
 
 
