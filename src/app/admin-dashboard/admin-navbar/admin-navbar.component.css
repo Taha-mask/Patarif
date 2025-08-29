@@ -1,0 +1,62 @@
+body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+:host {
+  --mainFont: 'Baloo 2';
+  --comic: 'Comic Relief';
+}
+
+.nav {
+  background-color: rgba(255, 255, 255, 0.336);
+  backdrop-filter: blur(30px);
+  box-shadow: 0px 0px 30px rgba(227, 228, 237, 0.37);
+  border: solid 2px rgba(225, 225, 225, 0.18);
+  border-radius: 24px;
+  text-align: center;
+  text-transform: capitalize;
+  height: 100vh;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  /* width: 24%; */
+}
+
+.nav .nav-link {
+  /* border: 1px solid green; */
+  margin-bottom: 12px;
+  width: 100%;
+  /* border: 1px solid red ; */
+}
+.nav .nav-link .bi{
+  display: none;
+}
+.nav-link p{
+  margin: 0;
+  font-family: var(--comic);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.nav-link.active {
+  background-color: #0d6efd;
+  color: #fff !important;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.links{
+  margin-top: -150%;
+}
+
+@media (max-width: 910px) {
+  .nav-link p{
+display: none;
+  }
+  .nav .nav-link .bi{
+  display: block;
+}
+}

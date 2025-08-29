@@ -10,13 +10,14 @@ import { Router } from '@angular/router';
 
 })
 export class SupabaseService {
-  constructor(private router: Router) {
+
+  private supabase: SupabaseClient;
+
+  constructor() { this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey) }
+
+  get client() {
+    return this.supabase; 
   }
-  private supabase_client?: SupabaseClient;
-
-  supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-
-
   //  Auth
   async getCurrentUser() {
     const { data } = await this.supabase.auth.getUser();
@@ -39,7 +40,6 @@ export class SupabaseService {
     const user = data.user;
     if (!user) throw new Error('User not found');
 
-    // جلب الدور من جدول profiles
     const { data: profile, error: profileError } = await this.supabase
       .from('profiles')
       .select('role')
@@ -48,9 +48,7 @@ export class SupabaseService {
 
     if (profileError) throw profileError;
 
-    // تحقق إذا Admin أو لا
     if (profile.role === 'admin') {
-      // لو Admin → رجع قيمة أو نفذ توجيه
       return { ...data, isAdmin: true };
     } else {
       return { ...data, isAdmin: false };
@@ -75,7 +73,7 @@ export class SupabaseService {
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/home` // المكان اللي هيتم إعادة التوجيه ليه بعد Google login
+          redirectTo: `${window.location.origin}/home` 
         }
       });
 
@@ -84,7 +82,6 @@ export class SupabaseService {
         return null;
       }
 
-      // بعد redirect، Supabase هيملأ session تلقائيًا
       return data;
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -287,11 +284,11 @@ export class SupabaseService {
 
       if (error) {
         console.error("Error listing files:", error.message);
-        return "images/background.png"; 
+        return "images/background.png";
       }
 
       if (!files || files.length === 0) {
-        return "images/background.png"; 
+        return "images/background.png";
       }
 
       const latestFile = files.sort((a, b) =>
@@ -312,6 +309,5 @@ export class SupabaseService {
   }
 
 }
-
 
 

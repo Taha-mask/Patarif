@@ -1,0 +1,320 @@
+/* ===========================
+   Global Styles
+=========================== */
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+    --mainColor: rgb(255, 0, 106);
+}
+
+/* ===========================
+   Main Layout
+=========================== */
+.main {
+    padding: 2%;
+    /* debug border: 1px solid green; */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* height: 100%; */
+}
+
+/* ===========================
+   Top Bar
+=========================== */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 60px;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* --- Search --- */
+.top-bar .search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: auto;
+}
+
+.search input {
+    width: 0;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    font-family: var(--comic);
+    border: 1px solid black;
+    border-radius: 24px;
+    padding-left: 10px;
+    background-color: transparent;
+    height: 36px;
+    font-size: 1rem;
+}
+
+.search input:focus {
+    outline: none;
+}
+
+.search .prefix {
+    border: 1px solid var(--mainColor);
+    border-radius: 50%;
+    padding: 8px 14px;
+    font-size: 1.2rem;
+    color: var(--mainColor);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.search .prefix:hover {
+    color: white;
+    background-color: var(--mainColor);
+}
+
+/* Show input on hover */
+.search:hover input {
+    width: 180px;
+    opacity: 1;
+}
+
+/* --- Notifications --- */
+.notifications {
+    border: 1px solid var(--mainColor);
+    border-radius: 50%;
+    padding: 8px 14px;
+    font-size: 1.2rem;
+    color: var(--mainColor);
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.notifications.notifi {
+    color: white;
+    background-color: var(--mainColor);
+}
+
+/* --- Account --- */
+.account {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--mainColor);
+    border-radius: 24px;
+    padding: 4px 10px;
+    width: fit-content;
+}
+
+.account .account-img {
+    border: 3px solid rgba(255, 255, 255, 0.89);
+    border-radius: 50%;
+    overflow: hidden;
+    width: 40px;
+    height: 40px;
+}
+
+.account-img img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.account h4 {
+    font-size: 1rem;
+    font-family: var(--mainFont);
+    color: white;
+    font-weight: 800;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* ===========================
+   Content Layout
+=========================== */
+.content {
+    gap: 4%;
+    margin-top: 40px;
+}
+
+.content .section1,
+.content .section2 {
+    padding: 0px;
+    height: 50%;
+    width: 100%;
+    /* border: green 1px solid; */
+}
+
+/* ===========================
+   Parts / Cards
+=========================== */
+.part {
+    background-color: rgba(255, 255, 255, 0.336);
+    backdrop-filter: blur(30px);
+    text-align: center;
+    padding: 20px;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    cursor: default;
+    /* Flex behavior */
+    flex: 1;
+    min-height: 0;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+}
+
+.part h1 {
+    font-family: var(--mainFont);
+    font-size: 5rem;
+    font-weight: 900;
+    margin: 0;
+}
+
+.part h5 {
+    font-family: var(--comic);
+    /* color:rgba(0, 0, 0, 0.692); */
+    opacity: 0.8;
+    font-weight: normal;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.part p {
+    font-family: var(--mainFont);
+    /* color:rgba(0, 0, 0, 0.692); */
+    opacity: 0.6;
+    font-weight: normal;
+    font-size: 1rem;
+    margin: 0;}
+
+
+.part:hover {
+    z-index: 100;
+    background-color: var(--mainColor);
+    color: white;
+}
+
+.bi-arrow-down-circle {
+    color: red;
+}
+
+.bi-arrow-up-circle {
+    color: green;
+}
+
+.chart:hover {
+    background-color: white;
+}
+
+/* ===========================
+   Clients Part
+=========================== */
+.clients {
+    display: none;
+    overflow-y: auto;
+}
+
+.clients-part {
+    flex: 1;
+    overflow: hidden;
+}
+
+
+
+/* .clients-part:hover h1 {
+    display: none;
+}
+
+.clients-part:hover .clients {
+    display: inline-flex;
+} */
+
+/* ===========================
+   products
+=========================== */
+.best-products {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 12px;
+    height: 90%;
+    width: 100%;
+    font-size: 0.9rem;
+    font-family: var(--comic);
+    padding: 10px 0;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+.best-products .product {
+    padding: 12px 16px;
+    width: 100%;
+    background-color: #ffffffbd;
+    color: #333333;
+    overflow: hidden;
+    border-radius: 18px;
+    text-align: start;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.best-products .product:hover {
+    background-color: white;
+    transform: translateY(-3px) scale(1.1);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ===========================
+   Sidebar
+=========================== */
+.side-bar {
+    /* height: 100%; */
+    max-height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+.side-bar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.side-bar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.side-bar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 24px;
+}
+
+.side-bar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.section1 .row,
+.section2 .row {
+    height: 100%;
+}
+
+@media screen and (max-width: 992px) {
+    /* .section1-products {
+        max-height: 40%;
+        height: 40% !important;
+    } */
+}

@@ -1,0 +1,64 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:host {
+    --mainFont: 'Baloo 2';
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.616);
+    height: 60px;
+    padding: 4px 16px;
+    border-radius: 24px;
+    width: 100%;
+    position: relative;
+    margin: 4px 0 ;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+}
+
+.main span {
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    background-color: rgb(255, 0, 106);
+    border-radius: 50%;
+    top: -4px;
+    left: -4px;
+}
+
+.image-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 2%;
+}
+
+.main h1 {
+    font-family: var(--mainFont);
+    font-size: 1rem;
+    text-wrap: nowrap;
+    margin: 0;
+    font-weight: 900;
+}
+
+.main .image {
+    width: 16%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 24px;
+}
+
+.main .image img {
+    object-fit: cover;
+    width: 100%;
+
+}

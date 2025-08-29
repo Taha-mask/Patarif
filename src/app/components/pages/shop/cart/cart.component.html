@@ -1,4 +1,4 @@
-<app-background></app-background>
+<!-- <app-background></app-background> -->
 <app-stars-background></app-stars-background>
 
 <div class="main">
@@ -28,7 +28,7 @@
                     {{ item.name }}
                 </td>
                 <td data-label="size">{{ item.size }}</td>
-                <td data-label="price">{{ item.price }}$</td>
+                <td data-label="price">{{ item.price }}€</td>
                 <td data-label="color">
                     <div [style.background]="item.color"
                         style="width: 25px; height: 25px; border-radius: 50%; border:1px solid #ccc;">
@@ -41,7 +41,7 @@
                         <button (click)="increaseQuantity(item)"><i class="bi bi-plus-square-fill"></i></button>
                     </div>
                 </td>
-                <td data-label="subtotal">{{ getSubtotal(item) }}$</td>
+                <td data-label="subtotal">{{ getSubtotal(item) }}€</td>
                 <td data-label="remove" class="remove">
                     <button (click)="removeItem(item)"><i class="bi bi-trash3"></i></button>
                 </td>
@@ -63,12 +63,12 @@
                 <div class="cart-details" *ngIf="total != 0">
                     <div class="part">
                         <p class="part-title">Subtotal</p>
-                        <p class="value">$274.59</p>
+                        <p class="value">{{total}} €</p>
                     </div>
                     <div class="divider"></div>
                     <div class="part">
                         <p class="part-title">Shipping</p>
-                        <p class="value">Free</p>
+                        <p class="value">{{ shipping }} €</p>
                     </div>
                     <div class="divider"></div>
                     <div class="part">
@@ -78,7 +78,7 @@
                     <div class="divider"></div>
                     <div class="part">
                         <p class="part-title">Total</p>
-                        <p class="value">${{total}}</p>
+                        <p class="value">{{totalAfterShipping()}} €</p>
                     </div>
                     <button class="checkout-button" (click)="verifyCheckout()">Proceed To CheckOut</button>
                 </div>

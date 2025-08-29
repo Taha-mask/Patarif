@@ -380,6 +380,10 @@ body {
     border-color: #007bff;
     background-color: #e0f0ff;
 }
+.size.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
 
 .details .btn {
     width: 100%;

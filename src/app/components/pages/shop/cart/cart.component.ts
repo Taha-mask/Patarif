@@ -44,11 +44,16 @@ export class CartComponent {
       item.quantity--;
     }
   }
-
+  shipping: number = 4.5;
   get total() {
     return this.dataService.getTotal();
   }
+  totalAfterShipping(){
+   return this.total + this.shipping;
+  }
 
+  // =============================== select location ========================================
+    
   // ===================================================================================================
 
   // link with supabase
