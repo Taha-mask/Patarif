@@ -1,0 +1,42 @@
+<!-- <app-background></app-background> -->
+<!-- [class.selected]="selectedSize === size.size_name" -->
+<div class="p-0 m-0">
+
+    <div class="row g-0">
+
+        <!-- Sidebar -->
+        <div class="col-1">
+            <app-admin-navbar></app-admin-navbar>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-11 main min-vh-100" *ngFor="let message of messages">
+
+            <div class="message row justify-content-start align-items-start p-3">
+
+                <div class="col-1">
+                    <img class="img-fluid" src="images/contactUsAvatar.png" alt="avatar">
+                </div>
+
+                <div class="col-11">
+                    <div class="d-flex flex-column justify-content-start align-items-end">
+                        <div class="col-12 d-flex justify-content-between header">
+                            <div class="d-flex flex-column justify-content-start align-items-start">
+                                <h3>{{message.first_name}} {{message.last_name}}</h3>
+                                <p><i class="bi bi-envelope"></i> {{message.email}} <br> <i class="bi bi-telephone"></i>
+                                    {{message.phone}}</p>
+                            </div>
+                            <p>{{ message.created_at | date:'short' }}</p>
+                        </div>
+                        <div class="col-12 content">
+                            <p>{{message.message}} </p>
+                        </div>
+                        <button  (click)="openGmail(message.email)" class="button btn btn-outline-secondary col-2">Correspondance <i
+                                class="bi bi-envelope"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

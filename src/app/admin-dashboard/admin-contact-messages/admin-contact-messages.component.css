@@ -1,0 +1,71 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+    --mainColor: #ff006a;
+}
+
+.main {
+    padding: 2%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.main .message {
+    background-color: rgba(255, 255, 255, 0.616);
+    padding: 12px;
+    border-radius: 24px;
+    width: 90%;
+    margin: 16px auto;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: showMessage 0.4s ease-out forwards;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: grey 1px solid;
+    transition: all 0.3s ease-in-out;
+    
+}
+.main .message:hover{
+    background-color: white;
+    border: var(--mainColor) 1px solid;
+}
+
+@keyframes showMessage {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.header h3 {
+    font-family: var(--mainFont);
+    /* color: var(--mainColor); */
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.header i{
+    color: var(--mainColor);
+}
+.content {
+    border-top: 1px solid grey;
+        padding-top: 24px;
+
+}
+.content p {
+    font-family: var(--comic);
+    color: black;
+    font-size: 1rem;
+}
