@@ -22,6 +22,7 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease-in-out;
     position: relative;
+    margin: 20px 0;
 }
 
 .main:hover {
@@ -66,7 +67,7 @@ body {
     margin-right: 4px;
 }
 
-button {
+.header button {
     width: 80%;
     border-radius: 24px;
 }
@@ -105,19 +106,20 @@ button {
 
 .invoice {
     width: 50%;
-    height: 80%;
+    height: fit-content;
     background-color: white;
     border-radius: 24px;
     position: relative;
     animation: popup 0.5s;
 }
 
-.invoice .close{
+.invoice .close {
     position: absolute;
     top: 2%;
     right: 2%;
     border-radius: 50%;
     width: fit-content;
+    z-index: 20000;
 }
 
 @keyframes popup {
@@ -132,4 +134,65 @@ button {
     100% {
         transform: scale(1);
     }
+}
+
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+th,
+td {
+    border: 1px solid #dddddd34;
+    padding: 12px;
+}
+
+.color {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 32px;
+    border-radius: 50%;
+}
+
+th {
+    background-color: var(--mainColor);
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: rgb(210, 228, 255);
+}
+
+tfoot td {
+    font-weight: bold;
+    background-color: #eee;
+}
+
+.submit-order {
+    text-transform: capitalize;
+    font-family: var(--mainColor);
+    font-weight: 700;
+}
+
+.recipt {
+    position: relative;
+}
+
+.logo-patarif {
+    position: absolute;
+    transform: translateX(-50%);
+    left: 50%;
+    top: 2%;
+    width: 10%;
+    height: auto;
 }
