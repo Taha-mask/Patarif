@@ -1,0 +1,28 @@
+<!-- <app-background></app-background> -->
+<!-- [class.selected]="selectedSize === size.size_name" -->
+<div class="p-0 m-0">
+
+    <div class="row g-0">
+
+        <!-- Sidebar -->
+        <div class="col-1">
+            <app-admin-navbar></app-admin-navbar>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-11 main min-vh-100">
+            <h1>Orders</h1>
+            <div class="top-bar m-2 pb-1 row align-items-end justify-content-between gap-3">
+                <h3 class="col-3"><span>count </span> {{5}}</h3>
+                <div class="row col-4 justify-content-end gap-3 filter-home">
+                    <button class="btn btn-outline-primary col-5 "> <i class="bi bi-filter"></i> Newest</button>
+                    <button class="btn btn-outline-primary col-5 "> <i class="bi bi-filter"></i> Oldest</button>
+                </div>
+            </div>
+            <!-- main content -->
+            <div class="row justify-content-center align-items-start">
+                <app-order-card class="col-4"></app-order-card>
+            </div>
+        </div>
+    </div>
+</div>

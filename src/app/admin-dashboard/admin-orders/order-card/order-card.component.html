@@ -1,0 +1,90 @@
+<div class="main d-flex flex-column gap-4 align-items-center justify-content-start">
+    <span>5</span>
+    <div class="row justify-content-center align-items-center header">
+        <div class="shop-bag col-2">
+            <img class="img-fluid" src="images/shopBag.png" alt="shop-bag">
+        </div>
+        <h1 class="col-10">Soliman Ali</h1>
+        <div class="row justify-content-center align-items-center details-home">
+            <p class="col-6"><i class="bi bi-calendar-check-fill"></i> 8/4/2005</p>
+            <p class="col-6"><i class="bi bi-telephone-fill"></i> 01065765512</p>
+        </div>
+        <button (click)="showInvoice = true" class="btn btn-outline-primary">Show order</button>
+    </div>
+</div>
+
+<div *ngIf="showInvoice == true" class="invoice-background">
+    <div class="invoice">
+        <button (click)="showInvoice = false" class="btn btn-outline-secondary close">
+            <i class="bi bi-x-circle"></i>
+        </button>
+        <div class="row justify-content-center align-items-center header">
+            <div class="shop-bag col-2">
+                <img class="img-fluid" src="images/shopBag.png" alt="shop-bag">
+            </div>
+            <h1 class="col-10">Soliman Ali</h1>
+            <div class="row justify-content-center align-items-center details-home">
+                <p class="col-6"><i class="bi bi-calendar-check-fill"></i> 8/4/2005</p>
+                <p class="col-6"><i class="bi bi-telephone-fill"></i> 01065765512</p>
+            </div>
+            <div class="row justify-content-center align-items-center details-home">
+                <p class="col-6"><i class="bi bi-geo-alt-fill"></i> hamoooooor</p>
+                <p class="col-6"><i class="bi bi-box-fill"></i> 5</p>
+            </div>
+             <div class="row justify-content-center align-items-center details-home">
+                <p class="col-12"><i class="bi bi-sticky-fill"></i> ranging me when arrive, i am in st.23 snabil el-khir</p>
+            </div>
+        </div>
+
+
+  <table>
+    <thead>
+      <tr>
+        <th>no.</th>
+        <th>product</th>
+        <th>size</th>
+        <th>price</th>
+        <th>color</th>
+        <th>quantity</th>
+        <th>subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>mian</td>
+        <td>L</td>
+        <td>24</td>
+        <td>red</td>
+        <td>2</td>
+        <td>48</td>
+      </tr>
+      <tr>
+              <td>2</td>
+        <td>mian</td>
+        <td>S</td>
+        <td>32</td>
+        <td>blue</td>
+        <td>1</td>
+        <td>32</td>
+      </tr>
+      <tr>
+               <td>3</td>
+        <td>mian</td>
+        <td>M</td>
+        <td>20</td>
+        <td>black</td>
+        <td>2</td>
+        <td>40</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2">Total</td>
+        <td colspan="2">1,550 $</td>
+      </tr>
+    </tfoot>
+  </table>
+
+    </div>
+</div>
