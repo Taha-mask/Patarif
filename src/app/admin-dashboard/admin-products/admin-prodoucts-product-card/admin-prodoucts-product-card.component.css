@@ -28,10 +28,10 @@ body {
 
 .main.out-of-stock {
   opacity: 0.5;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 .main:hover {
-  transform: translateX(12px);
+  /* transform: translateX(12px); */
   background-color: rgb(255, 255, 255);
 }
 

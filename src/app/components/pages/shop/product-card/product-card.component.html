@@ -1,4 +1,6 @@
-<div class="product-card">
+<div class="product-card" [class.disabled]="product_stock == 0">
+
+        <div class="is-salled" *ngIf="product_stock == 0">salled</div>
     <div class="card-img"> <img [src]="img" alt="{{ title }}"></div>
 
     <div class="product-rating">

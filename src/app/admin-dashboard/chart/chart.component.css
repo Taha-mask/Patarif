@@ -1,0 +1,22 @@
+.chart-wrapper {
+  width: 90%;
+  margin: auto;
+  height: 400px;
+  
+}
+
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  
+}
+
+*{
+    font-family: var(--comic);
+    /* color:rgba(0, 0, 0, 0.692); */
+    opacity: 0.8;
+    font-weight: normal;
+    font-size: 1rem;
+    margin: 0;
+}

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../../environment/environment';
+import { Product } from '../interface/product';
 
 @Injectable({
   providedIn: 'root'
@@ -16,17 +17,17 @@ export class ProductsService {
     );
   }
 
-  // جلب كل المنتجات
+  // get all products
   async getAllProducts() {
     const { data, error } = await this.supabase
       .from('products')
       .select(`
-        id,
-        title,
-        final_price,
-        category,
-        images
-      `);
+      *,
+      product_colors (
+        *,
+        product_sizes (*)
+      )
+    `);
 
     if (error) {
       console.error('Error fetching products:', error);
@@ -36,7 +37,8 @@ export class ProductsService {
     return data;
   }
 
-  // جلب كل المنتجات بكاش
+
+  // get all products cashed
   async getAllProductsCached() {
     if (this.productsCache.length > 0) {
       return this.productsCache;
@@ -46,7 +48,7 @@ export class ProductsService {
     return products;
   }
 
-  // جلب المنتجات حسب الفئة
+  // get by category [filter]
   async getProductsByCategory(category: string) {
     try {
       const { data, error } = await this.supabase
@@ -184,34 +186,32 @@ export class ProductsService {
 
 
 
-async getTop3CartItemNames() {
-  const { data, error } = await this.supabase
-    .from('cart_items')
-    .select('name');
+  async getTop3CartItemNames() {
+    const { data, error } = await this.supabase
+      .from('cart_items')
+      .select('name');
 
-  if (error) {
-    console.error('Error fetching cart items:', error.message);
-    return [];
-  }
-
-  if (!data) return [];
-
-  // ✨ حساب التكرارات
-  const nameCount: Record<string, number> = {};
-  data.forEach(item => {
-    if (item.name) {
-      nameCount[item.name] = (nameCount[item.name] || 0) + 1;
+    if (error) {
+      console.error('Error fetching cart items:', error.message);
+      return [];
     }
-  });
 
-  // ✨ ترتيب + أخذ أول 3
-  const top3 = Object.entries(nameCount)
-    .sort((a, b) => b[1] - a[1]) // ترتيب تنازلي حسب العدد
-    .slice(0, 3) // أول 3
-    .map(([name, count]) => ({ name, count }));
+    if (!data) return [];
 
-  return top3;
-}
+    const nameCount: Record<string, number> = {};
+    data.forEach(item => {
+      if (item.name) {
+        nameCount[item.name] = (nameCount[item.name] || 0) + 1;
+      }
+    });
+
+    const top3 = Object.entries(nameCount)
+      .sort((a, b) => b[1] - a[1]) // ترتيب تنازلي حسب العدد
+      .slice(0, 3) // أول 3
+      .map(([name, count]) => ({ name, count }));
+
+    return top3;
+  }
 
 
   async getLowStockProducts() {
@@ -376,6 +376,116 @@ async getTop3CartItemNames() {
     };
   }
 
+  // products page
+  async uploadImage(filePath: string, file: File) {
+    return await this.supabase.storage
+      .from('products')
+      .upload(filePath, file, {
+        upsert: true,
+        contentType: file.type,
+      });
+  }
+
+  getPublicUrl(filePath: string): string {
+    const { data } = this.supabase.storage
+      .from('products')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  }
+
+  async updateProductImages(productId: number, imageUrls: string[]) {
+    const { data, error } = await this.supabase
+      .from('products')
+      .update({ images: imageUrls })
+      .eq('id', productId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async addProduct(product: Product) {
+
+    const { data: user } = await this.supabase.auth.getUser();
+    console.log(user);
+
+    // 1) Insert product
+    const { data: productData, error: productError } = await this.supabase
+      .from('products')
+      .insert([
+        {
+          title: product.title,
+          subtitle: product.subtitle,
+          price: product.price,
+          discount: product.discount,
+          final_price: product.final_price,
+          code: product.code,
+          category: product.category,
+          description: product.description,
+          images: product.images || [],
+          rate: product.rate || null,
+          product_stock: product.product_stock || 0,
+        },
+      ])
+      .select()
+      .single();
+
+    if (productError) throw productError;
+
+    const productId = productData.id;
+
+    // 2) Insert colors
+    if (product.colors && product.colors.length > 0) {
+      for (const color of product.colors) {
+        const { data: colorData, error: colorError } = await this.supabase
+          .from('product_colors')
+          .insert([
+            {
+              product_id: productId,
+              color_name: color.color_name,
+              color_code: color.color_code,
+            },
+          ])
+          .select()
+          .single();
+
+        if (colorError) throw colorError;
+
+        const colorId = colorData.id;
+
+        // 3) Insert sizes for each color
+        if (color.sizes && color.sizes.length > 0) {
+          const { error: sizeError } = await this.supabase
+            .from('product_sizes')
+            .insert(
+              color.sizes.map((s) => ({
+                color_id: colorId,
+                size_name: s.size_name,
+                stock: s.stock,
+              }))
+            );
+
+          if (sizeError) throw sizeError;
+        }
+      }
+    }
+
+    return productData;
+  }
+
+  // delete product
+  async deleteProduct(productId: string) {
+    const { error } = await this.supabase
+      .from('products')
+      .delete()
+      .eq('id', productId);
+
+    if (error) throw error;
+
+    return true;
+  }
 
 
 }

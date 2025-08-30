@@ -1,0 +1,85 @@
+<div class="main d-flex flex-column gap-4 align-items-center justify-content-start">
+    <div class="row justify-content-center align-items-center header">
+        <div class="shop-bag col-2">
+            <img class="img-fluid" src="images/shopBag.png" alt="shop-bag">
+        </div>
+        <h1 class="col-10">{{ order.user_name }}</h1>
+        <div class="row justify-content-center align-items-center details-home">
+            <p class="col-6"><i class="bi bi-calendar-check-fill"></i> {{ order.created_at | date:'shortDate' }}</p>
+            <p class="col-6"><i class="bi bi-telephone-fill"></i> {{ order.user_phone }}</p>
+        </div>
+        <button (click)="selectedOrder = order" class="btn btn-outline-primary">Show order</button>
+    </div>
+</div>
+
+<!-- recipt -->
+<div *ngIf="selectedOrder" class="invoice-background">
+    <div class="invoice d-flex flex-column gap-4 align-items-center justify-content-start">
+        <button (click)="selectedOrder = null" class="btn btn-outline-secondary close">
+            <i class="bi bi-x-circle"></i>
+        </button>
+
+        <div id="recipt" class="recipt">
+            <img *ngIf="showLogo" class="logo-patarif" src="images/logo-patarif.png" alt="patarif">
+
+            <div class="row justify-content-center align-items-center header">
+                <div class="shop-bag col-2">
+                    <img class="img-fluid" src="images/shopBag.png" alt="shop-bag">
+                </div>
+                <h1 class="col-10">{{ selectedOrder.user_name }}</h1>
+                <div class="row justify-content-center align-items-center details-home">
+                    <p class="col-6"><i class="bi bi-calendar-check-fill"></i> {{ selectedOrder.created_at |
+                        date:'short' }}</p>
+                    <p class="col-6"><i class="bi bi-telephone-fill"></i> {{ selectedOrder.user_phone }}</p>
+                </div>
+                <div class="row justify-content-center align-items-center details-home">
+                    <p class="col-6"><i class="bi bi-geo-alt-fill"></i> {{ selectedOrder.estimate_for }}</p>
+                    <p class="col-6"><i class="bi bi-box-fill"></i> {{ selectedOrder.count }}</p>
+                </div>
+                <div class="row justify-content-center align-items-center details-home" *ngIf="selectedOrder.note">
+                    <p class="col-12"><i class="bi bi-sticky-fill"></i> {{ selectedOrder.note }}</p>
+                </div>
+            </div>
+
+            <table border="0">
+                <thead>
+                    <tr>
+                        <th>no.</th>
+                        <th>product</th>
+                        <th>size</th>
+                        <th>price</th>
+                        <th>color</th>
+                        <th>quantity</th>
+                        <th>subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of selectedOrder.cart_items; let i = index">
+                        <td>{{ i+1 }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.size }}</td>
+                        <td>{{ item.price }}</td>
+                        <td><span [style.background-color]="item.color" class="color"></span></td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.subtotal }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">Total</td>
+                        <td colspan="2">{{ selectedOrder.total }} $</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="row justify-content-center align-items-center mb-3 w-100 px-5 gap-3">
+            <button (click)="takeScreenshot()" class="btn btn-outline-secondary py-2 col-2">
+                <i class="bi bi-camera-fill"></i>
+            </button>
+            <button (click)="deliverOrder(selectedOrder.id)" class="btn btn-outline-primary py-2 submit-order col-9">
+                Mark as Delivered
+            </button>
+        </div>
+    </div>
+</div>

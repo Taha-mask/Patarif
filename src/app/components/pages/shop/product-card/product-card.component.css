@@ -18,6 +18,26 @@
     transform: translateY(0);
     transition: background 0.2s, transform 0.2s;
     cursor: normal;
+    position: relative; 
+}
+.is-salled{
+    position: absolute;
+    top: 3%;
+    left: 3%;
+    color: white;
+    background-color: rgb(65, 65, 65);
+    font-family: var(--comic);
+    font-size: 0.7rem;
+    border-radius: 12px;
+    padding: 6px 12px;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: fit-content;
+}
+.product-card.disabled{
+    pointer-events: none;
+    opacity: 0.7;
 }
 .card-img{
     width:100%;

@@ -7,11 +7,12 @@ import { StarsBackgroundComponent } from "../../../stars-background/stars-backgr
 import { LinesBackgroundComponent } from "../../../lines-background/lines-background.component";
 import { SupabaseService } from '../../../../supabase.service';
 import Swal from 'sweetalert2';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [BackgroundComponent, CommonModule, HomeFooterComponent, StarsBackgroundComponent],
+  imports: [CommonModule, HomeFooterComponent, StarsBackgroundComponent, FormsModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
@@ -44,13 +45,29 @@ export class CartComponent {
       item.quantity--;
     }
   }
-
+  shipping: number = 4.5;
   get total() {
     return this.dataService.getTotal();
   }
+  totalAfterShipping() {
+    return this.total + this.shipping;
+  }
+
 
   // ===================================================================================================
 
+  // Form model
+  contact = {
+    name: '',
+    phone: '',
+    department: '',
+    otherPlace: '',
+    isDelivered: false,
+    note: ''
+  };
+  showContactInfo: boolean = false;
+  frenchDepartments: { code: string; name: string }[] = [];
+  selectedDepartment: string = '';
   // link with supabase
   email: string = '';
   async ngOnInit() {
@@ -59,24 +76,51 @@ export class CartComponent {
       // this.displayName = user.user_metadata?.['display_name'] ?? 'name not found';
       this.email = user.email ?? 'email not found';
     };
+    // =============================== select location ========================================
+    this.frenchDepartments = await this.supabaseService.getFrenchDepartments();
+    this.frenchDepartments.push({ code: 'Other', name: 'Other' });
   };
 
+
+  async saveContact() {
+    if (!this.isContactInfoNotNull()) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    this.showContactInfo = false;
+    console.log("Contact info saved:", this.contact);
+  }
+
+  isContactInfoNotNull() {
+    if (!this.contact.name || !this.contact.phone || !this.contact.department) {
+      return false;
+    }
+
+    if (this.contact.department === 'Other Other' && !this.contact.otherPlace) {
+      return false;
+    }
+
+    return true;
+  }
+
   async checkout() {
-
-
-
     const cart = this.dataService.getCart();
     if (cart.length === 0) return;
 
     try {
-      // 1. انشئ cart جديد
       const newCart = await this.supabaseService.createCart(
-        this.email, // TODO: جيب الايميل من auth
-        this.dataService.getTotal(),
-        this.dataService.countCart
+        this.email,                   // userEmail
+        this.contact.name,            // name
+        this.contact.phone,           // phone
+        this.contact.department,      // department
+        this.contact.note,            // note
+        this.total,                   // subtotal (sum of items)
+        this.totalAfterShipping(),    // total (subtotal + shipping)
+        this.dataService.countCart    // count
       );
 
-      // 2. ضيف cart_items
+
       const items = cart.map(item => ({
         cart_id: newCart.id,
         product_id: item.id,
@@ -88,9 +132,9 @@ export class CartComponent {
         subtotal: item.price * item.quantity
       }));
 
+
       await this.supabaseService.addCartItems(newCart.id, items);
 
-      // 3. فضي الكارت
       this.dataService.clearCart();
 
       console.log('Checkout successful 🚀');
@@ -122,7 +166,7 @@ export class CartComponent {
         this.checkout();
         swalWithBootstrapButtons.fire({
           title: "Requested!",
-          text: "Your requests have been sent.",
+          text: "Your requests have been sent.\n -We will contact with you soon - wait us",
           icon: "success"
         });
       } else if (
@@ -136,7 +180,6 @@ export class CartComponent {
         });
       }
     });
-
-
   }
+
 }

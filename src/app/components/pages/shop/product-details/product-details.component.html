@@ -1,4 +1,4 @@
-<app-background></app-background>
+<!-- <app-background></app-background> -->
 <app-stars-background></app-stars-background>
 <app-stars-background [top]="80"></app-stars-background>
 <app-lines-background></app-lines-background>
@@ -98,12 +98,15 @@
                     <p>Size (stock)</p>
                     <div class="sizes-wrapper">
                         <div *ngFor="let size of sizes" class="size" [class.selected]="selectedSize === size.size_name"
-                            (click)="selectSize(size.size_name, size.stock)">
+                            [class.disabled]="size.stock === 0"
+                            (click)="size.stock > 0 && selectSize(size.size_name, size.stock)">
+
                             {{ size.size_name }}
                             <span *ngIf="size.stock > 0"> ({{ size.stock }})</span>
                             <span *ngIf="size.stock === 0" class="out-of-stock"> (Out of stock)</span>
                         </div>
                     </div>
+
                 </div>
 
                 <button (click)="addToCart()" *ngIf="selectedSize != null" class="btn btn-primary">Add to cart

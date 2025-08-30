@@ -1,0 +1,32 @@
+<div class="nav flex-column nav-pills min-vh-100" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+  <div class="m-4 logo">
+    <img class="img-fluid" src="images/logo-patarif.png" alt="App Logo" width="80" height="80">
+  </div>
+  <div class="links">
+
+    <a routerLink="/admin-dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-link">
+      <i class="bi bi-bar-chart"></i>
+      <p> 
+        Dashboard
+      </p>
+    </a>
+
+    <a routerLink="/app-admin-orders" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+      <i class="bi bi-plus-circle-dotted"></i>
+      <p>
+        Orders
+      </p>
+    </a>
+    <a routerLink="/admin-products" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-link">
+      <i class="bi bi-plus-circle-dotted"></i>
+      <p>
+        Products
+      </p>
+    </a>
+
+  </div>
+  <p style="font-size: 0.8rem">&#169;Patarif - 2022</p>
+</div>

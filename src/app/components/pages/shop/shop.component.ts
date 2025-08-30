@@ -24,7 +24,7 @@ export class ShopComponent implements OnInit {
   loading = true;
   constructor(public productsService: ProductsService, private router: Router, private dataService: CartService) { }
 
-  categories = ['t-shirts', 'paints', 'shirts'];
+  categories = ['t-shirts', 'pants', 'shirts', 'other'];
   productsByCategory: Record<string, any[]> = {};
 
   @ViewChildren('cardsContainer') cardsContainers!: QueryList<ElementRef<HTMLDivElement>>;

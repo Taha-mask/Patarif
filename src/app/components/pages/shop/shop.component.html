@@ -1,4 +1,4 @@
-<app-background></app-background>
+<!-- <app-background></app-background> -->
 <app-lines-background></app-lines-background>
 <app-lines-background [top]="100"></app-lines-background>
 <app-stars-background></app-stars-background>
@@ -50,11 +50,11 @@
 
                 <div class="product-card">
                   <app-product-card [title]="product.title" [img]="product.images[0]" [price]="product.final_price"
-                    [rate]="product.rate">
+                    [rate]="product.rate" [product_stock]="product.product_stock">
 
                   </app-product-card>
                 </div>
-                <button class="btn btn-primary add-to-cart" (click)="navigateToProduct(product.id)">
+                <button *ngIf="product.product_stock != 0" class="btn btn-primary add-to-cart" (click)="navigateToProduct(product.id)">
                   Add to Cart <i class="bi bi-cart"></i>
                 </button>
               </div>
