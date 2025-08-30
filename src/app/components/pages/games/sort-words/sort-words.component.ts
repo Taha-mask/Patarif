@@ -97,15 +97,32 @@ export class SortWordsComponent {
       this.loadSentence();
     }
   
-    /** Shuffle array using Fisher-Yates */
-    shuffle(array: string[]): string[] {
-      let shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled;
+    // Generate a consistent color based on the word index
+  getRandomColor(index: number): string {
+    const colors = [
+      '#FF6B6B', // Soft Red
+      '#4ECDC4', // Turquoise
+      '#45B7D1', // Sky Blue
+      '#96CEB4', // Sage Green
+      '#FFEEAD', // Light Yellow
+      '#D4A5A5', // Dusty Rose
+      '#9B59B6', // Purple
+      '#E67E22', // Orange
+      '#2ECC71', // Emerald
+      '#E74C3C'  // Alizarin
+    ];
+    return colors[index % colors.length];
+  }
+
+  // Shuffle array using Fisher-Yates algorithm
+  private shuffle(array: string[]): string[] {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
+    return newArray;
+  }
   
     loadSentence() {
       const current = this.sentences[this.currentIndex];

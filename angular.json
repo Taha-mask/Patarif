@@ -30,33 +30,34 @@
               "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ],
+            "outputHashing": "all"
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2mb",
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kb",
+                  "maximumError": "15kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "prerender": false,
+              "ssr": false
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"

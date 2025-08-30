@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GameHeaderComponent } from './game-header/game-header.component';
@@ -9,7 +9,9 @@ import { GameHeaderComponent } from './game-header/game-header.component';
   templateUrl: './game-template.component.html',
   styleUrls: ['./game-template.component.css']
 })
-export class GameTemplateComponent {
+export class GameTemplateComponent implements OnInit, OnDestroy {
+  private audio: HTMLAudioElement | null = null;
+  isMusicPlaying = false;
   hiddenRoutes: string[] = ['/gallery', '/canvas/:imageUrl', '/paint'];
   @Input() showHeader: boolean = true;
   @Input() showTopIcons: boolean = true;
@@ -17,7 +19,7 @@ export class GameTemplateComponent {
 
 
   shouldShowGameHeader(): boolean {
-    return this.showHeader && this.router.url !== '/canvas';
+    return this.showHeader && this.router.url !== '/canvas' && this.router.url !== '/gallery';
   }
   constructor(
     private router: Router
@@ -107,5 +109,35 @@ export class GameTemplateComponent {
 
   closeGame() {
     this.router.navigate(['/games']);
+  }
+
+  toggleMusic() {
+    if (!this.audio) {
+      // Initialize audio if not already done
+      this.audio = new Audio('/audio/Billie Eilish - WILDFLOWER (Official Lyric Video).mp3');
+      this.audio.loop = true;
+    }
+
+    if (this.isMusicPlaying) {
+      this.audio.pause();
+    } else {
+      this.audio.play().catch(e => console.error('Error playing music:', e));
+    }
+    this.isMusicPlaying = !this.isMusicPlaying;
+  }
+
+  ngOnInit() {
+    // Initialize audio with volume set to 30%
+    this.audio = new Audio('/audio/Billie Eilish - WILDFLOWER (Official Lyric Video).mp3');
+    this.audio.volume = 0.3;
+    this.audio.loop = true;
+  }
+
+  ngOnDestroy() {
+    // Clean up audio when component is destroyed
+    if (this.audio) {
+      this.audio.pause();
+      this.audio = null;
+    }
   }
 }

@@ -42,7 +42,12 @@ export class GamesComponent {
     else if (event.index === 6) {
       this.router.navigate(['/matchint-words']);
     }
-
+    else if (event.index === 7) {
+      this.router.navigate(['/math-ladder']);
+    }
+    else if (event.index === 8) {
+      this.router.navigate(['/geo-quiz']);
+    }
     
     // You can add more navigation logic for other cards here
   }
@@ -51,11 +56,10 @@ export class GamesComponent {
     {
       title: 'Organiser les lettres\nArrange the letters!',
       subtitle: 'Try now for free',
-      img: 'images/card-2.png',
+      img: '/images/sort.png',
     },
     {
       title: 'Guess the Country\nIdentify countries!',
-      subtitle: 'Try now for free',
       img: 'images/card-3.png',
     },
     {
@@ -66,46 +70,41 @@ export class GamesComponent {
   ];
   cardSet2: Card[] = [
     {
-      title: 'Puzzle Adventure',
-      img: 'images/game-1.png',
+      title: 'Trier les lettres',
+      img: '/images/sort.jpg',
     },
     {
-      title: 'Memory Match',
-      img: 'images/game-2.png',
+      title: 'Deviner le pays',
+      img: '/images/place.jpg',
     },
     {
-      title: 'Math Challenge',
-      img: 'images/game-1.png',
+      title: 'Vrai ou Faux',
+      img: '/images/fact.jpg',
     },
     {
-      title: 'Word Builder',
-      img: 'images/game-2.png',
+      title: 'Peinture',
+      img: '/images/paint.jpg',
     },
     {
-      title: 'Color Mixer',
-      img: 'images/game-1.png',
+      title: 'Trier les mots',
+      img: '/images/sortword.jpg',
     },
     {
-      title: 'Shape Sorter',
-      img: 'images/game-2.png',
+      title: 'Deviner l\'emoji',
+      img: '/images/emoji.jpg',
     },
     {
-      title: 'Number Quest',
-      img: 'images/game-1.png',
+      title: 'Mot à Image',
+      img: 'images/matching.jpg',
     },
     {
-      title: 'Logic Master',
-      img: 'images/game-2.png',
+      title: 'Escalier Mathématique',
+      img: 'images/math.jpg',
     },
     {
-      title: 'Pattern Finder',
-      img: 'images/game-1.png',
+      title: 'Quiz Géographie',
+      img: 'images/map.jpg',
     },
-    {
-      title: 'Speed Math',
-      img: 'images/game-2.png',
-    },
+
   ];
-
-
 }

@@ -16,54 +16,69 @@ import { BananeComponent } from './components/pages/learning/stories/banane/bana
 import { ProfileComponent } from './components/pages/profile/profile.component';
 import { BrocoliComponent } from './components/pages/learning/stories/brocoli/brocoli.component';
 import { FraiseComponent } from './components/pages/learning/stories/fraise/fraise.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AddProductComponent } from './admin-dashboard/add-product/add-product.component';
+import { AdminProductsComponent } from './admin-dashboard/admin-products/admin-products.component';
+import { AdminOrdersComponent } from './admin-dashboard/admin-orders/admin-orders.component';
+import { ProductDetailsComponent } from './components/pages/shop/product-details/product-details.component';
+import { CartComponent } from './components/pages/shop/cart/cart.component';
 import { GalleryComponent } from './components/pages/games/paint/gallery/gallery.component';
 import { CanvasComponent } from './components/pages/games/paint/canvas/canvas.component';
 // import { MapComponent } from './components/pages/games/map/map.component';
 import { GuessEemojiComponent } from './components/pages/games/guess-eemoji/guess-eemoji.component';
 import { SortWordsComponent } from './components/pages/games/sort-words/sort-words.component';
 import { MatchintWordsComponent } from './components/pages/games/matchint-words/matchint-words.component';
-
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
-import { AddProductComponent } from './admin-dashboard/add-product/add-product.component';
-import { ProductDetailsComponent } from './components/pages/shop/product-details/product-details.component';
-import { CartComponent } from './components/pages/shop/cart/cart.component';
-import path from 'path';
-import { AdminProductsComponent } from './admin-dashboard/admin-products/admin-products.component';
-import { AdminOrdersComponent } from './admin-dashboard/admin-orders/admin-orders.component';
+import { MathLadderComponent } from './components/pages/games/math-ladder/math-ladder.component';
+import { GeoQuizComponent } from './components/pages/games/geo-quiz/geo-quiz.component';
 import { ContactUsComponent } from './components/pages/contact-us/contact-us.component';
 
-
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-    { path: 'guess-eemoji', component: GuessEemojiComponent },
+  { path: '', redirectTo: 'login', pathMatch: 'full', data: { renderMode: 'client' } },
+
+  // Games
+  { path: 'guess-eemoji', component: GuessEemojiComponent },
   { path: 'matchint-words', component: MatchintWordsComponent },
+  { path: 'sort-words', component: SortWordsComponent },
   { path: 'gallery', component: GalleryComponent },
-  { path: 'canvas/:imageUrl', component: CanvasComponent },
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
-  { path: 'games', component: GamesComponent },
+  { path: 'canvas', component: CanvasComponent },
   { path: 'letters-game', component: LettersGameComponent },
   { path: 'country-guessing', component: CountryGuessingComponent },
   { path: 'fact-game', component: FactGameComponent },
+  { path: 'math-ladder', component: MathLadderComponent },
+  { path: 'geo-quiz', component: GeoQuizComponent },
+
+  // Account
+  { path: 'login', component: LoginComponent },
+  { path: 'signup', component: SignupComponent },
+  { path: 'profile', component: ProfileComponent },
+
+  // Pages
+  { path: 'games', component: GamesComponent },
   { path: 'stories', component: StoriesComponent },
   { path: 'learning', component: LearningComponent },
   { path: 'shop', component: ShopComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'contact-us', component: ContactUsComponent },
+
+  // Learning stories
   { path: 'tomate-story', component: TomateStoryComponent },
   { path: 'carotte-story', component: CarotteStoryComponent },
   { path: 'banane-story', component: BananeComponent },
-  { path: 'brocoli-story', component: BrocoliComponent},
+  { path: 'brocoli-story', component: BrocoliComponent },
   { path: 'fraise-story', component: FraiseComponent },
-  // { path: 'map', component: MapComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'sort-words', component: SortWordsComponent },
-  { path: 'add-product', component: AddProductComponent },
+
+  // Admin
   { path: 'admin-dashboard', component: AdminDashboardComponent },
-  { path: 'product-details/:id', component: ProductDetailsComponent },
-  { path: 'cart', component: CartComponent },
+  { path: 'add-product', component: AddProductComponent },
   { path: 'admin-products', component: AdminProductsComponent },
   { path: 'app-admin-orders', component: AdminOrdersComponent },
-  {path: 'contact-us', component: ContactUsComponent}
+
+  // Shop
+  { 
+    path: 'product-details/:id', 
+    loadComponent: () => import('./components/pages/shop/product-details/product-details.component')
+      .then(m => m.ProductDetailsComponent),
+    data: { renderMode: 'client' }
+  },
+  { path: 'cart', component: CartComponent },
 ];
