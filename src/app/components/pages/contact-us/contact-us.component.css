@@ -1,0 +1,61 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+    --mainColor: rgb(255, 0, 106);
+}
+
+* {
+    /* border: 1px solid green; */
+}
+
+.main {
+    margin: auto;
+    width: 90%;
+    height: 90%;
+    background-color: rgba(255, 255, 255, 0.144);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    border: white 4px solid;
+
+}
+
+.main .main-side h1 {
+    color: var(--mainColor);
+    font-family: var(--mainFont);
+    font-weight: 900;
+    font-size: 4rem;
+    margin: 0;
+}
+
+.main .main-side p {
+    color: rgb(46, 46, 46);
+    font-family: var(--comic);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.main .img-home {
+    /* width: fit-content; */
+}
+
+.main .form-control {
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: var(--comic);
+    border: 1px solid #6486FF;
+}
+
+form button {
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: var(--comic);
+    background-color: #6486FF;
+    border: none;
+}

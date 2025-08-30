@@ -28,8 +28,6 @@ export class AdminDashboardComponent {
   }
 
 
-
-
   // products services
 
   totalCarts = 0;

@@ -404,4 +404,37 @@ export class SupabaseService {
     }
     return data as { code: string; name: string }[];
   }
+
+  // ==========================
+  // contact us
+  // ==========================
+
+  async sendContactForm(data: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    message: string;
+  }) {
+    const user = await this.supabase.auth.getUser();
+    const user_id = user.data.user?.id || null;
+
+    const { error } = await this.supabase.from('contact_messages').insert([
+      {
+        ...data,
+        user_id,
+      },
+    ]);
+
+    if (error) throw error;
+    return true;
+  }
+
+  async getContactMessages() {
+    const { data, error } = await this.supabase.from('contact_messages').select('*');
+    if (error) throw error;
+    return data;
+  }
+
 }
+

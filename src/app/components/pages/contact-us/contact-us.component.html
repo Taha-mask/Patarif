@@ -2,7 +2,89 @@
 <app-lines-background></app-lines-background>
 
 <div class="main row justify-content-center align-items-center p-5">
-    <div class="col-3">
-        <img src="images/contactUs.png" alt="contact us cover">
-    </div>
+  <!-- Left Side (Form Section) -->
+  <div class="main-side col-7 d-flex flex-column justify-content-start align-items-start p-0">
+    <h1>Contactez-nous</h1>
+    <p>
+      N'hésitez pas à nous écrire pour toute question ou demande.
+      Nous serons ravis de vous répondre rapidement.
+    </p>
+
+    <form
+      (submit)="onSubmit($event)"
+      class="d-flex flex-column justify-content-start align-items-start gap-4 w-100 mt-2"
+    >
+      <!-- Name + Last Name -->
+      <div class="row w-100 justify-content-between align-items-center">
+        <div class="col-6">
+          <input
+            [(ngModel)]="formData.first_name"
+            name="first_name"
+            class="form-control"
+            type="text"
+            placeholder="prénom"
+            required
+          />
+        </div>
+        <div class="col-6">
+          <input
+            [(ngModel)]="formData.last_name"
+            name="last_name"
+            class="form-control"
+            type="text"
+            placeholder="nom de famille"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- email -->
+      <input
+        [(ngModel)]="formData.email"
+        name="email"
+        class="form-control"
+        type="email"
+        placeholder="e-mail"
+      />
+
+      <!-- phone -->
+      <input
+        [(ngModel)]="formData.phone"
+        name="phone"
+        class="form-control"
+        type="text"
+        placeholder="téléphone"
+      />
+
+      <!-- Message -->
+      <textarea
+        [(ngModel)]="formData.message"
+        name="message"
+        class="form-control"
+        rows="5"
+        placeholder="Écrivez votre message ici..."
+        required
+      ></textarea>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary px-4 py-3 w-100"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Envoi...' : 'Envoyer' }}
+      </button>
+
+      <!-- Feedback messages -->
+      <p *ngIf="success" class="text-success mt-2">
+        ✅ Message envoyé avec succès
+      </p>
+      <p *ngIf="error" class="text-danger mt-2">⚠️ {{ error }}</p>
+    </form>
+  </div>
+
+  <!-- Right Side (Image Section) -->
+  <div class="col-5 d-flex align-items-end justify-content-end img-home">
+    <img class="img-fluid" src="images/contactUs.png" alt="contact us cover" />
+  </div>
 </div>

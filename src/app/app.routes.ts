@@ -31,6 +31,7 @@ import { MatchintWordsComponent } from './components/pages/games/matchint-words/
 import { MathLadderComponent } from './components/pages/games/math-ladder/math-ladder.component';
 import { GeoQuizComponent } from './components/pages/games/geo-quiz/geo-quiz.component';
 import { ContactUsComponent } from './components/pages/contact-us/contact-us.component';
+import { AdminContactMessagesComponent } from './admin-dashboard/admin-contact-messages/admin-contact-messages.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full', data: { renderMode: 'client' } },
@@ -58,7 +59,6 @@ export const routes: Routes = [
   { path: 'learning', component: LearningComponent },
   { path: 'shop', component: ShopComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'contact-us', component: ContactUsComponent },
 
   // Learning stories
   { path: 'tomate-story', component: TomateStoryComponent },
@@ -72,6 +72,7 @@ export const routes: Routes = [
   { path: 'add-product', component: AddProductComponent },
   { path: 'admin-products', component: AdminProductsComponent },
   { path: 'app-admin-orders', component: AdminOrdersComponent },
+  { path: 'contact-messages', component: AdminContactMessagesComponent },
 
   // Shop
   { 

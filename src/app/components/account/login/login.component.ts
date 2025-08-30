@@ -72,7 +72,7 @@ export class LoginComponent {
 
       // التوجيه بناءً على الدور
       if (res.isAdmin) {
-        window.location.replace('/add-product');
+        window.location.replace('/admin-dashboard');
       } else {
         window.location.replace('/home');
       }
