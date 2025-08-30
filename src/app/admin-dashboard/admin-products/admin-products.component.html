@@ -1,93 +1,85 @@
 <!-- <app-background></app-background> -->
 
 <div class="p-0 m-0">
-    <!-- product form -->
-    <div class="product-form">
-        <!-- <button *ngIf="showForm" (click)="showForm = false" class="discard btn btn-danger">Discard</button> -->
+  <!-- product form -->
+  <div class="product-form">
+    <!-- <button *ngIf="showForm" (click)="showForm = false" class="discard btn btn-danger">Discard</button> -->
 
-        <app-product-form *ngIf="showForm" (closed)="onFormClosed()"></app-product-form>
+    <app-product-form *ngIf="showForm" (closed)="onFormClosed()"></app-product-form>
+  </div>
+
+  <div class="row g-0">
+
+    <!-- Sidebar -->
+    <div class="col-1">
+      <app-admin-navbar></app-admin-navbar>
     </div>
 
-    <div class="row g-0">
-
-        <!-- Sidebar -->
-        <div class="col-1">
-            <app-admin-navbar></app-admin-navbar>
-        </div>
-
-        <!-- Main Content -->
-        <div class="col-11 main min-vh-100">
-            <h1>Products</h1>
-            <div class="top-bar m-2 pb-1  row align-items-end justify-content-between gap-3">
-                <div class="sort row align-items-center justify-content-start gap-3">
-                    <!-- <span> count <i class="bi bi-filter"></i></span> -->
-                    <!-- <button class="btn btn-outline-primary type col-auto">category</button>
+    <!-- Main Content -->
+    <div class="col-11 main min-vh-100">
+      <h1>Products</h1>
+      <div class="top-bar m-2 pb-1  row align-items-end justify-content-between gap-3">
+        <div class="sort row align-items-center justify-content-start gap-3">
+          <!-- <span> count <i class="bi bi-filter"></i></span> -->
+          <!-- <button class="btn btn-outline-primary type col-auto">category</button>
                     <button class="btn btn-outline-primary type col-auto">stock</button>
                     <button class="btn btn-outline-primary type col-auto">price</button> -->
-                    <h3><span>count </span> {{products.length}}</h3>
-                </div>
+          <h3><span>count </span> {{products.length}}</h3>
+        </div>
 
-                <button (click)="openForm()" class="btn btn-outline-primary add col-auto">Add <span><i
-                            class="bi bi-plus-lg"></i></span></button>
-            </div>
-
-          <div class="product-card" *ngFor="let product of products">
-  <app-admin-prodoucts-product-card 
-      [productId]="product.id" 
-      (productAdded)="reload()"
-      [img]="product.images[0]" 
-      [title]="product.title" 
-      [price]="product.final_price"
-      [stock]="product.product_stock" 
-      [size]="product.size" 
-      [category]="product.category">
-  </app-admin-prodoucts-product-card>
-
-  <div class="product-data">
-
-    <!-- Title & Price -->
-    <div class="product-header">
-      <h3>{{ product.title }}</h3>
-      <span class="price">{{ product.final_price | currency:'USD' }}</span>
-    </div>
-
-    <!-- Description -->
-    <p class="product-desc">
-      {{ product.description || 'No description available.' }}
-    </p>
-
-    <!-- Images -->
-    <div class="product-images">
-      <div *ngFor="let img of product.images" class="product-image">
-        <img [src]="img" alt="Product image">
+        <button (click)="openForm()" class="btn btn-outline-primary add col-auto">Add <span><i
+              class="bi bi-plus-lg"></i></span></button>
       </div>
-    </div>
 
-    <!-- Sizes -->
-    <div class="product-sizes">
-      <span class="size-badge" *ngFor="let s of product.size?.split(',')">
-        {{ s.trim() }}
-      </span>
-    </div>
+      <div class="product-card" *ngFor="let product of products">
+        <app-admin-prodoucts-product-card [productId]="product.id" (productAdded)="reload()" [img]="product.images[0]"
+          [title]="product.title" [price]="product.final_price" [stock]="product.product_stock" [size]="product.size"
+          [category]="product.category">
+        </app-admin-prodoucts-product-card>
 
-    <!-- Colors -->
-    <div class="product-colors">
-      <span *ngFor="let color of product.colors" 
-            class="color-dot" 
-            [style.backgroundColor]="color">
-      </span>
-    </div>
+        <div class="product-data">
 
-    <!-- Stock -->
-    <div class="product-stock">
-      <span [ngClass]="{ 'in-stock': product.product_stock > 0, 'out-stock': product.product_stock === 0 }">
-        {{ product.product_stock > 0 ? (product.product_stock + ' in stock') : 'Out of stock' }}
-      </span>
+          <!-- Title & Price -->
+          <div class="product-header">
+            <h3>{{ product.title }}</h3>
+            <span class="price">{{ product.final_price | currency:'USD' }}</span>
+          </div>
+
+          <!-- Description -->
+          <p class="product-desc">
+            {{ product.description || 'No description available.' }}
+          </p>
+
+          <!-- Images -->
+          <div class="product-images">
+            <div *ngFor="let img of product.images" class="product-image">
+              <img [src]="img" alt="Product image">
+            </div>
+          </div>
+
+          <!-- Sizes -->
+          <div class="product-sizes">
+            <span class="size-badge" *ngFor="let s of product.size?.split(',')">
+              {{ s.trim() }}
+            </span>
+          </div>
+
+          <!-- Colors -->
+          <div class="product-colors">
+            <span *ngFor="let color of product.colors" class="color-dot" [style.backgroundColor]="color">
+            </span>
+          </div>
+
+          <!-- Stock -->
+          <div class="product-stock">
+            <span [ngClass]="{ 'in-stock': product.product_stock > 0, 'out-stock': product.product_stock === 0 }">
+              {{ product.product_stock > 0 ? (product.product_stock + ' in stock') : 'Out of stock' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+
     </div>
   </div>
-</div>
-
-
-        </div>
-    </div>
 </div>

@@ -16,7 +16,7 @@ export class SupabaseService {
   constructor() { this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey) }
 
   get client() {
-    return this.supabase; 
+    return this.supabase;
   }
   //  Auth
   async getCurrentUser() {
@@ -73,7 +73,7 @@ export class SupabaseService {
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/home` 
+          redirectTo: `${window.location.origin}/home`
         }
       });
 
@@ -110,35 +110,49 @@ export class SupabaseService {
     return this.supabase.auth.signOut();
   }
   // add new record in carts , cart_items [insert to supabase]  
+async createCart(
+  userEmail: string,
+  name: string,
+  phone: string,
+  department: string,
+  note: string,
+  subtotal: number,
+  total: number,
+  count: number
+) {
+  const shipping = Number((total - subtotal).toFixed(2)); // ensure numeric, 2 decimals
 
-  async createCart(userEmail: string, subtotal: number, count: number) {
-    const { data, error } = await this.supabase
-      .from('carts')
-      .insert([
-        {
-          user_email: userEmail,
-          subtotal,
-          shipping: 0,
-          total: subtotal,
-          count,
-          estimate_for: '3 days',
-          isDelivered: false
-        }
-      ])
-      .select()
-      .single();
+  const { data, error } = await this.supabase
+    .from('carts')
+    .insert([
+      {
+        user_email: userEmail,
+        user_name: name,
+        user_phone: phone,
+        subtotal,
+        shipping,
+        estimate_for: department,
+        note,
+        total,
+        count,
+        isDelivered: false
+      }
+    ])
+    .select()
+    .single();
 
-    if (error) throw error;
-    return data;
-  }
+  if (error) throw error;
+  return data;
+}
+async addCartItems(cartId: string, items: any[]) {
+  // ensure each item has cart_id set (you do that in checkout)
+  const { error } = await this.supabase
+    .from('cart_items')
+    .insert(items);
 
-  async addCartItems(cartId: string, items: any[]) {
-    const { error } = await this.supabase
-      .from('cart_items')
-      .insert(items);
+  if (error) throw error;
+}
 
-    if (error) throw error;
-  }
 
   // add to favourites:
 
@@ -306,6 +320,61 @@ export class SupabaseService {
       console.error("Unexpected error:", err);
       return "images/background.png";
     }
+  }
+
+
+  // french departments [for select place for ordering] french_departments
+
+  async getFrenchDepartments(): Promise<{ code: string; name: string }[]> {
+    const { data, error } = await this.supabase
+      .from('french_departments')
+      .select('*');
+
+    if (error) {
+      console.error('Error fetching departments:', error);
+      return [];
+    }
+
+    return data as { code: string; name: string }[];
+  }
+
+  // ------------------ Insert a cart ------------------
+  async insertCart(cart: any) {
+    const { data, error } = await this.supabase
+      .from('carts')
+      .insert([cart]);
+    if (error) throw error;
+    return data;
+  }
+
+
+  // ======= get carts & car items =====
+
+
+  // get cart with items
+  
+  async getAllOrders() {
+    const { data, error } = await this.supabase
+      .from('carts')
+      .select(`
+        *,
+        cart_items (*)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async markAsDelivered(cartId: string) {
+    const { data, error } = await this.supabase
+      .from('carts')
+      .update({ isDelivered: true })
+      .eq('id', cartId)
+      .select();
+
+    if (error) throw error;
+    return data;
   }
 
 }

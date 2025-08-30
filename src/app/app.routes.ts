@@ -29,6 +29,8 @@ import { ProductDetailsComponent } from './components/pages/shop/product-details
 import { CartComponent } from './components/pages/shop/cart/cart.component';
 import path from 'path';
 import { AdminProductsComponent } from './admin-dashboard/admin-products/admin-products.component';
+import { AdminOrdersComponent } from './admin-dashboard/admin-orders/admin-orders.component';
+import { ContactUsComponent } from './components/pages/contact-us/contact-us.component';
 
 
 export const routes: Routes = [
@@ -62,5 +64,6 @@ export const routes: Routes = [
   { path: 'product-details/:id', component: ProductDetailsComponent },
   { path: 'cart', component: CartComponent },
   { path: 'admin-products', component: AdminProductsComponent },
-
+  { path: 'app-admin-orders', component: AdminOrdersComponent },
+  {path: 'contact-us', component: ContactUsComponent}
 ];
