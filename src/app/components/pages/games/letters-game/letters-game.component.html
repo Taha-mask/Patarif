@@ -1,9 +1,12 @@
 <app-game-template
+  [level]="level"
   [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [currentQuestion]="currentQuestion"
   [timeElapsed]="timeElapsed"
   [currentWord]="currentWord?.correct || ''"
-  [difficulty]="currentDifficulty"
->
+  [difficulty]="currentWord?.difficulty || 'easy'"
+  [totalQuestions]="5"
+  >
   <div class="enhanced-game-content" [class.shake]="shakeAnimation">
     
     <!-- Main Game Area -->
@@ -65,17 +68,47 @@
       </div>
   
     </div>
- <!-- Action Buttons -->
- <div class="action-buttons">
-  <button class="check-btn" 
-          [disabled]="isCheckButtonDisabled()" 
-          (click)="checkWord()">
-    <i class="check-icon">✓</i>
-    <span>Done</span>
-  </button>
-  
-
-
-</div>
+ <!-- Wrong Message -->
+ <div class="wrong-message" *ngIf="showWrong">
+   <span>❌ Wrong!</span>
+ </div>
+ 
+ <!-- Bootstrap Modal -->
+ <div class="modal fade" 
+      [class.show]="showLevelCompleteModal" 
+      [style.display]="showLevelCompleteModal ? 'block' : 'none'"
+      tabindex="-1" 
+      role="dialog" 
+      aria-labelledby="levelCompleteModalLabel" 
+      aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+     <div class="modal-content celebration-modal">
+       <div class="modal-header border-0">
+         <h5 class="modal-title" id="levelCompleteModalLabel">
+           🎉 Congratulations! 🎉
+         </h5>
+         <button type="button" class="btn-close" (click)="continueToNextLevel()" aria-label="Close"></button>
+       </div>
+       <div class="modal-body text-center">
+         <h4 class="mb-3">You completed Level {{ level }}!</h4>
+         <div class="alert alert-success">
+           <i class="fas fa-star text-warning"></i>
+           All 5 questions answered correctly!
+         </div>
+         <div class="level-progress mb-3">
+           <div class="progress">
+             <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+           </div>
+         </div>
+       </div>
+       <div class="modal-footer border-0 justify-content-center">
+         <button type="button" class="btn btn-primary btn-lg px-4" (click)="continueToNextLevel()">
+           <i class="fas fa-arrow-right me-2"></i>
+           Continue to Level {{ level + 1 }}
+         </button>
+       </div>
+     </div>
+   </div>
+ </div>
   </div>
 </app-game-template>

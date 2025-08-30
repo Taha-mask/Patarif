@@ -3,10 +3,10 @@
     <div class="level-progress">
       <div class="level-info">
         <span class="level-text">Level {{ level }}</span>
-        <span class="progress-text">{{ questionsCorrectInLevel }}/5 completed</span>
+        <span class="progress-text">Question {{ currentQuestion }}/{{ totalQuestions }}</span>
       </div>
       <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / 5) * 100"></div>
+        <div class="progress-fill" [style.width.%]="(questionsCorrectInLevel / totalQuestions) * 100"></div>
       </div>
     </div>
     
@@ -21,8 +21,5 @@
       {{ difficulty.toUpperCase() }}
     </div>
     
-    <div class="bonus-points" *ngIf="bonusPoints > 0">
-      <span class="bonus-label">Bonus:</span>
-      <span class="bonus-value">+{{ bonusPoints }}</span>
-    </div>
+    
   </div>

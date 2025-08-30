@@ -36,6 +36,7 @@ export class GameTemplateComponent implements OnInit, OnDestroy {
   @Input() level: number = 1;
   @Input() score: number = 0;
   @Input() questionsCorrectInLevel: number = 0;
+  @Input() currentQuestion: number = 1;
   @Input() timeElapsed: number = 0;
   @Input() currentWord: string = '';
   @Input() bonusPoints: number = 0;
