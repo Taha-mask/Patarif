@@ -31,37 +31,142 @@ export class FactGameComponent implements OnInit {
     return String.fromCharCode(65 + index);
   }
 
-  get isLastQuestion(): boolean {
-    return this.currentIndex === this.questions.length - 1;
-  }
 
-  questions: Question[] = [
-    {
-      text: 'The Earth revolves around the Sun.',
-      options: [
-        { text: 'True', isCorrect: true },
-        { text: 'False', isCorrect: false }
-      ],
-      difficulty: 'easy'
-    },
-    {
-      text: 'Cats can fly.',
-      options: [
-        { text: 'True', isCorrect: false },
-        { text: 'False', isCorrect: true }
-      ],
-      difficulty: 'easy'
-    },
-    {
-      text: 'Water freezes at 0°C.',
-      options: [
-        { text: 'True', isCorrect: true },
-        { text: 'False', isCorrect: false }
-      ],
-      difficulty: 'medium'
-    }
-  ];
 
+  // Questions organized by levels
+  questionsByLevel: { [key: number]: Question[] } = {
+    1: [
+      {
+        text: 'The Earth revolves around the Sun.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'Cats can fly.',
+        options: [
+          { text: 'True', isCorrect: false },
+          { text: 'False', isCorrect: true }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'Water freezes at 0°C.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'The human body has 206 bones.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'Sharks are mammals.',
+        options: [
+          { text: 'True', isCorrect: false },
+          { text: 'False', isCorrect: true }
+        ],
+        difficulty: 'easy'
+      }
+    ],
+    2: [
+      {
+        text: 'The speed of light is approximately 300,000 km/s.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'Mount Everest is the tallest mountain on Earth.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'The Great Wall of China is visible from space.',
+        options: [
+          { text: 'True', isCorrect: false },
+          { text: 'False', isCorrect: true }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'Dolphins are fish.',
+        options: [
+          { text: 'True', isCorrect: false },
+          { text: 'False', isCorrect: true }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'The human brain uses about 20% of the body\'s energy.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'easy'
+      }
+    ],
+    3: [
+      {
+        text: 'The chemical symbol for gold is Au.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'medium'
+      },
+      {
+        text: 'The smallest country in the world is Vatican City.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'medium'
+      },
+      {
+        text: 'The Amazon rainforest produces 20% of the world\'s oxygen.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'medium'
+      },
+      {
+        text: 'The human heart has four chambers.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'medium'
+      },
+      {
+        text: 'The planet Venus is hotter than Mercury.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'medium'
+      }
+    ]
+  };
+
+  // Level & Progress
+  currentLevel = 1;
+  currentQuestion = 1;
+  questionsPerLevel = 5;
   currentIndex = 0;
   answered = false;
   answerStatus: string[] = [];
@@ -69,23 +174,32 @@ export class FactGameComponent implements OnInit {
   questionsCorrectInLevel = 0;
   timeElapsed = 0;
   bonusPoints = 0;
-  level = 1;
+  showLevelComplete = false;
 
   timerInterval: any;
 
-  get currentQuestion(): Question {
-    return this.questions[this.currentIndex];
+  get currentQuestionData(): Question {
+    const currentLevelQuestions = this.questionsByLevel[this.currentLevel];
+    return currentLevelQuestions ? currentLevelQuestions[this.currentIndex] : this.questionsByLevel[1][0];
+  }
+
+  get questions(): Question[] {
+    return this.questionsByLevel[this.currentLevel] || [];
   }
 
   get currentWord(): CurrentWord {
     return { 
-      difficulty: this.currentQuestion.difficulty,
-      correct: this.currentQuestion.options.find(opt => opt.isCorrect)?.text || ''
+      difficulty: this.currentQuestionData.difficulty,
+      correct: this.currentQuestionData.options.find(opt => opt.isCorrect)?.text || ''
     };
   }
 
   get currentDifficulty() {
-    return this.currentQuestion.difficulty;
+    return this.currentQuestionData.difficulty;
+  }
+
+  get isLastQuestion(): boolean {
+    return this.currentIndex === this.questionsPerLevel - 1;
   }
 
   ngOnInit() {
@@ -94,7 +208,7 @@ export class FactGameComponent implements OnInit {
   }
 
   resetAnswerStatus() {
-    this.answerStatus = this.currentQuestion.options.map(() => '');
+    this.answerStatus = this.currentQuestionData.options.map(() => '');
   }
 
   checkAnswer(isCorrect: boolean, index: number) {
@@ -107,24 +221,60 @@ export class FactGameComponent implements OnInit {
       this.score++;
       this.questionsCorrectInLevel++;
       this.bonusPoints = 10; // example bonus
+      this.playCorrectSound();
     } else {
       this.answerStatus[index] = 'wrong';
       // highlight correct answer too
-      const correctIndex = this.currentQuestion.options.findIndex(o => o.isCorrect);
+      const correctIndex = this.currentQuestionData.options.findIndex(o => o.isCorrect);
       if (correctIndex !== -1) {
         this.answerStatus[correctIndex] = 'correct';
       }
+      this.playWrongSound();
     }
   }
 
   nextQuestion() {
-    if (this.currentIndex < this.questions.length - 1) {
+    if (this.currentIndex < this.questionsPerLevel - 1) {
       this.currentIndex++;
+      this.currentQuestion++;
       this.answered = false;
       this.bonusPoints = 0;
       this.resetAnswerStatus();
     } else {
-      console.log('Level complete');
+      this.showLevelComplete = true;
+      this.stopTimer();
+    }
+  }
+
+  getLevelScorePercentage(): number {
+    return Math.round((this.questionsCorrectInLevel / this.questionsPerLevel) * 100);
+  }
+
+  getScoreMessage(): string {
+    const percentage = this.getLevelScorePercentage();
+    if (percentage === 100) return 'Parfait ! Vous êtes un expert en faits !';
+    if (percentage >= 80) return 'Excellent ! Vous connaissez bien vos faits !';
+    if (percentage >= 60) return 'Bon travail ! Continuez à vous entraîner !';
+    if (percentage >= 40) return 'Pas mal ! Essayez à nouveau pour vous améliorer !';
+    return 'Continuez à vous entraîner ! Vous allez progresser !';
+  }
+
+  nextLevel() {
+    this.currentLevel++;
+    this.currentQuestion = 1;
+    this.currentIndex = 0;
+    this.questionsCorrectInLevel = 0;
+    this.score = 0;
+    this.bonusPoints = 0;
+    this.showLevelComplete = false;
+    
+    // Check if next level exists
+    if (this.questionsByLevel[this.currentLevel]) {
+      this.resetAnswerStatus();
+      this.resetTimer();
+    } else {
+      // Game completed - all levels finished
+      console.log('Game completed! All levels finished.');
     }
   }
 
@@ -139,6 +289,12 @@ export class FactGameComponent implements OnInit {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
+  }
+
+  resetTimer() {
+    this.stopTimer();
+    this.timeElapsed = 0;
+    this.startTimer();
   }
   getDifficultyClass(): string {
     return `difficulty-${this.currentWord.difficulty}`;
@@ -156,5 +312,26 @@ export class FactGameComponent implements OnInit {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
+  playCorrectSound() {
+    const audio = new Audio('/audio/correct.mp3');
+    audio.play().catch(err => console.error('Error playing correct sound:', err));
+    
+    // Stop after 1.5 seconds
+    setTimeout(() => {
+      audio.pause();
+      audio.currentTime = 0;
+    }, 1500);
+  }
+
+  playWrongSound() {
+    const audio = new Audio('/audio/wrong.mp3');
+    audio.play().catch(err => console.error('Error playing wrong sound:', err));
+    
+    // Stop after 2 seconds
+    setTimeout(() => {
+      audio.pause();
+      audio.currentTime = 0;
+    }, 2000);
+  }
 
 }
