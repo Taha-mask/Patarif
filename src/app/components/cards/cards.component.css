@@ -22,6 +22,7 @@
   justify-content: center;
   gap: 0;
   position: relative;
+  overflow: hidden;
 }
 
 .arrow i {
@@ -138,6 +139,7 @@ margin: auto;
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
+  overflow: hidden;
 }
 
 .list-header {
