@@ -42,6 +42,8 @@ height: 100%;
   overflow: auto;
 
 }
+
+
 .game-card.no-bg {
   background: none !important;
   background-image: none !important;

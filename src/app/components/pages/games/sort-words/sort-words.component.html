@@ -2,8 +2,7 @@
   [questionsCorrectInLevel]="questionsCorrectInLevel"
   [timeElapsed]="timeElapsed"
   [currentWord]="currentWord?.correct || ''"
-  [difficulty]="currentDifficulty"
->
+  >
   <div class="container d-flex justify-content-center align-items-center py-4">
     <div class="game-card">
       <div class="card-body">
@@ -17,7 +16,6 @@
           <button 
             *ngFor="let word of shuffledWords; let i = index"
             class="btn"
-            [style.background]="getRandomColor(i)"
             (click)="selectWord(word)"
             [attr.aria-label]="'Select word: ' + word">
             {{ word }}
@@ -36,7 +34,6 @@
             <button 
               *ngFor="let word of selectedWords; let i = index" 
               class="btn"
-              [style.background]="getRandomColor(i)"
               (click)="removeWord(word, i)"
               [attr.aria-label]="'Remove word: ' + word">
               {{ word }}

@@ -49,13 +49,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   showBrushOptions = false;
   isFullscreen = false;
   
-  // Enhanced color presets with categories
-  colorCategories = {
-    basic: ['#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'],
-    pastel: ['#ffb3ba', '#ffdfba', '#ffffba', '#baffc9', '#bae1ff', '#e6b3ff', '#ffb3e6', '#b3ffb3'],
-    earth: ['#8b4513', '#a0522d', '#cd853f', '#deb887', '#f4a460', '#d2691e', '#bc8f8f', '#d2b48c'],
-    vibrant: ['#ff1493', '#00ff7f', '#ff4500', '#9400d3', '#00bfff', '#ffd700', '#ff6347', '#32cd32']
-  };
+  // Basic colors for the bottom palette
+  basicColors = [
+    '#ff0000', '#0000ff', '#00bfff', '#00ff00', '#00ffff', 
+    '#ffff00', '#ffa500', '#ff69b4', '#dda0dd', '#d3d3d3', 
+    '#808080', '#ffffff'
+  ];
   
   // Brush presets
   brushPresets = [
@@ -106,23 +105,26 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       alpha: true 
     })!;
     
-    this.resizeCanvas();
+    // Set canvas size immediately
+    canvas.width = 600;
+    canvas.height = 400;
+    canvas.style.width = '600px';
+    canvas.style.height = '400px';
+    
     this.updateDrawingSettings();
   }
 
   @HostListener('window:resize')
   private resizeCanvas(): void {
     const canvas = this.canvasRef.nativeElement;
-    const container = canvas.parentElement!;
     
-    // Set canvas size to fill container while maintaining aspect ratio
-    const size = Math.min(container.clientWidth - 40, container.clientHeight - 40, 800);
-    canvas.width = size;
-    canvas.height = size;
+    // Set canvas size to match CSS dimensions
+    canvas.width = 600;
+    canvas.height = 400;
     
     // Set display size for crisp rendering
-    canvas.style.width = size + 'px';
-    canvas.style.height = size + 'px';
+    canvas.style.width = '600px';
+    canvas.style.height = '400px';
     
     this.updateDrawingSettings();
   }
@@ -390,7 +392,23 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (!this.isBrowser) return;
     
     const canvas = this.canvasRef.nativeElement;
-    const dataUrl = canvas.toDataURL('image/png');
+    
+    // Create a new canvas for the final image with watermark
+    const finalCanvas = document.createElement('canvas');
+    const finalCtx = finalCanvas.getContext('2d')!;
+    
+    // Set final canvas size
+    finalCanvas.width = canvas.width;
+    finalCanvas.height = canvas.height;
+    
+    // Draw the original canvas
+    finalCtx.drawImage(canvas, 0, 0);
+    
+    // Add watermark synchronously
+    this.addWatermarkSync(finalCtx, finalCanvas.width, finalCanvas.height);
+    
+    // Convert to data URL and download
+    const dataUrl = finalCanvas.toDataURL('image/png');
     
     const link = document.createElement('a');
     link.download = `painting-${new Date().toISOString().slice(0, 10)}.png`;
@@ -400,6 +418,132 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     link.click();
     document.body.removeChild(link);
   }
+
+  private addWatermark(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    // Create watermark image
+    const watermarkCanvas = document.createElement('canvas');
+    const watermarkCtx = watermarkCanvas.getContext('2d')!;
+    
+    // Set watermark canvas size
+    const watermarkSize = Math.min(width, height) * 0.2; // 20% of canvas size
+    watermarkCanvas.width = watermarkSize;
+    watermarkCanvas.height = watermarkSize;
+    
+    // Draw watermark background (semi-transparent circle)
+    watermarkCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    watermarkCtx.beginPath();
+    watermarkCtx.arc(watermarkSize / 2, watermarkSize / 2, watermarkSize / 2, 0, Math.PI * 2);
+    watermarkCtx.fill();
+    
+    // Draw watermark border
+    watermarkCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+    watermarkCtx.lineWidth = 2;
+    watermarkCtx.stroke();
+    
+    // Load and draw logo image
+    const logoImg = new Image();
+    logoImg.crossOrigin = 'anonymous';
+    logoImg.onload = () => {
+      // Calculate logo size (60% of watermark size)
+      const logoSize = watermarkSize * 0.6;
+      const logoX = (watermarkSize - logoSize) / 2;
+      const logoY = (watermarkSize - logoSize) / 2 - watermarkSize * 0.05;
+      
+      // Draw logo
+      watermarkCtx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+      
+      // Add text below logo
+      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      watermarkCtx.font = `bold ${watermarkSize * 0.12}px Arial`;
+      watermarkCtx.textAlign = 'center';
+      watermarkCtx.textBaseline = 'middle';
+      watermarkCtx.fillText('PATARIF', watermarkSize / 2, watermarkSize / 2 + watermarkSize * 0.25);
+      
+      // Add smaller text
+      watermarkCtx.font = `${watermarkSize * 0.08}px Arial`;
+      watermarkCtx.fillText('GAMING', watermarkSize / 2, watermarkSize / 2 + watermarkSize * 0.35);
+      
+      // Position watermark in bottom-right corner
+      const margin = watermarkSize * 0.1;
+      const x = width - watermarkSize - margin;
+      const y = height - watermarkSize - margin;
+      
+      // Draw watermark on final canvas
+      ctx.drawImage(watermarkCanvas, x, y);
+    };
+    
+    logoImg.onerror = () => {
+      // Fallback to text-only watermark if image fails to load
+      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      watermarkCtx.font = `bold ${watermarkSize * 0.15}px Arial`;
+      watermarkCtx.textAlign = 'center';
+      watermarkCtx.textBaseline = 'middle';
+      watermarkCtx.fillText('PATARIF', watermarkSize / 2, watermarkSize / 2 - watermarkSize * 0.05);
+      
+      watermarkCtx.font = `${watermarkSize * 0.08}px Arial`;
+      watermarkCtx.fillText('GAMING', watermarkSize / 2, watermarkSize / 2 + watermarkSize * 0.08);
+      
+      // Position watermark in bottom-right corner
+      const margin = watermarkSize * 0.1;
+      const x = width - watermarkSize - margin;
+      const y = height - watermarkSize - margin;
+      
+      // Draw watermark on final canvas
+      ctx.drawImage(watermarkCanvas, x, y);
+    };
+    
+    // Set image source
+    logoImg.src = '/images/PataUG1.svg';
+  }
+
+  private addWatermarkSync(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    const watermarkSize = Math.min(width, height) * 0.2;
+    const margin = watermarkSize * 0.1;
+    const x = width - watermarkSize - margin;
+    const y = height - watermarkSize - margin;
+  
+    // Background circle
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.beginPath();
+    ctx.arc(x + watermarkSize / 2, y + watermarkSize / 2, watermarkSize / 2, 0, Math.PI * 2);
+    ctx.fill();
+  
+    // Border
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  
+    // --- Load and draw logo ---
+    const logoImg = new Image();
+    logoImg.src = '/images/logo-patarif.png';
+    logoImg.onload = () => {
+      const logoSize = watermarkSize * 0.6;
+      const logoX = x + (watermarkSize - logoSize) / 2;
+      const logoY = y + (watermarkSize - logoSize) / 2 - watermarkSize * 0.1;
+  
+      ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+  
+      // Add text below logo
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.font = `bold ${watermarkSize * 0.12}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('PATARIF', x + watermarkSize / 2, y + watermarkSize / 2 + watermarkSize * 0.25);
+  
+      ctx.font = `${watermarkSize * 0.08}px Arial`;
+      ctx.fillText('GAMING', x + watermarkSize / 2, y + watermarkSize / 2 + watermarkSize * 0.35);
+    };
+  
+    logoImg.onerror = () => {
+      // fallback: only text
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.font = `bold ${watermarkSize * 0.15}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('PATARIF', x + watermarkSize / 2, y + watermarkSize / 2);
+    };
+  }
+  
 
   toggleFullscreen(): void {
     if (!document.fullscreenElement) {
@@ -568,6 +712,13 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error handling keyboard event:', error);
+    }
+  }
+
+  openColorPicker(): void {
+    const colorPicker = document.querySelector('.hidden-color-picker') as HTMLInputElement;
+    if (colorPicker) {
+      colorPicker.click();
     }
   }
 

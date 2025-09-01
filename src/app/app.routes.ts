@@ -41,10 +41,11 @@ export const routes: Routes = [
   { path: 'guess-eemoji', component: GuessEemojiComponent },
   { path: 'matchint-words', component: MatchintWordsComponent },
   { path: 'gallery', component: GalleryComponent },
-  { path: 'canvas', component: CanvasComponent },
+  { path: 'canvas/:imageUrl', component: CanvasComponent }, 
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   
   { path: 'login', component: LoginComponent },
+
   { path: 'signup', component: SignupComponent },
   { path: 'games', component: GamesComponent },
   { path: 'letters-game', component: LettersGameComponent },
