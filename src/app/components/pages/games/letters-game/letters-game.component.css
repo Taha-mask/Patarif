@@ -561,6 +561,195 @@ width:100%;
   }
 }
 
+/* Modal Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background: transparent;
+}
+
+.modal.show {
+  display: flex !important;
+}
+
+/* Wrong Message Styling */
+.wrong-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ef4444;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  z-index: 1000;
+  animation: wrongPulse 0.5s ease-in-out;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+}
+
+@keyframes wrongPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Bootstrap Modal Styling */
+.celebration-modal {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+  animation: celebrationPulse 2s ease-in-out infinite;
+  position: relative;
+  z-index: 10000;
+}
+
+/* Remove Bootstrap modal backdrop opacity */
+.modal-backdrop.show {
+  background: transparent !important;
+}
+
+/* Ensure modal is centered and clickable */
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0 auto;
+  pointer-events: auto;
+  position: relative;
+  z-index: 10001;
+}
+
+.modal-content {
+  pointer-events: auto;
+  position: relative;
+  z-index: 10002;
+}
+
+.celebration-modal .modal-header {
+  background: transparent;
+  color: white;
+  border-bottom: none;
+}
+
+.celebration-modal .modal-title {
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: celebrationBounce 1s ease-in-out infinite;
+}
+
+.celebration-modal .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+}
+
+.celebration-modal .btn-close:hover {
+  opacity: 1;
+}
+
+.celebration-modal .modal-body {
+  background: transparent;
+  color: white;
+}
+
+.celebration-modal .modal-body h4 {
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.celebration-modal .alert-success {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 10px;
+}
+
+.celebration-modal .progress {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  height: 10px;
+}
+
+.celebration-modal .progress-bar {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  border-radius: 10px;
+}
+
+.celebration-modal .modal-footer {
+  background: transparent;
+  border-top: none;
+}
+
+.celebration-modal .btn-primary {
+  background: linear-gradient(45deg, #ff6b6b, #ffa500);
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  z-index: 10003;
+}
+
+.celebration-modal .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+  background: linear-gradient(45deg, #ff5252, #ff8c00);
+}
+
+.celebration-modal .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  z-index: 10003;
+}
+
+@keyframes celebrationPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes celebrationBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
 /* Animation imports need to be added to the component */
 @keyframes fadeIn {
   from { opacity: 0; }

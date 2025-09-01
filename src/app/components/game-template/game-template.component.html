@@ -5,7 +5,7 @@
       <img src="/images/fullscreen.svg" />
     </button>
     <button class="icon-btn" (click)="toggleMusic()" [class.playing]="isMusicPlaying">
-      <img [src]="isMusicPlaying ? '/images/music.svg' : '/images/music-off.svg'" alt="Music" />
+      <img [src]="isMusicPlaying ? '/images/music.svg' : '/images/unmusic.svg'" alt="Music" />
     </button>
     <button class="action-btn icon-btn">
       <img src="/images/sound.svg"/>
@@ -22,8 +22,10 @@
     <app-game-header *ngIf="shouldShowGameHeader()"
       [level]="level"
       [questionsCorrectInLevel]="questionsCorrectInLevel || 0"
+      [currentQuestion]="currentQuestion || 1"
       [timeElapsed]="timeElapsed || 0"
       [difficulty]="difficulty || 'easy'"
+      [totalQuestions]="5"
     ></app-game-header>
 
     <div class="game-content">
