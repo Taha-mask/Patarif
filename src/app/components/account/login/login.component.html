@@ -1,67 +1,70 @@
-<!-- login.component.html -->
-<!-- <img class="logo" src="images/logo-patarif.png" alt="logo" width="100"> -->
-<div class="container">
-  <div class="gradient-border-wrapper w-100">
-    <div class="row shadow-lg  overflow-hidden w-100">
+  <div class="container">
+    <div class="gradient-border-wrapper w-100">
+      <div class="row shadow-lg overflow-hidden w-100">
 
-      <!-- Left side -->
-      <div class="col-md-5 d-flex flex-column justify-content-center align-items-center text-white">
-        <img src="images/login-img.png" alt="Login illustration" class="login-img img-fluid" />
-        <p class="text-img ">Log in to Batarev world and enjoy with us!</p>
-      </div>
-
-      <!-- Right side (form) -->
-      <div class="col-md-7 p-5 mt-5">
-        <h2 class="account-header mb-4 fw-bold text-center">Login</h2>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <div class="mb-4">
-            <input type="email" class="form-control" id="loginEmail" placeholder="Email" formControlName="email">
-          </div>
-          <div class="mb-3 w-100 password-wrapper">
-            <input type="password" [type]="showPassword ? 'text' : 'password'" class="form-control" id="loginPassword"
-              placeholder="Password" formControlName="password">
-            <span class="toggle-icon" (click)="togglePassword()">
-              <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-            </span>
-          </div>
-          <button type="submit" class="btn btn-primary w-100 p-2" [disabled]="isLoading">
-            <span *ngIf="!isLoading">Login</span>
-            <span *ngIf="isLoading">
-              <i class="fa fa-spinner fa-spin"></i> Logging in...
-            </span>
-          </button>
-          <div class="mt-3 text-center">
-            Don't have an account? <a class="text-primary" href="/signup">Sign up</a>
-          </div>
-        </form>
-        <div class="d-flex align-items-center my-3">
-          <hr class="flex-grow-1 line">
-          <span class="mx-3 fw-bold" style="font-size: 20px;">or</span>
-          <hr class="flex-grow-1 line">
+        <!-- Left Side -->
+        <div class="col-md-5 d-flex flex-column justify-content-center align-items-center text-white position-relative">
+          <img src="images/login-img.png" alt="Illustration de connexion" class="login-img img-fluid" />
+          <p class="text-img">Connectez-vous au monde de Batarev et amusez-vous avec nous !</p>
         </div>
-        <div class="another-account mt-3 text-center">
-          <div class="defualt-account d-flex justify-content-center gap-3">
-            <button type="button" class="btn btn-outline-dark d-flex align-items-center gap-2" (click)="loginWithGoogle()">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google"
-                style="width: 24px; height: 24px;">
-              Login with Google
+
+        <!-- Right Side (form) -->
+        <div class="col-md-7 p-md-5 p-sm-2 mt-md-5">
+          <h2 class="account-header mb-4 fw-bold text-center">Connexion</h2>
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="mb-4">
+              <input type="email" class="form-control" id="loginEmail" placeholder="E-mail" formControlName="email" />
+            </div>
+            <div class="mb-3 w-100 password-wrapper">
+              <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="loginPassword"
+                placeholder="Mot de passe" formControlName="password" />
+              <span class="toggle-icon" (click)="togglePassword()">
+                <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 p-2" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Se connecter</span>
+              <span *ngIf="isLoading">
+                <i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Connexion...
+              </span>
             </button>
-            <button type="button" class="btn btn-outline-dark d-flex align-items-center gap-2">
-              <i class="bi bi-apple" style="font-size: 24px;"></i>
-              Login with Apple ID
-            </button>
+
+            <div class="mt-3 text-center">
+              Pas de compte ? <a class="text-primary" href="/signup">Créer un compte</a>
+            </div>
+          </form>
+
+          <div class="d-flex align-items-center my-3">
+            <hr class="flex-grow-1 line">
+            <span class="mx-3 fw-bold" style="font-size: 20px;">ou</span>
+            <hr class="flex-grow-1 line">
+          </div>
+
+          <div class="another-account mt-3 text-center">
+            <div class="defualt-account d-flex flex-column flex-md-row justify-content-center gap-3">
+              <button type="button" class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2"
+                (click)="loginWithGoogle()">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google"
+                  style="width: 24px; height: 24px;" />
+                Se connecter avec Google
+              </button>
+              <!-- <button type="button" class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-apple" style="font-size: 24px;"></i>
+                Se connecter avec Apple ID
+              </button> -->
+            </div>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
-</div>
 
-
-<div class="toast-container">
-  <div class="toast" *ngFor="let t of toasts" [attr.data-id]="t.id">
-    <span class="emoji">🧸</span>
-    {{ t.text }}
+  <!-- Toasts -->
+  <div class="toast-container">
+    <div class="toast" *ngFor="let t of toasts" [attr.data-id]="t.id">
+      <span class="emoji">🧸</span>
+      {{ t.text }}
+    </div>
   </div>
-</div>

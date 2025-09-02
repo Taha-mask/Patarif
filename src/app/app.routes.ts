@@ -34,7 +34,7 @@ import { ContactUsComponent } from './components/pages/contact-us/contact-us.com
 import { AdminContactMessagesComponent } from './admin-dashboard/admin-contact-messages/admin-contact-messages.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full', data: { renderMode: 'client' } },
+  { path: '', redirectTo: 'home', pathMatch: 'full', data: { renderMode: 'client' } },
 
   // Games
   { path: 'guess-eemoji', component: GuessEemojiComponent },
@@ -59,6 +59,7 @@ export const routes: Routes = [
   { path: 'learning', component: LearningComponent },
   { path: 'shop', component: ShopComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'contact-us', component: ContactUsComponent },
 
   // Learning stories
   { path: 'tomate-story', component: TomateStoryComponent },

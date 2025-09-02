@@ -22,6 +22,26 @@ export class SupabaseService {
   // ==========================
   // Auth
   // ==========================
+
+  async getCurrentUserEmail(): Promise<string | null> {
+    const { data, error } = await this.supabase.auth.getUser();
+
+    if (error || !data.user) {
+      console.error('No user logged in:', error?.message);
+      return null;
+    }
+
+    return data.user.email ?? null;
+  }
+
+  async getCurrentUserName(): Promise<string | null> {
+    const email = await this.getCurrentUserEmail();
+    if (!email) return null;
+
+    // Extract the part before "@"
+    return email.split('@')[0];
+  }
+  
   async getCurrentUser() {
     const { data } = await this.supabase.auth.getUser();
     return data.user;
@@ -297,36 +317,37 @@ export class SupabaseService {
       return null;
     }
   }
+async getProfileImage(userId: string): Promise<string> {
+  try {
+    const folderPath = `avatars/${userId}`;
+    const { data: files, error } = await this.supabase.storage
+      .from('avatars')
+      .list(folderPath);
 
-  async getProfileImage(userId: string): Promise<string> {
-    try {
-      const folderPath = `avatars/${userId}`;
-      const { data: files, error } = await this.supabase.storage
-        .from('avatars')
-        .list(folderPath);
-
-      if (error) {
-        console.error("Error listing files:", error.message);
-        return "images/background.png";
-      }
-
-      if (!files || files.length === 0) {
-        return "images/background.png";
-      }
-
-      const latestFile = files.sort((a, b) =>
-        (b.created_at || "").localeCompare(a.created_at || "")
-      )[0];
-
-      const filePath = `${folderPath}/${latestFile.name}`;
-      const { data: publicData } = this.supabase.storage.from('avatars').getPublicUrl(filePath);
-
-      return publicData.publicUrl || "images/background.png";
-    } catch (err) {
-      console.error("Unexpected error:", err);
+    if (error) {
+      console.error("Error listing files:", error.message);
       return "images/background.png";
     }
+
+    if (!files || files.length === 0) {
+      return "images/background.png";
+    }
+
+    const latestFile = files.sort((a, b) =>
+      (b.created_at || "").localeCompare(a.created_at || "")
+    )[0];
+
+    const filePath = `${folderPath}/${latestFile.name}`;
+    const { data: publicData } = this.supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    return publicData.publicUrl || "images/background.png";
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    return "images/background.png";
   }
+}
 
   // ==========================
   // Games & Questions

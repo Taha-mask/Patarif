@@ -312,9 +312,85 @@ body {
     height: 100%;
 }
 
-@media screen and (max-width: 992px) {
-    /* .section1-products {
-        max-height: 40%;
-        height: 40% !important;
-    } */
+/* ===========================
+   Responsive Adjustments
+=========================== */
+
+/* Small screens (phones <576px) */
+@media (max-width: 575.98px) {
+  .col-1 {
+    display: none; /* hide sidebar */
+  }
+  .col-11 {
+    width: 100% !important;
+  }
+
+  .top-bar {
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .account h4 {
+    display: none; /* hide text, keep avatar */
+  }
+
+  .search:hover input {
+    width: 140px; /* smaller expand */
+  }
+
+  .part h1 {
+    font-size: 2.5rem; /* smaller numbers */
+  }
+
+  .part h5, .part p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Medium screens (tablets <768px) */
+@media (max-width: 767.98px) {
+  .top-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .section1, .section2 {
+    height: auto !important;
+  }
+
+  .part {
+    min-height: 200px;
+  }
+
+  .part h1 {
+    font-size: 3rem;
+  }
+}
+
+/* Large tablets / small laptops <992px */
+@media (max-width: 991.98px) {
+  .account h4 {
+    font-size: 0.85rem;
+  }
+
+  .part h1 {
+    font-size: 3.5rem;
+  }
+}
+
+/* Extra small tweaks for very small devices (<=375px) */
+@media (max-width: 375px) {
+  .search:hover input {
+    width: 100px;
+  }
+
+  .notifications, .search .prefix {
+    padding: 6px 10px;
+    font-size: 1rem;
+  }
+
+  .account .account-img {
+    width: 32px;
+    height: 32px;
+  }
 }
