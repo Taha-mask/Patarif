@@ -29,3 +29,162 @@
   scrollbar-color: #ff1670 #f0f0f0;     /* لون المقبض ثم الخلفية */
 }
 
+
+
+
+.game-btn{
+  width: max-content;
+display: flex;
+margin: auto;
+gap:10px;
+  color: white;
+font: 1rem;
+font-weight: 700;  
+border: 2px solid rgba(255, 255, 255, 0.938);
+  border-radius: 50px;
+  background: linear-gradient(13deg, #5EDC7D, #49D06A, #A8FFBE);
+padding: 10px 20px;
+}
+
+.game-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(13deg, #5edc7d9c, #49d06b9f, #a8ffbea9);
+  border-color: rgba(156, 163, 175, 0.5);
+  color: #6b7280;
+  border: 2px solid rgba(255, 255, 255, 0.712);
+
+}
+
+.game-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(94, 220, 125, 0.3);
+  transition: all 0.3s ease;
+}
+.card-title {
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
+  color: white;
+  font-family: 'Fredoka One', sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  border-radius: 40px;
+  border: 3px solid #ffffff;
+  padding: .5rem 3rem;
+  text-align: center;
+  color: #ffffff;
+  width:max-content;
+  margin: 0 auto ;
+}
+*{
+  color: white;
+}
+
+
+
+
+
+
+
+
+/* Answer Buttons */
+.option-btn {
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #374151;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.option-btn:hover:not([disabled]) {
+  background: #6366f1;
+  color: #fff;
+  border-color: #6366f1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.option-btn:active:not([disabled]) {
+  transform: scale(0.98) translateY(-1px);
+}
+
+.option-btn:disabled {
+  opacity: 0.9;
+  cursor: not-allowed;
+}
+
+/* Correct answer styling */
+.option-btn.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-color: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transform: scale(1.02);
+}
+
+/* Wrong answer styling */
+.option-btn.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Correct answer that wasn't selected */
+.option-btn.correct-answer {
+  background: linear-gradient(135deg, #84cc16, #65a30d);
+  color: white;
+  border-color: #65a30d;
+  box-shadow: 0 4px 12px rgba(132, 204, 22, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.correct-answer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.3) 50%, transparent 55%);
+  background-size: 200% 200%;
+  animation: shine 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% { background-position: -100% -100%; }
+  100% { background-position: 100% 100%; }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+  40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
+.result-icon {
+  margin-left: 8px;
+  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  animation: popIn 0.3s ease-out;
+}

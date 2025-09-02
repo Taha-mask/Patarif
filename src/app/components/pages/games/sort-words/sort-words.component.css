@@ -12,20 +12,6 @@
   padding: 2rem;
 }
 
-.card-title {
-  color: #2c3e50;
-  margin-bottom: 2rem;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
-  color: white;
-  font-family: 'Fredoka One', sans-serif;
-  font-size: 2rem;
-  font-weight: 900;
-  border-radius: 40px;
-  border: 3px solid #ffffff;
-  padding: 1rem;
-  text-align: center;
-}
 
 /* Shuffled words container */
 .mb-3 {
@@ -92,7 +78,7 @@ background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
 
 /* Selected words area */
 .selected-words {
-  height: 100px;
+  min-height: 100px;
   border-radius: 12px;
   padding: 1.5rem;
   margin: 1.5rem 0;
@@ -109,7 +95,7 @@ background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
   gap: 8px;
   justify-content: center;
   align-items: center;
-  min-height: 40px;
+  height: 40px;
 }
 
 .selected-word {
@@ -168,11 +154,7 @@ background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
 }
 
 .action-buttons .btn {
-  min-width: 120px;
-
-  border: 2px solid rgba(255, 255, 255, 0.938);
-  border-radius: 50px;
-  background: linear-gradient(13deg, #5EDC7D, #49D06A, #A8FFBE);
+ 
 }
 
 /* Responsive adjustments */

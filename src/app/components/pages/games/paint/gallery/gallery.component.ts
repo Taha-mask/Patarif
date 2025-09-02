@@ -33,7 +33,7 @@ export class GalleryComponent implements OnInit {
     {
       name: 'Animals',
       images: [
-        { title: 'Cat', img: 'https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295429_960_720.png' },
+        { title: 'Cat', img: 'images/card-1.png' },
         { title: 'Dog', img: 'https://cdn.pixabay.com/photo/2016/04/01/10/11/avatar-1299805_960_720.png' },
         { title: 'Fish', img: 'https://cdn.pixabay.com/photo/2012/04/13/20/37/fish-33712_960_720.png' },
         { title: 'Bird', img: 'https://cdn.pixabay.com/photo/2012/04/02/16/03/bird-24859_960_720.png' },

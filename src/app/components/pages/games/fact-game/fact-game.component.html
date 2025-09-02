@@ -1,53 +1,142 @@
 <app-game-template
+  [level]="currentLevel"
+  [currentQuestion]="currentQuestion"
   [questionsCorrectInLevel]="questionsCorrectInLevel"
   [timeElapsed]="timeElapsed"
   [currentWord]="currentWord.correct || ''"
   [difficulty]="currentDifficulty"
->  <div class="container py-4">
+  [totalQuestions]="5"
+>  
+  <div class="game-layout">
     
+    <!-- ===== QUESTION SECTION ===== -->
+    <div class="question-section">
+      <div class="question-card">
+        <h2 class="question-text">
+          {{ currentQuestionData.text }}
+        </h2>
+      </div>
+    </div>
 
-    <!-- Question Container -->
-    <div class="question-container p-4 shadow-sm mb-4">
-      <h2 class="question-text text-center mb-5 fw-bold ">
-        {{ currentQuestion.text }}
-      </h2>
-
-      <!-- Answer Options -->
-      <div class="answer-options row g-3 mx-auto w-100 justify-content-center align-items-center">
-        <div *ngFor="let option of currentQuestion.options; let i = index" 
-             class="col-12 col-md-6">
-          <div class="answer-option p-3  border cursor-pointer h-50 d-flex align-items-center"
-               [ngClass]="{
-                 'bg-success bg-opacity-10 border-success': answered && answerStatus[i] === 'correct',
-                 'bg-danger bg-opacity-10 border-danger': answered && answerStatus[i] === 'wrong',
-                 'hover:bg-light': !answered
-               }"
-               (click)="!answered && checkAnswer(option.isCorrect, i)">
-            <div class="d-flex align-items-center w-100">
-              <div class="option-letter me-3 d-flex align-items-center justify-content-center rounded-circle bg-primary text-white fw-bold"
-                   style="width: 32px; height: 32px;">
-                {{ getOptionLetter(i) }}
-              </div>
-              <span class="option-text">{{ option.text }}</span>
-              <div class="ms-auto">
-                <i *ngIf="answered && answerStatus[i] === 'correct'" class="bi bi-check-circle-fill text-success"></i>
-                <i *ngIf="answered && answerStatus[i] === 'wrong'" class="bi bi-x-circle-fill text-danger"></i>
-              </div>
+    <!-- ===== ANSWER SECTION ===== -->
+    <div class="answer-section">
+      <div class="answer-grid">
+        <div *ngFor="let option of currentQuestionData.options; let i = index" 
+             class="option-btn"
+             [ngClass]="{
+               'selected': selectedAnswer === option.text && !answered,
+               'btn-success': answered && answerStatus[i] === 'correct',
+               'btn-danger': answered && answerStatus[i] === 'wrong',
+               'correct-answer': answered && answerStatus[i] === 'correct'
+             }"
+             (click)="!answered && checkAnswer(option.isCorrect, i)">
+          
+          <div class="answer-content">
+            <!-- Option Badge (A, B, C, D) -->
+            <div class="option-badge">
+              {{ getOptionLetter(i) }}
+            </div>
+            
+            <!-- Option Text -->
+            <div class="option-text">
+              {{ option.text }}
+            </div>
+            
+            <!-- Result Icon -->
+            <div class="result-icon" *ngIf="answered">
+              <i *ngIf="answerStatus[i] === 'correct'" class="fas fa-check"></i>
+              <i *ngIf="answerStatus[i] === 'wrong'" class="fas fa-times"></i>
             </div>
           </div>
         </div>
       </div>
     </div>
     
-    <!-- Next Button -->
-    <div class="text-center mt-4">
-      <button class="btn btn-primary btn-lg px-5 py-2 fw-medium" 
-              [disabled]="!answered" 
-              (click)="nextQuestion()"
-              [ngClass]="{'btn-success': answered}">
-        {{ isLastQuestion ? 'Finish Game' : 'Next Question' }}
-        <i class="bi ms-2" [ngClass]="{'bi-arrow-right': !isLastQuestion, 'bi-trophy': isLastQuestion}"></i>
-      </button>
+    <!-- ===== ACTION SECTION ===== -->
+    <div class="action-section">
+      <div class="action-card">
+        <button class="game-btn" 
+                [disabled]="!answered" 
+                (click)="nextQuestion()"
+                [ngClass]="{'ready': answered}">
+          
+          <span class="button-text">
+            {{ isLastQuestion ? 'Terminer le niveau' : 'Question suivante' }}
+          </span>
+          
+          <div class="button-icon">
+            <i *ngIf="!isLastQuestion" class="fas fa-arrow-right"></i>
+            <i *ngIf="isLastQuestion" class="fas fa-trophy"></i>
+          </div>
+        </button>
+      </div>
     </div>
+
+    <!-- ===== LEVEL COMPLETE MODAL ===== -->
+    <div class="modal fade" 
+         [class.show]="showLevelComplete" 
+         [style.display]="showLevelComplete ? 'block' : 'none'"
+         tabindex="-1" 
+         role="dialog" 
+         aria-labelledby="levelCompleteModalLabel" 
+         aria-hidden="true">
+      
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content celebration-modal">
+          
+          <!-- Modal Header -->
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="levelCompleteModalLabel">
+              🎉 Niveau {{ currentLevel }} terminé ! 🎉
+            </h5>
+            <button type="button" class="btn-close" (click)="nextLevel()" aria-label="Close"></button>
+          </div>
+          
+          <!-- Modal Body -->
+          <div class="modal-body text-center">
+            <h4 class="mb-3">Félicitations !</h4>
+            
+            <!-- Success Alert -->
+            <div class="alert alert-success">
+              <i class="fas fa-star text-warning"></i>
+              Vous avez répondu correctement à {{ questionsCorrectInLevel }} questions sur {{ questionsPerLevel }} !
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="level-progress mb-3">
+              <div class="progress">
+                <div class="progress-bar bg-success" 
+                     role="progressbar" 
+                     [style.width.%]="getLevelScorePercentage()">
+                </div>
+              </div>
+              <small class="text-muted">{{ getLevelScorePercentage() }}% de réussite</small>
+            </div>
+            
+            <!-- Score Display -->
+            <div class="score-display mb-3">
+              <h3 class="text-primary">{{ score }}</h3>
+              <p class="mb-0">Points obtenus</p>
+            </div>
+            
+            <!-- Score Message -->
+            <div class="score-message">
+              <p class="mb-0">{{ getScoreMessage() }}</p>
+            </div>
+          </div>
+          
+          <!-- Modal Footer -->
+          <div class="modal-footer border-0 justify-content-center">
+            <button type="button" 
+                    class="btn btn-primary btn-lg px-4" 
+                    (click)="nextLevel()">
+              <i class="fas fa-arrow-right me-2"></i>
+              Continuer au niveau {{ currentLevel + 1 }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </app-game-template>

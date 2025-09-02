@@ -36,7 +36,7 @@
         </button>
       </div>
 <div class="actions">
-      <button class="done" (click)="nextQuestion()" *ngIf="!isWin()">Done</button>
+      <button class="game-btn" (click)="nextQuestion()" *ngIf="!isWin()">Skip</button>
       <div class="win-box" *ngIf="isWin()">
         أحسنت! أخذت النجمة ⭐
         <button class="again" (click)="resetGame()">إعادة</button>

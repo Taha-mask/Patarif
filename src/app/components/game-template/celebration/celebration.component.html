@@ -1,0 +1,13 @@
+<div class="modal-backdrop" *ngIf="show">
+    <div class="modal-card">
+      <h2>🎉 Congratulations! 🎉</h2>
+      <p>You finished Level 1 successfully.</p>
+      <p>Ready to start <strong>Level {{ nextLevel }}</strong>?</p>
+  
+      <div class="buttons">
+        <button (click)="onClose()">Close</button>
+        <button class="next" (click)="onNextLevel()">Go to Level {{ nextLevel }}</button>
+      </div>
+    </div>
+  </div>
+  

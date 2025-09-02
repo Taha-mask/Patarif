@@ -755,3 +755,114 @@ width:100%;
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ===== CHECK BUTTON RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .check-button-container {
+    margin-top: 1rem;
+  }
+  
+  .check-btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .check-btn {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    min-width: 120px;
+  }
+  
+  .check-btn i {
+    font-size: 1rem;
+  }
+}
+
+/* ===== CHECK BUTTON ===== */
+.check-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  animation: popIn 0.5s ease-out;
+}
+
+.check-btn {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: #9ca3af;
+  border: none;
+  border-radius: 12px;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: not-allowed;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 160px;
+  justify-content: center;
+  opacity: 0.6;
+}
+
+.check-btn.ready {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  opacity: 1;
+  animation: buttonEnable 0.5s ease-out;
+}
+
+.check-btn:hover.ready {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.check-btn:active:not(:disabled) {
+  transform: scale(0.98) translateY(-1px);
+}
+
+.check-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: #9ca3af;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.check-btn i {
+  font-size: 1.1rem;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes buttonEnable {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

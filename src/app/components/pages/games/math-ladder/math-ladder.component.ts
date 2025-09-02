@@ -87,12 +87,35 @@ export class MathLadderComponent {
   isLocked = signal(false);
   isWin = computed(() => this.step() >= this.totalSteps);
 
+  // Audio for correct and wrong answers
+  private correctAudio: HTMLAudioElement;
+  private wrongAudio: HTMLAudioElement;
+
   constructor() {
+    this.correctAudio = new Audio('/audio/correct.mp3');
+    this.wrongAudio = new Audio('/audio/wrong.mp3');
+    
     // كل ما نكسب: نزود المستوى شوية
     effect(() => {
       if (this.isWin()) {
         this.level.set(this.level() + 1);
       }
+    });
+  }
+
+  // Play correct sound
+  private playCorrectSound() {
+    this.correctAudio.currentTime = 0;
+    this.correctAudio.play().catch(error => {
+      console.log('Audio playback failed:', error);
+    });
+  }
+
+  // Play wrong sound
+  private playWrongSound() {
+    this.wrongAudio.currentTime = 0;
+    this.wrongAudio.play().catch(error => {
+      console.log('Audio playback failed:', error);
     });
   }
 
@@ -105,6 +128,7 @@ export class MathLadderComponent {
   if (correct) {
     // نطلع درجة
     this.step.set(Math.min(this.totalSteps, this.step() + 1));
+    this.playCorrectSound(); // Play correct sound
 
     // نضيف كلاس jump للولد
     const boyEl = document.querySelector('.boy');
@@ -116,6 +140,7 @@ export class MathLadderComponent {
       this.isLocked.set(false);
     }, 600);
   } else {
+    this.playWrongSound(); // Play wrong sound
     setTimeout(() => {
       this.nextQuestion();
       this.isLocked.set(false);

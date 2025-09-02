@@ -61,10 +61,21 @@
               <span class="slot-placeholder" *ngIf="!slot">{{ i + 1 }}</span>
             </div>
           </div>
+          
+          <!-- Check Button - Always show but disabled until word is complete -->
+         
         </div>
 
       </div>
-     
+      <div class="check mt-4">
+        <button class="game-btn" 
+                (click)="checkWord()"
+                [disabled]="!isWordComplete || showSuccess"
+                [ngClass]="{'ready': isWordComplete && !showSuccess}">
+          <i class="fas fa-check me-2"></i>
+          Vérifier le mot
+        </button>
+      </div>
       </div>
   
     </div>

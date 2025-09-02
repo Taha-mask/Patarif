@@ -180,6 +180,7 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   get timeElapsed(): number { return this.gameState.timeElapsed; }
   get showLevelCompleteModal(): boolean { return this.gameState.showLevelCompleteModal; }
   get currentWord(): GameWord | null { return this._currentWord; }
+  get isWordComplete(): boolean { return this.wordSlots.every(slot => slot !== null); }
 
   ngOnInit(): void {
     this.initializeGame();
@@ -399,11 +400,12 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   private checkAutoComplete(): void {
-    if (this.wordSlots.every(slot => slot !== null)) {
-      setTimeout(() => {
-        this.checkWord();
-      }, GAME_CONFIG.ANIMATION_DELAY);
-    }
+    // Commented out auto-complete since we now have a manual check button
+    // if (this.wordSlots.every(slot => slot !== null)) {
+    //   setTimeout(() => {
+    //     this.checkWord();
+    //   }, GAME_CONFIG.ANIMATION_DELAY);
+    // }
   }
 
   // ===== GAME LOGIC =====
