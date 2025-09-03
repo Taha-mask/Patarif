@@ -9,99 +9,6 @@ body {
     --comic: 'Comic Relief';
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    /* border: red 1px solid; */
-}
-
-
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    transition: opacity 0.3s ease;
-}
-
-.loading-box {
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 6px solid #eee;
-    border-top-color: #4f46e5;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-.loading-box p {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #333;
-    margin: 0;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-.background-colors {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: fixed;
-    overflow-x: hidden;
-    width: 100vw;
-    height: 100vh;
-    z-index: -2;
-    pointer-events: none;
-    /* display: flex; */
-
-}
-
-.background-lines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: fixed;
-    overflow: hidden;
-    width: 100vw;
-    height: 100vh;
-    z-index: -2;
-
-}
-
-.background img {
-    width: 100%;
-    object-fit: cover;
-}
-
-/* content */
-.content .card-info * {
-    /* border: green 1px solid; */
-}
-
 .content {
     /* border: blue 1px solid; */
     width: 100%;
@@ -120,13 +27,6 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-@media(min-width: 768px) {
-    .card-info {
-        flex-direction: row;
-        height: auto;
-        align-items: flex-start;
-    }
-}
 
 .main-img {
     width: 100%;
@@ -166,13 +66,13 @@ body {
     border: none;
     /* outline: none; */
     cursor: pointer;
-    font-size: clamp(0.7em, 1.5vw, 1.5rem);
+    font-size: clamp(1.2rem, 1.5vw, 1.5rem);
     transition: color 0.3s ease-in-out;
 
 }
 
 .collection .is-available {
-    font-size: clamp(0.7em, 1vw, 1rem);
+    font-size: clamp(1.2rem, 1vw, 1rem);
     color: #fff;
     background-color: #ff0000a2;
     padding: 4px 16px;
@@ -273,13 +173,13 @@ body {
 
 .details .title h5 {
     color: rgba(0, 0, 0, 0.425);
-    font-size: clamp(0.7em, 1vw, 1rem);
+    font-size: clamp(1.2rem, 1vw, 1rem);
     font-family: var(--comic);
     font-weight: normal;
 }
 
 .details .title h1 {
-    font-size: clamp(0.7em, 3vw, 3rem);
+    font-size: clamp(1.2rem, 3vw, 3rem);
     font-weight: 900;
     color: #000;
     font-family: var(--mainFont);
@@ -295,14 +195,14 @@ body {
 
 
 .details .price .old-price {
-    font-size: clamp(0.7em, 1.5vw, 1.5rem);
+    font-size: clamp(1.2rem, 1.5vw, 1.5rem);
     color: #969696;
     font-weight: 900;
     font-family: var(--mainFont);
 }
 
 .details .price .final-price {
-    font-size: clamp(0.7em, 2.5vw, 2.5rem);
+    font-size: clamp(1.2rem, 2.5vw, 2.5rem);
     font-weight: 900;
     font-family: var(--mainFont);
 }
@@ -316,14 +216,15 @@ body {
 
 .details .price .offer p {
     color: #fff;
-    font-size: clamp(0.7em, 1vw, 1rem);
+    font-size: clamp(1.2rem, 1vw, 1rem);
     font-weight: 600;
     font-family: var(--comic);
+    margin: 0;
 }
 
 .details .colors p,
 .details .sizes p {
-    font-size: clamp(0.7em, 1.5vw, 1.5rem);
+    font-size: clamp(1.2rem, 1.5vw, 1.5rem);
     font-weight: normal;
     font-family: var(--comic);
     color: #000;
@@ -380,9 +281,10 @@ body {
     border-color: #007bff;
     background-color: #e0f0ff;
 }
+
 .size.disabled {
-  opacity: 0.4;
-  pointer-events: none;
+    opacity: 0.4;
+    pointer-events: none;
 }
 
 .details .btn {
@@ -390,7 +292,7 @@ body {
     position: relative;
     background: linear-gradient(270deg, #6486FF 0%, #c8d4ff 20%, #6486FF 100%);
     color: #fff;
-    font-size: clamp(0.7em, 1.5vw, 1.5rem);
+    font-size: clamp(1.2rem, 1.5vw, 1.5rem);
     font-weight: 600;
     font-family: var(--comic);
     padding: 1% 0;
@@ -435,7 +337,7 @@ body {
 }
 
 .content .category {
-    font-size: clamp(0.7em, 2.5vw, 2.5rem);
+    font-size: clamp(1.8rem, 2.5vw, 2.5rem);
     color: #007bff;
     font-family: var(--mainFont);
     font-weight: bold;
@@ -443,10 +345,14 @@ body {
 }
 
 .content .description {
-    font-size: clamp(0.7em, 1vw, 1rem);
+    width: 90vw;
+    font-size: clamp(1.2em, 1vw, 1rem);
     color: #1C1D1D;
     font-family: var(--comic);
     line-height: 1.6;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 
@@ -466,19 +372,27 @@ body {
     }
 }
 
-@media(max-width: 767px) {
-    .details .colors {
-        max-width: 100%;
+@media (max-width: 767px) {
+    .content {
+        padding: 20px;
     }
 
-    .details .sizes-wrapper {
-        flex-wrap: wrap;
+    .card-info {
+        flex-direction: column;
+        padding: 16px;
+        margin: 0 auto;
     }
 
-    .other-imgs {
-        gap: 8px;
+    .main-img {
+        max-height: 50vh;
+    }
+
+    .details {
+        padding: 16px 0;
+        gap: 16px;
     }
 }
+
 
 
 .footer {
