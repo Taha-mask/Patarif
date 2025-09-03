@@ -11,8 +11,8 @@ import { StarsBackgroundComponent } from '../../../stars-background/stars-backgr
   styleUrl: './home-games.component.css'
 })
 export class HomeGamesComponent {
-onCardClicked(arg0: string) {
-throw new Error('Method not implemented.');
-}
+  onCardClicked(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
 
 }

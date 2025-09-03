@@ -122,7 +122,7 @@ export class SearchModalComponent implements OnInit {
     if (item.category === 'product' && item.id) {
       console.log(item.id);
       this.router.navigate(['/product-details', item.id]);
-      this.router.navigate(['/shop']);
+      // this.router.navigate(['/shop']);
       return;
     }
 

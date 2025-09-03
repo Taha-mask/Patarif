@@ -49,24 +49,23 @@
   color: white;
 }
 
+
+.main-icon {
+  width: 100%;
+}
 .title {
   margin: 10px 0 0 20px;
   font-family: "Comic Relief", system-ui;
   font-weight: 700;
   font-style: normal;
-  font-size: clamp(1.5rem, 5vw, 3.12rem);
+  font-size: clamp(1.5rem, 5vw, 3.12rem); 
   white-space: pre-line;
 }
 
-.main-icon {
-  width: 100%;
-}
-
-/* عناصر تفاعلية */
 .age {
   margin-left: 20px;
-  padding: 4px 8px;
-  font-size: 14px;
+  padding: 0.25em 0.5em;
+  font-size: clamp(0.75rem, 2vw, 1rem);
   color: white;
   border: 1px solid white;
   border-radius: 16px;
@@ -76,12 +75,14 @@
 
 .open {
   margin: 10px 20px 0 0;
-  padding: 12px;
+  padding: clamp(0.5rem, 1.5vw, 0.75rem);
+  font-size: clamp(0.75rem, 2vw, 1rem); 
   border: 1px solid white;
   border-radius: 50%;
   width: fit-content;
   visibility: hidden;
 }
+
 
 .card-container:hover .open {
   background-color: rgba(255, 255, 255, 0.2);
@@ -94,4 +95,13 @@
   0%   { transform: scale(1); }
   50%  { transform: scale(1.2); }
   100% { transform: scale(1); }
+}
+
+
+@media (max-width: 600px) {
+  .title {
+    font-size:2rem;   
+    margin: 8px 0 0 12px;
+  }
+
 }
