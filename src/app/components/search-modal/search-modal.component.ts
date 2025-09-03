@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import { SupabaseService } from '../../supabase.service';
 
 interface SearchItem {
-  id?: string;        
+  id?: string;
   title: string;
   category: 'game' | 'story' | 'product';
-  route?: string;     
+  route?: string;
   searchTitle?: string;
 }
 
@@ -49,9 +49,17 @@ export class SearchModalComponent implements OnInit {
       const products = await this.supabase.getProductsTitles();
 
       const games: SearchItem[] = [
-        { title: 'Memory Game', category: 'game', route: '/games/memory' },
-        { title: 'Puzzle Game', category: 'game', route: '/games/puzzle' }
+        { title: 'Guess Emoji', category: 'game', route: '/guess-eemoji' },
+        { title: 'Matching Words', category: 'game', route: '/matchint-words' },
+        { title: 'Sort Words', category: 'game', route: '/sort-words' },
+        { title: 'Gallery', category: 'game', route: '/gallery' },
+        { title: 'Letters Game', category: 'game', route: '/letters-game' },
+        { title: 'Country Guessing', category: 'game', route: '/country-guessing' },
+        { title: 'Fact Game', category: 'game', route: '/fact-game' },
+        { title: 'Math Ladder', category: 'game', route: '/math-ladder' },
+        { title: 'Geo Quiz', category: 'game', route: '/geo-quiz' }
       ];
+
 
       const learning: SearchItem[] = [
         { title: 'Tomate Story', category: 'story', route: '/tomate-story' },
