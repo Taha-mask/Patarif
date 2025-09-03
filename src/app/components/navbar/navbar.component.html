@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <!-- Logo -->
     <a class="navbar-brand d-flex align-items-center" href="">
-      <img src="images/logo-patarif.png" alt="Logo" class="logo-img img-fluid" />
+      <img src="images/logo-patarif.png" alt="Logo" class="logo-img" />
     </a>
 
     <!--   <button
@@ -17,16 +17,24 @@
       <span class="navbar-toggler-icon"></span>
     </button> -->
 
-    <!-- القائمة الجانبية -->
     <div id="sideMenu" class="side-menu">
       <button class="close-btn" onclick="document.getElementById('sideMenu').classList.remove('open')"><i
           class="bi bi-x-lg"></i></button>
       <ul>
+        <a href="/profile">
+          <li class="d-flex align-items-center account">
+            <img src="images/account.png" class="rounded-circle me-2" alt="User" />
+            <span class="user-name">{{userName}}</span>
+          </li>
+        </a>
+
         <li><a routerLink="/home">Home</a></li>
         <li><a routerLink="/learning">Learning Zone</a></li>
         <!-- <li><a routerLink="/stories">Storytime</a></li> -->
         <li><a routerLink="/games">Playground</a></li>
         <li><a routerLink="/shop">Shop</a></li>
+        <li><a routerLink="/contact-us">contact</a></li>
+        <li class="logout"><a routerLink="/login">Logout</a></li>
         <!-- <li><a routerLink="/characters">Characters</a></li> -->
       </ul>
     </div>
@@ -62,35 +70,42 @@
     <div class="d-flex align-items-center gap-3 user-menu">
       <i class="bi bi-search fs-5 search-icon"></i>
 
-      <div class="dropdown">
+      <div class="dropdown" [class.show]="menuOpen">
         <img src="images/account.png" class="dropdown-toggle rounded-circle user-avatar"
-          style="width:50px; height:50px; cursor:pointer;" data-bs-toggle="dropdown" aria-expanded="false" alt="User" />
-        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-          <li>
-            <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/profile']">
-              <i class="bi bi-person-circle fs-5"></i> Profile
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item d-flex align-items-center gap-2" href="#">
-              <i class="bi bi-gear fs-5"></i> Settings
-            </a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item logout d-flex align-items-center gap-2 text-danger" href="signup">
-              <i class="bi bi-box-arrow-right fs-5"></i> Logout
-            </a>
-          </li>
+          style="width:50px; height:50px; cursor:pointer;" role="button" tabindex="0" (click)="toggleMenu($event)"
+          (keydown.enter)="toggleMenu($event)" [attr.aria-expanded]="menuOpen" alt="User" />
+
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm" [class.show]="menuOpen">
+          <div *ngIf="isLogged == false">
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" href="#">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+              </a>
+            </li>
+          </div>
+          <div *ngIf="isLogged == true">
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/profile']">
+                <i class="bi bi-person-circle fs-5"></i> Profile
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item logout d-flex align-items-center gap-2 text-danger" href="signup">
+                <i class="bi bi-box-arrow-right fs-5"></i> Logout
+              </a>
+            </li>
+          </div>
         </ul>
       </div>
 
-      <button class="menu-btn d-lg-none" onclick="document.getElementById('sideMenu').classList.add('open')">
-        <i class="bi bi-list"></i> </button>
-
-
+      <button class="menu-btn d-lg-none" (click)="openSideMenu()">
+        <i class="bi bi-list"></i>
+      </button>
     </div>
+
   </div>
 </nav>

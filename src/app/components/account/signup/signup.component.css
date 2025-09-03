@@ -1,19 +1,14 @@
 body {
   margin: 0;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
-/*  */
-
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  max-width: 100%;
+  padding: 10px;
 }
 
 .logo {
@@ -21,66 +16,56 @@ body {
   transform: translateX(-50%);
   left: 50%;
   margin-bottom: 2%;
+  max-width: 120px;
 }
 
 .gradient-border-wrapper {
   padding: 6px;
-  /* سمك البوردر */
-  border-radius: 48px;
+  border-radius: 30px;
   background: linear-gradient(135deg,
       #FFEE52, #FF006E, #FB5664, #6486FF, #9B57FA,
       #FFEE52, #FF006E, #FB5664, #6486FF, #9B57FA);
   background-size: 400% 400%;
-  /* ✅ مهم لتحريك الخلفية */
   animation: moveGradient 10s linear infinite;
-  width: 1208px;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
 }
 
-/* الحركة */
 @keyframes moveGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.register-card {
-  background: white;
-  overflow: hidden;
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .row {
-  width: 1200px;
-  background: white;
+  width: 100%;
   margin: auto;
   padding: 8px;
-  border-radius: 45px;
+  border-radius: 30px;
+  background: white;
 }
 
 .signup-img {
-  height: 550px;
-  width: 600px;
-  margin: 10px;
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  margin: 10px auto;
+  display: block;
 }
 
 .text-img {
   position: absolute;
   bottom: 7%;
-  font-size: clamp(1rem, 2vw, 2.1rem);
+  font-size: clamp(1rem, 2vw, 2rem);
   font-weight: 900;
-  text-align: left;
+  text-align: start;
+  padding: 0 10px;
 }
 
 .account-header {
   font-family: 'Baloo 2';
-  font-size: 2.5rem;  
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
 }
 
 input {
@@ -88,29 +73,28 @@ input {
   border-radius: 16px;
   border: black 1px solid;
   background-color: #F1F1F1BF;
-  /* font-size: 20px; */
-  padding: 12px ;
-  /* height: 56px; */
+  padding: 12px;
+  width: 100%;
 }
 
-form .btn span{
+form .btn span {
   font-family: 'Baloo 2';
   font-weight: 700;
-  font-size: 1.3rem;
-
+  font-size: 1.2rem;
 }
+
 .btn-create {
   border-radius: 11px;
   font-family: 'Comic Sans MS', cursive, sans-serif;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
-
 }
 
 .defualt-account .btn {
-  width: 500px;
+  width: 100%;
+  max-width: 300px;
   font-family: 'Comic Sans MS', cursive, sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   padding: 10px;
   border-radius: 15px;
   background-color: #F1F1F1BF;
@@ -120,30 +104,24 @@ form .btn span{
 .defualt-account .btn:hover {
   background-color: #e0e0e0;
   color: #000000;
-  box-shadow: 0 4px 16px 0 rgba(100, 134, 255, 0.15);
+  box-shadow: 0 4px 16px rgba(100, 134, 255, 0.15);
   cursor: pointer;
 }
 
 .line {
-  border-top: rgb(0, 0, 0) 4px solid;
-
+  border-top: rgb(0, 0, 0) 3px solid;
 }
 
-a {
-  cursor: pointer;
-}
-
-
+a { cursor: pointer; }
 
 .password-wrapper {
   position: relative;
   display: inline-block;
   z-index: 100;
+  width: 100%;
 }
 
-.password-wrapper input {
-  padding-right: 35px;
-}
+.password-wrapper input { padding-right: 35px; }
 
 .password-wrapper i {
   position: absolute;
@@ -154,10 +132,32 @@ a {
   color: #888;
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+  .gradient-border-wrapper {
+    border-radius: 20px;
+  }
 
+  .row {
+    flex-direction: column;
+    border-radius: 20px;
+  }
 
+  .text-img, .signup-img  {
+    display: none;
+  }
 
+  .signup-img {
+    max-width: 100%;
+    height: auto;
+  }
 
+  .defualt-account {
+    flex-direction: column !important;
+  }
+}
+
+/* Toast styles */
 .toast-container {
   position: fixed;
   top: 20px;
@@ -182,7 +182,6 @@ a {
   gap: 8px;
   animation: slideIn 0.4s ease-out, fadeOut 0.5s ease-in forwards;
   animation-delay: 0s, 2.5s;
-  /* أول أنيميشن فورًا، الثاني بعد 2.5 ثانية */
 }
 
 .toast span.emoji {
@@ -192,20 +191,5 @@ a {
   font-size: 20px;
 }
 
-/* دخول من اليمين */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-/* خروج تدريجي */
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-  }
-}
+@keyframes slideIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { to { opacity: 0; } }

@@ -1,6 +1,5 @@
 .games-carousel-container {
   width: 100%;
-  max-width: 900px;
   margin: 10px auto 0;
   text-align: center;
 
@@ -22,7 +21,6 @@
   justify-content: center;
   gap: 0;
   position: relative;
-  overflow: hidden;
 }
 
 .arrow i {

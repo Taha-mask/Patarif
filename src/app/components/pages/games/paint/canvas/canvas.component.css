@@ -164,7 +164,7 @@ i{
   flex-direction: column;
   gap: 8px;
   position: absolute;
-  top: 50%;
+  top: 20%;
   right: 100%;
   transform: translateY(-50%);
   background: white;

@@ -34,7 +34,7 @@ import { ContactUsComponent } from './components/pages/contact-us/contact-us.com
 import { AdminContactMessagesComponent } from './admin-dashboard/admin-contact-messages/admin-contact-messages.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full', data: { renderMode: 'client' } },
+  { path: '', redirectTo: 'home', pathMatch: 'full', data: { renderMode: 'client' } },
 
   // Games
   { path: 'guess-eemoji', component: GuessEemojiComponent },
@@ -42,6 +42,14 @@ export const routes: Routes = [
   { path: 'sort-words', component: SortWordsComponent },
   { path: 'gallery', component: GalleryComponent },
   { path: 'canvas/:imageUrl', component: CanvasComponent }, 
+
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  
+  { path: 'login', component: LoginComponent },
+
+  { path: 'signup', component: SignupComponent },
+  { path: 'games', component: GamesComponent },
+  { path: 'canvas', component: CanvasComponent },
   { path: 'letters-game', component: LettersGameComponent },
   { path: 'country-guessing', component: CountryGuessingComponent },
   { path: 'fact-game', component: FactGameComponent },
@@ -59,6 +67,7 @@ export const routes: Routes = [
   { path: 'learning', component: LearningComponent },
   { path: 'shop', component: ShopComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'contact-us', component: ContactUsComponent },
 
   // Learning stories
   { path: 'tomate-story', component: TomateStoryComponent },

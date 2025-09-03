@@ -29,15 +29,20 @@ export class CartService {
     return this.cart;
   }
 
-  addToCart(product: CartItem) {
-    const existing = this.cart.find(p => p.id === product.id && p.size === product.size);
+  addToCart(product: CartItem): boolean {
+    const existing = this.cart.find(
+      p => p.id === product.id && p.color === product.color && p.size === product.size
+    );
+
     if (existing) {
-      existing.quantity += product.quantity;
+      return false; 
     } else {
-      this.cart.push({ ...product });
+      this.cart.push({ ...product, quantity: 1 });
+      this.updateCount();
+      return true; 
     }
-    this.updateCount();
   }
+
 
   removeFromCart(id: string, size: string) {
     this.cart = this.cart.filter(p => !(p.id === id && p.size === size));
