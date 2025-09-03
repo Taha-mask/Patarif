@@ -37,7 +37,7 @@ import { AdminProfileComponent } from './admin-dashboard/admin-profile/admin-pro
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full', data: { renderMode: 'client' } },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 
   // Games
   { path: 'guess-eemoji', component: GuessEemojiComponent },
@@ -46,10 +46,7 @@ export const routes: Routes = [
   { path: 'gallery', component: GalleryComponent },
   { path: 'canvas/:imageUrl', component: CanvasComponent },
 
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-
   { path: 'login', component: LoginComponent },
-
   { path: 'signup', component: SignupComponent },
   { path: 'games', component: GamesComponent },
   { path: 'canvas', component: CanvasComponent },
@@ -60,12 +57,9 @@ export const routes: Routes = [
   { path: 'geo-quiz', component: GeoQuizComponent },
 
   // Account
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent },
 
   // Pages
-  { path: 'games', component: GamesComponent },
   { path: 'stories', component: StoriesComponent },
   { path: 'learning', component: LearningComponent },
   { path: 'shop', component: ShopComponent },
@@ -95,8 +89,8 @@ export const routes: Routes = [
   },
   { path: 'cart', component: CartComponent },
 
-  
-  { path: 'page-not-found', component: PageNotFoundComponent,},
+  // Page Not Found
+  { path: 'page-not-found', component: PageNotFoundComponent },
   { path: '**', component: PageNotFoundComponent },
-
 ];
+

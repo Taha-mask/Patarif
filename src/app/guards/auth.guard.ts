@@ -15,22 +15,21 @@ export class AuthGuard implements CanActivate {
     const { data: { session } } = await this.supabase.client.auth.getSession();
 
     if (!session) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/page-not-found']);
       return false;
     }
 
     const { data: { user } } = await this.supabase.client.auth.getUser();
 
     if (!user) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/page-not-found']);
       return false;
     }
 
-    // ✅ تحقق من الايميل
     if (user.email === 'patarif.admin@gmail.com') {
       return true;
     } else {
-      this.router.navigate(['/']); // لو مش الادمن يرجعه للهوم
+      this.router.navigate(['/page-not-found']);
       return false;
     }
   }
