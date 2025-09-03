@@ -72,71 +72,14 @@
       </div>
     </div>
 
-    <!-- ===== LEVEL COMPLETE MODAL ===== -->
-    <div class="modal fade" 
-         [class.show]="showLevelComplete" 
-         [style.display]="showLevelComplete ? 'block' : 'none'"
-         tabindex="-1" 
-         role="dialog" 
-         aria-labelledby="levelCompleteModalLabel" 
-         aria-hidden="true">
-      
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content celebration-modal">
-          
-          <!-- Modal Header -->
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="levelCompleteModalLabel">
-              🎉 Niveau {{ currentLevel }} terminé ! 🎉
-            </h5>
-            <button type="button" class="btn-close" (click)="nextLevel()" aria-label="Close"></button>
-          </div>
-          
-          <!-- Modal Body -->
-          <div class="modal-body text-center">
-            <h4 class="mb-3">Félicitations !</h4>
-            
-            <!-- Success Alert -->
-            <div class="alert alert-success">
-              <i class="fas fa-star text-warning"></i>
-              Vous avez répondu correctement à {{ questionsCorrectInLevel }} questions sur {{ questionsPerLevel }} !
-            </div>
-            
-            <!-- Progress Bar -->
-            <div class="level-progress mb-3">
-              <div class="progress">
-                <div class="progress-bar bg-success" 
-                     role="progressbar" 
-                     [style.width.%]="getLevelScorePercentage()">
-                </div>
-              </div>
-              <small class="text-muted">{{ getLevelScorePercentage() }}% de réussite</small>
-            </div>
-            
-            <!-- Score Display -->
-            <div class="score-display mb-3">
-              <h3 class="text-primary">{{ score }}</h3>
-              <p class="mb-0">Points obtenus</p>
-            </div>
-            
-            <!-- Score Message -->
-            <div class="score-message">
-              <p class="mb-0">{{ getScoreMessage() }}</p>
-            </div>
-          </div>
-          
-          <!-- Modal Footer -->
-          <div class="modal-footer border-0 justify-content-center">
-            <button type="button" 
-                    class="btn btn-primary btn-lg px-4" 
-                    (click)="nextLevel()">
-              <i class="fas fa-arrow-right me-2"></i>
-              Continuer au niveau {{ currentLevel + 1 }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </app-game-template>
+
+<!-- Celebration Modal -->
+<app-celebration
+  *ngIf="showCelebration"
+  [show]="showCelebration"
+  [data]="celebrationData"
+  (close)="showCelebration = false"
+  (goToNext)="onNextLevel($event)">
+</app-celebration>

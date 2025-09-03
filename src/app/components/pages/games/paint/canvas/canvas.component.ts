@@ -48,6 +48,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   showColorPalette = false;
   showBrushOptions = false;
   isFullscreen = false;
+  hoveredSize: number | null = null;
   
   // Basic colors for the bottom palette
   basicColors = [

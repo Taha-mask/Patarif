@@ -82,19 +82,32 @@
         </button>
 
         <!-- Line Size Control -->
-        <div class="line-size-control">
-          <div class="size-label">
-            <i class="fas fa-circle" [style.color]="selectedColor"></i>
-            <span>{{ brushSize }}px</span>
+        <div class="line-size-wrapper">
+          <div class="line-size-control">
+            <div class="size-label" (click)="$event.stopPropagation()">
+              <i class="fas fa-circle" [style.color]="selectedColor" [style.fontSize.px]="brushSize/2 + 12"></i>
+              <!-- <span>{{ brushSize }}px</span> -->
+            </div>
           </div>
-          <input 
-            type="range" 
-            class="size-slider" 
-            [min]="1" 
-            [max]="50" 
-            [value]="brushSize"
-            (input)="setBrushSize($any($event.target).value)"
-            title="Adjust line size">
+          
+          <!-- Size Presets Column -->
+          <div class="size-presets">
+            <div 
+              *ngFor="let size of [8, 16, 32]"
+              class="size-option"
+              [class.active]="brushSize === size"
+              (click)="setBrushSize(size); $event.stopPropagation()"
+              [title]="size + 'px'"
+              (mouseenter)="hoveredSize = size"
+              (mouseleave)="hoveredSize = null">
+              <i 
+                class="fas fa-circle" 
+                [style.fontSize.px]="size/2 + 4" 
+                [style.color]="selectedColor"
+                [style.opacity]="hoveredSize === size ? '1' : '0.8'">
+              </i>
+            </div>
+          </div>
         </div>
       </div>
     </div>

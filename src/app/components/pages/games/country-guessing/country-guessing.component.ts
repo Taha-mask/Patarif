@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
+import { CelebrationComponent } from '../../../game-template/celebration/celebration.component';
 
 interface Question {
   image: string;
@@ -9,12 +10,13 @@ interface Question {
   options: string[];
   correctAnswer: string;
   difficulty: 'easy' | 'medium' | 'hard';
+  level:number;
 }
 
 @Component({
   selector: 'app-country-guessing',
   standalone: true,
-  imports: [CommonModule, GameTemplateComponent],
+  imports: [CommonModule, GameTemplateComponent, CelebrationComponent],
   templateUrl: './country-guessing.component.html',
   styleUrls: ['./country-guessing.component.css'],
   animations: [
@@ -27,23 +29,21 @@ interface Question {
   ]
 })
 export class CountryGuessingComponent implements OnInit, OnDestroy {
-  // Level & Progress
+  // Game Configuration
+  readonly QUESTIONS_PER_LEVEL = 5;
+  
+  // Game State
   currentLevel = 1;
   currentQuestion = 1;
-  questionsPerLevel = 5;
   questionsCorrectInLevel = 0;
-
-  // Score & Bonus
   score = 0;
   bonusPoints = 0;
-
-  // Timer
   timeElapsed = 0;
+  levelStartTime = 0;
   timerInterval: any;
-
-  // Game State
   currentQuestionIndex = 0;
   currentQuestionData!: Question;
+  usedQuestionIndices: {[key: number]: number[]} = {}; // Track used question indices per level
   
   get currentDifficulty() {
     return this.currentQuestionData?.difficulty || 'easy';
@@ -59,14 +59,48 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadQuestions();
+    this.startLevel();
   }
 
   ngOnDestroy() {
-    clearInterval(this.timerInterval);
+    this.stopTimer();
+  }
+
+  // Timer methods
+  private startTimer(): void {
+    this.levelStartTime = Date.now();
+    this.timerInterval = setInterval(() => {
+      this.timeElapsed = Math.floor((Date.now() - this.levelStartTime) / 1000);
+    }, 1000);
+  }
+
+  private stopTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = undefined;
+    }
+  }
+
+  private resetTimer(): void {
+    this.timeElapsed = 0;
+    this.levelStartTime = Date.now();
+  }
+
+  startLevel() {
+    this.isLoading = true;
+    this.currentQuestion = 1;
+    this.questionsCorrectInLevel = 0;
+    this.timeElapsed = 0;
+    this.levelStartTime = Date.now();
+    // Reset used questions for this level
+    if (this.usedQuestionIndices[this.currentLevel]) {
+      this.usedQuestionIndices[this.currentLevel] = [];
+    }
+    this.loadQuestions();
+    this.startTimer();
   }
 
   loadQuestions() {
-    this.isLoading = true;
     this.questionsByLevel = {
       1: [
         {
@@ -74,35 +108,40 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
           hint: 'Connue pour la Tour Eiffel',
           options: ['France', 'Italie', 'Espagne', 'Allemagne'],
           correctAnswer: 'France',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:1
         },
         {
           image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&h=300&fit=crop',
           hint: 'Maison de la forêt amazonienne',
           options: ['Brésil', 'Argentine', 'Chili', 'Pérou'],
           correctAnswer: 'Brésil',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:1
         },
         {
           image: 'https://images.unsplash.com/photo-1543832923-44667a44c804?w=400&h=300&fit=crop',
           hint: 'Terre des pyramides',
           options: ['Égypte', 'Maroc', 'Tunisie', 'Algérie'],
           correctAnswer: 'Égypte',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:1
         },
         {
           image: 'https://images.unsplash.com/photo-1538970272646-f61fabb3a8a2?w=400&h=300&fit=crop',
           hint: 'Pays du Soleil Levant',
           options: ['Japon', 'Chine', 'Corée du Sud', 'Thaïlande'],
           correctAnswer: 'Japon',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:1
         },
         {
           image: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop',
           hint: 'Terre des kangourous et des koalas',
           options: ['Australie', 'Nouvelle-Zélande', 'Fidji', 'Papouasie-Nouvelle-Guinée'],
           correctAnswer: 'Australie',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:1
         }
       ],
       2: [
@@ -111,35 +150,41 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
           hint: 'Pays de la pizza et des pâtes',
           options: ['Italie', 'Espagne', 'Grèce', 'Portugal'],
           correctAnswer: 'Italie',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:2
         },
         {
           image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9e1?w=400&h=300&fit=crop',
           hint: 'Pays du tango',
           options: ['Argentine', 'Chili', 'Uruguay', 'Paraguay'],
           correctAnswer: 'Argentine',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:2
         },
         {
           image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
           hint: 'Pays de la baguette',
           options: ['France', 'Belgique', 'Suisse', 'Luxembourg'],
           correctAnswer: 'France',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:2
         },
         {
           image: 'https://images.unsplash.com/photo-1538970272646-f61fabb3a8a2?w=400&h=300&fit=crop',
           hint: 'Pays des samouraïs',
           options: ['Japon', 'Corée du Sud', 'Chine', 'Mongolie'],
           correctAnswer: 'Japon',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:2
         },
         {
           image: 'https://images.unsplash.com/photo-1543832923-44667a44c804?w=400&h=300&fit=crop',
           hint: 'Pays du Nil',
           options: ['Égypte', 'Soudan', 'Éthiopie', 'Kenya'],
           correctAnswer: 'Égypte',
-          difficulty: 'easy'
+          difficulty: 'easy',
+          level:2
+
         }
       ],
       3: [
@@ -148,51 +193,71 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
           hint: 'Pays de la Renaissance',
           options: ['Italie', 'Espagne', 'France', 'Allemagne'],
           correctAnswer: 'Italie',
-          difficulty: 'medium'
+          difficulty: 'medium',
+          level:3
         },
         {
           image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9e1?w=400&h=300&fit=crop',
           hint: 'Pays des Andes',
           options: ['Chili', 'Pérou', 'Bolivie', 'Équateur'],
           correctAnswer: 'Chili',
-          difficulty: 'medium'
+          difficulty: 'medium',
+          level: 3
         },
         {
           image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
           hint: 'Pays de la mode',
           options: ['France', 'Italie', 'Espagne', 'Belgique'],
           correctAnswer: 'France',
-          difficulty: 'medium'
+          difficulty: 'medium',
+          level: 3
         },
         {
           image: 'https://images.unsplash.com/photo-1538970272646-f61fabb3a8a2?w=400&h=300&fit=crop',
           hint: 'Pays du manga',
           options: ['Japon', 'Corée du Sud', 'Chine', 'Taïwan'],
           correctAnswer: 'Japon',
-          difficulty: 'medium'
+          difficulty: 'medium',
+          level:3
         },
         {
           image: 'https://images.unsplash.com/photo-1543832923-44667a44c804?w=400&h=300&fit=crop',
           hint: 'Pays des pharaons',
           options: ['Égypte', 'Maroc', 'Tunisie', 'Libye'],
           correctAnswer: 'Égypte',
-          difficulty: 'medium'
+          difficulty: 'medium',
+          level:3
         }
       ]
     };
-    this.currentQuestionIndex = 0;
-    this.currentQuestion = 1;
-    this.questionsCorrectInLevel = 0;
     this.setCurrentQuestion();
-    this.resetTimer();
     this.isLoading = false;
   }
 
   setCurrentQuestion() {
     const currentLevelQuestions = this.questionsByLevel[this.currentLevel];
-    if (currentLevelQuestions && currentLevelQuestions[this.currentQuestionIndex]) {
-      this.currentQuestionData = currentLevelQuestions[this.currentQuestionIndex];
+    
+    // Initialize used indices array for this level if it doesn't exist
+    if (!this.usedQuestionIndices[this.currentLevel]) {
+      this.usedQuestionIndices[this.currentLevel] = [];
     }
+    
+    // If all questions have been used, reset the used indices
+    if (this.usedQuestionIndices[this.currentLevel].length >= currentLevelQuestions.length) {
+      this.usedQuestionIndices[this.currentLevel] = [];
+    }
+    
+    // Find a random index that hasn't been used yet
+    let randomIndex: number;
+    do {
+      randomIndex = Math.floor(Math.random() * currentLevelQuestions.length);
+    } while (this.usedQuestionIndices[this.currentLevel].includes(randomIndex));
+    
+    // Mark this index as used
+    this.usedQuestionIndices[this.currentLevel].push(randomIndex);
+    
+    // Set the current question
+    this.currentQuestionData = currentLevelQuestions[randomIndex];
     this.selectedAnswer = null;
     this.showResult = false;
   }
@@ -226,16 +291,28 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
   
 
   nextQuestion() {
-    const currentLevelQuestions = this.questionsByLevel[this.currentLevel];
-    if (this.currentQuestionIndex + 1 < currentLevelQuestions.length) {
-      this.currentQuestionIndex++;
-      this.currentQuestion++;
-      this.setCurrentQuestion();
-      this.resetTimer();
-    } else {
-      this.showLevelComplete = true;
-      clearInterval(this.timerInterval);
+    // Move to next question
+    this.currentQuestion++;
+    this.currentQuestionIndex++;
+    
+    // If we've reached the end of the level, complete it
+    if (this.currentQuestion > this.QUESTIONS_PER_LEVEL) {
+      this.completeLevel();
+      return;
     }
+    
+    // Otherwise, set up the next question
+    this.setCurrentQuestion();
+  }
+  
+  completeLevel() {
+    this.stopTimer();
+    this.showLevelComplete = true;
+    
+    // Calculate bonus points based on time (faster completion = more points)
+    const timeBonus = Math.max(0, 300 - this.timeElapsed) * 2; // 300 seconds (5 minutes) max
+    this.bonusPoints = timeBonus;
+    this.score += timeBonus;
   }
 
   // Helper method to get option letter (A, B, C, D)
@@ -245,63 +322,35 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
 
   // Get level score percentage
   getLevelScorePercentage(): number {
-    return Math.round((this.questionsCorrectInLevel / this.questionsPerLevel) * 100);
+    return Math.round((this.questionsCorrectInLevel / this.QUESTIONS_PER_LEVEL) * 100);
   }
 
- 
- 
-
-  nextLevel() {
-    this.currentLevel++;
-    this.currentQuestion = 1;
-    this.currentQuestionIndex = 0;
-    this.questionsCorrectInLevel = 0;
-    this.score = 0;
-    this.bonusPoints = 0;
+  // Handle closing the celebration modal without starting next level
+  onCloseCelebration(): void {
     this.showLevelComplete = false;
+  }
 
-    // Check if next level exists
-    if (this.questionsByLevel[this.currentLevel]) {
-      this.setCurrentQuestion();
-      this.resetTimer();
-    } else {
-      // Game completed - all levels finished
-      console.log('Game completed! All levels finished.');
+  // Handle moving to the next level from celebration
+  onNextLevel(): void {
+    this.showLevelComplete = false;
+    this.currentLevel++;
+    // Reset used questions for the new level
+    if (this.usedQuestionIndices[this.currentLevel]) {
+      this.usedQuestionIndices[this.currentLevel] = [];
     }
-  }
-  startTimer() {
-    this.timeElapsed = 0;
-    this.timerInterval = setInterval(() => {
-      this.timeElapsed++;
-    }, 1000);
+    this.startLevel();
   }
 
-  stopTimer() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
+  // Get celebration data for the current level
+  getCelebrationData() {
+    return {
+      level: this.currentLevel,
+      questionsCorrect: this.questionsCorrectInLevel,
+      totalQuestions: this.QUESTIONS_PER_LEVEL,
+      score: this.score,
+      timeElapsed: this.timeElapsed,
+      bonusPoints: this.bonusPoints,
+      difficulty: this.currentDifficulty
+    };
   }
-
-  resetTimer() {
-    this.stopTimer();
-    this.timeElapsed = 0;
-    this.startTimer();
-  }
-  getDifficultyClass(): string {
-    return `difficulty-${this.currentQuestionData.difficulty}`;
-  }
-
-  getTimeDisplayClass(): string {
-    if (this.timeElapsed < 15) return 'time-good';
-    if (this.timeElapsed < 30) return 'time-warning';
-    return 'time-danger';
-  }
-
-  formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  }
-
-
 }

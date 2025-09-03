@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from '../../../../components/game-template/game-template.component';
+import { CelebrationComponent, CelebrationData } from '../../../../components/game-template/celebration/celebration.component';
 
 interface Option {
   text: string;
@@ -21,11 +22,15 @@ interface Question {
 @Component({
   selector: 'app-fact-game',
   standalone: true,
-  imports: [CommonModule, GameTemplateComponent],
+  imports: [CommonModule, GameTemplateComponent, CelebrationComponent],
   templateUrl:'./fact-game.component.html',
   styleUrls: ['./fact-game.component.css']
 })
 export class FactGameComponent implements OnInit, OnDestroy {
+  // Celebration modal
+  showCelebration = false;
+  celebrationData: CelebrationData | null = null;
+  private startTime: number = Date.now();
   // Helper method to get letter for answer options (A, B, C, D, ...)
   getOptionLetter(index: number): string {
     return String.fromCharCode(65 + index);
@@ -33,11 +38,12 @@ export class FactGameComponent implements OnInit, OnDestroy {
 
 
 
-  // Questions organized by levels
+  // Questions organized by levels with increasing difficulty
   questionsByLevel: { [key: number]: Question[] } = {
+    // Level 1: Basic General Knowledge
     1: [
       {
-        text: 'The Earth revolves around the Sun.',
+        text: 'A group of lions is called a pride.',
         options: [
           { text: 'True', isCorrect: true },
           { text: 'False', isCorrect: false }
@@ -45,18 +51,10 @@ export class FactGameComponent implements OnInit, OnDestroy {
         difficulty: 'easy'
       },
       {
-        text: 'Cats can fly.',
+        text: 'The Great Wall of China is visible from the Moon.',
         options: [
           { text: 'True', isCorrect: false },
           { text: 'False', isCorrect: true }
-        ],
-        difficulty: 'easy'
-      },
-      {
-        text: 'Water freezes at 0°C.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
         ],
         difficulty: 'easy'
       },
@@ -69,7 +67,15 @@ export class FactGameComponent implements OnInit, OnDestroy {
         difficulty: 'easy'
       },
       {
-        text: 'Sharks are mammals.',
+        text: 'The Earth is the fifth largest planet in our solar system.',
+        options: [
+          { text: 'True', isCorrect: false },
+          { text: 'False', isCorrect: true }
+        ],
+        difficulty: 'easy'
+      },
+      {
+        text: 'The capital of France is London.',
         options: [
           { text: 'True', isCorrect: false },
           { text: 'False', isCorrect: true }
@@ -77,88 +83,92 @@ export class FactGameComponent implements OnInit, OnDestroy {
         difficulty: 'easy'
       }
     ],
+    
+    // Level 2: Science and Nature
     2: [
       {
-        text: 'The speed of light is approximately 300,000 km/s.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'easy'
-      },
-      {
-        text: 'Mount Everest is the tallest mountain on Earth.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'easy'
-      },
-      {
-        text: 'The Great Wall of China is visible from space.',
+        text: 'The human body has four lungs.',
         options: [
           { text: 'True', isCorrect: false },
           { text: 'False', isCorrect: true }
         ],
-        difficulty: 'easy'
+        difficulty: 'medium'
       },
       {
-        text: 'Dolphins are fish.',
-        options: [
-          { text: 'True', isCorrect: false },
-          { text: 'False', isCorrect: true }
-        ],
-        difficulty: 'easy'
-      },
-      {
-        text: 'The human brain uses about 20% of the body\'s energy.',
+        text: 'Lightning is hotter than the surface of the Sun.',
         options: [
           { text: 'True', isCorrect: true },
           { text: 'False', isCorrect: false }
         ],
-        difficulty: 'easy'
+        difficulty: 'medium'
+      },
+      {
+        text: 'Octopuses have three hearts.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'medium'
+      },
+      {
+        text: 'The chemical symbol for gold is Ag.',
+        options: [
+          { text: 'True', isCorrect: false },
+          { text: 'False', isCorrect: true }
+        ],
+        difficulty: 'medium'
+      },
+      {
+        text: 'A day on Venus is longer than a year on Venus.',
+        options: [
+          { text: 'True', isCorrect: true },
+          { text: 'False', isCorrect: false }
+        ],
+        difficulty: 'medium'
       }
     ],
+    
+    // Level 3: Advanced Knowledge
     3: [
       {
-        text: 'The chemical symbol for gold is Au.',
+        text: 'The human nose can detect over 1 trillion different scents.',
         options: [
           { text: 'True', isCorrect: true },
           { text: 'False', isCorrect: false }
         ],
-        difficulty: 'medium'
+        difficulty: 'hard'
       },
       {
-        text: 'The smallest country in the world is Vatican City.',
+        text: 'The total length of your blood vessels could circle the Earth four times.',
         options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
+          { text: 'True', isCorrect: false },
+          { text: 'False', isCorrect: true }
         ],
-        difficulty: 'medium'
+        difficulty: 'hard'
       },
       {
-        text: 'The Amazon rainforest produces 20% of the world\'s oxygen.',
+        text: 'Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly good to eat.',
         options: [
           { text: 'True', isCorrect: true },
           { text: 'False', isCorrect: false }
         ],
-        difficulty: 'medium'
+        difficulty: 'hard'
       },
       {
-        text: 'The human heart has four chambers.',
+        text: 'The shortest war in history was between Britain and Zanzibar on August 27, 1896. Zanzibar surrendered after 38 minutes.',
         options: [
           { text: 'True', isCorrect: true },
           { text: 'False', isCorrect: false }
         ],
-        difficulty: 'medium'
+        difficulty: 'hard'
       },
       {
-        text: 'The planet Venus is hotter than Mercury.',
+        text: 'The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion of the metal.',
         options: [
           { text: 'True', isCorrect: true },
           { text: 'False', isCorrect: false }
         ],
-        difficulty: 'medium'
+        difficulty: 'hard'
       }
     ]
   };
@@ -169,6 +179,7 @@ export class FactGameComponent implements OnInit, OnDestroy {
   questionsPerLevel = 5;
   currentIndex = 0;
   answered = false;
+  usedQuestionIndices: {[key: number]: number[]} = {}; // Track used question indices per level
   answerStatus: string[] = [];
   score = 0;
   questionsCorrectInLevel = 0;
@@ -179,9 +190,14 @@ export class FactGameComponent implements OnInit, OnDestroy {
 
   timerInterval: any;
 
+  private _currentQuestionData: Question = this.questionsByLevel[1][0];
+  
   get currentQuestionData(): Question {
-    const currentLevelQuestions = this.questionsByLevel[this.currentLevel];
-    return currentLevelQuestions ? currentLevelQuestions[this.currentIndex] : this.questionsByLevel[1][0];
+    return this._currentQuestionData;
+  }
+  
+  set currentQuestionData(question: Question) {
+    this._currentQuestionData = question;
   }
 
   get questions(): Question[] {
@@ -204,12 +220,39 @@ export class FactGameComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.startTime = Date.now();
     this.startTimer();
     this.resetAnswerStatus();
+    this.currentQuestionData = this.getRandomQuestion();
   }
 
   ngOnDestroy() {
     this.stopTimer();
+  }
+
+  private getRandomQuestion(): Question {
+    const levelQuestions = this.questionsByLevel[this.currentLevel] || [];
+    
+    // Initialize used indices array for this level if it doesn't exist
+    if (!this.usedQuestionIndices[this.currentLevel]) {
+      this.usedQuestionIndices[this.currentLevel] = [];
+    }
+    
+    // If all questions have been used, reset the used indices
+    if (this.usedQuestionIndices[this.currentLevel].length >= levelQuestions.length) {
+      this.usedQuestionIndices[this.currentLevel] = [];
+    }
+    
+    // Find a random index that hasn't been used yet
+    let randomIndex: number;
+    do {
+      randomIndex = Math.floor(Math.random() * levelQuestions.length);
+    } while (this.usedQuestionIndices[this.currentLevel].includes(randomIndex));
+    
+    // Mark this index as used
+    this.usedQuestionIndices[this.currentLevel].push(randomIndex);
+    
+    return levelQuestions[randomIndex];
   }
 
   resetAnswerStatus() {
@@ -240,15 +283,19 @@ export class FactGameComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion() {
-    if (this.currentIndex < this.questionsPerLevel - 1) {
-      this.currentIndex++;
-      this.currentQuestion++;
-      this.answered = false;
-      this.bonusPoints = 0;
-      this.resetAnswerStatus();
+    // Reset answer state
+    this.answered = false;
+    this.selectedAnswer = null;
+    this.answerStatus = [];
+
+    // Move to next question or level
+    this.currentQuestion++;
+    if (this.currentQuestion >= this.questionsPerLevel) {
+      this.showLevelCompleteScreen();
     } else {
-      this.showLevelComplete = true;
-      this.stopTimer();
+      // Get a new random question for the current level
+      this.currentQuestionData = this.getRandomQuestion();
+      this.resetAnswerStatus();
     }
   }
 
@@ -265,6 +312,46 @@ export class FactGameComponent implements OnInit, OnDestroy {
     return 'Continuez à vous entraîner ! Vous allez progresser !';
   }
 
+  showLevelCompleteScreen() {
+    this.celebrationData = {
+      level: this.currentLevel,
+      questionsCorrect: this.questionsCorrectInLevel,
+      totalQuestions: this.questionsPerLevel,
+      score: this.calculateScore(),
+      timeElapsed: Math.floor((Date.now() - this.startTime) / 1000),
+      bonusPoints: this.calculateBonusPoints(),
+      difficulty: this.currentDifficulty
+    };
+    this.showCelebration = true;
+  }
+
+  onNextLevel(nextLevel: number) {
+    this.showCelebration = false;
+    this.currentLevel = nextLevel;
+    this.questionsCorrectInLevel = 0;
+    this.currentQuestion = 1; // Reset to 1 since we're starting a new level
+    this.questionsPerLevel = Math.min(5 + this.currentLevel, 10);
+    // Reset used questions for the new level
+    if (this.usedQuestionIndices[this.currentLevel]) {
+      this.usedQuestionIndices[this.currentLevel] = [];
+    }
+    this.currentQuestionData = this.getRandomQuestion();
+    this.startTime = Date.now();
+    this.resetAnswerStatus();
+  }
+
+  private calculateScore(): number {
+    const baseScore = this.questionsCorrectInLevel * 10;
+    const difficultyMultiplier = this.currentDifficulty === 'easy' ? 1 : this.currentDifficulty === 'medium' ? 1.5 : 2;
+    return Math.floor(baseScore * difficultyMultiplier);
+  }
+
+  private calculateBonusPoints(): number {
+    const timeBonus = Math.max(0, 30 - Math.floor((Date.now() - this.startTime) / 1000));
+    const perfectBonus = this.questionsCorrectInLevel === this.questionsPerLevel ? 20 : 0;
+    return timeBonus + perfectBonus;
+  }
+
   nextLevel() {
     this.currentLevel++;
     this.currentQuestion = 1;
@@ -272,12 +359,14 @@ export class FactGameComponent implements OnInit, OnDestroy {
     this.questionsCorrectInLevel = 0;
     this.score = 0;
     this.bonusPoints = 0;
-    this.showLevelComplete = false;
+    this.showCelebration = false;
     
     // Check if next level exists
     if (this.questionsByLevel[this.currentLevel]) {
+      this.currentQuestionData = this.getRandomQuestion();
       this.resetAnswerStatus();
       this.resetTimer();
+      this.startTime = Date.now();
     } else {
       // Game completed - all levels finished
       console.log('Game completed! All levels finished.');

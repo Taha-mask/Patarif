@@ -82,6 +82,8 @@ border-radius: 40px;
   padding: 16px 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #000000;
+
 }
 
 .tool-btn {
@@ -111,7 +113,10 @@ border-radius: 40px;
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+i{
+  color: #000000;
 
+}
 .tool-btn.active {
   background: #ff4444;
   color: white;
@@ -132,20 +137,100 @@ border-radius: 40px;
 
 /* Line Size Control */
 .line-size-control {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #666;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Create a container that includes both the button and the menu */
+.line-size-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.size-presets {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 8px;
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  background: white;
   padding: 12px 8px;
-  background: rgba(255, 255, 255, 0.8);
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-right: 15px; /* Increased gap */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0s linear 0.8s, margin-right 0.3s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Show menu when hovering over wrapper (button or menu) */
+.line-size-wrapper:hover .size-presets {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0s linear 0s, margin-right 0.3s ease;
+  pointer-events: auto;
+  margin-right: 8px; /* Smooth slide in */
+}
+
+/* Make the menu stay visible when hovering over it */
+.size-presets:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Add a small gap to make it easier to move to the menu */
+.line-size-control {
+  position: relative;
+  z-index: 1001; /* Above the menu */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-50%) translateX(-10px); }
+  to { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+.size-option {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 1s ease;
+}
+
+.size-option:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+}
+
+.size-option.active {
+  background: rgba(255, 68, 68, 0.1);
 }
 
 .size-label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   font-size: 12px;
   color: #666;
   font-weight: 500;
@@ -158,6 +243,7 @@ border-radius: 40px;
 .size-label span {
   min-width: 35px;
   text-align: center;
+  color: #000000;
 }
 
 .size-slider {

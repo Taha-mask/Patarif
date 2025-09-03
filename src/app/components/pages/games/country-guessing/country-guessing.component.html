@@ -71,22 +71,15 @@
                 [ngClass]="{'ready': selectedAnswer}">
           
           <span class="button-text">
-            {{ currentQuestionIndex + 1 < 5 ? 'Question suivante' : 'Terminer le niveau' }}
+            {{ currentQuestion <= QUESTIONS_PER_LEVEL ? 'Question suivante' : 'Terminer le niveau' }}
           </span>
           
           <div class="button-icon">
-            <i *ngIf="currentQuestionIndex + 1 < 5" class="fas fa-arrow-right"></i>
-            <i *ngIf="currentQuestionIndex + 1 >= 5" class="fas fa-flag-checkered"></i>
+            <i *ngIf="currentQuestion < QUESTIONS_PER_LEVEL" class="fas fa-arrow-right"></i>
+            <i *ngIf="currentQuestion >= QUESTIONS_PER_LEVEL" class="fas fa-flag-checkered"></i>
           </div>
         </button>
         
-        <!-- Helper Text -->
-        <div class="helper-text" *ngIf="!selectedAnswer">
-          <small class="text-muted">
-            <i class="bi bi-info-circle me-1"></i>
-            Choisissez une réponse pour continuer
-          </small>
-        </div>
       </div>
     </div>
 
@@ -101,4 +94,15 @@
   
 
   </div>
+
+  <!-- Level Completion Celebration -->
+  <app-celebration 
+    *ngIf="showLevelComplete"
+    [show]="showLevelComplete"
+    [nextLevel]="currentLevel + 1"
+    [data]="getCelebrationData()"
+    (close)="onCloseCelebration()"
+    (goToNext)="onNextLevel()">
+  </app-celebration>
+
 </app-game-template>
