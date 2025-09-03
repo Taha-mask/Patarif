@@ -21,8 +21,8 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: -2;
 }
 
@@ -31,7 +31,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
+    height: auto;
     overflow: hidden;
     z-index: -1;
     display: block;
@@ -46,8 +46,8 @@ body {
 }
 
 .cover-title {
-    margin-top: 102px;
-    margin-left: 76px;
+    margin-top: 30px;
+    margin-left: 60px;
     display: inline-flex;
     flex-direction: column;
     gap: 16px;
@@ -65,7 +65,7 @@ body {
 }
 
 .firstDesc {
-    font-size: clamp(1.1rem, 2.5vw, 2rem);
+    font-size: clamp(0.8rem, 2vw, 2rem);
     font-weight: bold;
     font-family: var(--mainFont);
     animation: popup 0.6s ease-out forwards;
@@ -76,7 +76,7 @@ body {
 
 .title {
     color: var(--carotteColor);
-    font-size: clamp(2rem, 6vw, 6rem);
+    font-size: clamp(1.2rem, 6vw, 6rem);
     font-family: var(--mainFont);
     font-weight: bold;
     text-shadow:
@@ -180,35 +180,30 @@ body {
     scale: 1.06;
 }
 
-.cloud1 {
-    position: absolute;
-    left: 0;
-    bottom: -300px;
-    display: block;
+.content {
+    position: relative;
+    margin-top: 34%;
+}
+
+.mainCloud {
     z-index: 10;
     animation: fadeIn 1s ease-in-out;
-    overflow-x: hidden;
     width: 100%;
-
+    height: auto;
+    position: absolute;
+    top: -4.5%;
+    overflow-x: hidden;
 }
 
-.cloud1 img {
-    /* width: 100%; */
-    height: 100%;
-    position: relative;
-    left: -176px;
-    object-fit: cover;
-    display: block;
-}
 
 .section {
     display: block;
     position: relative;
     width: 100%;
-    animation: appearSection 1s linear;
+    /* animation: appearSection 1s linear;
     animation-timeline: view();
     animation-range: entry cover 50%;
-    scroll-snap-align: start;
+    scroll-snap-align: start; */
 }
 
 .section img {
@@ -232,7 +227,6 @@ body {
 .section2 {
     display: flex;
     animation: fadeIn 1s ease-in-out;
-    margin-top: 500px;
 }
 
 
@@ -777,39 +771,78 @@ body {
     margin: 45px 0;
 }
 
-.footer {
-    /* position: absolute  ;
-    bottom: -230px; */
-    overflow-x: hidden;
-    background-color: #B68455;
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
-    animation: none;
 
+
+
+
+.rotate-message {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.856);
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 10000;
 }
+
+.rotate-message img {
+    width: 80%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+
+
+
+
+
+
 
 
 /* resposive */
 
 /* mobile */
 @media (max-width: 480px) {
+    .content{
+        position: fixed;
+    }
+    .rotate-message {
+        display: block;
+    }
+
     .cover-title {
-        margin-top: 20px;
+        margin-top: 10px;
         margin-left: 20px;
     }
 }
 
 /* tablet */
 @media (min-width: 481px) and (max-width: 968px) {
+    /* .content {
+        margin-top: 10%;
+    } */
+
+    .background {}
+
     .cover-title {
-        margin-top: 20px;
-        margin-left: 20px;
+        margin-top: 12px;
+        margin-left: 30px;
+        gap: 2px;
     }
 
-    .cloud1 {
-        opacity: 0;
+    /* 
+    .mainCloud {
+        bottom: 0;
+    } */
 
+    .mainCloud img {
+        object-fit: cover;
+        width: 100%;
     }
+
 
     .location {
         padding: 8px;
@@ -822,9 +855,6 @@ body {
     }
 
 
-    .section2 {
-        margin-top: 300px;
-    }
 
 
     .section3 .story {
@@ -837,10 +867,4 @@ body {
 }
 
 /* laptob */
-@media (min-width: 769px) {
-    .cover-title {
-        margin-top: 40px;
-        margin-left: 40px;
-    }
-
-}
+@media (min-width: 769px) {}

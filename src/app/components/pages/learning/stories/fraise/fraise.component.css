@@ -46,8 +46,8 @@ body {
 }
 
 .cover-title {
-    margin-top: 11%;
-    margin-left: 5%;
+    margin-top: 6%;
+    margin-left: 6%;
     display: inline-flex;
     flex-direction: column;
     /* gap: 16px; */
@@ -175,27 +175,18 @@ h3 {
     scale: 1.06;
 }
 
-.cloud1 {
-    position: absolute;
-    left: 0;
-    /* bottom: -64%; */
-    top: -35%;
-    display: block;
+.content {
+    position: relative;
+    margin-top: 40%;
+    }
+.mainCloud {
     z-index: 10;
     animation: fadeIn 1s ease-in-out;
-    overflow-x: hidden;
     width: 100%;
-
-}
-
-.cloud1 img {
-    width: 100vw;
-    height: 100%;
-    position: relative;
-    /* left: -176px; */
-    object-fit: cover;
-    display: block;
-
+    height: auto;
+    position: absolute;
+    top: -4.5%;
+    overflow: hidden;
 }
 
 .section {
@@ -390,9 +381,10 @@ h3 {
     bottom: 10%;
 }
 
-.section5{
+.section5 {
     margin-top: 13%;
 }
+
 .section5 .first,
 .second {
     position: absolute;
@@ -413,7 +405,8 @@ h3 {
     top: 42%;
     left: 45%;
 }
-.section6{
+
+.section6 {
     margin-top: 13%;
 }
 
@@ -503,6 +496,7 @@ h3 {
     margin: 0;
     font-size: clamp(0.7rem, 2.5vw, 2.5rem);
 }
+
 .section9 .first {
     top: 3%;
     left: 12%;
@@ -540,29 +534,49 @@ h3 {
 
 
 
-
-.footer {
-    /* position: relative  ;
-    top: -120px; */
-    overflow-x: hidden;
-    background-color: #B68455;
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
-    animation: none;
-    margin-top: -6%;
-    z-index: 200;
+.rotate-message {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.856);
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 10000;
 }
 
-
+.rotate-message img {
+    width: 80%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
 
 
 /* resposive */
 
 /* mobile */
-@media (max-width: 480px) {}
+@media (max-width: 480px) {
+    .content{
+        position: fixed;
+    }
+    .rotate-message {
+        display: block;
+    }
+}
 
 /* tablet */
-@media (min-width: 481px) and (max-width: 968px) {}
+@media (min-width: 481px) and (max-width: 968px) {
+    .content {
+        margin-top: 34%;
+    }
+
+    .mainCloud img {
+        object-fit: cover;
+        width: 100%;
+    }
+}
 
 /* laptob */
 @media (min-width: 769px) {}

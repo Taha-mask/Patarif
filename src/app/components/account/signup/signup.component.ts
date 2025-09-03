@@ -86,4 +86,18 @@ export class SignupComponent {
   async signUPWithGoogle() {
    await this.auth.signInWithGoogle();
   }
+
+
+  // login with facebook
+  async loginWithFacebook() {
+    try {
+      await this.auth.signInWithFacebook();
+    } catch (err) {
+      console.error('Login error:', err);
+    }
+  }
+
+  async logout() {
+    await this.auth.signOut();
+  }
 }

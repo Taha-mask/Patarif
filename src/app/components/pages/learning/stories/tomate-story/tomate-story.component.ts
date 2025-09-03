@@ -40,18 +40,12 @@ export class TomateStoryComponent {
   currentIndex = 0;
   isScrolling = false;
 
-  showBox = false;
-
   discover() {
     document.getElementById(this.sections[1])?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  toggleBox() {
-    this.showBox = !this.showBox;
-  }
 
   ngOnInit() {
-    // تأكد من التمركز على أول سكشن عند البداية
     document.getElementById(this.sections[this.currentIndex])?.scrollIntoView({ behavior: 'smooth' });
   }
 
@@ -67,7 +61,6 @@ export class TomateStoryComponent {
       });
 
 
-      // نمنع التكرار السريع
       setTimeout(() => {
         this.isScrolling = false;
       }, 1000);
@@ -98,4 +91,5 @@ export class TomateStoryComponent {
       this.scrollToSection(this.currentIndex - 1);
     }
   }
+  
 }
