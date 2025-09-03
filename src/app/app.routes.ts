@@ -43,10 +43,10 @@ export const routes: Routes = [
   { path: 'matchint-words', component: MatchintWordsComponent },
   { path: 'sort-words', component: SortWordsComponent },
   { path: 'gallery', component: GalleryComponent },
-  { path: 'canvas/:imageUrl', component: CanvasComponent }, 
+  { path: 'canvas/:imageUrl', component: CanvasComponent },
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  
+
   { path: 'login', component: LoginComponent },
 
   { path: 'signup', component: SignupComponent },
@@ -79,26 +79,20 @@ export const routes: Routes = [
   { path: 'fraise-story', component: FraiseComponent },
 
   // Admin
-  { path: 'admin-dashboard', component: AdminDashboardComponent , canActivate: [AuthGuard] },
-  { path: 'add-product', component: AddProductComponent , canActivate: [AuthGuard]},
-  { path: 'admin-products', component: AdminProductsComponent , canActivate: [AuthGuard]},
-  { path: 'app-admin-orders', component: AdminOrdersComponent , canActivate: [AuthGuard]},
-  { path: 'contact-messages', component: AdminContactMessagesComponent , canActivate: [AuthGuard]},
-  { path: 'admin-profile', component: AdminProfileComponent , canActivate: [AuthGuard]},
-  { path: '**', redirectTo: '' },
+  { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard] },
+  { path: 'add-product', component: AddProductComponent, canActivate: [AuthGuard] },
+  { path: 'admin-products', component: AdminProductsComponent, canActivate: [AuthGuard] },
+  { path: 'app-admin-orders', component: AdminOrdersComponent, canActivate: [AuthGuard] },
+  { path: 'contact-messages', component: AdminContactMessagesComponent, canActivate: [AuthGuard] },
+  { path: 'admin-profile', component: AdminProfileComponent, canActivate: [AuthGuard] },
 
   // Shop
-  { 
-    path: 'product-details/:id', 
+  {
+    path: 'product-details/:id',
     loadComponent: () => import('./components/pages/shop/product-details/product-details.component')
-      .then(m => m.ProductDetailsComponent),
-    data: { renderMode: 'client' }
+      .then(m => m.ProductDetailsComponent)
   },
-  { 
-  path: 'test', 
-  loadComponent: () => import('./components/pages/shop/product-details/product-details.component')
-    .then(m => m.ProductDetailsComponent)
-},
-
   { path: 'cart', component: CartComponent },
+  { path: '**', redirectTo: '' },
+
 ];
