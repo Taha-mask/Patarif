@@ -23,7 +23,7 @@
       <ul>
         <a href="/profile">
           <li class="d-flex align-items-center account">
-            <img [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
+              <img [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
               class="dropdown-toggle rounded-circle user-avatar" style="width:50px; height:50px; cursor:pointer;"
               role="button" tabindex="0" (click)="toggleMenu($event)" (keydown.enter)="toggleMenu($event)"
               [attr.aria-expanded]="menuOpen" alt="User" /> <span class="user-name">{{userName}}</span>
@@ -69,7 +69,7 @@
     </div>
 
     <!-- Right Side (Search + Avatar) -->
-    <div class="d-flex align-items-center gap-3 user-menu">
+    <div class="d-flex align-items-center gap-3 user-menu">he
       <i (click)="openSearch()" class="bi bi-search fs-5 search-icon"></i>
 
       <div class="dropdown" [class.show]="menuOpen">
