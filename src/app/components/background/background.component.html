@@ -1,5 +1,7 @@
 <div class="super">
   <!-- circles -->
+   
+  <!-- <div class="circle"></div>
   <div class="circle"></div>
   <div class="circle"></div>
   <div class="circle"></div>
@@ -8,8 +10,11 @@
   <div class="circle"></div>
   <div class="circle"></div>
   <div class="circle"></div>
-  <div class="circle"></div>
-  <div class="circle"></div>
+  <div class="circle"></div> -->
+
+  <div *ngFor="let i of [].constructor(10); let idx = index" class="circle">
+  {{ idx + 1 }}
+</div>
 
   <div class="home-container position-fixed top-0 start-0 w-100 h-100" style="inset:0;"></div>
 </div>

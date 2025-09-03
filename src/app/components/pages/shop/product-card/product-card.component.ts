@@ -18,6 +18,7 @@ export class ProductCardComponent implements OnInit, OnChanges {
   @Input() img!: string;
   @Input() price!: number;
   @Input() rate!: number;
+  @Input() product_stock:number = 0;  
   @Input() product: any;  
 
   // @Output() productClicked: EventEmitter<string> = new EventEmitter();

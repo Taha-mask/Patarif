@@ -1,0 +1,68 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+    --mainColor: rgb(255, 0, 106);
+}
+
+h1 {
+    font-family: var(--mainFont);
+    font-weight: 900;
+    text-align: center;
+    margin: 28px 12px 0 0;
+}
+
+.main {
+    padding: 2%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.top-bar {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.267);
+}
+
+.btn.filter {
+    width: 10%;
+}
+
+.top-bar .btn {
+    /* width: 8%; */
+    transition: all 0.2s;
+    border-radius: 12px;
+}
+
+.btn i {
+    display: none;
+}
+
+.btn:hover i {
+    display: inline;
+}
+
+.btn.filter:hover:hover {
+    width: 20%;
+    border-radius: 24px;
+    transition: all 0.3s ease-in-out;
+
+}
+
+.top-bar h3 {
+    color: black;
+    font-family: var(--mainFont);
+    font-weight: 900;
+    font-size: 2rem;
+}
+
+.top-bar h3 span {
+    color: rgb(0, 102, 255);
+    font-size: 1rem;
+    font-family: var(--comic);
+}

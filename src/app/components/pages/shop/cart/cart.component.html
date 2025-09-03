@@ -1,5 +1,67 @@
-<app-background></app-background>
+<!-- <app-background></app-background> -->
 <app-stars-background></app-stars-background>
+<div *ngIf="showContactInfo == true" class="modal-background">
+
+    <div class="order-info-modal">
+        <h1>Contact <span>info</span>rmation</h1>
+        <form action="" (ngSubmit)="saveContact()">
+            <div class="form-home row justify-content-evenly align-items-center">
+                <span></span>
+
+                <div class="col-lg-6 col-sm-12">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" placeholder="Your name" [(ngModel)]="contact.name" name="name">
+                </div>
+                <!-- <span></span> -->
+
+                <div class="col-lg-6 col-sm-12">
+                    <label for="phone">Number</label>
+                    <input type="text" id="phone" placeholder="Your number" [(ngModel)]="contact.phone" name="phone">
+                </div>
+                <span></span>
+
+                <div class="col-12">
+                    <label for="department">Department</label>
+                    <select id="department" class="form-select" [(ngModel)]="contact.department" name="department">
+                        <option *ngFor="let dep of frenchDepartments" [value]="dep.code +' '+ dep.name">
+                            {{ dep.code }} - {{ dep.name }}
+                        </option>
+                    </select>
+
+                </div>
+                <span></span>
+
+                <div *ngIf="contact.department === 'Other Other'" class="col-12">
+                    <label for="otherPlace">Other place</label>
+                    <input type="text" id="otherPlace" placeholder="Where...?" [(ngModel)]="contact.otherPlace"
+                        name="otherPlace">
+                </div>
+                <span></span>
+
+                <div class="col-12">
+                    <label for="note">Notes or detailed address</label>
+                    <input type="text" id="note" placeholder="Any notes...?" [(ngModel)]="contact.note" name="note">
+                </div>
+
+                <span></span>
+
+
+
+
+            </div>
+            <div class="row mt-3">
+
+                <div class="col-3">
+                    <button (click)="showContactInfo = false" type="button"
+                        class="btn btn-outline-secondary w-100">Cancel</button>
+                </div>
+                <div class="col-9">
+                    <button type="submit" class="btn btn-primary w-100">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="main">
     <div class="pageTitle">
@@ -28,7 +90,7 @@
                     {{ item.name }}
                 </td>
                 <td data-label="size">{{ item.size }}</td>
-                <td data-label="price">{{ item.price }}$</td>
+                <td data-label="price">{{ item.price }}€</td>
                 <td data-label="color">
                     <div [style.background]="item.color"
                         style="width: 25px; height: 25px; border-radius: 50%; border:1px solid #ccc;">
@@ -41,7 +103,7 @@
                         <button (click)="increaseQuantity(item)"><i class="bi bi-plus-square-fill"></i></button>
                     </div>
                 </td>
-                <td data-label="subtotal">{{ getSubtotal(item) }}$</td>
+                <td data-label="subtotal">{{ getSubtotal(item) }}€</td>
                 <td data-label="remove" class="remove">
                     <button (click)="removeItem(item)"><i class="bi bi-trash3"></i></button>
                 </td>
@@ -50,7 +112,12 @@
         </tbody>
     </table>
     <div class="section2">
-        <div class="invoice">
+        <button *ngIf="!isContactInfoNotNull()" (click)="showContactInfo = true"
+            class="btn btn-primary confirm">Confirm</button>
+
+
+
+        <div *ngIf="isContactInfoNotNull() == true" class="invoice">
             <div class="discount-code">
                 <form action="">
 
@@ -58,29 +125,40 @@
                     <button type="submit">applay</button>
                 </form>
             </div>
+            <div class="cash-on-delivery">
+                <i class="bi bi-exclamation-octagon"></i> Cash on delivery
+            </div>
             <div class="checkout">
                 <p class="no-products" *ngIf="total == 0">select products first</p>
                 <div class="cart-details" *ngIf="total != 0">
                     <div class="part">
                         <p class="part-title">Subtotal</p>
-                        <p class="value">$274.59</p>
+                        <p class="value">{{total}} €</p>
                     </div>
                     <div class="divider"></div>
                     <div class="part">
                         <p class="part-title">Shipping</p>
-                        <p class="value">Free</p>
+                        <p class="value">{{ shipping }} €</p>
                     </div>
                     <div class="divider"></div>
                     <div class="part">
                         <p class="part-title">Estimate for</p>
-                        <p class="value">United Kingdom</p>
+                        <p *ngIf="contact.department !== 'Other Other'" class="value">{{ contact.department }} </p>
+                        <p *ngIf="contact.department === 'Other Other'" class="value">{{ contact.otherPlace }} </p>
                     </div>
                     <div class="divider"></div>
                     <div class="part">
                         <p class="part-title">Total</p>
-                        <p class="value">${{total}}</p>
+                        <p class="value">{{totalAfterShipping()}} €</p>
                     </div>
-                    <button class="checkout-button" (click)="verifyCheckout()">Proceed To CheckOut</button>
+                    <div class="row align-items-center justify-content-evenly mt-5">
+
+                        <button *ngIf="isContactInfoNotNull()" (click)="showContactInfo = true"
+                            class="p-3 col-3 btn btn-outline-secondary">Re-enter</button>
+                        <button class="p-3 col-8 checkout-button" (click)="verifyCheckout()">Proceed To
+                            CheckOut</button>
+                    </div>
+
                 </div>
             </div>
 

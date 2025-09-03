@@ -1,70 +1,72 @@
-<!-- <app-background></app-background> -->
-<!-- <app-stars-background></app-stars-background> -->
-<!-- <app-lines-background></app-lines-background> -->
-
 <!-- register.component.html -->
 <div class="container">
   <img class="logo" src="images/logo-patarif.png" alt="logo" width="100">
-  <div class="gradient-border-wrapper w-100 ">
-    <div class="row shadow-lg  overflow-hidden w-100">
+  <div class="gradient-border-wrapper w-100">
+    <div class="row shadow-lg overflow-hidden w-100">
 
-      <!-- Left side -->
-      <div class="col-md-5 d-flex flex-column justify-content-center align-items-center text-white">
-        <img src="images/signup-img.png" alt="Batarev art" class="signup-img img-fluid" />
-        <p class="text-img fw-bold">Create an account and join <br> the wonderful world of <br> Batarev and have fun
-          with us!</p>
+      <!-- Partie gauche -->
+      <div class="left-side col-md-5 d-flex flex-column justify-content-center align-items-center text-white position-relative">
+        <img src="images/signup-img.png" alt="Illustration Batarev" class="signup-img img-fluid" />
+        <p class="text-img fw-bold">
+          Créez un compte et rejoignez <br>
+          l’univers merveilleux de <br>
+          Batarev, amusez-vous avec nous !
+        </p>
       </div>
 
-      <!-- Right side (form) -->
+      <!-- Partie droite (formulaire) -->
       <div class="col-md-7 p-5">
-        <h2 class="account-header mb-4 fw-bold text-center">Create Account</h2>
+        <h2 class="account-header mb-4 fw-bold text-center">Créer un compte</h2>
         <form [formGroup]="regirster" (ngSubmit)="onSubmit()">
-          <div class="mb-4 d-flex gap-3">
-            <input type="text" class="form-control" id="firstName" placeholder="first name" name="firstName"
+          <div class="mb-4 d-flex flex-column flex-md-row gap-3">
+            <input type="text" class="form-control" id="firstName" placeholder="Prénom" name="firstName"
               formControlName="firstName">
-            <input type="text" class="form-control" id="lastName" placeholder="last name" name="lastName"
+            <input type="text" class="form-control" id="lastName" placeholder="Nom" name="lastName"
               formControlName="lastName">
           </div>
           <div class="mb-4">
-            <input type="email" class="form-control" id="signupEmail" placeholder="Enter your email" name="email"
+            <input type="email" class="form-control" id="signupEmail" placeholder="Entrez votre e-mail" name="email"
               formControlName="email">
           </div>
           <div class="mb-3 w-100 password-wrapper">
             <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="signupPassword"
-              placeholder="Enter your password" name="password" formControlName="password" />
+              placeholder="Entrez votre mot de passe" name="password" formControlName="password" />
             <span class="toggle-icon" (click)="togglePassword()">
               <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
             </span>
           </div>
 
-
           <button type="submit" class="btn-create btn btn-primary w-100" [disabled]="isLoading">
-            <span *ngIf="!isLoading">Create Account</span>
+            <span *ngIf="!isLoading">Créer un compte</span>
             <span *ngIf="isLoading">
-              <i class="fa fa-spinner fa-spin"></i> Processing...
+              <i class="fa fa-spinner fa-spin"></i> En cours...
             </span>
           </button>
         </form>
         <div class="mt-3 text-center">
-          have an account? <a class="text-primary" href="/login">login</a>
+          Vous avez déjà un compte ?
+          <a class="text-primary" href="/login">Se connecter</a>
         </div>
-        <div class="d-flex align-items-center my-3">  
+
+        <div class="d-flex align-items-center my-3">
           <hr class="flex-grow-1 line">
-          <span class="mx-3 fw-bold" style="font-size: 20px;">or</span>
+          <span class="mx-3 fw-bold" style="font-size: 20px;">ou</span>
           <hr class="flex-grow-1 line">
         </div>
+
         <div class="another-account mt-3 text-center">
-          <div class="defualt-account d-flex justify-content-center gap-3">
-            <button type="button" class="btn btn-outline-dark d-flex align-items-center gap-2" (click)="signUPWithGoogle()">
+          <div class="defualt-account d-flex flex-column flex-md-row justify-content-center gap-3">
+            <button type="button" class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2"
+              (click)="signUPWithGoogle()">
               <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google"
                 style="width: 24px; height: 24px;">
-              sign up with Google
+              S’inscrire avec Google
             </button>
-            <button type="button" class="btn btn-outline-dark d-flex align-items-center gap-2">
+            <!-- <button type="button" class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2">
               <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple"
                 style="width: 24px; height: 24px;">
-              sign up with Apple ID
-            </button>
+              S’inscrire avec Apple ID
+            </button> -->
           </div>
         </div>
       </div>
@@ -74,16 +76,17 @@
 </div>
 
 
-    <div class="toast-container" *ngIf="submitted && regirster.invalid">
-      <div class="toast" *ngIf="regirster.controls['firstName'].invalid" [attr.data-key]="'firstName-' + submitted">
-        <span class="emoji">🧸</span> Please write your first name (2–20 characters)
-      </div>
+<!-- Messages d'erreur -->
+<div class="toast-container" *ngIf="submitted && regirster.invalid">
+  <div class="toast" *ngIf="regirster.controls['firstName'].invalid" [attr.data-key]="'firstName-' + submitted">
+    <span class="emoji">🧸</span> Veuillez entrer votre prénom (2–20 caractères)
+  </div>
 
-      <div class="toast" *ngIf="regirster.controls['email'].invalid" [attr.data-key]="'email-' + submitted">
-        <span class="emoji">📧</span> Email is required and must be valid
-      </div>
+  <div class="toast" *ngIf="regirster.controls['email'].invalid" [attr.data-key]="'email-' + submitted">
+    <span class="emoji">📧</span> L’e-mail est requis et doit être valide
+  </div>
 
-      <div class="toast" *ngIf="regirster.controls['password'].invalid" [attr.data-key]="'password-' + submitted">
-        <span class="emoji">🔒</span> Password must be at least 10 characters
-      </div>
-    </div>
+  <div class="toast" *ngIf="regirster.controls['password'].invalid" [attr.data-key]="'password-' + submitted">
+    <span class="emoji">🔒</span> Le mot de passe doit contenir au moins 10 caractères
+  </div>
+</div>

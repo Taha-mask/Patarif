@@ -4,14 +4,17 @@
   --pink: rgb(255, 0, 55);
   --orane: rgb(252, 71, 86);
 }
-.navbar{
 
+.navbar {
+  position: relative;
   /* border: 1px solid red; */
 }
+
 .navbar-brand {
   width: 7%;
 }
-.navbar-brand img{
+
+.navbar-brand img {
   width: 100%;
   object-fit: contain;
 }
@@ -83,15 +86,13 @@
   cursor: pointer;
 }
 
-/* تثبيت البوردر على الرابط النشط */
-/* مش شغال: تم التعطيل مؤقتاً */
+
 .nav-item.active .nav-link-animated::before {
   opacity: 1;
   transform: translateY(0) scale(1);
   filter: blur(0);
 }
 
-/* تغيير لون النص عند التفعيل */
 .nav-item.active .nav-link-animated {
   font-weight: bold;
   color: #111;
@@ -103,7 +104,6 @@
   color: #444;
 }
 
-/* أيقونة البحث */
 .search-icon {
   color: #000000;
   font-size: 1.4rem;
@@ -115,32 +115,23 @@
 .search-icon:hover {
   color: #1c6db8;
   transform: scale(1.15) rotate(3deg);
-
 }
 
-/* صورة المستخدم */
 .user-avatar {
   position: relative;
-  border: 1px solid #FF006E;
-  /* padding: 2px; */
+  /* border: 1px solid #FF006E; */
   transition: transform 0.3s ease;
-  background: #fff;
   cursor: pointer;
   z-index: 1;
-  width: 50px !important;
-  height: 50px !important;
-  margin-left: 50%;
-
 }
 
 .user-avatar:hover {
   transform: scale(1.05) rotate(3deg);
-  border: 1.5px solid #FF006E;
-  padding: 2px;
+  /* border: 1.5px solid #FF006E; */
+  /* padding: 2px; */
 }
 
-/* تأثير دائرة صغيرة متحركة */
-.user-avatar::after {
+/* .user-avatar::after {
   content: "";
   position: absolute;
   top: -6px;
@@ -152,7 +143,7 @@
   box-shadow: 0 0 8px #56a0d3;
   animation: pulse-simple 2.5s infinite ease-in-out;
   z-index: -1;
-}
+} */
 
 @keyframes pulse-simple {
 
@@ -168,7 +159,6 @@
   }
 }
 
-/* قائمة Dropdown */
 .dropdown-menu {
   border-radius: 12px;
   padding: 0.5rem 0;
@@ -176,16 +166,9 @@
   background: #ffffff;
   color: #000000;
   font-weight: 600;
-  /* box-shadow: 0 8px 20px rgba(26, 115, 232, 0.15); */
   font-family: "Baloo 2", sans-serif;
-
-}
-
-.dropdown-header {
-  font-size: 1rem;
-  color: #25252563;
-  padding-left: 1.5rem;
-  font-weight: 700;
+  /* margin-right: 30%; */
+  margin-left: -150px;
 }
 
 .dropdown-item {
@@ -228,26 +211,23 @@
 
 /* navbar in phone */
 
-
 .side-menu {
   position: fixed;
   left: 0;
-  top: -100vh;
-  /* برة الشاشة */
+  top: -200vh;
   width: 100vw;
-  height: 60vh;
-  background: white;
+  max-height: 60vh;
+  background: #fff;
   box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
-  padding: 40px 20px 20px 20px;
+  padding: 40px 0;
   transition: top 0.3s ease;
   z-index: 2000;
-  border-radius: 30px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* يخلي العناصر في النص */
   align-items: center;
-
 }
 
 .side-menu.open {
@@ -257,49 +237,96 @@
 .side-menu .close-btn {
   background: none;
   border: none;
-  font-size: 2rem;
+  font-size: 1.5rem;
   position: absolute;
-  top: 10px;
+  top: 15px;
   right: 15px;
   cursor: pointer;
-  color: #000000;
+  color: #000;
 }
 
 .side-menu ul {
   list-style: none;
   padding: 0;
-  width: 100%;
+  width: 90%;
 }
 
 .side-menu li {
-  margin: 30px 0;
+  margin: 12px 0;
+  border: 1px solid rgb(0, 0, 0);
   border-radius: 24px;
-  padding: 12px 0;
-  background: rgba(255, 106, 106, 0.116);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+  background: transparent;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.side-menu li:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-}
 
 .side-menu a {
   display: block;
   text-decoration: none;
-  color: var(--pink);
-  font-size: 1.2rem;
-  font-weight: bold;
+  color: black;
+  font-size: 0.8rem;
+  font-family: var(--comic);
+}
+
+.side-menu li.account {
+  border: none;
+}
+.side-menu li.logout{
+  border: red 1px solid;
+}
+.side-menu li.logout a{
+  color: red;
+}
+li.account img {
+  width: 10%;
+  height: 10%;
+  border: var(--pink) 2px solid;
+}
+
+li.account span {
+  color: black;
+  font-size: 1.5rem;
+  font-weight: bolder;
+  font-family: var(--mainFont);
 }
 
 .menu-btn {
   font-size: 2rem;
   border: none;
+  font-weight: 900;
   background: none;
   cursor: pointer;
-  margin-left: 30px;
+  margin-left: 0px;
+
 }
 
+/* Mobile*/
+@media (max-width: 576px) {
+  .user-avatar {
+    display: none;
+  }
 
+  .navbar-brand {
+    width: 20%;
+  }
+}
+
+/* Tablet*/
+@media (min-width: 577px) and (max-width: 991px) {
+  .user-avatar {
+    display: none;
+  }
+
+  .navbar-brand {
+    width: 10%;
+  }
+}
+
+/* Desktop*/
+@media (min-width: 992px) {
+
+  /* .navbar-brand {
+    width: auto;
+  } */
+}

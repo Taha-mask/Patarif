@@ -7,17 +7,41 @@ import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
-
 })
 export class SupabaseService {
-  constructor(private router: Router) {
+  private supabase: SupabaseClient;
+
+  constructor() {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
   }
-  private supabase_client?: SupabaseClient;
 
-  supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+  get client() {
+    return this.supabase;
+  }
 
+  // ==========================
+  // Auth
+  // ==========================
 
-  //  Auth
+  async getCurrentUserEmail(): Promise<string | null> {
+    const { data, error } = await this.supabase.auth.getUser();
+
+    if (error || !data.user) {
+      console.error('No user logged in:', error?.message);
+      return null;
+    }
+
+    return data.user.email ?? null;
+  }
+
+  async getCurrentUserName(): Promise<string | null> {
+    const email = await this.getCurrentUserEmail();
+    if (!email) return null;
+
+    // Extract the part before "@"
+    return email.split('@')[0];
+  }
+  
   async getCurrentUser() {
     const { data } = await this.supabase.auth.getUser();
     return data.user;
@@ -39,7 +63,6 @@ export class SupabaseService {
     const user = data.user;
     if (!user) throw new Error('User not found');
 
-    // جلب الدور من جدول profiles
     const { data: profile, error: profileError } = await this.supabase
       .from('profiles')
       .select('role')
@@ -48,13 +71,7 @@ export class SupabaseService {
 
     if (profileError) throw profileError;
 
-    // تحقق إذا Admin أو لا
-    if (profile.role === 'admin') {
-      // لو Admin → رجع قيمة أو نفذ توجيه
-      return { ...data, isAdmin: true };
-    } else {
-      return { ...data, isAdmin: false };
-    }
+    return { ...data, isAdmin: profile.role === 'admin' };
   }
 
   signUp(email: string, password: string, firstName: string, lastName: string) {
@@ -68,14 +85,14 @@ export class SupabaseService {
       }
     });
   }
-  // providers [google]
+
   // login with Google
   async signInWithGoogle() {
     try {
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/home` // المكان اللي هيتم إعادة التوجيه ليه بعد Google login
+          redirectTo: `${window.location.origin}/home`
         }
       });
 
@@ -84,7 +101,6 @@ export class SupabaseService {
         return null;
       }
 
-      // بعد redirect، Supabase هيملأ session تلقائيًا
       return data;
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -92,39 +108,50 @@ export class SupabaseService {
     }
   }
 
-
-  // get user data
   getUser() {
     return this.supabase.auth.getSession();
   }
 
-  // change password
   async changePassword(newPassword: string) {
     const { data, error } = await this.supabase.auth.updateUser({
       password: newPassword
     });
-
     if (error) throw error;
     return data;
   }
 
-
   signOut() {
     return this.supabase.auth.signOut();
   }
-  // add new record in carts , cart_items [insert to supabase]  
 
-  async createCart(userEmail: string, subtotal: number, count: number) {
+  // ==========================
+  // Carts
+  // ==========================
+  async createCart(
+    userEmail: string,
+    name: string,
+    phone: string,
+    department: string,
+    note: string,
+    subtotal: number,
+    total: number,
+    count: number
+  ) {
+    const shipping = Number((total - subtotal).toFixed(2));
+
     const { data, error } = await this.supabase
       .from('carts')
       .insert([
         {
           user_email: userEmail,
+          user_name: name,
+          user_phone: phone,
           subtotal,
-          shipping: 0,
-          total: subtotal,
+          shipping,
+          estimate_for: department,
+          note,
+          total,
           count,
-          estimate_for: '3 days',
           isDelivered: false
         }
       ])
@@ -143,17 +170,45 @@ export class SupabaseService {
     if (error) throw error;
   }
 
-  // add to favourites:
+  async insertCart(cart: any) {
+    const { data, error } = await this.supabase
+      .from('carts')
+      .insert([cart]);
+    if (error) throw error;
+    return data;
+  }
 
+  async getAllOrders() {
+    const { data, error } = await this.supabase
+      .from('carts')
+      .select(`
+        *,
+        cart_items (*)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async markAsDelivered(cartId: string) {
+    const { data, error } = await this.supabase
+      .from('carts')
+      .update({ isDelivered: true })
+      .eq('id', cartId)
+      .select();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // ==========================
+  // Favourites
+  // ==========================
   async addToFavourites(userEmail: string, productId: string) {
     const { data, error } = await this.supabase
       .from('favourites')
-      .insert([
-        {
-          user_email: userEmail,
-          product_id: productId
-        }
-      ])
+      .insert([{ user_email: userEmail, product_id: productId }])
       .select()
       .single();
 
@@ -183,11 +238,8 @@ export class SupabaseService {
       .maybeSingle();
 
     if (error) throw error;
-
-    return data !== null; // true لو لقى، false لو مش موجود
+    return data !== null;
   }
-
-  //get products from favourites
 
   async getUserFavouriteProductIds(userEmail: string): Promise<string[]> {
     const { data, error } = await this.supabase
@@ -223,13 +275,15 @@ export class SupabaseService {
     const productIds = await this.getUserFavouriteProductIds(userEmail);
     return this.getProductsByIds(productIds);
   }
-  // profile image
+
+  // ==========================
+  // Profile Images
+  // ==========================
   async uploadProfileImage(file: File, userId: string): Promise<string | null> {
     try {
       const folderPath = `avatars/${userId}`;
       const filePath = `${folderPath}/${Date.now()}_${file.name}`;
 
-      // geting folder which have images
       const { data: files, error: listError } = await this.supabase.storage
         .from('avatars')
         .list(folderPath);
@@ -237,7 +291,6 @@ export class SupabaseService {
       if (listError) {
         console.error('Error listing files:', listError.message);
       } else if (files && files.length > 0) {
-        // delete old image
         const filesToRemove = files.map(f => `${folderPath}/${f.name}`);
         const { error: removeError } = await this.supabase.storage
           .from('avatars')
@@ -245,126 +298,96 @@ export class SupabaseService {
 
         if (removeError) {
           console.error('Error deleting old files:', removeError.message);
-        } else {
-          console.log('Old files deleted:', filesToRemove);
         }
       }
 
-      // upload new image
       const { error: uploadError } = await this.supabase.storage
         .from('avatars')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true
-        });
+        .upload(filePath, file, { cacheControl: '3600', upsert: true });
 
       if (uploadError) {
         console.error('Upload error:', uploadError.message);
         return null;
       }
 
-      // get img url
       const { data } = this.supabase.storage.from('avatars').getPublicUrl(filePath);
       return data.publicUrl;
-
     } catch (err) {
       console.error('Unexpected error:', err);
       return null;
     }
   }
+async getProfileImage(userId: string): Promise<string> {
+  try {
+    const folderPath = `avatars/${userId}`;
+    const { data: files, error } = await this.supabase.storage
+      .from('avatars')
+      .list(folderPath);
 
-  // get profile image for navbar , ..etc
-
-  // get profile image by userId
-  async getProfileImage(userId: string): Promise<string> {
-    try {
-      const folderPath = `avatars/${userId}`;
-
-      // 1️⃣ جيب كل الملفات اللي موجودة
-      const { data: files, error } = await this.supabase.storage
-        .from('avatars')
-        .list(folderPath);
-
-      if (error) {
-        console.error("Error listing files:", error.message);
-        return "images/background.png"; 
-      }
-
-      if (!files || files.length === 0) {
-        return "images/background.png"; 
-      }
-
-      const latestFile = files.sort((a, b) =>
-        (b.created_at || "").localeCompare(a.created_at || "")
-      )[0];
-
-      const filePath = `${folderPath}/${latestFile.name}`;
-
-      const { data: publicData } = this.supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      return publicData.publicUrl || "images/background.png";
-    } catch (err) {
-      console.error("Unexpected error:", err);
+    if (error) {
+      console.error("Error listing files:", error.message);
       return "images/background.png";
     }
+
+    if (!files || files.length === 0) {
+      return "images/background.png";
+    }
+
+    const latestFile = files.sort((a, b) =>
+      (b.created_at || "").localeCompare(a.created_at || "")
+    )[0];
+
+    const filePath = `${folderPath}/${latestFile.name}`;
+    const { data: publicData } = this.supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    return publicData.publicUrl || "images/background.png";
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    return "images/background.png";
   }
+}
 
-
-
-
-    // ==========================
-  // Games & Questions Methods
   // ==========================
-
-  // جلب كل الألعاب
+  // Games & Questions
+  // ==========================
   async getGames() {
-    const { data, error } = await this.supabase
-      .from('games')
-      .select('*');
-
+    const { data, error } = await this.supabase.from('games').select('*');
     if (error) throw error;
     return data;
   }
 
-  // جلب لعبة واحدة بالـ id
   async getGameById(gameId: number) {
     const { data, error } = await this.supabase
       .from('games')
       .select('*')
       .eq('id', gameId)
       .single();
-
     if (error) throw error;
     return data;
   }
 
-  // جلب الأسئلة الخاصة بلعبة + مستوى
   async getQuestions(gameId: number, level: number) {
     const { data, error } = await this.supabase
       .from('questions')
       .select('*')
       .eq('game_id', gameId)
       .eq('level', level);
-
     if (error) throw error;
     return data;
   }
 
-  // إضافة لعبة جديدة
   async addGame(name: string, gameType: string, levelCount: number) {
     const { data, error } = await this.supabase
       .from('games')
       .insert([{ name, game_type: gameType, level_count: levelCount }])
       .select()
       .single();
-
     if (error) throw error;
     return data;
   }
 
-  // إضافة سؤال للعبة
   async addQuestion(
     gameId: number,
     level: number,
@@ -376,25 +399,63 @@ export class SupabaseService {
   ) {
     const { data, error } = await this.supabase
       .from('questions')
-      .insert([
-        {
-          game_id: gameId,
-          level,
-          difficulty,
-          question_text: questionText,
-          image_url: imageUrl,
-          correct_answer: correctAnswer,
-          time_limit: timeLimit
-        }
-      ])
+      .insert([{
+        game_id: gameId,
+        level,
+        difficulty,
+        question_text: questionText,
+        image_url: imageUrl,
+        correct_answer: correctAnswer,
+        time_limit: timeLimit
+      }])
       .select()
       .single();
+    if (error) throw error;
+    return data;
+  }
 
+  // ==========================
+  // French Departments
+  // ==========================
+  async getFrenchDepartments(): Promise<{ code: string; name: string }[]> {
+    const { data, error } = await this.supabase.from('french_departments').select('*');
+    if (error) {
+      console.error('Error fetching departments:', error);
+      return [];
+    }
+    return data as { code: string; name: string }[];
+  }
+
+  // ==========================
+  // contact us
+  // ==========================
+
+  async sendContactForm(data: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    message: string;
+  }) {
+    const user = await this.supabase.auth.getUser();
+    const user_id = user.data.user?.id || null;
+
+    const { error } = await this.supabase.from('contact_messages').insert([
+      {
+        ...data,
+        user_id,
+      },
+    ]);
+
+    if (error) throw error;
+    return true;
+  }
+
+  async getContactMessages() {
+    const { data, error } = await this.supabase.from('contact_messages').select('*');
     if (error) throw error;
     return data;
   }
 
 }
-
-
 

@@ -3,6 +3,7 @@
     <h1><span>name</span>{{title}}</h1>
     <h1><span>category</span>{{category}}</h1>
     <h1><span>stock</span>{{stock}}</h1>
+    <!-- <h1><span>size</span><p style="font-size: x-small; color: rgba(0, 0, 0, 0.808);">{{size}}</p></h1> -->
     <h1><span>price</span>{{price}} $</h1>
-    <button class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
+    <button (click)="onDelete()" class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
 </div>
