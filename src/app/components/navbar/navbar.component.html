@@ -23,8 +23,10 @@
       <ul>
         <a href="/profile">
           <li class="d-flex align-items-center account">
-            <img src="images/account.png" class="rounded-circle me-2" alt="User" />
-            <span class="user-name">{{userName}}</span>
+            <img [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
+              class="dropdown-toggle rounded-circle user-avatar" style="width:50px; height:50px; cursor:pointer;"
+              role="button" tabindex="0" (click)="toggleMenu($event)" (keydown.enter)="toggleMenu($event)"
+              [attr.aria-expanded]="menuOpen" alt="User" /> <span class="user-name">{{userName}}</span>
           </li>
         </a>
 
@@ -68,18 +70,19 @@
 
     <!-- Right Side (Search + Avatar) -->
     <div class="d-flex align-items-center gap-3 user-menu">
-      <i class="bi bi-search fs-5 search-icon"></i>
+      <i (click)="openSearch()" class="bi bi-search fs-5 search-icon"></i>
 
       <div class="dropdown" [class.show]="menuOpen">
-        <img src="images/account.png" class="dropdown-toggle rounded-circle user-avatar"
-          style="width:50px; height:50px; cursor:pointer;" role="button" tabindex="0" (click)="toggleMenu($event)"
-          (keydown.enter)="toggleMenu($event)" [attr.aria-expanded]="menuOpen" alt="User" />
+        <img [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
+          class="dropdown-toggle rounded-circle user-avatar" style="width:50px; height:50px; cursor:pointer;"
+          role="button" tabindex="0" (click)="toggleMenu($event)" (keydown.enter)="toggleMenu($event)"
+          [attr.aria-expanded]="menuOpen" alt="User" />
 
 
         <ul class="dropdown-menu dropdown-menu-end shadow-sm" [class.show]="menuOpen">
           <div *ngIf="isLogged == false">
             <li>
-              <a class="dropdown-item d-flex align-items-center gap-2" href="#">
+              <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/login']">
                 <i class="bi bi-box-arrow-in-right"></i> Login
               </a>
             </li>
@@ -109,3 +112,6 @@
 
   </div>
 </nav>
+
+
+<app-search-modal [visible]="isOpen" (close)="isOpen = false"></app-search-modal>

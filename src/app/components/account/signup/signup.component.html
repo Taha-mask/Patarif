@@ -5,7 +5,8 @@
     <div class="row shadow-lg overflow-hidden w-100">
 
       <!-- Partie gauche -->
-      <div class="left-side col-md-5 d-flex flex-column justify-content-center align-items-center text-white position-relative">
+      <div
+        class="left-side col-md-5 d-flex flex-column justify-content-center align-items-center text-white position-relative">
         <img src="images/signup-img.png" alt="Illustration Batarev" class="signup-img img-fluid" />
         <p class="text-img fw-bold">
           Créez un compte et rejoignez <br>
@@ -62,11 +63,11 @@
                 style="width: 24px; height: 24px;">
               S’inscrire avec Google
             </button>
-            <!-- <button type="button" class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple"
-                style="width: 24px; height: 24px;">
-              S’inscrire avec Apple ID
-            </button> -->
+            <button (click)="loginWithFacebook()" type="button"
+              class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2">
+              <i class="bi bi-facebook" style="font-size: 24px; color: blue;"></i>
+              S’inscrire avec Facebook
+            </button>
           </div>
         </div>
       </div>

@@ -14,28 +14,19 @@ body {
     z-index: -2;
 }
 
-.background {
+
+.main {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
     z-index: -1;
-    display: block;
-
+    overflow: hidden;
 }
 
-.background img {
-    object-fit: cover;
-    width: 100vw;
-    height: 100%;
-    display: block;
-}
 
 .cover-title {
-    margin-top: 102px;
-    margin-left: 76px;
+    position: absolute;
+    top: 1.5%;
+    left: 6%;
     display: inline-flex;
     flex-direction: column;
     gap: 16px;
@@ -151,89 +142,93 @@ body {
     color: #fff;
 }
 
-/* Cloud styles */
-.cloud {
-    position: absolute;
-    left: 0;
-    bottom: -15%;
-    display: block;
+.content {
+    position: relative;
+    margin-top: 8%;
+}
+
+.mainCloud {
     z-index: 10;
     animation: fadeIn 1s ease-in-out;
     overflow-x: hidden;
     width: 100%;
     height: auto;
-    /* display: none; */
+    overflow-x: hidden;
+    position: absolute;
+    top: -3%;
 }
 
-
-
-.cloud img {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    /* left: -176px; */
-    object-fit: cover;
-    display: block;
-}
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        margin-bottom: -500px;
     }
 
     to {
         opacity: 1;
-        margin-bottom: 0;
     }
 }
 
-.section {
-    display: block;
-    position: relative;
-    width: 100%;
-    animation: appearSection 1s linear;
-    animation-timeline: view();
-    animation-range: entry cover 50%;
-    scroll-snap-align: start;
+
+.story {
+    position: absolute;
+    padding: 24px;
+    border: #9B8150 4px solid;
+    border-radius: 64px;
+    background-color: #F5E1A6;
+    display: flex;
+    justify-content: center;
 }
 
-.section img {
-    width: 100%;
+
+.section {
+    position: relative;
+    width: 100vw;
     height: 100%;
-    object-fit: cover;
+    /* animation: appearSection 700ms ease forwards;
+  animation-timeline: view();
+  scroll-snap-align: start; */
 }
 
 @keyframes appearSection {
     from {
         opacity: 0;
-        transform: translate3d(0, -200px, 0) scale(0.5);
+        transform: scale(0.5);
     }
 
     to {
         opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
+        transform: scale(1);
     }
 }
 
 
-.content .first-shown {
-    /* position: relative;
-    width: 100%;
-    height: 100%; */
+
+.story h3 {
+    color: #474747;
+    font-size: clamp(1.2rem, 2vw, 2rem);
+    font-weight: bold;
+    font-family: "Baloo 2", sans-serif;
+    text-align: center;
+    text-wrap: nowrap;
+    margin: 0;
+
 }
 
-.content {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    z-index: 0;
-    position: absolute;
-    top: 100%;
+
+
+/* ========================= COPY TO HERE BITCH !! ==============================*/
+
+.first-shown .story {
+    left: 50%;
+    top: 6%;
+    transform: translateX(-50%);
 }
 
-.content .fade-first-shown {
+
+
+
+.fade-first-shown {
     position: relative;
     bottom: 150px;
     z-index: 10;
@@ -248,40 +243,18 @@ body {
     pointer-events: none;
 }
 
-.content .second-shown {
-    position: relative;
-    margin-top: -290px;
-}
-
-.story {
-    position: absolute;
-}
-
-.first-shown .story {
-    padding: 24px;
-    border: #9B8150 4px solid;
-    border-radius: 64px;
-    background-color: #F5E1A6;
-    /* position: absolute; */
-    left: 50%;
-    top: 6%;
-    transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
-}
-
-.story h3 {
-    color: #474747;
-    font-size: clamp(0.7rem, 2vw, 2rem);
-    font-weight: bold;
-    font-family: "Baloo 2", sans-serif;
-    text-align: center;
-    text-wrap: nowrap;
-}
 
 .second-shown .story {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
     top: 18%;
-    left: 2%;
+    left: 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
 }
 
 .second-shown .story h3 span {
@@ -289,29 +262,23 @@ body {
     color: #D1301C;
     font-weight: bold;
     font-family: "Baloo 2", sans-serif;
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-size: clamp(1.2rem, 3vw, 3rem);
     text-align: start;
 }
 
 .second-shown .story .end {
     text-align: end;
+    margin-top: auto;
+    margin-right: -20%;
 }
 
-.third-shown {
-    position: relative;
-}
+
+
 
 .third-shown .story {
-    padding: 1.3%;
-    border: #9B8150 4px solid;
-    border-radius: 30%;
-    background-color: #F5E1A6;
-    /* position: absolute; */
     left: 50%;
     top: 100px;
     transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
 }
 
 .third-shown .bottom-story {
@@ -320,7 +287,6 @@ body {
     border: #9B8150 4px solid;
     border-radius: 64px;
     background-color: #F5E1A6;
-    /* position: absolute; */
     left: 50%;
     bottom: 40px;
     transform: translateX(-50%);
@@ -330,11 +296,12 @@ body {
     text-align: center;
 }
 
-.forth-shown {
-    position: relative;
-}
 
 .forth-shown .story {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
     right: 2%;
     top: 12%;
 }
@@ -345,15 +312,16 @@ body {
 }
 
 .forth-shown .end {
-    font-size: clamp(1.2rem, 5vw, 4rem);
+    font-size: clamp(1.2rem, 5vw, 5rem);
 }
 
-/* fifth */
-.fifth-shown {
-    position: relative;
-}
+
 
 .fifth-shown .story {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
     left: 8%;
     top: 5%;
 }
@@ -366,12 +334,13 @@ body {
     font-size: clamp(1.2rem, 5vw, 2.5rem);
 }
 
-/* sixth */
-.sixth-shown {
-    position: relative;
-}
+
 
 .sixth-shown .story {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
     top: 30px;
     left: 50%;
     transform: translateX(-50%);
@@ -379,7 +348,6 @@ body {
 
 
 
-/* cloud 2 */
 .sixth-shown .cloud2 {
     position: absolute;
     bottom: -38%;
@@ -396,7 +364,6 @@ body {
     align-items: center;
     z-index: 10;
     position: absolute;
-    /* bottom: -300px; */
     top: 40%;
     width: 100%;
 }
@@ -406,19 +373,19 @@ body {
     border: #9B8150 4px solid;
     border-radius: 64px;
     background-color: #F5E1A6;
-    /* position: absolute; */
     display: flex;
     justify-content: center;
 }
 
-/* seventh */
-.seventh-shown {
-    position: relative;
-    top: 60px;
-}
+
+
 
 .seventh-shown .story {
-    left: 56.5%;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    left: 57%;
     top: 15%;
 }
 
@@ -448,32 +415,27 @@ body {
     left: 7%;
 }
 
-/* eighth */
-.eighth-shown {
-    position: relative;
-    /* top: 40px; */
-}
+
+
 
 .eighth-shown .story {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
     left: 31%;
-    bottom: 50%;
+    bottom: 70%;
 }
 
 .eighth-shown .story h3 {
-    /* position: absolute;
-    top: 170px; */
+
     text-align: center;
     font-size: clamp(0.9rem, 2.5vw, 2.5rem);
-    /* opacity: 0.6; */
     text-shadow:
         1px 0 0 #F5E1A6,
-        /* right */
         -1px 0 0 #F5E1A6,
-        /* left */
         0 1px 0 #F5E1A6,
-        /* bottom */
         0 -1px 0 #F5E1A6,
-        /* top */
         1px 1px 0 #F5E1A6,
         -1px 1px 0 #F5E1A6,
         1px -1px 0 #F5E1A6,
@@ -481,7 +443,6 @@ body {
 }
 
 .eighth-shown .story span {
-    /* display: block; */
     color: #D1301C;
     opacity: 1.0;
     font-weight: bold;
@@ -490,13 +451,9 @@ body {
     text-align: start;
     text-shadow:
         1px 0 0 #F5E1A6,
-        /* right */
         -1px 0 0 #F5E1A6,
-        /* left */
         0 1px 0 #F5E1A6,
-        /* bottom */
         0 -1px 0 #F5E1A6,
-        /* top */
         1px 1px 0 #F5E1A6,
         -1px 1px 0 #F5E1A6,
         1px -1px 0 #F5E1A6,
@@ -506,21 +463,16 @@ body {
 
 .eighth-shown .end {
     position: absolute;
-    bottom: 10px;
+    bottom: 8%;
     text-align: center;
     font-size: clamp(0.9rem, 2.5vw, 2.5rem);
-    /* opacity: 0.6; */
     color: #474747;
 
     text-shadow:
         1px 0 0 #F5E1A6,
-        /* right */
         -1px 0 0 #F5E1A6,
-        /* left */
         0 1px 0 #F5E1A6,
-        /* bottom */
         0 -1px 0 #F5E1A6,
-        /* top */
         1px 1px 0 #F5E1A6,
         -1px 1px 0 #F5E1A6,
         1px -1px 0 #F5E1A6,
@@ -534,19 +486,19 @@ body {
 }
 
 
-/* ninth */
-.ninth-shown {
-    position: relative;
-}
+
 
 .ninth-shown .story {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
     top: 9%;
     left: 6%;
 }
 
 .ninth-shown .line {
     position: absolute;
-    /* width: 30%; */
     height: 1px;
     background-color: #1A2F0B;
 }
@@ -558,7 +510,6 @@ body {
     font-size: clamp(1.2rem, 3vw, 3rem);
     font-family: "Baloo 2", sans-serif;
     font-weight: bold;
-    /* Inner shadow from top in white and from bottom in black */
     box-shadow:
         inset 0 8px 16px -8px rgba(255, 255, 255, 0.7),
         inset 0 -8px 16px -8px rgba(0, 0, 0, 0.5);
@@ -569,7 +520,6 @@ body {
     border-bottom-right-radius: 15px;
 }
 
-/* C */
 .line1 {
     rotate: 40deg;
     top: 34%;
@@ -584,7 +534,6 @@ body {
 }
 
 
-/* B9 */
 .line2 {
     rotate: 30deg;
     top: 45%;
@@ -599,7 +548,6 @@ body {
 }
 
 
-/* K1 */
 .line3 {
     rotate: 10deg;
     top: 58%;
@@ -615,7 +563,6 @@ body {
 
 
 
-/* E */
 .line4 {
     rotate: -8deg;
     top: 73%;
@@ -632,7 +579,6 @@ body {
 
 
 
-/* A */
 .line5 {
     rotate: -14deg;
     top: 85%;
@@ -646,24 +592,18 @@ body {
     background-color: #945B25;
 }
 
-/* benifits */
 
 .benifits {
-    /* position: absolute; */
-    /* z-index: 1; */
     width: 100%;
-    /* height: 100vh; */
     background-color: #FCEFC5;
     overflow: hidden;
 
 }
 
 .benifits h3 {
-    /* margin-top: 10%; */
     color: #AB3314;
     font-family: "Baloo 2", sans-serif;
     font-weight: bold;
-    /* for text */
 
     text-shadow:
         1px 4px 0 rgba(171, 51, 20, 0.15),
@@ -682,51 +622,76 @@ body {
     text-align: center;
 }
 
-/* benifit */
+/* ---------- Responsive grid (keeps same design & order) ---------- */
+.benifits .row {
+    /* override inline flex (so no HTML changes required) */
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 416px));
+    justify-content: center;
+    gap: 48px;
+    align-items: start;
+    padding-inline: 16px;
+}
+
+/* make each card flexible but cap at original width */
 .benifit {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0;
-    width: 416px;
-    height: 604px;
+    width: 100%;
+    max-width: 416px;
+    /* preserves original card max width */
+    min-width: 240px;
+    /* allows shrinking on small screens */
+    height: auto;
+    /* let content determine height for responsiveness */
+    min-height: 480px;
+    /* keep a similar visual height on large screens */
     position: relative;
 }
 
+/* keep the description styling but keep it responsive */
 .benifit .benifit-desc {
     padding: 18px 32px 14px 32px;
     border: 2.5px solid #9B8150;
     border-radius: 64px;
     background-color: #F5E1A6;
-    font-family: "Comic Neue", cursive;
-    font-weight: bold;
-    font-size: 20px;
-    color: #474747;
-    text-align: center;
+
     margin-bottom: -24px;
     z-index: 2;
     box-shadow: 0 2px 8px 0 rgba(171, 51, 20, 0.08);
     width: 100%;
     position: relative;
     top: 60px;
+    box-sizing: border-box;
 }
 
-.benifit .benifit-desc p {
-    margin: 0;
-    color: #474747;
+.benifit-desc {
     font-family: "Comic Neue", cursive;
     font-weight: bold;
     font-size: 20px;
+    color: #474747;
     text-align: center;
 }
 
 .benifit .benifit-img {
-
-    min-width: 370px;
+    width: 100%;
     max-width: 420px;
-    min-height: 540px;
+    min-width: 0;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     margin-top: 0;
     z-index: 1;
+}
+
+.benifit .benifit-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
 }
 
 .benifit1 {
@@ -753,10 +718,6 @@ body {
     margin-top: 40px;
 }
 
-.benifit5 img {
-    object-fit: contain;
-}
-
 .benifit6 {
     margin-top: -90px;
 }
@@ -765,6 +726,59 @@ body {
     margin-bottom: 20px;
 }
 
+/* special image inside benifit5 (keeps original styling but responsive) */
+
+
+/* --------- Responsive breakpoints --------- */
+@media (max-width: 900px) {
+    .benifits .row {
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .benifit {
+        min-height: 420px;
+    }
+
+    .benifit .benifit-desc {
+        top: 40px;
+        padding: 14px 20px 12px 20px;
+        font-size: clamp(16px, 3.5vw, 20px);
+    }
+}
+
+@media (max-width: 420px) {
+    .benifits .row {
+        gap: 16px;
+        grid-template-columns: 1fr;
+        padding-inline: 8px;
+    }
+
+    .benifit {
+        min-height: 380px;
+    }
+
+    .benifit .benifit-desc {
+        top: 30px;
+        padding: 12px 16px;
+        font-size: 16px;
+    }
+
+    .benifit4,
+    .benifit1 {
+        margin-top: 80px;
+    }
+
+    /* scale benifit5 logo a bit for small screens */
+    .benifit5 {
+        display: none;
+    }
+
+    .benifits h3 {
+        font-size: clamp(1.6rem, 7vw, 2.2rem);
+        margin-bottom: 8%;
+    }
+}
 
 
 .last-shown {
@@ -772,6 +786,10 @@ body {
 }
 
 .last-shown .story {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -805,34 +823,143 @@ body {
     white-space: nowrap;
 }
 
-.footer {
-    background-color: #B68455;
-    overflow-x: hidden;
-    background-color: #B68455;
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
-    animation: none;
-    position: relative;
-    top: -20px;
-    margin: 0;
+
+
+
+.rotate-message {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.856);
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 10000;
 }
+
+
+.rotate-message img {
+    width: 80%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    animation: showRotateMessage 0.5s, shake 2.2s infinite 2s;
+}
+
+@keyframes showRotateMessage {
+    0% {
+        transform: rotate(30deg) scale(0.5);
+    }
+    50% {
+        transform: rotate(-10deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes shake {
+    0%, 90%, 100% {
+        transform: rotate(0deg);
+    }
+    92% {
+        transform: rotate(-1deg);
+    }
+    96% {
+        transform: rotate(1deg);
+    }
+    98% {
+        transform: rotate(-1deg);
+    }
+}
+
+
+
+
+
+
 
 /* reposive */
 
-/* mobile */
-@media (max-width: 480px) {}
+/* mobile*/
 
-/* tablet */
-@media (min-width: 481px) and (max-width: 1100px) {
+@media (max-width: 480px) {
+    .content{
+        position: fixed;
+    }
+    .rotate-message {
+        display: block;
+    }
+
+    .mainCloud {
+        top: -4%;
+    }
+
+    .mainCloud img {
+        object-fit: cover;
+        width: 100%;
+    }
+
     .cover-title .btn {
-        padding: 5px 0px;
+        width: 40%;
 
     }
 
-    .cloud {
-        bottom: -10%;
+    .second-shown .story .end {
+        margin-right: 0;
+    }
+
+    .seventh-shown .story,
+    .first-message {
+        padding: 24px;
+        border: #9B8150 4px solid;
+        border-radius: 64px;
+        background-color: #F5E1A6;
+    }
+
+    .first-message-content {
+        display: none;
+    }
+
+
+}
+
+/* tablet */
+
+@media (min-width: 481px) and (max-width: 1100px) {
+
+
+    .mainCloud img {
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .section img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+
+    .benifit4,
+    .benifit1 {
+        margin-top: 80px;
+    }
+    .benifit6{
+        margin-top: -160vh;
+    }
+    /* scale benifit5 logo a bit for small screens */
+    .benifit5 {
+        display: none;
     }
 }
 
 /* laptob */
-@media (min-width: 769px) {}
+@media (min-width: 769px) {
+    .section img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}

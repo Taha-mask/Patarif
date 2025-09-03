@@ -7,16 +7,16 @@
     <h1 class="title">Brocoli !</h1>
     <h3 class="description">JIl était une fois... un petit légume vert<br>magique, adoré des Romains,Appelé ..</h3>
 
-    <button class="btn btn-primary" (click)="discover()" (mouseover)="toggleBox()">Discover</button>
+    <button class="btn btn-primary" (click)="discover()">Discover</button>
 
 </div>
 
-<div *ngIf="showBox" class="content">
-    
+<div class="content">
+    <div class="mainCloud">
+        <img src="images/learningZone/stories/mainCloud.svg" alt="cloud">
+    </div>
+
     <div id="section2" #section class="section section2">
-        <div *ngIf="showBox" class="cloud1">
-            <img class="" src="images/learningZone/stories/brocoli/cloud1.png" alt="background">
-        </div>
         <img src="images/learningZone/stories/brocoli/section2.png" alt="section 2">
         <div class="story">
             <p>Petit à petit, le brocoli est<br>devenu un super-héros vert<br>dans toute l’Europe !
@@ -56,7 +56,7 @@
             </p>
         </div>
     </div>
-    
+
     <div id="section5" #section class="section section5">
         <div class="cloud2">
             <img class="" src="images/learningZone/stories/banane/cloud2.png" alt="background">
@@ -96,18 +96,24 @@
 
     <div id="section9" #section class="section section9">
         <img src="images/learningZone/stories/brocoli/section9.png" alt="section 9">
-            <p>Il nettoie ton<br>corps, ton ventre</p>
-            <p>et ton énergie<br>intérieure ! "</p>
+        <p>Il nettoie ton<br>corps, ton ventre</p>
+        <p>et ton énergie<br>intérieure ! "</p>
     </div>
 
     <div id="section10" #section class="section section10">
         <img src="images/learningZone/stories/brocoli/section10.png" alt="section 10">
-         <p>Le brocoli t’aide à<br>rester fort,<br>enraciné,</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;calme… comme<br>un arbre ! </p>
+        <p>Le brocoli t’aide à<br>rester fort,<br>enraciné,</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;calme… comme<br>un arbre ! </p>
     </div>
 
-        <div #section class="section footer">
 
-        <app-home-footer></app-home-footer>
-    </div>
+    <app-home-footer [color]="'#B68455'"></app-home-footer>
+</div>
+
+
+
+<!-- phone horizontal direction -->
+
+<div class="rotate-message">
+    <img src="images/learningZone/stories/mainMessage.svg" alt="please, rotate your phone [required]">
 </div>

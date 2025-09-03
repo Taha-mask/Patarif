@@ -1,22 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../../../supabase.service';
-import { BackgroundComponent } from "../../background/background.component";
-import Swal from 'sweetalert2';
-import { ProductCardComponent } from "../shop/product-card/product-card.component";
+import { ProductCardComponent } from '../../components/pages/shop/product-card/product-card.component';
 import { CommonModule } from '@angular/common';
-import { FavProCardComponent } from "./fav-pro-card/fav-pro-card.component";
-import { HomeFooterComponent } from "../home/home-footer/home-footer.component";
+import { FavProCardComponent } from '../../components/pages/profile/fav-pro-card/fav-pro-card.component';
+import { HomeFooterComponent } from '../../components/pages/home/home-footer/home-footer.component';
 import { Subscription } from 'rxjs';
+import { SupabaseService } from '../../supabase.service';
+import Swal from 'sweetalert2';
+import { AdminNavbarComponent } from "../admin-navbar/admin-navbar.component";
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [BackgroundComponent, FormsModule, ProductCardComponent, CommonModule, FavProCardComponent, HomeFooterComponent],
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  selector: 'app-admin-profile',
+  imports: [FormsModule, CommonModule, AdminNavbarComponent],
+  templateUrl: './admin-profile.component.html',
+  styleUrl: './admin-profile.component.css'
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class AdminProfileComponent {
   displayName: string = '';
   email: string = '';
   lastSignIn: string = '';
@@ -133,7 +132,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   onImageError(event: Event) {
     const img = event.target as HTMLImageElement;
-    img.src = 'images/account.png';
+    img.src = 'images/admin.png';
   }
 
   private formatDate(dateString: string | null | undefined): string {
