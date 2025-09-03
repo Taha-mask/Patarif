@@ -4,6 +4,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environment/environment';
 import { CartItem } from './services/data.service';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -290,6 +291,9 @@ export class SupabaseService {
   // ==========================
   // Profile Images
   // ==========================
+  private _profileImageSubject = new BehaviorSubject<string | null>(null);
+  public profileImage$ = this._profileImageSubject.asObservable();
+
   async uploadProfileImage(file: File, userId: string): Promise<string | null> {
     try {
       const folderPath = `avatars/${userId}`;
@@ -322,12 +326,16 @@ export class SupabaseService {
       }
 
       const { data } = this.supabase.storage.from('avatars').getPublicUrl(filePath);
-      return data.publicUrl;
+      const publicUrl = data?.publicUrl ? `${data.publicUrl}?t=${Date.now()}` : null;
+      if (publicUrl) this._profileImageSubject.next(publicUrl);
+
+      return publicUrl;
     } catch (err) {
       console.error('Unexpected error:', err);
       return null;
     }
   }
+
   async getProfileImage(userId: string): Promise<string> {
     try {
       const folderPath = `avatars/${userId}`;
@@ -353,7 +361,11 @@ export class SupabaseService {
         .from('avatars')
         .getPublicUrl(filePath);
 
-      return publicData.publicUrl || "images/background.png";
+      const publicUrl = publicData.publicUrl ? `${publicData.publicUrl}?t=${Date.now()}` : "images/background.png";
+
+      this._profileImageSubject.next(publicUrl);
+
+      return publicUrl;
     } catch (err) {
       console.error("Unexpected error:", err);
       return "images/background.png";
@@ -468,5 +480,23 @@ export class SupabaseService {
     return data;
   }
 
+
+  // ==========================
+  // get products for search
+  // ==========================
+
+
+   async getProductsTitles(): Promise<{ id: string; title: string }[]> {
+    const { data, error } = await this.client
+      .from('products')
+      .select('id, title');
+
+    if (error) {
+      console.error('Error fetching products titles:', error.message);
+      return [];
+    }
+
+    return data || [];
+  }
 }
 

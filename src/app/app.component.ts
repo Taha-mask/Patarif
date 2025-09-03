@@ -18,7 +18,7 @@ export class AppComponent {
   constructor(public router: Router) { }
 
   isAdminDashboard(): boolean {
-    return this.router.url.startsWith('/admin-dashboard') || this.router.url.startsWith('/admin-products') || this.router.url.startsWith('/app-admin-orders') || this.router.url.startsWith('/contact-messages');
+    return this.router.url.startsWith('/admin-dashboard') || this.router.url.startsWith('/admin-products') || this.router.url.startsWith('/app-admin-orders') || this.router.url.startsWith('/contact-messages') || this.router.url.startsWith('/admin-profile');
   }
   shouldShowNavbar(): boolean {
     return !this.hiddenRoutes.includes(this.router.url);

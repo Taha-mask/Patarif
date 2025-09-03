@@ -32,6 +32,8 @@ import { MathLadderComponent } from './components/pages/games/math-ladder/math-l
 import { GeoQuizComponent } from './components/pages/games/geo-quiz/geo-quiz.component';
 import { ContactUsComponent } from './components/pages/contact-us/contact-us.component';
 import { AdminContactMessagesComponent } from './admin-dashboard/admin-contact-messages/admin-contact-messages.component';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminProfileComponent } from './admin-dashboard/admin-profile/admin-profile.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full', data: { renderMode: 'client' } },
@@ -69,11 +71,13 @@ export const routes: Routes = [
   { path: 'fraise-story', component: FraiseComponent },
 
   // Admin
-  { path: 'admin-dashboard', component: AdminDashboardComponent },
-  { path: 'add-product', component: AddProductComponent },
-  { path: 'admin-products', component: AdminProductsComponent },
-  { path: 'app-admin-orders', component: AdminOrdersComponent },
-  { path: 'contact-messages', component: AdminContactMessagesComponent },
+  { path: 'admin-dashboard', component: AdminDashboardComponent , canActivate: [AuthGuard] },
+  { path: 'add-product', component: AddProductComponent , canActivate: [AuthGuard]},
+  { path: 'admin-products', component: AdminProductsComponent , canActivate: [AuthGuard]},
+  { path: 'app-admin-orders', component: AdminOrdersComponent , canActivate: [AuthGuard]},
+  { path: 'contact-messages', component: AdminContactMessagesComponent , canActivate: [AuthGuard]},
+  { path: 'admin-profile', component: AdminProfileComponent , canActivate: [AuthGuard]},
+  { path: '**', redirectTo: '' },
 
   // Shop
   { 
@@ -82,5 +86,11 @@ export const routes: Routes = [
       .then(m => m.ProductDetailsComponent),
     data: { renderMode: 'client' }
   },
+  { 
+  path: 'test', 
+  loadComponent: () => import('./components/pages/shop/product-details/product-details.component')
+    .then(m => m.ProductDetailsComponent)
+},
+
   { path: 'cart', component: CartComponent },
 ];

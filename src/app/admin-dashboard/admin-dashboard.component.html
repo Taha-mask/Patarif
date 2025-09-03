@@ -14,23 +14,29 @@
       <!-- Top Bar -->
       <div class="top-bar">
         <!-- Search -->
-        <div class="search">
+        <!-- <div class="search">
           <input type="search" placeholder="Search...">
           <i class="bi bi-search prefix"></i>
-        </div>
+        </div> -->
 
         <!-- Notifications -->
-        <button class="notifications" [class.notifi]="notifications != 0">
+        <!-- <button class="notifications" [class.notifi]="notifications != 0">
           <i class="bi bi-bell-fill"></i>
-        </button>
+        </button> -->
 
         <!-- Account -->
-        <div class="account">
-          <div class="account-img">
-            <img src="images/admin.png" alt="account">
+        <a class="account-link" [routerLink]="['/admin-profile']">
+          <div class="account">
+            <div class="account-img">
+              <img [src]="profileImage || 'images/admin.png'" (error)="onImageError($event)"
+                class="dropdown-toggle rounded-circle user-avatar" style="width:50px; height:50px; cursor:pointer;"
+                role="button" tabindex="0" (click)="toggleMenu($event)" (keydown.enter)="toggleMenu($event)"
+                [attr.aria-expanded]="menuOpen" alt="User" /> 
+            </div>
+            <h4>{{userName}}</h4>
           </div>
-          <h4>patarif admin</h4>
-        </div>
+        </a>
+
       </div>
 
       <!-- Page Content -->

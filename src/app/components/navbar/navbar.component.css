@@ -216,7 +216,7 @@
   left: 0;
   top: -200vh;
   width: 100vw;
-  max-height: 60vh;
+  max-height: fit-content;
   background: #fff;
   box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
   padding: 40px 0;

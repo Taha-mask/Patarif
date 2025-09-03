@@ -1,0 +1,84 @@
+<div class="search-backdrop" *ngIf="visible" (click)="emitClose()">
+  <div class="search-modal card p-3" (click)="$event.stopPropagation()">
+    <button class="btn btn-sm btn-light position-absolute top-0 end-0 m-2" (click)="emitClose()">
+      <i class="bi bi-x"></i>
+    </button>
+
+    <h5 class="text-center mb-3 fw-bold">
+      Search about any games, stories and products
+      <span *ngIf="!isReady" class="ms-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    </h5>
+
+
+    <input type="text" class="form-control mb-3" placeholder="{{ isReady ? 'search....' : 'loading...'}}"
+      [(ngModel)]="query" (ngModelChange)="search(query)" [disabled]="!isReady" aria-label="search" />
+
+
+    <div *ngIf="query">
+      <!-- Games -->
+      <div *ngIf="results.games.length" class="mb-3">
+        <h6 class="mb-2 text-start">-</h6>
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-lg-4" *ngFor="let game of results.games">
+            <button class="btn btn-white w-100 text-start border rounded d-flex align-items-center p-2"
+              (click)="goTo(game)" type="button">
+              <div class="me-3 d-flex align-items-center justify-content-center"
+                style="width:44px; height:44px; background:#f8f9fa; border-radius:8px;">
+                <i class="bi" [ngClass]="iconMap[game.category]" style="font-size:1.2rem;"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="text-muted small">Game</div>
+                <div class="fw-semibold">{{ game.title }}</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stories -->
+      <div *ngIf="results.learning.length" class="mb-3">
+        <h6 class="mb-2 text-start">-</h6>
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-lg-4" *ngFor="let learn of results.learning">
+            <button class="btn btn-white w-100 text-start border rounded d-flex align-items-center p-2"
+              (click)="goTo(learn)" type="button">
+              <div class="me-3 d-flex align-items-center justify-content-center"
+                style="width:44px; height:44px; background:#f8f9fa; border-radius:8px;">
+                <i class="bi" [ngClass]="iconMap[learn.category]" style="font-size:1.2rem;"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="text-muted small">learn</div>
+                <div class="fw-semibold">{{ learn.title }}</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products -->
+      <div *ngIf="results.products.length" class="mb-3">
+        <h6 class="mb-2 text-start">-</h6>
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-lg-4" *ngFor="let product of results.products">
+            <button class="btn btn-white w-100 text-start border rounded d-flex align-items-center p-2"
+              (click)="goTo(product)" type="button">
+              <div class="me-3 d-flex align-items-center justify-content-center"
+                style="width:44px; height:44px; background:#f8f9fa; border-radius:8px;">
+                <i class="bi" [ngClass]="iconMap[product.category]" style="font-size:1.2rem;"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="text-muted small">Product</div>
+                <div class="fw-semibold">{{ product.title }}</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!results.games.length && !results.learning.length && !results.products.length"
+        class="text-center text-muted py-3">
+        No results found.
+      </div>
+    </div>
+  </div>
+</div>

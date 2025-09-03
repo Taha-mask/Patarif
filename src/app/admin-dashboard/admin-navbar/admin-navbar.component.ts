@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { SupabaseService } from '../../supabase.service';
 
 @Component({
   selector: 'app-admin-navbar',
@@ -8,5 +9,10 @@ import { RouterModule } from '@angular/router';
   styleUrl: './admin-navbar.component.css'
 })
 export class AdminNavbarComponent {
+  constructor(private supabase: SupabaseService, private router: Router) {}
 
+  async signOut() {
+    await this.supabase.client.auth.signOut();
+    this.router.navigate(['/login']);
+  }
 }

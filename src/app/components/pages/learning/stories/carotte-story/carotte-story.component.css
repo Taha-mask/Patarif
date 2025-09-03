@@ -787,14 +787,41 @@ body {
     z-index: 10000;
 }
 
+
 .rotate-message img {
     width: 80%;
     position: absolute;
     bottom: 0;
     right: 0;
+    animation: showRotateMessage 0.5s, shake 2.2s infinite 2s;
 }
 
+@keyframes showRotateMessage {
+    0% {
+        transform: rotate(30deg) scale(0.5);
+    }
+    50% {
+        transform: rotate(-10deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
 
+@keyframes shake {
+    0%, 90%, 100% {
+        transform: rotate(0deg);
+    }
+    92% {
+        transform: rotate(-1deg);
+    }
+    96% {
+        transform: rotate(1deg);
+    }
+    98% {
+        transform: rotate(-1deg);
+    }
+}
 
 
 
