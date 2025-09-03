@@ -6,16 +6,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1050;
-  /* padding: 14% 20%; */
+  z-index: 10050;
+  padding: 6% 20%;
 }
 
 .search-modal {
-  width: 80%;
-  max-width: 960px;
+  width: 100%;
+  height: 100%;
   border-radius: 12px;
   position: relative;
   box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+  overflow-y: scroll;
 }
 
 /* make card buttons slightly elevate on hover */
