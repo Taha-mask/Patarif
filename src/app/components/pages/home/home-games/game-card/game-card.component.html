@@ -1,33 +1,15 @@
+
 <div class="card-container">
-    <!-- Background Image -->
     <img class="background" src="images/Subtract.png" alt="bg icon">
-
-    <!-- Main Game Icon -->
     <img class="game-image" [src]="mainIcon" alt="icon">
-
-    <!-- Start Game Button -->
     <button class="start-game-button">
-        <div class="start-home">
-            <img src="images/arrow.png" alt="start">
-        </div>
+        <div class="start-home"><img src="images/arrow.png" alt="start"></div>
     </button>
-
-    <!-- Title -->
+    <!-- <div class="raiting"><img src="images/starGameIcon.png" alt="raiting"> <h3 style="margin-top: 8px;">{{ raiting }}</h3></div> -->
     <h3 class="title" [innerHTML]="title"></h3>
-
-    <!-- Age Badge -->
     <div class="age">
-        <h4>3-7 année</h4>
+        <h4>3-7 year</h4>
     </div>
-
-    <!-- Selected Game Indicator -->
     <img class="selected-game" [hidden]="!isSelected" src="images/ic_round-games.png" alt="Selected game" />
-
-      <!--   Rating (commented out, keep for later) -->
-
-    <div class="raiting">
-        <img src="images/starGameIcon.png" alt="raiting">
-        <h3 style="margin-top: 8px; color: black; ">{{ raiting }}</h3>
-    </div>
-   
 </div>
+  

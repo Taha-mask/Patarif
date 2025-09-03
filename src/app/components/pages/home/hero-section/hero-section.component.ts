@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { BackgroundComponent } from "../../../background/background.component";
-import { StarsBackgroundComponent } from "../../../stars-background/stars-background.component";
 
 @Component({
   selector: 'app-hero-section',
-  imports: [BackgroundComponent, StarsBackgroundComponent],
+  imports: [BackgroundComponent],
   templateUrl: './hero-section.component.html',
   styleUrl: './hero-section.component.css'
 })

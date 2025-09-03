@@ -1,24 +1,44 @@
 <div *ngIf="designType === 'carousel'" class="games-carousel-container">
-
+  
   <div class="carousel">
     <div class="cards">
       <!-- <app-stars-background></app-stars-background>
       <app-stars-background></app-stars-background>
       <app-stars-background></app-stars-background> -->
-      <div *ngFor="let card of cards; let i = index" class="game-card" [ngClass]="{
+      <div
+      *ngFor="let card of cards; let i = index"
+      class="game-card"
+      [ngClass]="{
         'center': i === currentIndex,
         'left': i === leftIndex,
         'right': i === rightIndex
-      }" [style.textAlign]="'left'">
+      }"
+        [style.textAlign]="'left'"
+        >
         <!-- Add the top-right icon only for the center card -->
         <ng-container *ngIf="i === currentIndex">
-          <img src="images/ic_round-games.png" alt="selected game"
-            style="position: absolute; top: -230px; left: 410px; width: 38px; z-index: 20;" />
+          <img 
+            src="images/ic_round-games.png" 
+            alt="selected game" 
+            style="position: absolute; top: -230px; left: 410px; width: 38px; z-index: 20;"
+          />
         </ng-container>
         <!-- Show the raiting explicitly here to ensure it appears -->
-
-        <app-game-card [isSelected]="false" [mainIcon]="card.img" [title]="card.title" [raiting]="card.raiting"
-          [ngStyle]="{ '--title-align': 'left' }"></app-game-card>
+        <div 
+          *ngIf="i === currentIndex" 
+          class="raiting" 
+          style="position: absolute; top: -230px; left: 26%; transform: translateX(-50%); display: flex; align-items: center; z-index: 21; color: rgb(0, 0, 0);"
+        >
+          <img src="images/starGameIcon.png" alt="raiting" style="width: 24px; height: 24px; margin-right: 6px;">
+          <h3 style="margin: 0; font-size: 1.2rem;">{{ card.raiting }}</h3>
+        </div>
+        <app-game-card
+          [isSelected]="false"
+          [mainIcon]="card.img"
+          [title]="card.title"
+          [raiting]="card.raiting"
+          [ngStyle]="{ '--title-align': 'left' }"
+        ></app-game-card>
       </div>
     </div>
   </div>
@@ -28,7 +48,10 @@
       <i class="bi bi-arrow-left"></i>
     </button> -->
     <div class="dots">
-      <span *ngFor="let card of cards; let i = index" [ngClass]="{ 'active': i === currentIndex }"></span>
+      <span
+        *ngFor="let card of cards; let i = index"
+        [ngClass]="{ 'active': i === currentIndex }"
+      ></span>
     </div>
     <button class="arrow" (click)="nextSlide()">
       <i class="bi bi-arrow-right"></i>

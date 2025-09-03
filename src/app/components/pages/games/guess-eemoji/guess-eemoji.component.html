@@ -1,49 +1,145 @@
 <app-game-template
+  [level]="level"
+  [currentQuestion]="currentIndex + 1"
   [questionsCorrectInLevel]="questionsCorrectInLevel"
   [timeElapsed]="timeElapsed"
   [currentWord]="currentWord?.correct || ''"
   [difficulty]="currentDifficulty"
->    <div class="big-container mx-auto w-100 p-4">
- 
-  <!-- Game Content -->
-  <div class="container d-flex justify-content-center align-items-center ">
-    <div class="card text-center shadow-lg game-card">
-      <div class="card-body">
-        <h4 class="card-title">Guess the Meaning!</h4>
-        <p class="display-4 mb-4">{{ currentQuestion.emojis }}</p>
-        
-        <!-- Options -->
-        <div class="options-container mb-4">
-          <button *ngFor="let option of currentQuestion.options"
-                  class="btn option-btn"
-                  (click)="checkAnswer(option)"
-                  [disabled]="feedback !== null"
-                  [class.btn-success]="feedback !== null && option === currentQuestion.answer"
-                  [class.btn-danger]="feedback !== null && option === selectedOption && option !== currentQuestion.answer"
-                  [class.btn-outline-secondary]="feedback !== null && option !== selectedOption && option !== currentQuestion.answer">
-            {{ option }}
-          </button>
-        </div>
+  [totalQuestions]="questions.length"
+>  
+  <div class="game-layout">
+    <div class="card-title">  
+      Devinez la signification !
+    </div>
   
-        <!-- Feedback -->
-        <div *ngIf="feedback" class="alert mb-3"
-             [ngClass]="{'alert-success': isCorrect, 'alert-danger': !isCorrect}">
-          {{ feedback }}
+    <!-- ===== QUESTION SECTION ===== -->
+    <div class="question-section">
+    
+        <div class="emoji-display">
+          {{ currentQuestion.emojis }}
         </div>
-  
-      
+    </div>
+
+    <!-- ===== ANSWER SECTION ===== -->
+    <div class="answer-section">
+      <div class="answer-grid">
+        <div *ngFor="let option of currentQuestion.options; let i = index" 
+             class="option-btn"
+             [ngClass]="{
+               'selected': selectedOption === option && !feedback,
+               'btn-success': feedback && option === currentQuestion.answer,
+               'btn-danger': feedback && selectedOption === option && option !== currentQuestion.answer,
+               'correct-answer': feedback && option === currentQuestion.answer
+             }"
+             (click)="!feedback && checkAnswer(option)">
+          
+          <div class="answer-content">
+            <!-- Option Badge (A, B, C, D) -->
+            <div class="option-badge">
+              {{ getOptionLetter(i) }}
+            </div>
+            
+            <!-- Option Text -->
+            <div class="option-text">
+              {{ option }}
+            </div>
+            
+            <!-- Result Icon -->
+            <div class="result-icon" *ngIf="feedback">
+              <i *ngIf="option === currentQuestion.answer" class="fas fa-check"></i>
+              <i *ngIf="selectedOption === option && option !== currentQuestion.answer" class="fas fa-times"></i>
+            </div>
+          </div>
+        </div>
       </div>
-      
     </div>
     
+  
+    <!-- ===== ACTION SECTION ===== -->
+    <div class="action-section">
+      <div class="action-card">
+        <button class="game-btn" 
+                [disabled]="!selectedOption" 
+                (click)="nextQuestion()"
+                [ngClass]="{'ready': selectedOption}">
+          
+          <span class="button-text">
+            {{ currentIndex < questions.length - 1 ? 'Question suivante' : 'Rejouer' }}
+          </span>
+          
+          <div class="button-icon">
+            <i *ngIf="currentIndex < questions.length - 1" class="fas fa-arrow-right"></i>
+            <i *ngIf="currentIndex >= questions.length - 1" class="fas fa-redo"></i>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== LEVEL COMPLETE MODAL ===== -->
+    <div class="modal fade" 
+         [class.show]="questionsCorrectInLevel >= 5" 
+         [style.display]="questionsCorrectInLevel >= 5 ? 'block' : 'none'"
+         tabindex="-1" 
+         role="dialog" 
+         aria-labelledby="levelCompleteModalLabel" 
+         aria-hidden="true">
+      
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content celebration-modal">
+          
+          <!-- Modal Header -->
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="levelCompleteModalLabel">
+              🎉 Niveau {{ level }} terminé ! 🎉
+            </h5>
+            <button type="button" class="btn-close" (click)="nextQuestion()" aria-label="Close"></button>
+          </div>
+          
+          <!-- Modal Body -->
+          <div class="modal-body text-center">
+            <h4 class="mb-3">Félicitations !</h4>
+            
+            <!-- Success Alert -->
+            <div class="alert alert-success">
+              <i class="fas fa-star text-warning"></i>
+              Vous avez répondu correctement à {{ questionsCorrectInLevel }} questions sur 5 !
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="level-progress mb-3">
+              <div class="progress">
+                <div class="progress-bar bg-success" 
+                     role="progressbar" 
+                     [style.width.%]="getLevelScorePercentage()">
+                </div>
+              </div>
+              <small class="text-muted">{{ getLevelScorePercentage() }}% de réussite</small>
+            </div>
+            
+            <!-- Score Display -->
+            <div class="score-display mb-3">
+              <h3 class="text-primary">{{ bonusPoints }}</h3>
+              <p class="mb-0">Points bonus obtenus</p>
+            </div>
+            
+            <!-- Score Message -->
+            <div class="score-message">
+              <p class="mb-0">{{ getScoreMessage() }}</p>
+            </div>
+          </div>
+          
+          <!-- Modal Footer -->
+          <div class="modal-footer border-0 justify-content-center">
+            <button type="button" 
+                    class="btn btn-primary btn-lg px-4" 
+                    (click)="nextQuestion()">
+              <i class="fas fa-arrow-right me-2"></i>
+              Continuer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-    <!-- Next/Play Again Button -->
-<div class=" align-items-center justify-content-center d-flex mt-4 mx-auto w-100 ">
-    <button class="btn btn-primary px-5 py-2 fw-medium"
-    (click)="nextQuestion()"
-    [disabled]="!selectedOption">
-{{ currentIndex < questions.length - 1 ? 'Next' : 'Play Again' }}
-</button>
-</div>
-</div>
 </app-game-template>

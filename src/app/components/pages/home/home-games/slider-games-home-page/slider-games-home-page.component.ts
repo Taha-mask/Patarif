@@ -17,14 +17,14 @@ export class SliderGamesHomePageComponent {
 
   cards = [
     {
-      title: 'Casse\ntêtes',
+      title: 'Puz\nzles',
       img: 'images/PataUG3.svg',
       raiting: 2.8
 
     },
 
     {
-      title: 'Devi\nner',
+      title: 'Gue\nss',
       img: 'images/PataUG1.png',
       raiting: 4.2
     },

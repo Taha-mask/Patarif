@@ -41,6 +41,7 @@
   height: auto;
 }
 
+/* المحتوى */
 .main-content {
   position: relative;
   z-index: 1;
@@ -53,7 +54,7 @@
   font-family: "Comic Relief", system-ui;
   font-weight: 700;
   font-style: normal;
-  font-size: 3rem;
+  font-size: clamp(1.5rem, 5vw, 3.12rem);
   white-space: pre-line;
 }
 

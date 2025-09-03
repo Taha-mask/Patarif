@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
+import { CelebrationComponent, CelebrationData } from '../../../game-template/celebration/celebration.component';
 
 // Core interfaces
 interface LetterTile {
@@ -60,7 +61,7 @@ const GAME_CONFIG = {
 @Component({
   selector: 'app-letters-game',
   standalone: true,
-  imports: [CommonModule, GameTemplateComponent],
+  imports: [CommonModule, GameTemplateComponent, CelebrationComponent],
   templateUrl: './letters-game.component.html',
   styleUrls: ['./letters-game.component.css']
 })
@@ -170,6 +171,9 @@ export class LettersGameComponent implements OnInit, OnDestroy {
     ]
   };
 
+  // Celebration data
+  celebrationData: CelebrationData | null = null;
+
   // Getters for template
   get level(): number { return this.gameState.level; }
   get score(): number { return this.gameState.score; }
@@ -180,6 +184,7 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   get timeElapsed(): number { return this.gameState.timeElapsed; }
   get showLevelCompleteModal(): boolean { return this.gameState.showLevelCompleteModal; }
   get currentWord(): GameWord | null { return this._currentWord; }
+  get isWordComplete(): boolean { return this.wordSlots.every(slot => slot !== null); }
 
   ngOnInit(): void {
     this.initializeGame();
@@ -217,15 +222,20 @@ export class LettersGameComponent implements OnInit, OnDestroy {
 
   // ===== TIMER MANAGEMENT =====
   private startTimer(): void {
-    this.gameState.timeElapsed = 0;
-    this.cleanupTimer();
-    this.timer = setInterval(() => {
-      this.gameState.timeElapsed++;
-    }, GAME_CONFIG.TIMER_INTERVAL);
+    // Only start the timer if it's not already running
+    if (!this.timer) {
+      this.timer = setInterval(() => {
+        this.gameState.timeElapsed++;
+      }, GAME_CONFIG.TIMER_INTERVAL);
+    }
   }
 
   private stopTimer(): void {
     this.cleanupTimer();
+  }
+
+  private resetTimer(): void {
+    this.gameState.timeElapsed = 0;
   }
 
   private cleanupTimer(): void {
@@ -241,7 +251,12 @@ export class LettersGameComponent implements OnInit, OnDestroy {
     this.resetAnimations();
     this.loadCurrentWord();
     this.setupLetterTiles();
-    this.startTimer();
+    
+    // Only start timer on first question of the set
+    if (this.gameState.currentQuestion === 1) {
+      this.resetTimer();
+      this.startTimer();
+    }
   }
 
   private resetGameStats(): void {
@@ -399,11 +414,12 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   private checkAutoComplete(): void {
-    if (this.wordSlots.every(slot => slot !== null)) {
-      setTimeout(() => {
-        this.checkWord();
-      }, GAME_CONFIG.ANIMATION_DELAY);
-    }
+    // Commented out auto-complete since we now have a manual check button
+    // if (this.wordSlots.every(slot => slot !== null)) {
+    //   setTimeout(() => {
+    //     this.checkWord();
+    //   }, GAME_CONFIG.ANIMATION_DELAY);
+    // }
   }
 
   // ===== GAME LOGIC =====
@@ -459,10 +475,43 @@ export class LettersGameComponent implements OnInit, OnDestroy {
 
   private completeLevel(): void {
     console.log('Level completed! Showing modal...');
+    console.log('Current level:', this.level);
+    console.log('Questions correct:', this.questionsCorrectInLevel);
+    console.log('Total questions:', GAME_CONFIG.QUESTIONS_PER_LEVEL);
+    console.log('Score:', this.score);
+    console.log('Time elapsed:', this.timeElapsed);
+    console.log('Stars:', this.stars);
+    
+    this.stopTimer();
+    
+    // Prepare celebration data
+    this.celebrationData = {
+      level: this.level,
+      questionsCorrect: this.questionsCorrectInLevel,
+      totalQuestions: GAME_CONFIG.QUESTIONS_PER_LEVEL,
+      score: this.score,
+      timeElapsed: this.timeElapsed,
+      bonusPoints: this.stars * 100, // 100 points per star
+      difficulty: this.getCurrentLevelDifficulty()
+    };
+    
+    console.log('Celebration data:', this.celebrationData);
+    console.log('Setting showLevelCompleteModal to true');
     this.gameState.showLevelCompleteModal = true;
     this.preventBodyScroll();
-    // Don't increment level yet - wait for user to click continue
-    // Don't reset for new word yet - wait for user to click continue
+  }
+  
+  // Helper to get current level difficulty
+  private getCurrentLevelDifficulty(): 'easy' | 'medium' | 'hard' {
+    if (this.level <= 2) return 'easy';
+    if (this.level <= 4) return 'medium';
+    return 'hard';
+  }
+  
+  // Handle celebration modal close
+  onCloseCelebration(): void {
+    this.gameState.showLevelCompleteModal = false;
+    this.restoreBodyScroll();
   }
 
   private handleIncorrectAnswer(): void {
@@ -525,11 +574,19 @@ export class LettersGameComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
-  continueToNextLevel(): void {
+  continueToNextLevel(event?: number): void {
     console.log('Continuing to next level...');
     this.gameState.showLevelCompleteModal = false;
     this.restoreBodyScroll();
-    this.gameState.level++;
+    
+    if (event) {
+      // If we received a specific level to go to
+      this.gameState.level = event;
+    } else {
+      // Otherwise, just go to the next level
+      this.gameState.level++;
+    }
+    
     this.gameState.currentQuestion = 1;
     this.gameState.questionsCorrectInLevel = 0;
     this.currentWordIndex = 0;

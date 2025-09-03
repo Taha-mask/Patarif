@@ -61,10 +61,21 @@
               <span class="slot-placeholder" *ngIf="!slot">{{ i + 1 }}</span>
             </div>
           </div>
+          
+          <!-- Check Button - Always show but disabled until word is complete -->
+         
         </div>
 
       </div>
-     
+      <div class="check mt-4">
+        <button class="game-btn" 
+                (click)="checkWord()"
+                [disabled]="!isWordComplete || showSuccess"
+                [ngClass]="{'ready': isWordComplete && !showSuccess}">
+          <i class="fas fa-check me-2"></i>
+          Vérifier le mot
+        </button>
+      </div>
       </div>
   
     </div>
@@ -73,42 +84,15 @@
    <span>❌ Wrong!</span>
  </div>
  
- <!-- Bootstrap Modal -->
- <div class="modal fade" 
-      [class.show]="showLevelCompleteModal" 
-      [style.display]="showLevelCompleteModal ? 'block' : 'none'"
-      tabindex="-1" 
-      role="dialog" 
-      aria-labelledby="levelCompleteModalLabel" 
-      aria-hidden="true">
-   <div class="modal-dialog modal-dialog-centered" role="document">
-     <div class="modal-content celebration-modal">
-       <div class="modal-header border-0">
-         <h5 class="modal-title" id="levelCompleteModalLabel">
-           🎉 Congratulations! 🎉
-         </h5>
-         <button type="button" class="btn-close" (click)="continueToNextLevel()" aria-label="Close"></button>
-       </div>
-       <div class="modal-body text-center">
-         <h4 class="mb-3">You completed Level {{ level }}!</h4>
-         <div class="alert alert-success">
-           <i class="fas fa-star text-warning"></i>
-           All 5 questions answered correctly!
-         </div>
-         <div class="level-progress mb-3">
-           <div class="progress">
-             <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
-           </div>
-         </div>
-       </div>
-       <div class="modal-footer border-0 justify-content-center">
-         <button type="button" class="btn btn-primary btn-lg px-4" (click)="continueToNextLevel()">
-           <i class="fas fa-arrow-right me-2"></i>
-           Continue to Level {{ level + 1 }}
-         </button>
-       </div>
-     </div>
-   </div>
- </div>
+
   </div>
 </app-game-template>
+
+<!-- Celebration Modal (moved outside app-game-template) -->
+<app-celebration 
+  [show]="showLevelCompleteModal"
+  [nextLevel]="level + 1"
+  [data]="celebrationData"
+  (close)="onCloseCelebration()"
+  (goToNext)="continueToNextLevel($event)">
+</app-celebration>

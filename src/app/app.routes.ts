@@ -43,6 +43,14 @@ export const routes: Routes = [
   { path: 'matchint-words', component: MatchintWordsComponent },
   { path: 'sort-words', component: SortWordsComponent },
   { path: 'gallery', component: GalleryComponent },
+  { path: 'canvas/:imageUrl', component: CanvasComponent }, 
+
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  
+  { path: 'login', component: LoginComponent },
+
+  { path: 'signup', component: SignupComponent },
+  { path: 'games', component: GamesComponent },
   { path: 'canvas', component: CanvasComponent },
   { path: 'letters-game', component: LettersGameComponent },
   { path: 'country-guessing', component: CountryGuessingComponent },

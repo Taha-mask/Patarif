@@ -4,11 +4,12 @@ import { NavbarComponent } from "./components/navbar/navbar.component";
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { BackgroundComponent } from "./components/background/background.component";
+import { CelebrationComponent } from "./components/game-template/celebration/celebration.component";
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, NgIf, BackgroundComponent],
+  imports: [RouterOutlet, NavbarComponent, NgIf, BackgroundComponent, CelebrationComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

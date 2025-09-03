@@ -11,13 +11,11 @@ import { HomeFooterComponent } from '../../home/home-footer/home-footer.componen
 import { StarsBackgroundComponent } from "../../../stars-background/stars-background.component";
 import { LinesBackgroundComponent } from "../../../lines-background/lines-background.component";
 import { SupabaseService } from '../../../../supabase.service';
-import { AuthService } from '../../../../services/auth.service';
-import { LoadingComponent } from "../../../loading/loading.component";
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, BackgroundComponent, HomeFooterComponent, CartButtonComponent, StarsBackgroundComponent, LinesBackgroundComponent, LoadingComponent],
+  imports: [CommonModule, BackgroundComponent, HomeFooterComponent, CartButtonComponent, StarsBackgroundComponent, LinesBackgroundComponent],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css']
 })
@@ -115,7 +113,6 @@ export class ProductDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private supabaseServices: SupabaseService,
     public productsService: ProductsService,
-    private authService: AuthService,
     private router: Router,
     private dataService: CartService
   ) { }
@@ -185,69 +182,18 @@ export class ProductDetailsComponent implements OnInit {
   // ==========================
   // Cart
   // ==========================
-  async handleAddToCart(event: Event) {
-  event.preventDefault();
-
-  if (await this.authService.isLoggedIn()) {
-   this.addToCart();
-  } else {
-    Swal.fire({
-      title: 'You need to log in',
-      text: 'You must have an account to add items to the cart.',
-      icon: 'warning',
-      confirmButtonText: 'Login'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.router.navigate(['/login']);
-      }
-    });
-  }
-}
-
   addToCart() {
-    if (!this.selectedColor || !this.selectedSize) {
-      Swal.fire({
-        title: 'Select Options',
-        text: 'Please select color and size before adding to cart.',
-        icon: 'info',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
-
     const newItem: CartItem = {
       id: this.product.id,
       name: this.product.title,
       color: this.selectedColor,
-      size: this.selectedSize,
+      size: this.selectedSize || 'null',
       maxQuantity: this.maxQuantity,
       price: this.product.final_price,
       quantity: 1,
       image: this.selectedImage
     };
-
-    const added = this.dataService.addToCart(newItem);
-
-    if (added) {
-      Swal.fire({
-        title: 'Added to Cart',
-        text: `${this.product.title} has been added to your cart.`,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-    } else {
-      Swal.fire({
-        title: 'Already in Cart',
-        text: 'This item is already in your cart. You can increase the quantity from the cart page.',
-        icon: 'info',
-        confirmButtonText: 'Go to Cart'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.router.navigate(['/cart']);
-        }
-      });
-
-    }
+    this.dataService.addToCart(newItem);
   }
 
   // ==========================

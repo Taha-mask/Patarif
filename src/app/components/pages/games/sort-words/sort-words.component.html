@@ -2,12 +2,14 @@
   [questionsCorrectInLevel]="questionsCorrectInLevel"
   [timeElapsed]="timeElapsed"
   [currentWord]="currentWord?.correct || ''"
-  [difficulty]="currentDifficulty"
->
+  >
+
   <div class="container d-flex justify-content-center align-items-center py-4">
+   
     <div class="game-card">
+      <h2 class="card-title">Arrange the Sentence</h2>
+
       <div class="card-body">
-        <h2 class="card-title">Arrange the Sentence</h2>
         
         <!-- Instructions -->
         <!-- <p class="text-muted mb-4">Click on the words below to arrange them into a correct sentence</p> -->
@@ -17,7 +19,6 @@
           <button 
             *ngFor="let word of shuffledWords; let i = index"
             class="btn"
-            [style.background]="getRandomColor(i)"
             (click)="selectWord(word)"
             [attr.aria-label]="'Select word: ' + word">
             {{ word }}
@@ -36,7 +37,6 @@
             <button 
               *ngFor="let word of selectedWords; let i = index" 
               class="btn"
-              [style.background]="getRandomColor(i)"
               (click)="removeWord(word, i)"
               [attr.aria-label]="'Remove word: ' + word">
               {{ word }}
@@ -54,7 +54,7 @@
         
         <!-- Action Buttons -->
         <div class="action-buttons">
-          <button class="btn " 
+          <button class="game-btn " 
                   (click)="checkAnswer()"
                   [disabled]="selectedWords.length === 0"
                   [class.btn-success]="isCorrect"
@@ -63,7 +63,7 @@
             {{ isCorrect ? 'Correct!' : 'Check Answer' }}
           </button>
           
-          <button class="btn " 
+          <button class="game-btn " 
                   (click)="nextSentence()"
                   *ngIf="isCorrect || feedback">
             <i class="bi bi-arrow-right me-1"></i>

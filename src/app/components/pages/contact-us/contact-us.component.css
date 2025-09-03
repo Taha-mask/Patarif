@@ -10,31 +10,38 @@ body {
     --mainColor: rgb(255, 0, 106);
 }
 
+* {
+    /* border: 1px solid green; */
+}
+
 .main {
     margin: auto;
     width: 90%;
-    min-height: 90%;
+    height: 90%;
     background-color: rgba(255, 255, 255, 0.144);
     backdrop-filter: blur(10px);
     border-radius: 24px;
     border: white 4px solid;
-    margin-bottom: 12%;
+
 }
 
-/* ---- LEFT SIDE ---- */
 .main .main-side h1 {
     color: var(--mainColor);
     font-family: var(--mainFont);
     font-weight: 900;
-    font-size: clamp(2rem, 5vw, 4rem); /* responsive font */
+    font-size: 4rem;
     margin: 0;
 }
 
 .main .main-side p {
     color: rgb(46, 46, 46);
     font-family: var(--comic);
-    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-size: 1rem;
     margin: 0;
+}
+
+.main .img-home {
+    /* width: fit-content; */
 }
 
 .main .form-control {
@@ -45,71 +52,10 @@ body {
     border: 1px solid #6486FF;
 }
 
-/* ---- BUTTON ---- */
 form button {
     border-radius: 12px;
     font-size: 1rem;
     font-family: var(--comic);
     background-color: #6486FF;
     border: none;
-}
-
-/* ---- RESPONSIVE ---- */
-
-/* Large screens (desktop) → 2 columns */
-@media (min-width: 992px) {
-  .main {
-    display: flex;
-    flex-direction: row;
-  }
-  .main-side {
-    padding: 2rem;
-  }
-  .img-home img {
-    max-width: 100%;
-    height: auto;
-  }
-}
-
-/* Medium screens (tablets) */
-@media (max-width: 991px) {
-  .main {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    padding: 2rem 1rem;
-  }
-  .main-side {
-    width: 100% !important;
-    padding: 1rem;
-    align-items: center !important;
-  }
-  .main-side form {
-    align-items: center !important;
-  }
-  .img-home .img-fluid{
-    display: none;
-  }
-
-}
-
-/* Small screens (mobiles) */
-@media (max-width: 576px) {
-  .main {
-    width: 95%;
-    border-radius: 16px;
-    padding: 1.5rem 1rem;
-  }
-  .main-side h1 {
-    font-size: 2rem;
-    text-align: center;
-  }
-  .main-side p {
-    font-size: 0.9rem;
-    text-align: center;
-  }
-  form button {
-    font-size: 0.9rem;
-    padding: 0.8rem;
-  }
 }

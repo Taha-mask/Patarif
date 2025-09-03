@@ -12,7 +12,7 @@ import { GameHeaderComponent } from './game-header/game-header.component';
 export class GameTemplateComponent implements OnInit, OnDestroy {
   private audio: HTMLAudioElement | null = null;
   isMusicPlaying = false;
-  hiddenRoutes: string[] = ['/gallery', '/canvas/:imageUrl', '/paint'];
+  hiddenRoutes: string[] = ['/gallery', '/canvas/:imageUrl', '/paint', '/math-ladder'];
   @Input() showHeader: boolean = true;
   @Input() showTopIcons: boolean = true;
   @Input() noCardBackground: boolean = false;

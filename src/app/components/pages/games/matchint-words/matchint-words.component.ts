@@ -40,7 +40,13 @@ export class MatchintWordsComponent implements OnInit {
   bonusPoints: number = 0;
   currentDifficulty: 'easy' | 'medium' | 'hard' = 'medium';
 
+  // Audio for correct and wrong answers
+  private correctAudio: HTMLAudioElement;
+  private wrongAudio: HTMLAudioElement;
+
   constructor() {
+    this.correctAudio = new Audio('/audio/correct.mp3');
+    this.wrongAudio = new Audio('/audio/wrong.mp3');
     this.initializeGame();
   }
 
@@ -106,10 +112,12 @@ export class MatchintWordsComponent implements OnInit {
       });
       
       this.score += 10;
+      this.playCorrectSound(); // Play correct sound
       this.checkGameComplete();
     } else {
       // Wrong match
       this.feedback = 'Try again!';
+      this.playWrongSound(); // Play wrong sound
       setTimeout(() => {
         this.feedback = null;
       }, 1000);
@@ -143,6 +151,22 @@ export class MatchintWordsComponent implements OnInit {
     this.score = 0;
     this.gameComplete = false;
     this.initializeGame();
+  }
+
+  // Play correct sound
+  private playCorrectSound() {
+    this.correctAudio.currentTime = 0;
+    this.correctAudio.play().catch(error => {
+      console.log('Audio playback failed:', error);
+    });
+  }
+
+  // Play wrong sound
+  private playWrongSound() {
+    this.wrongAudio.currentTime = 0;
+    this.wrongAudio.play().catch(error => {
+      console.log('Audio playback failed:', error);
+    });
   }
   }
   

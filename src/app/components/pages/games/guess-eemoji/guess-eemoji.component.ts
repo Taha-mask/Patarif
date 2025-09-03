@@ -61,6 +61,15 @@ export class GuessEemojiComponent {
     correct: ''
   };
 
+  // Audio for correct and wrong answers
+  private correctAudio: HTMLAudioElement;
+  private wrongAudio: HTMLAudioElement;
+
+  constructor() {
+    this.correctAudio = new Audio('/audio/correct.mp3');
+    this.wrongAudio = new Audio('/audio/wrong.mp3');
+  }
+
   get currentDifficulty() {
     return this.currentWord.difficulty;
   }
@@ -81,6 +90,22 @@ export class GuessEemojiComponent {
     if (this.timer) {
       clearInterval(this.timer);
     }
+  }
+
+  // Play correct sound
+  private playCorrectSound() {
+    this.correctAudio.currentTime = 0;
+    this.correctAudio.play().catch(error => {
+      console.log('Audio playback failed:', error);
+    });
+  }
+
+  // Play wrong sound
+  private playWrongSound() {
+    this.wrongAudio.currentTime = 0;
+    this.wrongAudio.play().catch(error => {
+      console.log('Audio playback failed:', error);
+    });
   }
   
   // Timer methods
@@ -123,6 +148,7 @@ export class GuessEemojiComponent {
     this.feedback = this.isCorrect ? 'Correct! 🎉' : 'Try again! 😢';
     
     if (this.isCorrect) {
+      this.playCorrectSound(); // Play correct sound
       this.questionsCorrectInLevel++;
       if (this.questionsCorrectInLevel >= 5) {
         this.level++;
@@ -147,6 +173,8 @@ export class GuessEemojiComponent {
       setTimeout(() => {
         this.nextQuestion();
       }, 1500);
+    } else {
+      this.playWrongSound(); // Play wrong sound
     }
   }
 
@@ -155,5 +183,23 @@ export class GuessEemojiComponent {
     this.selectedOption = null;
     this.feedback = null;
     this.isCorrect = null;
+  }
+
+  // ===== UTILITY METHODS =====
+  getOptionLetter(index: number): string {
+    return String.fromCharCode(65 + index);
+  }
+
+  getLevelScorePercentage(): number {
+    return Math.round((this.questionsCorrectInLevel / 5) * 100);
+  }
+
+  getScoreMessage(): string {
+    const percentage = this.getLevelScorePercentage();
+    if (percentage === 100) return 'Parfait ! Vous êtes un expert en emojis !';
+    if (percentage >= 80) return 'Excellent ! Vous connaissez bien vos emojis !';
+    if (percentage >= 60) return 'Bon travail ! Continuez à vous entraîner !';
+    if (percentage >= 40) return 'Pas mal ! Essayez à nouveau pour vous améliorer !';
+    return 'Continuez à vous entraîner ! Vous allez progresser !';
   }
 }

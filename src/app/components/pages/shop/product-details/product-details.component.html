@@ -1,8 +1,8 @@
 <!-- <app-background></app-background> -->
 <app-stars-background></app-stars-background>
-<!-- <app-stars-background [top]="80"></app-stars-background> -->
+<app-stars-background [top]="80"></app-stars-background>
 <app-lines-background></app-lines-background>
-<!-- <app-lines-background [top]="80"></app-lines-background> -->
+<app-lines-background [top]="80"></app-lines-background>
 
 <!-- <div class="background-lines">
     <div class="background"><img src="images/shopping/background.png" alt="background"></div>
@@ -12,7 +12,12 @@
 <div class="content">
 
     <!-- ✅ Loading Spinner -->
-  <app-loading *ngIf="loading"></app-loading>
+    <div *ngIf="loading" class="loading-overlay">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <p>Loading products...</p>
+        </div>
+    </div>
 
     <ng-container *ngIf="!loading">
 
@@ -104,7 +109,7 @@
 
                 </div>
 
-                <button (click)="handleAddToCart($event)" *ngIf="selectedSize != null" class="btn btn-primary">Add to cart
+                <button (click)="addToCart()" *ngIf="selectedSize != null" class="btn btn-primary">Add to cart
                     <span></span></button>
                 <div *ngIf="selectedSize == null" class="btn btn-primary-outline">select <span *ngIf="selectedColor
              == null">[color] </span> <span *ngIf="selectedSize == null">[size]</span></div>

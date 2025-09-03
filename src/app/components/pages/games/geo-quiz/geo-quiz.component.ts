@@ -1,8 +1,9 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { GameTemplateComponent } from "../../../game-template/game-template.component";
 
+// ===== INTERFACES =====
 type GameDifficulty = 'easy' | 'medium' | 'hard';
 
 interface Question {
@@ -16,6 +17,25 @@ interface PointDef {
   y: number;           // y coordinate in viewBox coords
 }
 
+interface CurrentWord {
+  difficulty: 'easy' | 'medium' | 'hard';
+  correct: string;
+}
+
+// ===== GAME DATA =====
+const GAME_POINTS: PointDef[] = [
+  { name: 'Egypt',   x: 560, y: 255 },
+  { name: 'Saudi Arabia', x: 610, y: 280 },
+  { name: 'Brazil',  x: 300, y: 340 },
+  { name: 'United States', x: 140, y: 200 },
+  { name: 'India',   x: 720, y: 260 },
+  { name: 'Australia', x: 890, y: 440 },
+  { name: 'Russia',  x: 700, y: 100 },
+  { name: 'Canada',  x: 120, y: 120 },
+  { name: 'South Africa', x: 600, y: 420 },
+  { name: 'China',   x: 800, y: 200 }
+];
+
 @Component({
   selector: 'app-geo-quiz',
   standalone: true,
@@ -23,83 +43,95 @@ interface PointDef {
   templateUrl: './geo-quiz.component.html',
   styleUrls: ['./geo-quiz.component.css']
 })
-export class GeoQuizComponent implements OnInit {
+export class GeoQuizComponent implements OnInit, OnDestroy {
   @ViewChild('svgHost', { static: true }) svgHost!: ElementRef<HTMLDivElement>;
 
-  // Game template properties
+  // ===== GAME TEMPLATE PROPERTIES =====
   questionsCorrectInLevel = 0;
   timeElapsed = 0;
   currentQuestion: Question | null = { correctAnswer: '' };
   currentDifficulty: GameDifficulty = 'easy';
-  loading = true;
+  currentWord: CurrentWord = { difficulty: 'easy', correct: '' };
   
-  // Map properties
-  svgUrl = '/images/WorldMap_forTheGame.svg'; // path used in template; change if needed
-  svgText = '';          // raw SVG markup (inlined)
-  svgEl?: SVGSVGElement; // reference to inserted SVG element
-  viewBox = { w: 1000, h: 500 }; // default - will be read from SVG
-
-  // Game data: list of predefined points in viewBox coords (x,y)
-  points: PointDef[] = [
-    // Example entries (you should replace/add correct coordinates for your SVG viewBox)
-    { name: 'Egypt',   x: 560, y: 255 },
-    { name: 'Saudi Arabia', x: 610, y: 280 },
-    { name: 'Brazil',  x: 300, y: 340 },
-    { name: 'United States', x: 140, y: 200 },
-    { name: 'India',   x: 720, y: 260 },
-    { name: 'Australia', x: 890, y: 440 },
-    { name: 'Russia',  x: 700, y: 100 },
-    { name: 'Canada',  x: 120, y: 120 },
-    { name: 'South Africa', x: 600, y: 420 },
-    { name: 'China',   x: 800, y: 200 }
-  ];
-
-  // Game state
+  // ===== GAME STATE =====
+  loading = true;
+  answered = false;
+  selectedAnswer: string | null = null;
+  answerStatus: string[] = [];
+  score = 0;
+  attempts = 0;
+  feedback: { text: string; ok: boolean } | null = null;
+  
+  // ===== MAP PROPERTIES =====
+  svgUrl = '/images/WorldMap_forTheGame.svg';
+  svgText = '';
+  svgEl?: SVGSVGElement;
+  viewBox = { w: 1000, h: 500 };
+  
+  // ===== GAME DATA =====
+  points = GAME_POINTS;
   correctPoint?: PointDef;
   options: string[] = [];
   markerEl?: SVGCircleElement;
   highlightedPath?: SVGElement | null;
-  score = 0;
-  attempts = 0;
-  feedback: { text: string; ok: boolean } | null = null;
-  usingPathMode = true; // alternate mode: try to pick a country by path id if available
+  usingPathMode = true;
+  
+  // ===== TIMER & BONUS =====
+  bonusPoints = 0;
+  private timerInterval: any;
+  
+  // ===== AUDIO =====
+  private correctAudio: HTMLAudioElement;
+  private wrongAudio: HTMLAudioElement;
 
-
-  constructor(private http: HttpClient, private hostRef: ElementRef) {}
-
-  ngOnInit(): void {
-    this.loadSvg().then(() => {
-      // start first round after SVG is loaded & inserted
-      this.nextRound();
-      // watch resize to reposition marker if needed (marker is in SVG so scales automatically)
-      window.addEventListener('resize', () => { /* nothing special needed with viewBox */ });
-    });
+  constructor(private http: HttpClient, private hostRef: ElementRef) {
+    this.correctAudio = new Audio('/audio/correct.mp3');
+    this.wrongAudio = new Audio('/audio/wrong.mp3');
   }
 
-  /** Load SVG text and inline it into the DOM so we can manipulate its paths */
-  async loadSvg() {
+  // ===== LIFECYCLE =====
+  ngOnInit(): void {
+    this.initializeGame();
+  }
+
+  ngOnDestroy(): void {
+    this.stopTimer();
+  }
+
+  // ===== INITIALIZATION =====
+  private async initializeGame(): Promise<void> {
+    await this.loadSvg();
+    this.startTimer();
+    this.nextRound();
+  }
+
+  private async loadSvg(): Promise<void> {
     this.loading = true;
     try {
       const txt = await this.http.get(this.svgUrl, { responseType: 'text' }).toPromise();
       this.svgText = txt || '';
+      
       // Insert inline SVG into container
       this.svgHost.nativeElement.innerHTML = this.svgText;
-      // grab the inserted svg element
+      
+      // Grab the inserted SVG element
       const el = this.svgHost.nativeElement.querySelector('svg') as SVGSVGElement | null;
       if (!el) throw new Error('SVG not found in loaded file');
+      
       this.svgEl = el;
-      // read viewBox if present
+      
+      // Read viewBox if present
       const vb = (this.svgEl.getAttribute('viewBox') || '').split(/\s+|,/).map(Number);
       if (vb.length >= 4 && !vb.some(isNaN)) {
         this.viewBox = { w: vb[2], h: vb[3] };
       } else {
-        // fallback to width/height attributes
+        // Fallback to width/height attributes
         const wAttr = parseFloat(this.svgEl.getAttribute('width') || '1000');
         const hAttr = parseFloat(this.svgEl.getAttribute('height') || '500');
         this.viewBox = { w: wAttr, h: hAttr };
       }
 
-      // make sure SVG has pointer-events enabled on paths for highlighting
+      // Enable pointer events on paths for highlighting
       this.svgEl.style.pointerEvents = 'auto';
       this.loading = false;
     } catch (err) {
@@ -108,31 +140,147 @@ export class GeoQuizComponent implements OnInit {
     }
   }
 
-  /** Choose a random predefined point or (if usingPathMode) choose a random path-country from SVG */
-  pickRandomTarget() {
+  // ===== GAME LOGIC =====
+  nextRound(): void {
+    this.clearHighlight();
+    this.resetQuestionState();
+    
+    // Pick target
+    const target = this.pickRandomTarget();
+    this.correctPoint = target;
+    
+    // Create/position marker
+    this.placeMarker(target.x, target.y);
+    
+    // Create options (1 correct + 2-3 distractors)
+    this.options = this.makeOptions(target.name, 3);
+    
+    // Update game template properties
+    this.updateGameTemplateProperties();
+  }
+
+  private resetQuestionState(): void {
+    this.answered = false;
+    this.selectedAnswer = null;
+    this.feedback = null;
+    this.bonusPoints = 0;
+    this.resetAnswerStatus();
+  }
+
+  private resetAnswerStatus(): void {
+    this.answerStatus = this.options.map(() => '');
+  }
+
+  private updateGameTemplateProperties(): void {
+    if (this.correctPoint) {
+      this.currentWord = {
+        difficulty: this.currentDifficulty,
+        correct: this.correctPoint.name
+      };
+    }
+  }
+
+  checkAnswer(choice: string, index: number): void {
+    if (this.answered || !this.correctPoint) return;
+
+    this.answered = true;
+    this.selectedAnswer = choice;
+    this.attempts++;
+
+    const correct = this.correctPoint.name.toLowerCase().trim();
+    const isCorrect = choice.toLowerCase().trim() === correct;
+
+    if (isCorrect) {
+      this.handleCorrectAnswer(index);
+    } else {
+      this.handleWrongAnswer(index);
+    }
+  }
+
+  private handleCorrectAnswer(index: number): void {
+    this.answerStatus[index] = 'correct';
+    this.score++;
+    this.questionsCorrectInLevel++;
+    this.bonusPoints = Math.max(0, 10 - Math.floor(this.timeElapsed / 10));
+    this.feedback = { text: '✅ Correct!', ok: true };
+    this.playCorrectSound();
+    
+    // Highlight correct path if available
+    this.highlightCorrectPath();
+    
+    // Move to next round after delay
+    setTimeout(() => this.nextRound(), 900);
+  }
+
+  private handleWrongAnswer(index: number): void {
+    this.answerStatus[index] = 'wrong';
+    this.feedback = { text: `❌ Not quite — try the next one! (Answer was: ${this.correctPoint!.name})`, ok: false };
+    this.playWrongSound();
+    
+    // Show correct answer briefly
+    this.highlightCorrectPath();
+    
+    // Move to next round after delay
+    setTimeout(() => this.nextRound(), 1200);
+  }
+
+  private highlightCorrectPath(): void {
+    if (this.usingPathMode && this.svgEl && this.correctPoint) {
+      const paths = Array.from(this.svgEl.querySelectorAll<SVGPathElement>('path[id]'));
+      const found = paths.find(p => this.humanizeId(p.getAttribute('id') || '') === this.correctPoint!.name);
+      if (found) {
+        found.classList.add('country-highlight');
+        this.highlightedPath = found;
+        
+        // Remove highlight after delay for wrong answers
+        if (!this.answered || this.answerStatus.some(status => status === 'wrong')) {
+          setTimeout(() => {
+            found.classList.remove('country-highlight');
+            this.highlightedPath = null;
+          }, 1000);
+        }
+      }
+    }
+  }
+
+  // ===== UTILITY METHODS =====
+  getOptionLetter(index: number): string {
+    return String.fromCharCode(65 + index);
+  }
+
+  getLevelScorePercentage(): number {
+    return Math.round((this.questionsCorrectInLevel / 5) * 100);
+  }
+
+  getScoreMessage(): string {
+    const percentage = this.getLevelScorePercentage();
+    if (percentage === 100) return 'Parfait ! Vous êtes un expert en géographie !';
+    if (percentage >= 80) return 'Excellent ! Vous connaissez bien les pays !';
+    if (percentage >= 60) return 'Bon travail ! Continuez à vous entraîner !';
+    if (percentage >= 40) return 'Pas mal ! Essayez à nouveau pour vous améliorer !';
+    return 'Continuez à vous entraîner ! Vous allez progresser !';
+  }
+
+  // ===== MAP LOGIC =====
+  private pickRandomTarget(): PointDef {
     if (this.usingPathMode && this.svgEl) {
-      // try to find <path> elements with id attributes that look like country identifiers
       const paths = Array.from(this.svgEl.querySelectorAll<SVGPathElement>('path[id]'));
       if (paths.length > 0) {
-        // pick a random path element
         const p = paths[Math.floor(Math.random() * paths.length)];
         const id = p.getAttribute('id') || 'unknown';
-        // compute bbox centroid (safe for many shapes)
+        
         let cx = 0, cy = 0;
         try {
           const bbox = p.getBBox();
           cx = bbox.x + bbox.width / 2;
           cy = bbox.y + bbox.height / 2;
         } catch (e) {
-          // getBBox may fail for some SVGs; fallback to random from points
           console.warn('getBBox failed for path id', id, e);
           return this.pickRandomTargetFromList();
         }
         return { id, name: this.humanizeId(id), x: cx, y: cy } as PointDef;
       }
     }
-
-    // fallback: pick random from predefined points list
     return this.pickRandomTargetFromList();
   }
 
@@ -141,45 +289,30 @@ export class GeoQuizComponent implements OnInit {
     return this.points[idx];
   }
 
-  /** Convert an ID like "UNITED_STATES" or "us" into a readable name (best-effort) */
-  private humanizeId(id: string) {
+  private humanizeId(id: string): string {
     return id.replace(/[_-]+/g, ' ').replace(/\b\w/g, s => s.toUpperCase());
   }
 
-  nextRound() {
-    this.clearHighlight();
-    this.feedback = null;
-
-    // pick target
-    const target = this.pickRandomTarget();
-    this.correctPoint = target;
-    // create/position marker
-    this.placeMarker(target.x, target.y);
-
-    // create options (1 correct + 2–3 distractors)
-    this.options = this.makeOptions(target.name, 3);
-  }
-
-  /** Create N options including the correct one; shuffle */
-  makeOptions(correctName: string, distractorCount = 3): string[] {
+  private makeOptions(correctName: string, distractorCount = 3): string[] {
     const names = new Set<string>([correctName]);
-    // pool: from points' names + path ids (humanized) if any
     const pool = new Set<string>(this.points.map(p => p.name));
+    
     if (this.svgEl) {
       this.svgEl.querySelectorAll<SVGPathElement>('path[id]').forEach(p => {
         const id = p.getAttribute('id');
         if (id) pool.add(this.humanizeId(id));
       });
     }
+    
     const arr = Array.from(pool).filter(n => n !== correctName);
     while (names.size <= distractorCount) {
       if (arr.length === 0) break;
       const r = arr[Math.floor(Math.random() * arr.length)];
       names.add(r);
-      // remove picked to avoid repeats
       const i = arr.indexOf(r);
       if (i >= 0) arr.splice(i, 1);
     }
+    
     const opts = Array.from(names);
     // Shuffle
     for (let i = opts.length - 1; i > 0; i--) {
@@ -189,13 +322,14 @@ export class GeoQuizComponent implements OnInit {
     return opts;
   }
 
-  /** Place an SVG circle marker at viewBox coordinates (cx,cy) */
-  placeMarker(cx: number, cy: number) {
+  private placeMarker(cx: number, cy: number): void {
     if (!this.svgEl) return;
-    // remove existing marker
+    
+    // Remove existing marker
     if (this.markerEl && this.markerEl.parentNode) {
       this.markerEl.remove();
     }
+    
     const svgns = 'http://www.w3.org/2000/svg';
     const circle = document.createElementNS(svgns, 'circle');
     circle.setAttribute('cx', String(cx));
@@ -205,65 +339,79 @@ export class GeoQuizComponent implements OnInit {
     circle.setAttribute('fill', '#e74c3c');
     circle.setAttribute('stroke', '#fff');
     circle.setAttribute('stroke-width', '2');
-    // some styling for pointer
     circle.style.cursor = 'pointer';
 
-    // Append to top of SVG so visible
     this.svgEl.appendChild(circle);
     this.markerEl = circle;
   }
 
-  clearHighlight() {
+  private clearHighlight(): void {
     if (!this.svgEl) return;
+    
     if (this.markerEl) {
       this.markerEl.remove();
       this.markerEl = undefined;
     }
+    
     if (this.highlightedPath) {
       this.highlightedPath.classList.remove('country-highlight');
       this.highlightedPath = null;
     }
   }
 
-  /** User selects an option */
-  pickOption(choice: string) {
-    if (!this.correctPoint) return;
-    const correct = this.correctPoint.name.toLowerCase().trim();
-    this.attempts++;
-    if (choice.toLowerCase().trim() === correct) {
-      this.score++;
-      this.feedback = { text: '✅ Correct!', ok: true };
-      // highlight correct path if path mode is available
-      if (this.usingPathMode && this.svgEl) {
-        // try find a path whose humanized ID matches the correct name
-        const paths = Array.from(this.svgEl.querySelectorAll<SVGPathElement>('path[id]'));
-        const found = paths.find(p => this.humanizeId(p.getAttribute('id') || '') === this.correctPoint!.name);
-        if (found) {
-          found.classList.add('country-highlight');
-          this.highlightedPath = found;
-        }
-      }
-      // small delay then next round
-      setTimeout(() => this.nextRound(), 900);
-    } else {
-      this.feedback = { text: `❌ Not quite — try the next one! (Answer was: ${this.correctPoint.name})`, ok: false };
-      // show correct highlight briefly
-      if (this.usingPathMode && this.svgEl) {
-        const paths = Array.from(this.svgEl.querySelectorAll<SVGPathElement>('path[id]'));
-        const found = paths.find(p => this.humanizeId(p.getAttribute('id') || '') === this.correctPoint!.name);
-        if (found) {
-          found.classList.add('country-highlight');
-          this.highlightedPath = found;
-          setTimeout(() => { found.classList.remove('country-highlight'); this.highlightedPath = null; }, 1000);
-        }
-      }
-      // proceed to next round after short pause
-      setTimeout(() => this.nextRound(), 1200);
+  // ===== TIMER MANAGEMENT =====
+  private startTimer(): void {
+    this.timeElapsed = 0;
+    this.timerInterval = setInterval(() => {
+      this.timeElapsed++;
+    }, 1000);
+  }
+
+  private stopTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
     }
   }
 
-  /** Toggle mode: use path id centroids or predefined points */
-  togglePathMode() {
+  private resetTimer(): void {
+    this.stopTimer();
+    this.startTimer();
+  }
+
+  // ===== AUDIO =====
+  private playCorrectSound(): void {
+    this.correctAudio.currentTime = 0;
+    this.correctAudio.play().catch(error => {
+      console.log('Audio playback failed:', error);
+    });
+  }
+
+  private playWrongSound(): void {
+    this.wrongAudio.currentTime = 0;
+    this.wrongAudio.play().catch(error => {
+      console.log('Audio playback failed:', error);
+    });
+  }
+
+  // ===== UI HELPERS =====
+  getDifficultyClass(): string {
+    return `difficulty-${this.currentWord.difficulty}`;
+  }
+
+  getTimeDisplayClass(): string {
+    if (this.timeElapsed < 15) return 'time-good';
+    if (this.timeElapsed < 30) return 'time-warning';
+    return 'time-danger';
+  }
+
+  formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  // ===== MODE TOGGLE =====
+  togglePathMode(): void {
     this.usingPathMode = !this.usingPathMode;
     this.nextRound();
   }
