@@ -1,8 +1,21 @@
 <!-- <app-background></app-background> -->
 <app-lines-background></app-lines-background>
-<app-lines-background [top]="100"></app-lines-background>
+<div class="" *ngIf="categoriesCount >= 2">
+  <app-lines-background [top]="100"></app-lines-background>
+</div>
+<div class="" *ngIf="categoriesCount >= 1">
+  <app-lines-background [top]="60"></app-lines-background>
+</div>
 <app-stars-background></app-stars-background>
-<app-stars-background [top]="100"></app-stars-background>
+
+<div class="" *ngIf="categoriesCount >= 2">
+
+  <app-stars-background [top]="100"></app-stars-background>
+</div>
+<div class="" *ngIf="categoriesCount >= 1">
+
+  <app-stars-background [top]="60"></app-stars-background>
+</div>
 
 
 
@@ -12,12 +25,7 @@
 
 <div class="content">
   <!-- ✅ Loading Spinner -->
-  <div *ngIf="loading" class="loading-overlay">
-    <div class="loading-box">
-      <div class="spinner"></div>
-      <p>Loading products...</p>
-    </div>
-  </div>
+  <app-loading *ngIf="loading"></app-loading>
 
 
   <!-- ✅ Actual Content -->
@@ -45,7 +53,7 @@
           </button>
 
           <div class="cards" #cardsContainer>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let product of productsByCategory[category]">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 main-card" *ngFor="let product of productsByCategory[category]">
               <div class="merge-card">
 
                 <div class="product-card">
@@ -54,7 +62,8 @@
 
                   </app-product-card>
                 </div>
-                <button *ngIf="product.product_stock != 0" class="btn btn-primary add-to-cart" (click)="navigateToProduct(product.id)">
+                <button *ngIf="product.product_stock != 0" class="btn btn-primary add-to-cart"
+                  (click)="navigateToProduct(product.id)">
                   Add to Cart <i class="bi bi-cart"></i>
                 </button>
               </div>
@@ -71,7 +80,6 @@
 
   </ng-container>
 </div>
-<div *ngIf="!loading">
-
+<div *ngIf="!loading" class="footer">
   <app-home-footer></app-home-footer>
 </div>
