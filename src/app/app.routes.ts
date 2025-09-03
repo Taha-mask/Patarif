@@ -34,6 +34,7 @@ import { ContactUsComponent } from './components/pages/contact-us/contact-us.com
 import { AdminContactMessagesComponent } from './admin-dashboard/admin-contact-messages/admin-contact-messages.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminProfileComponent } from './admin-dashboard/admin-profile/admin-profile.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full', data: { renderMode: 'client' } },
@@ -85,7 +86,7 @@ export const routes: Routes = [
   { path: 'app-admin-orders', component: AdminOrdersComponent, canActivate: [AuthGuard] },
   { path: 'contact-messages', component: AdminContactMessagesComponent, canActivate: [AuthGuard] },
   { path: 'admin-profile', component: AdminProfileComponent, canActivate: [AuthGuard] },
-
+  
   // Shop
   {
     path: 'product-details/:id',
@@ -93,6 +94,9 @@ export const routes: Routes = [
       .then(m => m.ProductDetailsComponent)
   },
   { path: 'cart', component: CartComponent },
-  { path: '**', redirectTo: '' },
+
+  
+  { path: 'page-not-found', component: PageNotFoundComponent,},
+  { path: '**', component: PageNotFoundComponent },
 
 ];
