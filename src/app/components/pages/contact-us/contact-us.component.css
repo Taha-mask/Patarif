@@ -14,8 +14,8 @@ body {
     margin: auto;
     width: 90%;
     min-height: 90%;
-    background-color: rgba(255, 255, 255, 0.144);
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.521);
+    backdrop-filter: blur(20px);
     border-radius: 24px;
     border: white 4px solid;
     margin-bottom: 12%;

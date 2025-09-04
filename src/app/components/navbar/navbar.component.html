@@ -23,7 +23,7 @@
       <ul>
         <a href="/profile">
           <li class="d-flex align-items-center account">
-              <img [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
+            <img [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
               class="dropdown-toggle rounded-circle user-avatar" style="width:50px; height:50px; cursor:pointer;"
               role="button" tabindex="0" (click)="toggleMenu($event)" (keydown.enter)="toggleMenu($event)"
               [attr.aria-expanded]="menuOpen" alt="User" /> <span class="user-name">{{userName}}</span>
@@ -73,21 +73,17 @@
       <i (click)="openSearch()" class="bi bi-search fs-5 search-icon"></i>
 
       <div class="dropdown" [class.show]="menuOpen">
-        <img [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
+        <img *ngIf="isLogged" [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
           class="dropdown-toggle rounded-circle user-avatar" style="width:50px; height:50px; cursor:pointer;"
           role="button" tabindex="0" (click)="toggleMenu($event)" (keydown.enter)="toggleMenu($event)"
           [attr.aria-expanded]="menuOpen" alt="User" />
 
+        <button *ngIf="!isLogged" class="btn btn-primary" [routerLink]="['/login']">
+          <i class="bi bi-box-arrow-in-right"></i> Login
+        </button>
 
         <ul class="dropdown-menu dropdown-menu-end shadow-sm" [class.show]="menuOpen">
-          <div *ngIf="isLogged == false">
-            <li>
-              <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/login']">
-                <i class="bi bi-box-arrow-in-right"></i> Login
-              </a>
-            </li>
-          </div>
-          <div *ngIf="isLogged == true">
+          <ng-container *ngIf="isLogged; else guestMenu">
             <li>
               <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/profile']">
                 <i class="bi bi-person-circle fs-5"></i> Profile
@@ -101,7 +97,15 @@
                 <i class="bi bi-box-arrow-right fs-5"></i> Logout
               </a>
             </li>
-          </div>
+          </ng-container>
+
+          <ng-template #guestMenu>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/login']">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+              </a>
+            </li>
+          </ng-template>
         </ul>
       </div>
 
