@@ -38,6 +38,9 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
+  // auth
+  { path: 'login', component: LoginComponent },
+  { path: 'signup', component: SignupComponent },
 
   // Games
   { path: 'guess-eemoji', component: GuessEemojiComponent },
@@ -45,9 +48,6 @@ export const routes: Routes = [
   { path: 'sort-words', component: SortWordsComponent },
   { path: 'gallery', component: GalleryComponent },
   { path: 'canvas/:imageUrl', component: CanvasComponent },
-
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
   { path: 'games', component: GamesComponent },
   { path: 'canvas', component: CanvasComponent },
   { path: 'letters-game', component: LettersGameComponent },

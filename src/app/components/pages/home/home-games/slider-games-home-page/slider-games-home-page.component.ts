@@ -19,6 +19,7 @@ export class SliderGamesHomePageComponent {
     {
       title: 'Casse\ntêtes',
       img: 'images/PataUG3.svg',
+      page: 'letters-game',
       raiting: 2.8
 
     },
@@ -26,11 +27,13 @@ export class SliderGamesHomePageComponent {
     {
       title: 'Devi\nner',
       img: 'images/PataUG1.png',
+      page: 'guess-eemoji',
       raiting: 4.2
     },
     {
       title: 'Col\norie\ns',
       img: 'images/PataUG2.png',
+      page: 'canvas',
       raiting: 3.0
 
     }
