@@ -110,13 +110,68 @@
     pointer-events: none;
     text-align: center;
     width: 100%;
+}.character {
+  z-index: 10;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  position: relative;
 }
 
-.character {
-    z-index: 10;
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    margin-left: 40px;
+.character img {
+  width: 100%;
+  object-fit: contain;
+}
+/* Popup tooltip */
+.popup-name {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  background: #fff; /* clean white background */
+  color: #333; /* dark text for contrast */
+  font-size: 16px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  text-transform: capitalize;
+  font-family: "Poppins", sans-serif; /* modern, readable font */
+}
+
+/* Tooltip arrow */
+.popup-name::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent; /* white arrow */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Show on hover */
+.main-container:hover .popup-name {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  animation: popupFloat 1.5s ease-in-out infinite;
+}
+
+/* Floating effect */
+@keyframes popupFloat {
+  0% { transform: translateX(-50%) scale(1) translateY(0); }
+  50% { transform: translateX(-50%) scale(1.05) translateY(-6px); }
+  100% { transform: translateX(-50%) scale(1) translateY(0); }
 }
