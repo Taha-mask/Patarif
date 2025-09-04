@@ -10,36 +10,40 @@
   </div>
 
   <div class="stage">
-    <!-- السلم -->
-    <div class="ladder">
-      <img src="images/math-stairs/Stairs.png" alt="ladder">
-      <!-- النجمة أعلى السلم -->
-      <!-- <img class="star" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="star"> -->
-      <!-- الولد -->
-      <img class="boy"
-           [style.--p]="(step()/totalSteps)"
-           src="images/math-stairs/the_kid.png"
-           alt="boy">
+    <!-- Ladder at the top -->
+    <div class="ladder-container">
+      <div class="ladder">
+        <img src="images/math-stairs/Stairs.png" alt="ladder">
+        <!-- Star at the top of the ladder -->
+        <!-- <img class="star" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="star"> -->
+        <!-- Boy character -->
+        <img class="boy"
+             [style.--p]="(step()/totalSteps)"
+             src="images/math-stairs/the_kid.png"
+             alt="boy">
+      </div>
     </div>
 
-    <!-- صندوق السؤال -->
-    <div class="question-card" [class.locked]="isLocked()">
-      <div class="qtext">
-        {{ question().a }} {{ question().op }} {{ question().b }} = ؟
-      </div>
+    <!-- Question card at the bottom -->
+    <div class="question-section">
+      <div class="question-card" [class.locked]="isLocked()">
+        <div class="qtext">
+          {{ question().a }} {{ question().op }} {{ question().b }} = ؟
+        </div>
 
-      <div class="choices">
-        <button class="choice"
-                *ngFor="let c of question().choices"
-                (click)="pick(c)">
-          {{ c }}
-        </button>
-      </div>
-<div class="actions">
-      <button class="game-btn" (click)="nextQuestion()" *ngIf="!isWin()">Skip</button>
-      <div class="win-box" *ngIf="isWin()">
-        أحسنت! أخذت النجمة ⭐
-        <button class="again" (click)="resetGame()">إعادة</button>
+        <div class="choices">
+          <button class="choice"
+                  *ngFor="let c of question().choices"
+                  (click)="pick(c)">
+            {{ c }}
+          </button>
+        </div>
+        <div class="actions">
+          <button class="game-btn" (click)="nextQuestion()" *ngIf="!isWin()">Skip</button>
+          <div class="win-box" *ngIf="isWin()">
+            أحسنت! أخذت النجمة ⭐
+            <button class="again" (click)="resetGame()">إعادة</button>
+          </div>
         </div>
       </div>
     </div>

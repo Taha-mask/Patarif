@@ -489,9 +489,7 @@ export class LettersGameComponent implements OnInit, OnDestroy {
       level: this.level,
       questionsCorrect: this.questionsCorrectInLevel,
       totalQuestions: GAME_CONFIG.QUESTIONS_PER_LEVEL,
-      score: this.score,
       timeElapsed: this.timeElapsed,
-      bonusPoints: this.stars * 100, // 100 points per star
       difficulty: this.getCurrentLevelDifficulty()
     };
     

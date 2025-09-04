@@ -317,9 +317,7 @@ export class FactGameComponent implements OnInit, OnDestroy {
       level: this.currentLevel,
       questionsCorrect: this.questionsCorrectInLevel,
       totalQuestions: this.questionsPerLevel,
-      score: this.calculateScore(),
       timeElapsed: Math.floor((Date.now() - this.startTime) / 1000),
-      bonusPoints: this.calculateBonusPoints(),
       difficulty: this.currentDifficulty
     };
     this.showCelebration = true;

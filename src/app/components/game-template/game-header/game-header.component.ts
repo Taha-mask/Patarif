@@ -16,7 +16,6 @@ export class GameHeaderComponent {
   @Input() currentQuestion: number = 1;
   @Input() timeElapsed: number = 0;
   @Input() currentWord: string = '';
-  @Input() bonusPoints: number = 0;
   @Input() difficulty: Difficulty = 'easy';
   @Input() totalQuestions: number = 5;
 

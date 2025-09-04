@@ -8,16 +8,20 @@
   [totalQuestions]="5"
 >  
   <div class="game-layout">
-    <h2 class="card-title">
-      Où se trouve le point rouge sur la carte ?
-    </h2>
-    <!-- ===== TWO COLUMN LAYOUT ===== -->
+    <div class="question-section">
+      <div class="card-title">   
+          Le lieu sur la carte ?
+</div>
+</div>
+<!-- ===== TWO COLUMN LAYOUT ===== -->
     <div class="two-column-layout mt-3">
       
       <!-- ===== LEFT COLUMN - MAP ===== -->
       <div class="left-column">
         <div class="map-card">
-          <div #svgHost class="svg-container"></div>
+          <div #svgHost class="svg-container">
+
+          </div>
           
           <!-- Loading -->
           <div *ngIf="loading" class="loading-container">
@@ -33,7 +37,7 @@
    
 
         <!-- Answer Section -->
-        <div class="answer-section">
+        <div class="answer-section mb-3">
           <div class="answer-grid">
             <div *ngFor="let option of options; let i = index" 
                  class="option-btn"
@@ -66,16 +70,7 @@
           </div>
         </div>
         
-        <!-- Feedback Section -->
-        <div class="feedback-section" *ngIf="feedback">
-          <div class="feedback-card" [ngClass]="{'success': feedback.ok, 'error': !feedback.ok}">
-            <div class="feedback-content">
-              <i [class]="feedback.ok ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
-              <span>{{ feedback.text }}</span>
-            </div>
-          </div>
-        </div>
-        
+      
         <!-- Action Section -->
         <div class="action-section">
           <div class="action-card">
@@ -97,71 +92,6 @@
       </div>
     </div>
 
-    <!-- ===== LEVEL COMPLETE MODAL ===== -->
-    <div class="modal fade" 
-         [class.show]="questionsCorrectInLevel >= 5" 
-         [style.display]="questionsCorrectInLevel >= 5 ? 'block' : 'none'"
-         tabindex="-1" 
-         role="dialog" 
-         aria-labelledby="levelCompleteModalLabel" 
-         aria-hidden="true">
-      
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content celebration-modal">
-          
-          <!-- Modal Header -->
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="levelCompleteModalLabel">
-              🎉 Niveau terminé ! 🎉
-            </h5>
-            <button type="button" class="btn-close" (click)="nextRound()" aria-label="Close"></button>
-          </div>
-          
-          <!-- Modal Body -->
-          <div class="modal-body text-center">
-            <h4 class="mb-3">Félicitations !</h4>
-            
-            <!-- Success Alert -->
-            <div class="alert alert-success">
-              <i class="fas fa-star text-warning"></i>
-              Vous avez répondu correctement à {{ questionsCorrectInLevel }} questions sur 5 !
-            </div>
-            
-            <!-- Progress Bar -->
-            <div class="level-progress mb-3">
-              <div class="progress">
-                <div class="progress-bar bg-success" 
-                     role="progressbar" 
-                     [style.width.%]="getLevelScorePercentage()">
-                </div>
-              </div>
-              <small class="text-muted">{{ getLevelScorePercentage() }}% de réussite</small>
-            </div>
-            
-            <!-- Score Display -->
-            <div class="score-display mb-3">
-              <h3 class="text-primary">{{ score }}</h3>
-              <p class="mb-0">Points obtenus</p>
-            </div>
-            
-            <!-- Score Message -->
-            <div class="score-message">
-              <p class="mb-0">{{ getScoreMessage() }}</p>
-            </div>
-          </div>
-          
-          <!-- Modal Footer -->
-          <div class="modal-footer border-0 justify-content-center">
-            <button type="button" 
-                    class="btn btn-primary btn-lg px-4" 
-                    (click)="nextRound()">
-              <i class="fas fa-arrow-right me-2"></i>
-              Continuer
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
 
   </div>
 </app-game-template>

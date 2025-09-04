@@ -16,6 +16,7 @@ export class GameTemplateComponent implements OnInit, OnDestroy {
   @Input() showHeader: boolean = true;
   @Input() showTopIcons: boolean = true;
   @Input() noCardBackground: boolean = false;
+  @Input() nogamecontent: boolean = false;
 
 
   shouldShowGameHeader(): boolean {

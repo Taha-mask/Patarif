@@ -86,13 +86,14 @@
  
 
   </div>
+
+  <app-celebration 
+    *ngIf="showLevelCompleteModal"
+    [show]="showLevelCompleteModal"
+    [nextLevel]="level + 1"
+    [data]="celebrationData"
+    (close)="onCloseCelebration()"
+    (goToNext)="continueToNextLevel($event)">
+  </app-celebration>
 </app-game-template>
 
-<!-- Celebration Modal (moved outside app-game-template) -->
-<app-celebration 
-  [show]="showLevelCompleteModal"
-  [nextLevel]="level + 1"
-  [data]="celebrationData"
-  (close)="onCloseCelebration()"
-  (goToNext)="continueToNextLevel($event)">
-</app-celebration>

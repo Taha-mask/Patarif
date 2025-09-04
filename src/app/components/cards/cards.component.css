@@ -130,7 +130,6 @@ margin: auto;
 
 .list-container {
   width: 100vw;
-  margin: 40px 0;
   padding: 0;
   position: relative;
   left: 50%;
@@ -199,6 +198,7 @@ margin: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
   margin: 20px 10px;
+
 }
 
 .list-cards.dragging {

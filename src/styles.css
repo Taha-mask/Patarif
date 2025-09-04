@@ -81,7 +81,11 @@ padding: 10px 20px;
 }
 
 
-
+/* ===== QUESTION SECTION ===== */
+.question-section {
+  display: flex;
+  justify-content: center;
+}
 
 
 

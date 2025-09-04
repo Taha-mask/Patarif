@@ -7,19 +7,27 @@
 .brand{ padding:.4rem .7rem; background:#ffb703; color:#3a2d0a; border-radius:999px; box-shadow:0 4px 0 #d99603; }
 .level{ padding:.3rem .6rem; background:rgba(255,255,255,.18); border-radius:999px; }
 
-.stage{
-  display:grid;
-  grid-template-columns: 1.2fr 1fr;
+.stage {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  align-items:center;
-  justify-items:center;
-  padding: 80px 24px 24px;
+  height: 100%;
+  padding: 20px 24px;
+  box-sizing: border-box;
 }
 
-.ladder{
- position: relative;
+.ladder-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.ladder {
+  position: relative;
   width: min(440px, 80vw); /* السلم أصغر */
   aspect-ratio: 16/10;
+  margin: 0 auto;
 }
 .ladder > img{
   position:absolute; inset:auto;
@@ -81,10 +89,17 @@ background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
   text-align: center;
 }
 
-.choices{
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+@media (min-width: 480px) {
+  .choices {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 .choice{
   border:0; border-radius:16px; 
@@ -115,4 +130,13 @@ background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
 .win-box{
   margin-top:12px; font-weight:800; color:#2d6a4f;
 }
-.game-wrap.win .question-card{ border: 4px solid #ffd166; }
+.game-wrap.win .question-card { 
+  border: 4px solid #ffd166;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}

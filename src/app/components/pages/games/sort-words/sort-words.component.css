@@ -1,146 +1,123 @@
+/* Base styles */
 .game-card {
-  max-width: 600px;
+  max-width: 800px;
   width: 100%;
-  border-radius: 1rem;
-  border: none;
-  overflow: hidden;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
-
 
 .card-body {
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
-
 /* Shuffled words container */
-.mb-3 {
-  margin-bottom: 1.5rem !important;
-  min-height: 100px;
+.words-container {
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  padding: 1rem;
-  border: 2px dashed rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  min-height: 120px;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
 /* Word buttons */
 .btn {
+  background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
   color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 0.6rem 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  padding: 0.6rem 1.5rem;
   margin: 0.3rem;
   font-size: 1rem;
   font-weight: 600;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 15px rgba(242, 159, 75, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   cursor: pointer;
   text-transform: capitalize;
   position: relative;
   overflow: hidden;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(242, 159, 75, 0.4);
   filter: brightness(1.1);
 }
 
 .btn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-/* Add a subtle shine effect on hover */
-.btn::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  right: -50%;
-  bottom: -50%;
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: rotate(30deg) translateX(-100%);
-  pointer-events: none;
-  transition: all 0.5s ease;
-  opacity: 0;
-}
-
-.btn:hover::after {
-  opacity: 1;
-  transform: rotate(30deg) translateX(200%);
+  box-shadow: 0 2px 8px rgba(242, 159, 75, 0.3);
 }
 
 /* Selected words area */
 .selected-words {
-  min-height: 100px;
+  min-height: 120px;
   border-radius: 12px;
   padding: 1.5rem;
   margin: 1.5rem 0;
-  border: 2px dashed rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
   text-align: center;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
 .selected-sentence {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
   align-items: center;
-  height: 40px;
+  min-height: 60px;
 }
 
 .selected-word {
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(13deg, #F29F4B, #E29344);
   color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 .selected-word:hover {
-  background: rgba(255, 255, 255, 0.25);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.selected-word:active {
-  transform: translateY(0);
-  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* Feedback message */
 .feedback {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin: 1rem 0;
-  padding: 0.8rem 1.2rem;
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
   border-radius: 8px;
   text-align: center;
+  transition: all 0.3s ease;
 }
 
 .feedback.correct {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
 }
 
 .feedback.wrong {
-  background-color: #ffebee;
-  color: #c62828;
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.3);
 }
 
 /* Action buttons */
@@ -148,23 +125,74 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 1.5rem;
- 
-
+  margin-top: 2rem;
+  flex-wrap: wrap;
 }
 
 .action-buttons .btn {
- 
+  min-width: 140px;
+  text-align: center;
 }
 
 /* Responsive adjustments */
-@media (max-width: 576px) {
+@media (max-width: 768px) {
   .game-card {
+    padding: 1.5rem;
     margin: 0 1rem;
   }
   
+  .words-container, 
+  .selected-words {
+    padding: 1rem;
+  }
+  
   .btn {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.95rem;
+    margin: 0.25rem;
+  }
+  
+  .action-buttons {
+    gap: 0.75rem;
+  }
+  
+  .action-buttons .btn {
+    min-width: 120px;
     padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-card {
+    padding: 1rem;
+    margin: 0 0.5rem;
+    border-radius: 12px;
+  }
+  
+  .btn {
     font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+  }
+  
+  .selected-word {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .feedback {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+    margin: 0.1rem 0;
   }
 }

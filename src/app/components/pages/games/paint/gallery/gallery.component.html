@@ -27,7 +27,7 @@
           class="image-card"
           [class.selected]="isImageSelected(image.img)"
           (click)="selectImage(image)"
-          [attr.aria-label]="'Paint ' + image.title">
+          >
 
           <div class="image-wrapper">
             <img 
@@ -41,10 +41,7 @@
             </div>
           </div>
           
-          <div class="image-info">
-            <h3 class="image-title">{{ image.title }}</h3>
-            <span class="image-number">#{{ i + 1 }}</span>
-          </div>
+         
         </div>
       </div>
     </div>

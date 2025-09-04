@@ -91,43 +91,43 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       
       // Load image from query params if provided
       this.route.queryParams.subscribe(params => {
-        if (params['image']) {
-          const imageUrl = decodeURIComponent(params['image']);
+        if (params['imageUrl']) {
+          const imageUrl = decodeURIComponent(params['imageUrl']);
           this.loadImageToCanvas(imageUrl);
         }
       });
     }
   }
 
-  private setupCanvas(): void {
+  private setupCanvas() {
     const canvas = this.canvasRef.nativeElement;
-    this.ctx = canvas.getContext('2d', { 
-      willReadFrequently: true,
-      alpha: true 
-    })!;
-    
-    // Set canvas size immediately
-    canvas.width = 600;
-    canvas.height = 400;
-    canvas.style.width = '600px';
-    canvas.style.height = '400px';
-    
+    this.ctx = canvas.getContext('2d')!;
+    this.updateCanvasSize();
     this.updateDrawingSettings();
   }
 
-  @HostListener('window:resize')
-  private resizeCanvas(): void {
+  private updateCanvasSize() {
     const canvas = this.canvasRef.nativeElement;
+    const container = canvas.parentElement!;
     
-    // Set canvas size to match CSS dimensions
-    canvas.width = 600;
-    canvas.height = 400;
+    // Set canvas display size (CSS)
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
     
-    // Set display size for crisp rendering
-    canvas.style.width = '600px';
-    canvas.style.height = '400px';
+    // Set canvas drawing buffer size
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+  }
+
+
+  @HostListener('window:resize')
+  private onResize(): void {
+    this.updateCanvasSize();
     
-    this.updateDrawingSettings();
+    // Redraw the last state if available
+    if (this.drawingHistory.length > 0 && this.historyIndex >= 0) {
+      this.restoreState();
+    }
   }
 
   private updateDrawingSettings(): void {
@@ -554,31 +554,59 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // Image loading
+  // Image loading with error handling
+  isLoading = false;
+  loadError = '';
+
   private loadImageToCanvas(imageUrl: string): void {
+    if (!imageUrl) {
+      console.error('No image URL provided');
+      return;
+    }
+
+    this.isLoading = true;
+    this.loadError = '';
+    
     const img = new Image();
     img.crossOrigin = 'Anonymous';
+    
     img.onload = () => {
-      const canvas = this.canvasRef.nativeElement;
-      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const hRatio = canvas.width / img.width;
-      const vRatio = canvas.height / img.height;
-      const ratio = Math.min(hRatio, vRatio, 1);
-      
-      const centerX = (canvas.width - img.width * ratio) / 2;
-      const centerY = (canvas.height - img.height * ratio) / 2;
-      
-      this.ctx.drawImage(
-        img, 
-        0, 0, img.width, img.height,
-        centerX, centerY, 
-        img.width * ratio, 
-        img.height * ratio
-      );
-      
-      this.saveState();
+      try {
+        const canvas = this.canvasRef.nativeElement;
+        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Calculate dimensions to maintain aspect ratio
+        const hRatio = canvas.width / img.width;
+        const vRatio = canvas.height / img.height;
+        const ratio = Math.min(hRatio, vRatio, 1);
+        
+        const centerX = (canvas.width - img.width * ratio) / 2;
+        const centerY = (canvas.height - img.height * ratio) / 2;
+        
+        // Draw the image centered on the canvas
+        this.ctx.drawImage(
+          img, 
+          0, 0, img.width, img.height,
+          centerX, centerY, 
+          img.width * ratio, 
+          img.height * ratio
+        );
+        
+        this.saveState();
+      } catch (error) {
+        console.error('Error loading image:', error);
+        this.loadError = 'Failed to load the image. Please try another one.';
+      } finally {
+        this.isLoading = false;
+      }
     };
+    
+    img.onerror = (error) => {
+      console.error('Image load error:', error);
+      this.loadError = 'Failed to load the image. Please check the URL and try again.';
+      this.isLoading = false;
+    };
+    
     img.src = imageUrl;
   }
 

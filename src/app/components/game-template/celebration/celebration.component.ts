@@ -6,9 +6,7 @@ export interface CelebrationData {
   level: number;
   questionsCorrect: number;
   totalQuestions: number;
-  score: number;
   timeElapsed: number;
-  bonusPoints: number;
   difficulty: 'easy' | 'medium' | 'hard';
 }
 

@@ -28,7 +28,7 @@
       [totalQuestions]="5"
     ></app-game-header>
 
-    <div class="game-content">
+    <div class="game-content" [class.no-bg]="nogamecontent">
 
       <ng-content></ng-content>
     </div>

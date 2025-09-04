@@ -1,3 +1,9 @@
+
+
+
+
+
+
 import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -126,7 +132,7 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
         this.viewBox = { w: vb[2], h: vb[3] };
       } else {
         // Fallback to width/height attributes
-        const wAttr = parseFloat(this.svgEl.getAttribute('width') || '1000');
+        const wAttr = parseFloat(this.svgEl.getAttribute('width') || '100');
         const hAttr = parseFloat(this.svgEl.getAttribute('height') || '500');
         this.viewBox = { w: wAttr, h: hAttr };
       }
