@@ -9,15 +9,15 @@
     <h1 class="title">Fraise!</h1>
     <h3 class="description">rouge née dans les forêts<br>d’Amérique !"</h3>
 
-    <button class="btn btn-primary" (click)="discover()" (mouseover)="toggleBox()">Discover</button>
+    <button class="btn btn-primary" (click)="discover()">Discover</button>
 </div>
 
-<div *ngIf="showBox" class="content">
+<div class="content">
+    <div class="mainCloud">
+        <img src="images/learningZone/stories/mainCloud.svg" alt="cloud">
+    </div>
 
     <div id="section2" #section class="section section2">
-        <div *ngIf="showBox" class="cloud1">
-            <img class="" src="images/learningZone/stories/fraise/cloud1.png" alt="background">
-        </div>
         <img src="images/learningZone/stories/fraise/section2.png" alt="section 2">
         <div class="story">
             <p>Les jardiniers ont mélangé deux fraises pour créer… la<br>fraise juteuse qu’on adore aujourd’hui !
@@ -137,8 +137,15 @@
     </div>
 
 
-    <div #section class="section footer">
+    <app-home-footer [color]="'#B68455'"></app-home-footer>
 
-        <app-home-footer></app-home-footer>
-    </div>
+</div>
+
+
+
+
+<!-- phone horizontal direction -->
+
+<div class="rotate-message">
+    <img src="images/learningZone/stories/mainMessage.svg" alt="please, rotate your phone [required]">
 </div>

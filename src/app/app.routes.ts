@@ -32,21 +32,21 @@ import { MathLadderComponent } from './components/pages/games/math-ladder/math-l
 import { GeoQuizComponent } from './components/pages/games/geo-quiz/geo-quiz.component';
 import { ContactUsComponent } from './components/pages/contact-us/contact-us.component';
 import { AdminContactMessagesComponent } from './admin-dashboard/admin-contact-messages/admin-contact-messages.component';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminProfileComponent } from './admin-dashboard/admin-profile/admin-profile.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full', data: { renderMode: 'client' } },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 
   // Games
   { path: 'guess-eemoji', component: GuessEemojiComponent },
   { path: 'matchint-words', component: MatchintWordsComponent },
   { path: 'sort-words', component: SortWordsComponent },
   { path: 'gallery', component: GalleryComponent },
-  { path: 'canvas/:imageUrl', component: CanvasComponent }, 
+  { path: 'canvas/:imageUrl', component: CanvasComponent },
 
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  
   { path: 'login', component: LoginComponent },
-
   { path: 'signup', component: SignupComponent },
   { path: 'games', component: GamesComponent },
   { path: 'canvas', component: CanvasComponent },
@@ -57,12 +57,9 @@ export const routes: Routes = [
   { path: 'geo-quiz', component: GeoQuizComponent },
 
   // Account
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent },
 
   // Pages
-  { path: 'games', component: GamesComponent },
   { path: 'stories', component: StoriesComponent },
   { path: 'learning', component: LearningComponent },
   { path: 'shop', component: ShopComponent },
@@ -77,18 +74,23 @@ export const routes: Routes = [
   { path: 'fraise-story', component: FraiseComponent },
 
   // Admin
-  { path: 'admin-dashboard', component: AdminDashboardComponent },
-  { path: 'add-product', component: AddProductComponent },
-  { path: 'admin-products', component: AdminProductsComponent },
-  { path: 'app-admin-orders', component: AdminOrdersComponent },
-  { path: 'contact-messages', component: AdminContactMessagesComponent },
-
+  { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard] },
+  { path: 'add-product', component: AddProductComponent, canActivate: [AuthGuard] },
+  { path: 'admin-products', component: AdminProductsComponent, canActivate: [AuthGuard] },
+  { path: 'app-admin-orders', component: AdminOrdersComponent, canActivate: [AuthGuard] },
+  { path: 'contact-messages', component: AdminContactMessagesComponent, canActivate: [AuthGuard] },
+  { path: 'admin-profile', component: AdminProfileComponent, canActivate: [AuthGuard] },
+  
   // Shop
-  { 
-    path: 'product-details/:id', 
+  {
+    path: 'product-details/:id',
     loadComponent: () => import('./components/pages/shop/product-details/product-details.component')
-      .then(m => m.ProductDetailsComponent),
-    data: { renderMode: 'client' }
+      .then(m => m.ProductDetailsComponent)
   },
   { path: 'cart', component: CartComponent },
+
+  // Page Not Found
+  { path: 'page-not-found', component: PageNotFoundComponent },
+  { path: '**', component: PageNotFoundComponent },
 ];
+

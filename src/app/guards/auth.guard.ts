@@ -5,18 +5,31 @@ import { SupabaseService } from '../supabase.service';
 @Injectable({
   providedIn: 'root',
 })
-export class authGuard implements CanActivate {
-  constructor(private supabaseService: SupabaseService, private router: Router) {}
+export class AuthGuard implements CanActivate {
+  constructor(
+    private router: Router,
+    private supabase: SupabaseService
+  ) {}
 
   async canActivate(): Promise<boolean> {
-    console.log('AuthGuard checking session');
-    const session = await this.supabaseService.getSession();
-    if (session) {
-      console.log('Session found, allowing access');
+    const { data: { session } } = await this.supabase.client.auth.getSession();
+
+    if (!session) {
+      this.router.navigate(['/page-not-found']);
+      return false;
+    }
+
+    const { data: { user } } = await this.supabase.client.auth.getUser();
+
+    if (!user) {
+      this.router.navigate(['/page-not-found']);
+      return false;
+    }
+
+    if (user.email === 'patarif.admin@gmail.com') {
       return true;
     } else {
-      console.log('No session, redirecting to login');
-      this.router.navigate(['/login']);
+      this.router.navigate(['/page-not-found']);
       return false;
     }
   }

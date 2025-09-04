@@ -1,3 +1,6 @@
+<div class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
+  <img class="logo" src="images/logo-patarif.png" alt="logo" width="100">
+
   <div class="container">
     <div class="gradient-border-wrapper w-100">
       <div class="row shadow-lg overflow-hidden w-100">
@@ -5,7 +8,7 @@
         <!-- Left Side -->
         <div class="col-md-5 d-flex flex-column justify-content-center align-items-center text-white position-relative">
           <img src="images/login-img.png" alt="Illustration de connexion" class="login-img img-fluid" />
-          <p class="text-img">Connectez-vous au monde de Batarev et amusez-vous avec nous !</p>
+          <!-- <p class="text-img">Connectez-vous au monde de Batarev et amusez-vous avec nous !</p> -->
         </div>
 
         <!-- Right Side (form) -->
@@ -49,10 +52,11 @@
                   style="width: 24px; height: 24px;" />
                 Se connecter avec Google
               </button>
-              <!-- <button type="button" class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-apple" style="font-size: 24px;"></i>
-                Se connecter avec Apple ID
-              </button> -->
+              <button (click)="loginWithFacebook()" type="button"
+                class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-facebook" style="font-size: 24px; color: blue;"></i>
+                S’inscrire avec Facebook
+              </button>
             </div>
           </div>
         </div>
@@ -60,11 +64,13 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Toasts -->
-  <div class="toast-container">
-    <div class="toast" *ngFor="let t of toasts" [attr.data-id]="t.id">
-      <span class="emoji">🧸</span>
-      {{ t.text }}
-    </div>
+
+<!-- Toasts -->
+<div class="toast-container">
+  <div class="toast" *ngFor="let t of toasts" [attr.data-id]="t.id">
+    <span class="emoji">🧸</span>
+    {{ t.text }}
   </div>
+</div>

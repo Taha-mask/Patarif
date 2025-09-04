@@ -1,263 +1,321 @@
   /* Base / Layout */
-    body {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #f8f9fa;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f8f9fa;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  .container {
+    /* position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%; */
+    max-width: 100%;
+  }
+
+  .gradient-border-wrapper {
+    padding: 6px;
+    border-radius: 30px;
+    background: linear-gradient(135deg,
+        #FFEE52, #FF006E, #FB5664, #6486FF, #9B57FA,
+        #FFEE52, #FF006E, #FB5664, #6486FF, #9B57FA);
+    background-size: 400% 400%;
+    animation: moveGradient 10s linear infinite;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  @keyframes moveGradient {
+    0% {
+      background-position: 0% 50%;
     }
 
-    .container {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      top: 50%;
-      left: 50%;
-      max-width: 100%;
-      padding: 10px;
+    50% {
+      background-position: 100% 50%;
     }
 
-    .gradient-border-wrapper {
-      padding: 6px;
-      border-radius: 30px;
-      background: linear-gradient(135deg,
-          #FFEE52, #FF006E, #FB5664, #6486FF, #9B57FA,
-          #FFEE52, #FF006E, #FB5664, #6486FF, #9B57FA);
-      background-size: 400% 400%;
-      animation: moveGradient 10s linear infinite;
-      width: 100%;
-      max-width: 1200px;
-      margin: auto;
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Make the row a flex container and force equal height columns */
+  .row {
+    display: flex;
+    /* ensure two columns are same height */
+    flex-wrap: wrap;
+    align-items: stretch;
+    /* stretch children to same height */
+    width: 100%;
+    margin: auto;
+    padding: 8px;
+    border-radius: 30px;
+    background: white;
+    box-shadow: 0 8px 30px rgba(2, 8, 23, 0.06);
+    overflow: hidden;
+  }
+
+  /* Ensure columns are flex-columns so internal content can center/stack */
+  .row>[class*="col-"] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+    min-width: 0;
+    /* prevents overflow on small screens */
+  }
+
+  /* Left side specifics */
+  .col-md-5 {
+    /* keep the same width ratio on medium+ screens; allow flex to stretch height */
+    flex: 0 0 41.666667%;
+    /* 5/12 */
+    max-width: 41.666667%;
+    position: relative;
+    color: #fff;
+    gap: 1rem;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem;
+  }
+
+  /* Right side specifics */
+  .col-md-7 {
+    flex: 0 0 58.333333%;
+    /* 7/12 */
+    max-width: 58.333333%;
+    padding: 3rem;
+  }
+
+  /* Image and left-text */
+  .login-img {
+    width: 100%;
+    height: 90%;
+    border-radius: 20px;
+    object-fit: cover;
+    z-index: 2;
+  }
+
+  .text-img {
+    position: absolute;
+    bottom: 5%;
+    font-size: clamp(1rem, 2vw, 1.6rem);
+    font-weight: 900;
+    text-align: center;
+    padding: 0 10px;
+    z-index: 3;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+  }
+
+  /* Headings and inputs */
+  .account-header {
+    font-family: 'Baloo 2', system-ui, sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin: 0 0 1rem 0;
+  }
+
+  input,
+  .form-control {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    background-color: rgba(241, 241, 241, 0.75);
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+    padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  form button {
+    border-radius: 16px;
+    margin-top: 24px;
+  }
+
+  form .btn span {
+    font-family: 'Baloo 2', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .defualt-account .btn {
+    width: 100%;
+    max-width: 280px;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: clamp(0.9rem, 1rem, 1.1rem);
+    padding: 10px;
+    border-radius: 16px;
+    background-color: rgba(241, 241, 241, 0.75);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .defualt-account .btn:hover {
+    background-color: #e9e9e9;
+    color: #000000;
+    box-shadow: 0 4px 16px rgba(100, 134, 255, 0.12);
+    cursor: pointer;
+  }
+
+  .line {
+    border-top: 3px solid rgb(0, 0, 0);
+    opacity: 0.12;
+  }
+
+  /* Password toggle */
+  .password-wrapper {
+    position: relative;
+    display: inline-block;
+    z-index: 100;
+    width: 100%;
+  }
+
+  .password-wrapper input {
+    padding-right: 48px;
+  }
+
+  .toggle-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    border-radius: 8px;
+  }
+
+  .password-wrapper i,
+  .toggle-icon i {
+    pointer-events: none;
+    font-size: 1.05rem;
+  }
+
+  /* Toast */
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    max-width: calc(100vw - 40px);
+  }
+
+  .toast {
+    background: linear-gradient(135deg, #FF006E, #ff4f91);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    font-family: "Comic Sans MS", cursive;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    animation: toastIn 0.35s ease-out, toastOut 0.5s ease-in forwards;
+    animation-delay: 0s, 15s;
+  }
+
+  @keyframes toastIn {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
     }
 
-    @keyframes moveGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes toastOut {
+    to {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.96);
+    }
+  }
+
+  .toast .emoji {
+    background: white;
+    border-radius: 50%;
+    padding: 6px;
+    font-size: 1rem;
+    color: #FF006E;
+  }
+
+  /* Small screens: stack columns and adjust paddings */
+  @media (max-width: 992px) {
+
+    .login-img,
+    .text-img {
+      display: none;
     }
 
-    /* Make the row a flex container and force equal height columns */
-    .row {
-      display: flex;               /* ensure two columns are same height */
-      flex-wrap: wrap;
-      align-items: stretch;       /* stretch children to same height */
-      width: 100%;
-      margin: auto;
-      padding: 8px;
-      border-radius: 30px;
-      background: white;
-      box-shadow: 0 8px 30px rgba(2,8,23,0.06);
-      overflow: hidden;
-    }
-
-    /* Ensure columns are flex-columns so internal content can center/stack */
-    .row > [class*="col-"] {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 2rem;
-      min-width: 0; /* prevents overflow on small screens */
-    }
-
-    /* Left side specifics */
-    .col-md-5 {
-      /* keep the same width ratio on medium+ screens; allow flex to stretch height */
-      flex: 0 0 41.666667%; /* 5/12 */
-      max-width: 41.666667%;
-      position: relative;
-      color: #fff;
-      gap: 1rem;
-      align-items: center;
-      text-align: center;
-      padding: 2.5rem;
-    }
-
-    /* Right side specifics */
+    .col-md-5,
     .col-md-7 {
-      flex: 0 0 58.333333%; /* 7/12 */
-      max-width: 58.333333%;
-      padding: 3rem;
+      flex: 0 0 100%;
+      max-width: 100%;
     }
 
-    /* Image and left-text */
-    .login-img {
-      width: 100%;
-      max-width: 420px;
-      height: auto;
-      margin: 10px auto;
-      border-radius: 20px;
-      object-fit: contain;
-      z-index: 2;
+    .row {
+      align-items: stretch;
+    }
+
+    .col-md-5 {
+      padding: 1.4rem 1.25rem;
+    }
+
+    .col-md-7 {
+      padding: 1.4rem 1.25rem;
     }
 
     .text-img {
-      position: absolute;
-      bottom: 5%;
-      font-size: clamp(1rem, 2vw, 1.6rem);
-      font-weight: 900;
-      text-align: center;
-      padding: 0 10px;
-      z-index: 3;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 40px);
+      position: static;
+      transform: none;
+      margin-top: 8px;
     }
 
-    /* Headings and inputs */
     .account-header {
-      font-family: 'Baloo 2', system-ui, sans-serif;
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      margin: 0 0 1rem 0;
+      text-align: center;
     }
 
-    input, .form-control {
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      border-radius: 16px;
-      border: 1px solid rgba(0,0,0,0.25);
-      background-color: rgba(241,241,241,0.75);
-      font-size: clamp(0.9rem, 1.2vw, 1.05rem);
-      padding: 12px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    form .btn span {
-      font-family: 'Baloo 2', system-ui, sans-serif;
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    .defualt-account .btn {
-      width: 100%;
-      max-width: 280px;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      font-size: clamp(0.9rem, 1rem, 1.1rem);
-      padding: 10px;
-      border-radius: 15px;
-      background-color: rgba(241,241,241,0.75);
-      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-      border: 1px solid rgba(0,0,0,0.08);
-    }
-
-    .defualt-account .btn:hover {
-      background-color: #e9e9e9;
-      color: #000000;
-      box-shadow: 0 4px 16px rgba(100, 134, 255, 0.12);
-      cursor: pointer;
-    }
-
-    .line {
-      border-top: 3px solid rgb(0,0,0);
-      opacity: 0.12;
-    }
-
-    /* Password toggle */
-    .password-wrapper {
-      position: relative;
-      display: inline-block;
-      z-index: 100;
-      width: 100%;
-    }
-
-    .password-wrapper input { padding-right: 48px; }
-
-    .toggle-icon {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #666;
-      display: inline-flex;
+    .defualt-account {
+      flex-direction: column !important;
+      gap: 12px;
       align-items: center;
-      justify-content: center;
-      height: 32px;
-      width: 32px;
-      border-radius: 8px;
+    }
+  }
+
+  /* Extra small screens: keep inputs comfortable */
+  @media (max-width: 420px) {
+    .gradient-border-wrapper {
+      padding: 4px;
+      border-radius: 18px;
     }
 
-    .password-wrapper i, .toggle-icon i {
-      pointer-events: none;
-      font-size: 1.05rem;
-    }
-
-    /* Toast */
-    .toast-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 9999;
-      max-width: calc(100vw - 40px);
-    }
-
-    .toast {
-      background: linear-gradient(135deg, #FF006E, #ff4f91);
-      color: white;
-      padding: 12px 16px;
-      border-radius: 14px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-      font-family: "Comic Sans MS", cursive;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      animation: toastIn 0.35s ease-out, toastOut 0.5s ease-in forwards;
-      animation-delay: 0s, 15s;
-    }
-
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(-6px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @keyframes toastOut {
-      to { opacity: 0; transform: translateY(-8px) scale(0.96); }
-    }
-
-    .toast .emoji {
-      background: white;
-      border-radius: 50%;
+    .row {
+      border-radius: 18px;
       padding: 6px;
-      font-size: 1rem;
-      color: #FF006E;
     }
 
-    /* Small screens: stack columns and adjust paddings */
-    @media (max-width: 992px) {
-      .login-img, .text-img{
-        display: none;
-      }
-      .col-md-5, .col-md-7 {
-        flex: 0 0 100%;
-        max-width: 100%;
-      }
-      .row {
-        align-items: stretch;
-      }
-      .col-md-5 {
-        padding: 1.4rem 1.25rem;
-      }
-      .col-md-7 {
-        padding: 1.4rem 1.25rem;
-      }
-      .text-img {
-        position: static;
-        transform: none;
-        margin-top: 8px;
-      }
-      .account-header { text-align: center; }
-      .defualt-account { flex-direction: column !important; gap: 12px; align-items:center; }
+    .login-img {
+      max-width: 320px;
     }
 
-    /* Extra small screens: keep inputs comfortable */
-    @media (max-width: 420px) {
-      .gradient-border-wrapper { padding: 4px; border-radius: 18px; }
-      .row { border-radius: 18px; padding: 6px; }
-      .login-img { max-width: 320px; }
-      .account-header { font-size: 1.6rem; }
+    .account-header {
+      font-size: 1.6rem;
     }
+  }

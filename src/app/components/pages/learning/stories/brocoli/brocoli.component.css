@@ -184,27 +184,19 @@ body {
     scale: 1.06;
 }
 
-.cloud1 {
-    position: absolute;
-    left: 0;
-    /* bottom: -64%; */
-    top: -40%;
-    display: block;
-    z-index: 10;
-    animation: fadeIn 1s ease-in-out;
-    overflow-x: hidden;
-    width: 100%;
-
+.content {
+    position: relative;
+    margin-top: 40%;
 }
 
-.cloud1 img {
-    width: 100vw;
-    height: 100%;
-    position: relative;
-    /* left: -176px; */
-    object-fit: cover;
-    display: block;
-
+.mainCloud {
+    z-index: 10;
+    animation: fadeIn 1s ease-in-out;
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: -4.5%;
+    overflow: hidden;
 }
 
 .section {
@@ -239,7 +231,6 @@ body {
 .section2 {
     display: flex;
     animation: fadeIn 1s ease-in-out;
-    margin-top: 40%;
 }
 
 
@@ -505,23 +496,67 @@ body {
 
 
 
-.footer {
-    /* position: relative  ;
-    top: -120px; */
-    overflow-x: hidden;
-    background-color: #B68455;
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
-    animation: none;
-    /* margin-top: -120px; */
-    z-index: 200;
+
+.rotate-message {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.856);
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 10000;
 }
+
+.rotate-message img {
+    width: 80%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    animation: showRotateMessage 0.5s, shake 2.2s infinite 2s;
+}
+
+@keyframes showRotateMessage {
+    0% {
+        transform: rotate(30deg) scale(0.5);
+    }
+    50% {
+        transform: rotate(-10deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes shake {
+    0%, 90%, 100% {
+        transform: rotate(0deg);
+    }
+    92% {
+        transform: rotate(-1deg);
+    }
+    96% {
+        transform: rotate(1deg);
+    }
+    98% {
+        transform: rotate(-1deg);
+    }
+}
+
 
 
 /* resposive */
 
 /* mobile */
-@media (max-width: 480px) {}
+@media (max-width: 480px) {
+    .rotate-message{
+        position: fixed;
+    }
+    .rotate-message {
+        display: block;
+    }
+}
 
 /* tablet */
 @media (min-width: 481px) and (max-width: 968px) {
@@ -529,13 +564,15 @@ body {
         gap: 12px;
     }
 
-    .section2 {
-        margin-top: 28%;
+    .content {
+        margin-top: 34%;
     }
 
+    .mainCloud img {
+        object-fit: cover;
+        width: 100%;
+    }
 }
 
 /* laptob */
-@media (min-width: 769px) {
-    
-}
+@media (min-width: 769px) {}

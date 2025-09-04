@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../../supabase.service';
 import { BackgroundComponent } from "../../background/background.component";
@@ -7,6 +7,7 @@ import { ProductCardComponent } from "../shop/product-card/product-card.componen
 import { CommonModule } from '@angular/common';
 import { FavProCardComponent } from "./fav-pro-card/fav-pro-card.component";
 import { HomeFooterComponent } from "../home/home-footer/home-footer.component";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -15,7 +16,7 @@ import { HomeFooterComponent } from "../home/home-footer/home-footer.component";
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   displayName: string = '';
   email: string = '';
   lastSignIn: string = '';
@@ -25,17 +26,20 @@ export class ProfileComponent implements OnInit {
   newPassword: string = '';
   confirmPassword: string = '';
 
-  constructor(private supabaseService: SupabaseService) { }
-
   favouriteProducts: any[] = [];
   profileImageUrl: string | null = null;
 
+  private subs = new Subscription();
 
+  constructor(private supabaseService: SupabaseService) { }
+
+  // file select
   async onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
       const url = await this.supabaseService.uploadProfileImage(file, this.userId);
       if (url) {
+        // set local state (service already emits via BehaviorSubject if implemented)
         this.profileImageUrl = url;
       }
     }
@@ -43,6 +47,7 @@ export class ProfileComponent implements OnInit {
 
   async ngOnInit() {
     const user = await this.supabaseService.getCurrentUser();
+
     if (user) {
       this.userId = user.id;
       this.displayName = user.user_metadata?.['display_name'] ?? 'name not found';
@@ -50,9 +55,37 @@ export class ProfileComponent implements OnInit {
       this.lastSignIn = this.formatDate(user.last_sign_in_at);
       this.createdAt = this.formatDate(user.created_at);
       this.provider = user.app_metadata?.provider ?? 'not available';
+
+      try {
+        const img = await this.supabaseService.getProfileImage(this.userId);
+        this.profileImageUrl = img;
+        console.log('Loaded profile image:', img);
+      } catch (err) {
+        console.error('Error loading profile image on init:', err);
+      }
+    } else {
+      const session = await this.supabaseService.getSession?.();
+      if (session?.user) {
+        this.userId = session.user.id;
+        this.profileImageUrl = await this.supabaseService.getProfileImage(this.userId);
+      }
     }
+
+    this.subs.add(
+      this.supabaseService.profileImage$.subscribe((url) => {
+        if (url) {
+          this.profileImageUrl = url;
+          console.log('profile image updated via subject:', url);
+        }
+      })
+    );
+
     this.favouriteProducts = await this.supabaseService.loadUserFavourites(this.email);
     console.log(this.favouriteProducts);
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
   }
 
   async onChangePassword() {
@@ -98,6 +131,10 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'images/account.png';
+  }
 
   private formatDate(dateString: string | null | undefined): string {
     if (!dateString) return 'not available';

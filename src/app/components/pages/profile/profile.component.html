@@ -5,16 +5,27 @@
         <div class="profile-cover">
             <img src="images/profileBackground.jpg" alt="cover">
         </div>
-        <div class="profile-image">
-            <img *ngIf="profileImageUrl; else noImg" [src]="noImg" alt="Profile Image" />
-            <ng-template #noImg>
-                <img src="images/account.png" alt="no image">
-            </ng-template>
-            <button type="button" class="upload-btn" (click)="fileInput.click()">
-                <i class="bi bi-exposure"></i> </button>
+       <div class="profile-image">
+  <img
+    [src]="profileImageUrl || 'images/account.png'"
+    (error)="onImageError($event)"
+    alt="Profile Image"
+    class="rounded-circle"
+    style="width:120px; height:120px; object-fit:cover;"
+  />
 
-            <input type="file" accept="image/*" #fileInput style="display: none;" (change)="onFileSelected($event)" />
-        </div>
+  <button type="button" class="upload-btn" (click)="fileInput.click()">
+    <i class="bi bi-exposure"></i>
+  </button>
+
+  <input
+    type="file"
+    accept="image/*"
+    #fileInput
+    style="display: none;"
+    (change)="onFileSelected($event)" />
+</div>
+
 
 
     </div>

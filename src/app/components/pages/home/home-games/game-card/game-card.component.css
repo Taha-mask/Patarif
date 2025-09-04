@@ -5,6 +5,7 @@
     overflow: visible;
 }
 
+/* Background */
 .background {
     position: absolute;
     top: 0;
@@ -13,31 +14,32 @@
     height: 390px;
     object-fit: cover;
     z-index: 0;
-
 }
-
+*{
+    /* border: green 1px solid; */
+}
+/* Game Image */
 .game-image {
     position: absolute;
     z-index: 1;
     width: 100%;
     height: auto;
-    /* object-fit: cover; */
     left: -55px;
-
-
 }
 
-/* العنوان */
+/* Title */
 .title {
-    position: absolute;
-    top: 10px;
-    left: 10px;
+    font-family: "Audiowide", sans-serif;
+    font-size: 44.16px;
+    font-weight: 400;
     color: white;
-    font-size: 18px;
-    font-weight: bold;
+    position: absolute;
+    top: 112px;
+    left: 220px;
     z-index: 2;
 }
 
+/* Start Game Button */
 .start-game-button {
     position: absolute;
     padding: 5px;
@@ -56,7 +58,6 @@
     bottom: 0;
 }
 
-
 .start-home {   
     border: 1px black solid;
     background: white;
@@ -74,26 +75,30 @@
     margin-left: 6px;
 }
 
-.raiting{
-    /* justify-content: center; */
-    align-items: center; 
-    display: flex;
-    position: relative;
-    top: 6px;
-}
-
-.title{
-    font-family: "Audiowide", sans-serif;
-    font-size: 44.16px;
-    font-weight: 400;
-    color: white;
+/* Age Badge */
+.age {
     position: absolute;
-    top: 112px;
-    left: 220px;
-
+    top: 62px;
+    left: 255px;
+    width: 114px;
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    color: #000;
+    border: 1px black solid;
+    border-radius: 44px;
+    z-index: 20;
 }
 
-.selected-game{
+.age h4 {
+    font-family: "Architects Daughter", cursive;
+    margin: 0;
+}
+
+/* Selected Game Indicator */
+.selected-game {
     position: absolute;
     top: 8px;
     right: 18px;
@@ -101,21 +106,12 @@
     height: 38px;
 }
 
-.age{
-    width: 114px;
-    background-color: white;
-    color: #000000;
-    justify-content: center;
+/* Rating (commented out for now) */
+.raiting {
     display: flex;
-    border: 1px black solid;
-    border-radius: 44px;
-    padding: 4px;
-    position: absolute;
-    top: 62px;
-    left: 255px;
-    z-index: 20;
-}
-
-.age h4 {
-    font-family: "Architects Daughter", cursive;
+    align-items: center; 
+    position: relative;
+    top: 6px;
+    z-index: 1000;
+    /* justify-content: center; */
 }

@@ -6,7 +6,6 @@ import { CelebrationComponent } from '../../../game-template/celebration/celebra
 
 interface Question {
   image: string;
-  hint: string;
   options: string[];
   correctAnswer: string;
   difficulty: 'easy' | 'medium' | 'hard';
@@ -172,7 +171,6 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
       1: [
         {
           image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
-          hint: 'Connue pour la Tour Eiffel',
           options: ['France', 'Italie', 'Espagne', 'Allemagne'],
           correctAnswer: 'France',
           difficulty: 'easy',

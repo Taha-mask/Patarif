@@ -9,14 +9,14 @@
     <h3 class="description">Je suis orange, croquante, et j’aime qu’on<br>me mange !<br>Je vais te raconter plein de
         choses sur moi…<br>de manière amusante ! </h3>
 
-    <button class="btn btn-primary" (click)="discover()" (mouseover)="toggleBox()">Discover</button>
+    <button class="btn btn-primary" (click)="discover()">Discover</button>
 
-    <div *ngIf="showBox" class="cloud1">
-        <img class="" src="images/learningZone/stories/carotte/cloud1.png" alt="background">
-    </div>
 </div>
 
-<div *ngIf="showBox" class="content">
+<div class="content">
+    <div class="mainCloud">
+            <img src="images/learningZone/stories/mainCloud.svg" alt="cloud">
+        </div>
     
     <div id="section2" #section class="section section2">
         <img src="images/learningZone/stories/carotte/section2.png" alt="section 2">
@@ -191,8 +191,15 @@
             <h1 class="title last">Croque-moi !</h1>
         </div>
     </div>
-    <div #section class="section footer">
 
         <app-home-footer [color]="'#B68455'"></app-home-footer>
-    </div>
+</div>
+
+
+
+
+<!-- phone horizontal direction -->
+
+<div class="rotate-message">
+    <img src="images/learningZone/stories/mainMessage.svg" alt="please, rotate your phone [required]">
 </div>

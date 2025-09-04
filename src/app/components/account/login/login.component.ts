@@ -33,7 +33,7 @@ export class LoginComponent {
       this.toasts = this.toasts.filter(t => t.id !== id);
     }, 2000);
   }
-  isLoading = false; // حالة التحميل
+  isLoading = false; 
   async onSubmit() {
     this.loginForm.markAllAsTouched();
 
@@ -47,7 +47,7 @@ export class LoginComponent {
       return;
     }
 
-    this.isLoading = true; // بدأ التحميل
+    this.isLoading = true; 
 
     const { email, password } = this.loginForm.value;
 
@@ -63,14 +63,12 @@ export class LoginComponent {
         return;
       }
 
-      // حفظ رسالة الترحيب
       localStorage.setItem('welcomeMessage', JSON.stringify({
         title: "Welcome back !",
         text: "go and enjoy",
         icon: "success"
       }));
 
-      // التوجيه بناءً على الدور
       if (res.isAdmin) {
         window.location.replace('/admin-dashboard');
       } else {
@@ -84,7 +82,7 @@ export class LoginComponent {
         icon: "error"
       });
     } finally {
-      this.isLoading = false; // انتهى التحميل
+      this.isLoading = false; 
     }
   }
 
@@ -101,4 +99,17 @@ export class LoginComponent {
 
   }
 
+
+  // login with facebook
+  async loginWithFacebook() {
+    try {
+      await this.auth.signInWithFacebook();
+    } catch (err) {
+      console.error('Login error:', err);
+    }
+  }
+
+  async logout() {
+    await this.auth.signOut();
+  }
 }
