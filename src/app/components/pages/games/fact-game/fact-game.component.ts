@@ -1,430 +1,253 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { GameTemplateComponent } from '../../../../components/game-template/game-template.component';
 import { CelebrationComponent, CelebrationData } from '../../../../components/game-template/celebration/celebration.component';
+import { SupabaseService } from '../../../../supabase.service';
 
-interface Option {
-  text: string;
-  isCorrect: boolean;
-}
-
-interface CurrentWord {
+export interface FactQuestion {
+  level: number;
+  questionText: string;
   difficulty: 'easy' | 'medium' | 'hard';
-  correct: string;
-}
-
-interface Question {
-  text: string;
-  options: Option[];
-  difficulty: 'easy' | 'medium' | 'hard';
+  answers: { text: string; isCorrect: boolean }[];
 }
 
 @Component({
   selector: 'app-fact-game',
   standalone: true,
-  imports: [CommonModule, GameTemplateComponent, CelebrationComponent],
-  templateUrl:'./fact-game.component.html',
+  imports: [CommonModule, GameTemplateComponent, CelebrationComponent, RouterLink],
+  templateUrl: './fact-game.component.html',
   styleUrls: ['./fact-game.component.css']
 })
 export class FactGameComponent implements OnInit, OnDestroy {
-  // Celebration modal
-  showCelebration = false;
-  celebrationData: CelebrationData | null = null;
-  private startTime: number = Date.now();
-  // Helper method to get letter for answer options (A, B, C, D, ...)
-  getOptionLetter(index: number): string {
-    return String.fromCharCode(65 + index);
-  }
+  constructor(
+    private supabase: SupabaseService,
+    private router: Router
+  ) {}
 
-
-
-  // Questions organized by levels with increasing difficulty
-  questionsByLevel: { [key: number]: Question[] } = {
-    // Level 1: Basic General Knowledge
-    1: [
-      {
-        text: 'A group of lions is called a pride.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'easy'
-      },
-      {
-        text: 'The Great Wall of China is visible from the Moon.',
-        options: [
-          { text: 'True', isCorrect: false },
-          { text: 'False', isCorrect: true }
-        ],
-        difficulty: 'easy'
-      },
-      {
-        text: 'The human body has 206 bones.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'easy'
-      },
-      {
-        text: 'The Earth is the fifth largest planet in our solar system.',
-        options: [
-          { text: 'True', isCorrect: false },
-          { text: 'False', isCorrect: true }
-        ],
-        difficulty: 'easy'
-      },
-      {
-        text: 'The capital of France is London.',
-        options: [
-          { text: 'True', isCorrect: false },
-          { text: 'False', isCorrect: true }
-        ],
-        difficulty: 'easy'
-      }
-    ],
-    
-    // Level 2: Science and Nature
-    2: [
-      {
-        text: 'The human body has four lungs.',
-        options: [
-          { text: 'True', isCorrect: false },
-          { text: 'False', isCorrect: true }
-        ],
-        difficulty: 'medium'
-      },
-      {
-        text: 'Lightning is hotter than the surface of the Sun.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'medium'
-      },
-      {
-        text: 'Octopuses have three hearts.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'medium'
-      },
-      {
-        text: 'The chemical symbol for gold is Ag.',
-        options: [
-          { text: 'True', isCorrect: false },
-          { text: 'False', isCorrect: true }
-        ],
-        difficulty: 'medium'
-      },
-      {
-        text: 'A day on Venus is longer than a year on Venus.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'medium'
-      }
-    ],
-    
-    // Level 3: Advanced Knowledge
-    3: [
-      {
-        text: 'The human nose can detect over 1 trillion different scents.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'hard'
-      },
-      {
-        text: 'The total length of your blood vessels could circle the Earth four times.',
-        options: [
-          { text: 'True', isCorrect: false },
-          { text: 'False', isCorrect: true }
-        ],
-        difficulty: 'hard'
-      },
-      {
-        text: 'Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly good to eat.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'hard'
-      },
-      {
-        text: 'The shortest war in history was between Britain and Zanzibar on August 27, 1896. Zanzibar surrendered after 38 minutes.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'hard'
-      },
-      {
-        text: 'The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion of the metal.',
-        options: [
-          { text: 'True', isCorrect: true },
-          { text: 'False', isCorrect: false }
-        ],
-        difficulty: 'hard'
-      }
-    ]
+  // ===== GAME CONFIG =====
+  readonly MAX_LEVEL = 5;
+  readonly QUESTIONS_PER_LEVEL: { [level: number]: number } = { 
+    1: 2, 
+    2: 5, 
+    3: 5,
+    4: 5,
+    5: 5
   };
 
-  // Level & Progress
+  // ===== GAME STATE =====
   currentLevel = 1;
-  currentQuestion = 1;
-  questionsPerLevel = 5;
-  currentIndex = 0;
-  answered = false;
-  usedQuestionIndices: {[key: number]: number[]} = {}; // Track used question indices per level
-  answerStatus: string[] = [];
-  score = 0;
+  currentQuestionIndex = 0;
+  currentQuestion!: FactQuestion;
   questionsCorrectInLevel = 0;
-  timeElapsed = 0;
-  bonusPoints = 0;
-  showLevelComplete = false;
+  score = 0;
+
+  questionsByLevel: { [key: number]: FactQuestion[] } = {};
+  usedQuestions: { [key: number]: Set<string> } = {};
+
+  answered = false;
+  answerStatus: string[] = [];
   selectedAnswer: string | null = null;
 
+  // ===== CELEBRATION =====
+  showCelebration = false;
+  celebrationData: CelebrationData | null = null;
+
+  // ===== TIMER =====
+  timeElapsed = 0;
+  startTime = 0;
   timerInterval: any;
 
-  private _currentQuestionData: Question = this.questionsByLevel[1][0];
-  
-  get currentQuestionData(): Question {
-    return this._currentQuestionData;
-  }
-  
-  set currentQuestionData(question: Question) {
-    this._currentQuestionData = question;
-  }
+  // ===== AUDIO =====
+  private correctAudio = new Audio('/audio/correct.mp3');
+  private wrongAudio = new Audio('/audio/wrong.mp3');
 
-  get questions(): Question[] {
-    return this.questionsByLevel[this.currentLevel] || [];
-  }
+  isLoading = true;
 
-  get currentWord(): CurrentWord {
-    return { 
-      difficulty: this.currentQuestionData.difficulty,
-      correct: this.currentQuestionData.options.find(opt => opt.isCorrect)?.text || ''
-    };
-  }
-
-  get currentDifficulty(): 'easy' | 'medium' | 'hard' {
-    return this.currentQuestionData.difficulty;
-  }
-
-  get isLastQuestion(): boolean {
-    return this.currentIndex === this.questionsPerLevel - 1;
-  }
-
-  ngOnInit() {
-    this.startTime = Date.now();
+  // ---- LIFECYCLE ----
+  async ngOnInit() {
+    this.startLevel();
     this.startTimer();
-    this.resetAnswerStatus();
-    this.currentQuestionData = this.getRandomQuestion();
   }
 
   ngOnDestroy() {
     this.stopTimer();
   }
 
-  private getRandomQuestion(): Question {
-    const levelQuestions = this.questionsByLevel[this.currentLevel] || [];
-    
-    // Initialize used indices array for this level if it doesn't exist
-    if (!this.usedQuestionIndices[this.currentLevel]) {
-      this.usedQuestionIndices[this.currentLevel] = [];
-    }
-    
-    // If all questions have been used, reset the used indices
-    if (this.usedQuestionIndices[this.currentLevel].length >= levelQuestions.length) {
-      this.usedQuestionIndices[this.currentLevel] = [];
-    }
-    
-    // Find a random index that hasn't been used yet
-    let randomIndex: number;
-    do {
-      randomIndex = Math.floor(Math.random() * levelQuestions.length);
-    } while (this.usedQuestionIndices[this.currentLevel].includes(randomIndex));
-    
-    // Mark this index as used
-    this.usedQuestionIndices[this.currentLevel].push(randomIndex);
-    
-    return levelQuestions[randomIndex];
+  // ========================
+  // LEVEL FLOW
+  // ========================
+  private async startLevel() {
+    this.isLoading = true;
+    this.currentQuestionIndex = 0;
+    this.questionsCorrectInLevel = 0;
+
+    if (!this.usedQuestions[this.currentLevel]) this.usedQuestions[this.currentLevel] = new Set();
+
+    await this.loadQuestionsForLevel(this.currentLevel);
+    this.setCurrentQuestion();
+    this.isLoading = false;
+    this.startTime = Date.now();
   }
 
-  resetAnswerStatus() {
-    this.answerStatus = this.currentQuestionData.options.map(() => '');
+  async loadQuestionsForLevel(level: number) {
+    try {
+      const data = await this.supabase.getQuestionsByLevel(level);
+
+      this.questionsByLevel[level] = data.map((q: any) => ({
+        level: q.level,
+        questionText: q.question,
+        difficulty: q.difficulty,
+        answers: [
+          { text: 'True', isCorrect: q.value === true },
+          { text: 'False', isCorrect: q.value === false }
+        ]
+      }));
+    } catch (err) {
+      console.error('Error loading questions:', err);
+      this.questionsByLevel[level] = [
+        {
+          level,
+          questionText: 'A group of lions is called a pride.',
+          difficulty: 'easy',
+          answers: [
+            { text: 'True', isCorrect: true },
+            { text: 'False', isCorrect: false }
+          ]
+        }
+      ];
+    }
+  }
+
+  private setCurrentQuestion() {
+    const questions = this.questionsByLevel[this.currentLevel];
+    const available = questions.filter(q => !this.usedQuestions[this.currentLevel].has(q.questionText));
+
+    if (available.length === 0) {
+      // جميع الأسئلة تم استخدامها → اكمل المستوى
+      this.showLevelCompleteScreen();
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * available.length);
+    this.currentQuestion = available[randomIndex];
+    this.usedQuestions[this.currentLevel].add(this.currentQuestion.questionText);
+    this.resetAnswerStatus();
+  }
+
+  private resetAnswerStatus() {
+    this.answerStatus = this.currentQuestion.answers.map(() => '');
+    this.answered = false;
+    this.selectedAnswer = null;
   }
 
   checkAnswer(isCorrect: boolean, index: number) {
     if (this.answered) return;
 
     this.answered = true;
-    this.selectedAnswer = this.currentQuestionData.options[index].text;
+    this.selectedAnswer = this.currentQuestion.answers[index].text;
 
     if (isCorrect) {
       this.answerStatus[index] = 'correct';
       this.score++;
       this.questionsCorrectInLevel++;
-      this.bonusPoints = 10; // example bonus
       this.playCorrectSound();
     } else {
       this.answerStatus[index] = 'wrong';
-      // highlight correct answer too
-      const correctIndex = this.currentQuestionData.options.findIndex(o => o.isCorrect);
-      if (correctIndex !== -1) {
-        this.answerStatus[correctIndex] = 'correct';
-      }
+      const correctIndex = this.currentQuestion.answers.findIndex(a => a.isCorrect);
+      if (correctIndex !== -1) this.answerStatus[correctIndex] = 'correct';
       this.playWrongSound();
     }
   }
 
   nextQuestion() {
-    // Reset answer state
-    this.answered = false;
-    this.selectedAnswer = null;
-    this.answerStatus = [];
+    this.currentQuestionIndex++;
+    const maxQuestions = this.QUESTIONS_PER_LEVEL[this.currentLevel] || this.questionsByLevel[this.currentLevel].length;
 
-    // Move to next question or level
-    this.currentQuestion++;
-    if (this.currentQuestion >= this.questionsPerLevel) {
+    if (this.currentQuestionIndex >= maxQuestions) {
       this.showLevelCompleteScreen();
     } else {
-      // Get a new random question for the current level
-      this.currentQuestionData = this.getRandomQuestion();
-      this.resetAnswerStatus();
+      this.setCurrentQuestion();
     }
   }
-
-  getLevelScorePercentage(): number {
-    return Math.round((this.questionsCorrectInLevel / this.questionsPerLevel) * 100);
-  }
-
-  getScoreMessage(): string {
-    const percentage = this.getLevelScorePercentage();
-    if (percentage === 100) return 'Parfait ! Vous êtes un expert en faits !';
-    if (percentage >= 80) return 'Excellent ! Vous connaissez bien vos faits !';
-    if (percentage >= 60) return 'Bon travail ! Continuez à vous entraîner !';
-    if (percentage >= 40) return 'Pas mal ! Essayez à nouveau pour vous améliorer !';
-    return 'Continuez à vous entraîner ! Vous allez progresser !';
-  }
-
   showLevelCompleteScreen() {
+    this.timeElapsed = Math.floor((Date.now() - this.startTime) / 1000);
     this.celebrationData = {
       level: this.currentLevel,
       questionsCorrect: this.questionsCorrectInLevel,
-      totalQuestions: this.questionsPerLevel,
-      timeElapsed: Math.floor((Date.now() - this.startTime) / 1000),
-      difficulty: this.currentDifficulty
+      totalQuestions: this.QUESTIONS_PER_LEVEL[this.currentLevel] || this.questionsByLevel[this.currentLevel].length,
+      timeElapsed: this.timeElapsed,
+      difficulty: this.currentQuestion.difficulty
     };
     this.showCelebration = true;
+  
+    // الانتقال تلقائي بعد 2 ثانية
+    setTimeout(() => {
+      this.onNextLevel();
+    }, 2000); // يمكنك تغيير الوقت حسب الرغبة
   }
+  
 
-  onNextLevel(nextLevel: number) {
-    this.showCelebration = false;
-    this.currentLevel = nextLevel;
-    this.questionsCorrectInLevel = 0;
-    this.currentQuestion = 1; // Reset to 1 since we're starting a new level
-    this.questionsPerLevel = Math.min(5 + this.currentLevel, 10);
-    // Reset used questions for the new level
-    if (this.usedQuestionIndices[this.currentLevel]) {
-      this.usedQuestionIndices[this.currentLevel] = [];
-    }
-    this.currentQuestionData = this.getRandomQuestion();
-    this.startTime = Date.now();
-    this.resetAnswerStatus();
-  }
-
-  private calculateScore(): number {
-    const baseScore = this.questionsCorrectInLevel * 10;
-    const difficultyMultiplier = this.currentDifficulty === 'easy' ? 1 : this.currentDifficulty === 'medium' ? 1.5 : 2;
-    return Math.floor(baseScore * difficultyMultiplier);
-  }
-
-  private calculateBonusPoints(): number {
-    const timeBonus = Math.max(0, 30 - Math.floor((Date.now() - this.startTime) / 1000));
-    const perfectBonus = this.questionsCorrectInLevel === this.questionsPerLevel ? 20 : 0;
-    return timeBonus + perfectBonus;
-  }
-
-  nextLevel() {
-    this.currentLevel++;
-    this.currentQuestion = 1;
-    this.currentIndex = 0;
-    this.questionsCorrectInLevel = 0;
-    this.score = 0;
-    this.bonusPoints = 0;
+  async onNextLevel(nextLevel?: number) {
     this.showCelebration = false;
     
-    // Check if next level exists
-    if (this.questionsByLevel[this.currentLevel]) {
-      this.currentQuestionData = this.getRandomQuestion();
-      this.resetAnswerStatus();
-      this.resetTimer();
-      this.startTime = Date.now();
+    if (nextLevel) {
+      this.currentLevel = nextLevel;
     } else {
-      // Game completed - all levels finished
-      console.log('Game completed! All levels finished.');
+      // Only increment level if we haven't reached the max level
+      if (this.currentLevel < this.MAX_LEVEL) {
+        this.currentLevel++;
+      } else {
+        // Game completed, go back to games list
+        this.router.navigate(['/games']);
+        return;
+      }
     }
+    
+    this.currentQuestionIndex = 0;
+    this.questionsCorrectInLevel = 0;
+    this.startTime = Date.now();
+    await this.startLevel();
   }
-
+  
+  // ========================
+  // TIMER
+  // ========================
   startTimer() {
     this.timeElapsed = 0;
-    this.timerInterval = setInterval(() => {
-      this.timeElapsed++;
-    }, 1000);
+    this.timerInterval = setInterval(() => this.timeElapsed++, 1000);
   }
 
   stopTimer() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
+    if (this.timerInterval) clearInterval(this.timerInterval);
   }
 
-  resetTimer() {
-    this.stopTimer();
-    this.timeElapsed = 0;
-    this.startTimer();
-  }
-  getDifficultyClass(): string {
-    return `difficulty-${this.currentWord.difficulty}`;
-  }
-
-  getTimeDisplayClass(): string {
-    if (this.timeElapsed < 15) return 'time-good';
-    if (this.timeElapsed < 30) return 'time-warning';
-    return 'time-danger';
+  // ========================
+  // AUDIO
+  // ========================
+  private playCorrectSound() {
+    this.correctAudio.currentTime = 0;
+    this.correctAudio.play().catch(() => {});
   }
 
-  formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  private playWrongSound() {
+    this.wrongAudio.currentTime = 0;
+    this.wrongAudio.play().catch(() => {});
   }
 
-  playCorrectSound() {
-    const audio = new Audio('/audio/correct.mp3');
-    audio.play().catch(err => console.error('Error playing correct sound:', err));
-    
-    // Stop after 1.5 seconds
-    setTimeout(() => {
-      audio.pause();
-      audio.currentTime = 0;
-    }, 1500);
+  // ========================
+  // HELPERS
+  // ========================
+  getOptionLetter(index: number): string {
+    return String.fromCharCode(65 + index);
   }
 
-  playWrongSound() {
-    const audio = new Audio('/audio/wrong.mp3');
-    audio.play().catch(err => console.error('Error playing wrong sound:', err));
-    
-    // Stop after 2 seconds
-    setTimeout(() => {
-      audio.pause();
-      audio.currentTime = 0;
-    }, 2000);
+  get currentCorrectAnswer(): string {
+    return this.currentQuestion?.answers.find(a => a.isCorrect)?.text || '';
   }
 
+  get isLastQuestion(): boolean {
+    const maxQuestions = this.QUESTIONS_PER_LEVEL[this.currentLevel] || this.questionsByLevel[this.currentLevel]?.length || 5;
+    return this.currentQuestionIndex + 1 >= maxQuestions;
+  }
 }

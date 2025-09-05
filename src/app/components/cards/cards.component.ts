@@ -6,7 +6,7 @@ import { Card } from '../../interface/card';
   selector: 'app-cards',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './cards.component.html',
+  templateUrl:'./cards.component.html',
   styleUrls: ['./cards.component.css']
 })
 export class CardsComponent implements AfterViewInit, OnChanges {

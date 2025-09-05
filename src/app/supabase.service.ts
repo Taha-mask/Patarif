@@ -10,11 +10,11 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
-
-  constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-  }
+    private supabase: SupabaseClient;
+  
+    constructor() {
+      this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+    }
 
   get client() {
     return this.supabase;
@@ -434,5 +434,63 @@ export class SupabaseService {
 
     return data || [];
   }
+
+
+  // ==========================
+// guessing_country
+// ==========================
+
+async getQuestions(level: number) {
+  const { data, error } = await this.supabase
+    .from('guessing_country')
+    .select('*')
+    .eq('level', level);
+
+  if (error) {
+    console.error('Error fetching questions:', error);
+    throw error;
+  }
+  return data;
+}
+
+
+  // ==========================
+// true_or_false
+// ==========================
+
+async getQuestionsByLevel(level: number) {
+    const { data, error } = await this.supabase
+      .from('true_or_false')
+      .select('*')
+      .eq('level', level);
+
+    if (error) throw error;
+    return data;
+  }
+
+
+// ==========================
+// geo-map
+// ==========================
+  /**
+   * Fetches geo map data for a specific level
+   * @param level The difficulty level to fetch data for
+   * @returns Array of geo map entries with id, value, and chooses
+   */
+  async getGeoMapByLevel(level: number): Promise<Array<{id: string, value: string, chooses: any[]}>> {
+    try {
+      const { data, error } = await this.supabase
+        .from('geo_map')
+        .select('*')
+        .eq('level', level);
+      
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching geo map data:', error);
+      return [];
+    }
+  }
+
 }
 

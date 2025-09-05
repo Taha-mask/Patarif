@@ -9,7 +9,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { ShopComponent } from './components/pages/shop/shop.component';
 import { CountryGuessingComponent } from './components/pages/games/country-guessing/country-guessing.component';
 import { LettersGameComponent } from './components/pages/games/letters-game/letters-game.component';
-import { FactGameComponent } from './components/pages/games/fact-game/index.js';
+import { FactGameComponent } from './components/pages/games/fact-game/fact-game.component';
 import { TomateStoryComponent } from './components/pages/learning/stories/tomate-story/tomate-story.component';
 import { CarotteStoryComponent } from './components/pages/learning/stories/carotte-story/carotte-story.component';
 import { BananeComponent } from './components/pages/learning/stories/banane/banane.component';

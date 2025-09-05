@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
 import { CelebrationComponent, CelebrationData } from '../../../game-template/celebration/celebration.component';
-
+import {GamesComponent} from '../games.component';
 // Core interfaces
 interface LetterTile {
   id: string;
@@ -61,7 +61,7 @@ const GAME_CONFIG = {
 @Component({
   selector: 'app-letters-game',
   standalone: true,
-  imports: [CommonModule, GameTemplateComponent, CelebrationComponent],
+  imports: [CommonModule, GameTemplateComponent, CelebrationComponent, GamesComponent],
   templateUrl: './letters-game.component.html',
   styleUrls: ['./letters-game.component.css']
 })

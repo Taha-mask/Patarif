@@ -1,11 +1,11 @@
 <app-game-template
   [level]="1"
-  [currentQuestion]="1"
+  [currentQuestion]="currentQuestion"
   [questionsCorrectInLevel]="questionsCorrectInLevel"
   [timeElapsed]="timeElapsed"
   [currentWord]="currentWord.correct || ''"
   [difficulty]="currentDifficulty"
-  [totalQuestions]="5"
+  [totalQuestions]="totalQuestions"
 >  
   <div class="game-layout">
     <div class="question-section">
@@ -94,4 +94,19 @@
 
 
   </div>
+  <app-celebration
+  [show]="showCelebration"
+  [nextLevel]="level + 1"
+  [data]="{
+    level: level,
+    questionsCorrect: questionsCorrectInLevel,
+    totalQuestions: totalQuestionsPerLevel,
+    timeElapsed: timeElapsed,
+    difficulty: currentDifficulty
+  }"
+  (close)="onCloseCelebration()"
+  (goToNext)="onNextLevel($event)">
+</app-celebration>
+
+
 </app-game-template>

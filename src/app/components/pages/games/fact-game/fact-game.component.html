@@ -1,11 +1,12 @@
 <app-game-template
   [level]="currentLevel"
-  [currentQuestion]="currentQuestion"
+  [currentQuestion]="currentQuestionIndex + 1"
   [questionsCorrectInLevel]="questionsCorrectInLevel"
   [timeElapsed]="timeElapsed"
-  [currentWord]="currentWord.correct || ''"
-  [difficulty]="currentDifficulty"
-  [totalQuestions]="5"
+  [currentWord]="currentCorrectAnswer"
+  [difficulty]="currentQuestion?.difficulty || 'easy'"
+  [totalQuestions]="QUESTIONS_PER_LEVEL[currentLevel] || 5"
+  [isLastQuestion]="currentQuestionIndex + 1 >= (QUESTIONS_PER_LEVEL[currentLevel] || 5)"
 >  
   <div class="game-layout">
     
@@ -13,7 +14,7 @@
     <div class="question-section">
       <div class="question-card">
         <h2 class="question-text">
-          {{ currentQuestionData.text }}
+          {{ currentQuestion.questionText }}
         </h2>
       </div>
     </div>
@@ -21,7 +22,7 @@
     <!-- ===== ANSWER SECTION ===== -->
     <div class="answer-section">
       <div class="answer-grid">
-        <div *ngFor="let option of currentQuestionData.options; let i = index" 
+        <div *ngFor="let option of currentQuestion.answers; let i = index" 
              class="option-btn"
              [ngClass]="{
                'selected': selectedAnswer === option.text && !answered,
@@ -72,14 +73,15 @@
       </div>
     </div>
 
+    <!-- Celebration Modal -->
+    <app-celebration
+      *ngIf="showCelebration"
+      [show]="showCelebration"
+      [data]="celebrationData"
+      (close)="showCelebration = false"
+      (goToNext)="onNextLevel($event)">
+    </app-celebration>
   </div>
 </app-game-template>
 
-<!-- Celebration Modal -->
-<app-celebration
-  *ngIf="showCelebration"
-  [show]="showCelebration"
-  [data]="celebrationData"
-  (close)="showCelebration = false"
-  (goToNext)="onNextLevel($event)">
-</app-celebration>
+

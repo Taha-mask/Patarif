@@ -1,7 +1,7 @@
 <app-game-template
   [level]="currentLevel"
   [questionsCorrectInLevel]="questionsCorrectInLevel"
-  [currentQuestion]="currentQuestion"
+  [currentQuestion]="currentQuestionNumber"
   [timeElapsed]="timeElapsed"
   [currentWord]="currentQuestionData?.correctAnswer || ''"
   [difficulty]="currentDifficulty"
@@ -71,12 +71,12 @@
                 [ngClass]="{'ready': selectedAnswer}">
           
           <span class="button-text">
-            {{ currentQuestion <= QUESTIONS_PER_LEVEL ? 'Question suivante' : 'Terminer le niveau' }}
+            {{ currentQuestionNumber <= QUESTIONS_PER_LEVEL ? 'Question suivante' : 'Terminer le niveau' }}
           </span>
           
           <div class="button-icon">
-            <i *ngIf="currentQuestion < QUESTIONS_PER_LEVEL" class="fas fa-arrow-right"></i>
-            <i *ngIf="currentQuestion >= QUESTIONS_PER_LEVEL" class="fas fa-flag-checkered"></i>
+            <i *ngIf="currentQuestionNumber < QUESTIONS_PER_LEVEL" class="fas fa-arrow-right"></i>
+            <i *ngIf="currentQuestionNumber >= QUESTIONS_PER_LEVEL" class="fas fa-flag-checkered"></i>
           </div>
         </button>
         

@@ -6,11 +6,13 @@ import { BackgroundComponent } from "../../background/background.component";
 import { LettersGameComponent } from "../../pages/games/letters-game/letters-game.component";
 // import { CountryGuessingComponent } from "../../games/country-guessing/country-guessing.component";
 // import { FactGameComponent } from "../../games/fact-game/fact-game.component";
+import { StarsBackgroundComponent } from "../../stars-background/stars-background.component";
+import { LinesBackgroundComponent } from "../../lines-background/lines-background.component";
 @Component({
   selector: 'app-games',
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.css'],
-  imports: [BackgroundComponent, CardsComponent],
+  imports: [BackgroundComponent, CardsComponent, StarsBackgroundComponent, LinesBackgroundComponent],
   standalone: true
 })
 export class GamesComponent {
