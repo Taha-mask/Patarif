@@ -4,7 +4,7 @@
   <div class="gradient-border-wrapper w-100">
     <div class="row shadow-lg overflow-hidden w-100">
 
-      <!-- Partie gauche -->
+      <!-- image -->
       <div
         class="left-side col-md-5 d-flex flex-column justify-content-center align-items-center text-white position-relative">
         <img src="images/signup-img.png" alt="Illustration Batarev" class="signup-img img-fluid" />
@@ -15,8 +15,8 @@
         </p>
       </div>
 
-      <!-- Partie droite (formulaire) -->
-      <div class="col-md-7 p-5">
+      <!-- form -->
+      <div class="col-md-7 p-5 px-3">
         <h2 class="account-header mb-4 fw-bold text-center">Créer un compte</h2>
         <form [formGroup]="regirster" (ngSubmit)="onSubmit()">
           <div class="mb-4 d-flex flex-column flex-md-row gap-3">
