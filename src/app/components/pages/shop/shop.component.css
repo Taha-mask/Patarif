@@ -108,7 +108,7 @@
     /* display: block; */
     font-family: var(--mainFont);
     font-weight: 900;
-    font-size: clamp(1.5rem, 3vw, 3rem);
+    font-size: clamp(1.1rem, 3vw, 3rem);
     color: #000;
     text-wrap: nowrap;
     text-align: left;

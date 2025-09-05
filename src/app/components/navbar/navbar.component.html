@@ -36,7 +36,7 @@
         <li><a routerLink="/games">Playground</a></li>
         <li><a routerLink="/shop">Shop</a></li>
         <li><a routerLink="/contact-us">contact</a></li>
-        <li class="logout"><a routerLink="/login">Logout</a></li>
+        <li class="logout" *ngIf="isLogged"><a routerLink="/login">Logout</a></li>
         <!-- <li><a routerLink="/characters">Characters</a></li> -->
       </ul>
     </div>
