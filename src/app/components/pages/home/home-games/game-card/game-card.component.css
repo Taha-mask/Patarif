@@ -1,8 +1,9 @@
 .card-container {
     position: relative;
-    width: 328px; 
+    width: 328px;
     height: 390px;
     overflow: visible;
+    border: 1px solid green;
 }
 
 /* Background */
@@ -15,9 +16,11 @@
     object-fit: cover;
     z-index: 0;
 }
-*{
+
+* {
     /* border: green 1px solid; */
 }
+
 /* Game Image */
 .game-image {
     position: absolute;
@@ -25,6 +28,8 @@
     width: 100%;
     height: auto;
     left: -55px;
+    border: 1px solid rgb(128, 0, 0);
+
 }
 
 /* Title */
@@ -58,7 +63,7 @@
     bottom: 0;
 }
 
-.start-home {   
+.start-home {
     border: 1px black solid;
     background: white;
     width: 100%;
@@ -109,9 +114,27 @@
 /* Rating (commented out for now) */
 .raiting {
     display: flex;
-    align-items: center; 
+    align-items: center;
     position: relative;
     top: 6px;
     z-index: 1000;
     /* justify-content: center; */
 }
+
+
+
+
+
+/* reposive */
+
+/* mobile*/
+
+@media (max-width: 480px) {
+    .card-container {
+        transform: scale(0.8);
+    }
+}
+
+/* tablet */
+
+@media (min-width: 481px) and (max-width: 1100px) {}
