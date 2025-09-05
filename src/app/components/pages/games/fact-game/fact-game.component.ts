@@ -8,7 +8,7 @@ import { SupabaseService } from '../../../../supabase.service';
 export interface FactQuestion {
   level: number;
   questionText: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: 'facile' | 'moyen' | 'difficile';
   answers: { text: string; isCorrect: boolean }[];
 }
 
@@ -20,21 +20,11 @@ export interface FactQuestion {
   styleUrls: ['./fact-game.component.css']
 })
 export class FactGameComponent implements OnInit, OnDestroy {
-  constructor(
-    private supabase: SupabaseService,
-    private router: Router
-  ) {}
+  constructor(private supabase: SupabaseService, private router: Router) {}
 
   // ===== GAME CONFIG =====
   readonly MAX_LEVEL = 5;
-  readonly QUESTIONS_PER_LEVEL: { [level: number]: number } = { 
-    1: 2, 
-    2: 5, 
-    3: 5,
-    4: 5,
-    5: 5
-  };
-
+  readonly QUESTIONS_PER_LEVEL = 5;
   // ===== GAME STATE =====
   currentLevel = 1;
   currentQuestionIndex = 0;
@@ -42,9 +32,9 @@ export class FactGameComponent implements OnInit, OnDestroy {
   questionsCorrectInLevel = 0;
   score = 0;
 
-  questionsByLevel: { [key: number]: FactQuestion[] } = {};
-  usedQuestions: { [key: number]: Set<string> } = {};
-
+  questionsByLevel: Record<number, FactQuestion[]> = {};
+  usedQuestions: Record<number, Set<string>> = {};
+  
   answered = false;
   answerStatus: string[] = [];
   selectedAnswer: string | null = null;
@@ -66,7 +56,7 @@ export class FactGameComponent implements OnInit, OnDestroy {
 
   // ---- LIFECYCLE ----
   async ngOnInit() {
-    this.startLevel();
+    await this.startLevel();
     this.startTimer();
   }
 
@@ -81,19 +71,20 @@ export class FactGameComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.currentQuestionIndex = 0;
     this.questionsCorrectInLevel = 0;
-
+  
     if (!this.usedQuestions[this.currentLevel]) this.usedQuestions[this.currentLevel] = new Set();
-
+  
     await this.loadQuestionsForLevel(this.currentLevel);
     this.setCurrentQuestion();
     this.isLoading = false;
-    this.startTime = Date.now();
+  
+    // إعادة ضبط التايمر لكل مستوى
+    this.resetTimer();
   }
-
-  async loadQuestionsForLevel(level: number) {
+  
+  private async loadQuestionsForLevel(level: number) {
     try {
       const data = await this.supabase.getQuestionsByLevel(level);
-
       this.questionsByLevel[level] = data.map((q: any) => ({
         level: q.level,
         questionText: q.question,
@@ -105,11 +96,12 @@ export class FactGameComponent implements OnInit, OnDestroy {
       }));
     } catch (err) {
       console.error('Error loading questions:', err);
+      // Fallback single question
       this.questionsByLevel[level] = [
         {
           level,
           questionText: 'A group of lions is called a pride.',
-          difficulty: 'easy',
+          difficulty: 'facile',
           answers: [
             { text: 'True', isCorrect: true },
             { text: 'False', isCorrect: false }
@@ -120,12 +112,11 @@ export class FactGameComponent implements OnInit, OnDestroy {
   }
 
   private setCurrentQuestion() {
-    const questions = this.questionsByLevel[this.currentLevel];
+    const questions = this.questionsByLevel[this.currentLevel] || [];
     const available = questions.filter(q => !this.usedQuestions[this.currentLevel].has(q.questionText));
 
-    if (available.length === 0) {
-      // جميع الأسئلة تم استخدامها → اكمل المستوى
-      this.showLevelCompleteScreen();
+    if (available.length === 0 || this.currentQuestionIndex >= this.QUESTIONS_PER_LEVEL) {
+      this.showLevelCompleteModal();
       return;
     }
 
@@ -162,54 +153,32 @@ export class FactGameComponent implements OnInit, OnDestroy {
 
   nextQuestion() {
     this.currentQuestionIndex++;
-    const maxQuestions = this.QUESTIONS_PER_LEVEL[this.currentLevel] || this.questionsByLevel[this.currentLevel].length;
-
-    if (this.currentQuestionIndex >= maxQuestions) {
-      this.showLevelCompleteScreen();
-    } else {
-      this.setCurrentQuestion();
-    }
+    this.setCurrentQuestion();
   }
-  showLevelCompleteScreen() {
+
+  private showLevelCompleteModal() {
     this.timeElapsed = Math.floor((Date.now() - this.startTime) / 1000);
     this.celebrationData = {
       level: this.currentLevel,
       questionsCorrect: this.questionsCorrectInLevel,
-      totalQuestions: this.QUESTIONS_PER_LEVEL[this.currentLevel] || this.questionsByLevel[this.currentLevel].length,
+      totalQuestions: this.QUESTIONS_PER_LEVEL,
       timeElapsed: this.timeElapsed,
-      difficulty: this.currentQuestion.difficulty
+      difficulty: this.currentQuestion?.difficulty || 'facile'
     };
     this.showCelebration = true;
-  
-    // الانتقال تلقائي بعد 2 ثانية
-    setTimeout(() => {
-      this.onNextLevel();
-    }, 2000); // يمكنك تغيير الوقت حسب الرغبة
   }
-  
 
-  async onNextLevel(nextLevel?: number) {
+  async onNextLevel(event: any) {
     this.showCelebration = false;
-    
-    if (nextLevel) {
-      this.currentLevel = nextLevel;
+
+    if (this.currentLevel < this.MAX_LEVEL) {
+      this.currentLevel++;
+      await this.startLevel();
     } else {
-      // Only increment level if we haven't reached the max level
-      if (this.currentLevel < this.MAX_LEVEL) {
-        this.currentLevel++;
-      } else {
-        // Game completed, go back to games list
-        this.router.navigate(['/games']);
-        return;
-      }
+      this.router.navigate(['/games']); // Game completed
     }
-    
-    this.currentQuestionIndex = 0;
-    this.questionsCorrectInLevel = 0;
-    this.startTime = Date.now();
-    await this.startLevel();
   }
-  
+
   // ========================
   // TIMER
   // ========================
@@ -221,6 +190,12 @@ export class FactGameComponent implements OnInit, OnDestroy {
   stopTimer() {
     if (this.timerInterval) clearInterval(this.timerInterval);
   }
+private resetTimer() {
+  this.stopTimer();
+  this.timeElapsed = 0;
+  this.startTime = Date.now();
+  this.startTimer();
+}
 
   // ========================
   // AUDIO
@@ -247,7 +222,6 @@ export class FactGameComponent implements OnInit, OnDestroy {
   }
 
   get isLastQuestion(): boolean {
-    const maxQuestions = this.QUESTIONS_PER_LEVEL[this.currentLevel] || this.questionsByLevel[this.currentLevel]?.length || 5;
-    return this.currentQuestionIndex + 1 >= maxQuestions;
+    return this.currentQuestionIndex + 1 >= this.QUESTIONS_PER_LEVEL;
   }
 }

@@ -4,9 +4,10 @@
   [questionsCorrectInLevel]="questionsCorrectInLevel"
   [timeElapsed]="timeElapsed"
   [currentWord]="currentCorrectAnswer"
-  [difficulty]="currentQuestion?.difficulty || 'easy'"
-  [totalQuestions]="QUESTIONS_PER_LEVEL[currentLevel] || 5"
-  [isLastQuestion]="currentQuestionIndex + 1 >= (QUESTIONS_PER_LEVEL[currentLevel] || 5)"
+  [difficulty]="currentQuestion?.difficulty || 'facile'"
+  [totalQuestions]="QUESTIONS_PER_LEVEL"
+[isLastQuestion]="currentQuestionIndex + 1 >= QUESTIONS_PER_LEVEL"
+
 >  
   <div class="game-layout">
     

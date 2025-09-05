@@ -1,28 +1,25 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { SupabaseService } from '../../../../supabase.service';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
 import { CelebrationComponent } from '../../../game-template/celebration/celebration.component';
 
-type GameDifficulty = 'easy' | 'medium' | 'hard';
+type GameDifficulty = 'facile' | 'moyen' | 'difficile';
 
 interface PointDef {
   id?: string;
   name: string;
   x: number;
   y: number;
-}
-
-interface CurrentWord {
-  difficulty: GameDifficulty;
-  correct: string;
+  chooses?: string[];
+  difficulty?: GameDifficulty;
 }
 
 @Component({
   selector: 'app-geo-quiz',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, CelebrationComponent, GameTemplateComponent],
+  imports: [CommonModule, HttpClientModule, GameTemplateComponent, CelebrationComponent],
   templateUrl: './geo-quiz.component.html',
   styleUrls: ['./geo-quiz.component.css']
 })
@@ -32,20 +29,17 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   // ===== GAME STATE =====
   loading = true;
   points: PointDef[] = [];
-  correctPoint?: PointDef;
+  currentQuestionIndex = 0;
+  currentQuestion!: PointDef;
   options: string[] = [];
-  questionsCorrectInLevel = 0;
-  currentQuestion = 1;
-  totalQuestions = 5;
   selectedAnswer: string | null = null;
   answerStatus: string[] = [];
   answered = false;
   score = 0;
-  attempts = 0;
-  feedback: { text: string; ok: boolean } | null = null;
-  currentDifficulty: GameDifficulty = 'easy';
-  currentWord: CurrentWord = { difficulty: 'easy', correct: '' };
   bonusPoints = 0;
+  feedback: { text: string; ok: boolean } | null = null;
+  level = 1;
+  showCelebration = false;
 
   // ===== SVG / MAP =====
   svgUrl = '/images/WorldMap_forTheGame.svg';
@@ -64,7 +58,7 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   private correctAudio = new Audio('/audio/correct.mp3');
   private wrongAudio = new Audio('/audio/wrong.mp3');
 
-  constructor(private http: HttpClient, private supabase: SupabaseService) {}
+  constructor(private http: HttpClient, private supabase: SupabaseService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.initializeGame();
@@ -79,23 +73,31 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   // =========================
   private async initializeGame(): Promise<void> {
     this.loading = true;
+    this.cdr.detectChanges();
     try {
       await this.loadSvg();
-      const maps = await this.supabase.getGeoMapByLevel(1);
+
+      const maps = await this.supabase.getGeoMapByLevel(this.level);
       this.points = maps.map(m => ({
         id: m.id,
-        name: m.value,
-        x: parseFloat(m.chooses?.[0] || '0'),
-        y: parseFloat(m.chooses?.[1] || '0')
+        name: m.value || '',
+        x: m.location[0] || 0,   // <-- استخدم الرقم مباشرة
+        y: m.location[1] || 0,   // <-- استخدم الرقم مباشرة
+        chooses: m.chooses || [],
+        difficulty: m.difficulty as GameDifficulty || 'facile'
       }));
+      
+      
 
-      this.resetQuestion();
+      this.currentQuestionIndex = 0;
+      this.setCurrentQuestion();
       this.startTimer();
     } catch (err) {
       console.error('Game initialization failed:', err);
       this.feedback = { text: 'Error loading game', ok: false };
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -112,89 +114,139 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   }
 
   // =========================
-  // QUESTION / GAME LOGIC
+  // QUESTION HANDLING
   // =========================
-  resetQuestion(): void {
-    this.answered = false;
-    this.selectedAnswer = null;
-    this.feedback = null;
-    this.bonusPoints = 0;
-    this.answerStatus = [];
-    this.correctPoint = this.pickRandomTarget();
-    this.options = this.generateOptions(this.correctPoint.name, 3);
-    this.currentWord = { difficulty: this.currentDifficulty, correct: this.correctPoint.name };
-    this.placeMarker(this.correctPoint.x, this.correctPoint.y);
-  }
-
-  selectAnswer(choice: string, index: number): void {
-    if (this.answered) return;
-    if (!this.correctPoint) return;
-
-    this.answered = true;
-    this.selectedAnswer = choice;
-    this.attempts++;
-
-    const isCorrect = choice.toLowerCase().trim() === this.correctPoint.name.toLowerCase().trim();
-    if (isCorrect) {
-      this.answerStatus[index] = 'correct';
-      this.score++;
-      this.questionsCorrectInLevel++;
-      this.bonusPoints = Math.max(0, 10 - Math.floor(this.timeElapsed / 10));
-      this.feedback = { text: '✅ Correct!', ok: true };
-      this.playCorrectSound();
-      
-      // Move to next question after delay
-      setTimeout(() => this.nextQuestion(), 1000);
+  private setCurrentQuestion(): void {
+    if (this.currentQuestionIndex < this.points.length) {
+      this.currentQuestion = this.points[this.currentQuestionIndex];
+      this.options = this.generateOptions(this.currentQuestion.name, 3);
+      this.placeMarker(this.currentQuestion.x, this.currentQuestion.y);
+      this.answered = false;
+      this.selectedAnswer = null;
+      this.feedback = null;
+      this.bonusPoints = 0;
+      this.answerStatus = [];
     } else {
-      this.answerStatus[index] = 'wrong';
-      this.feedback = { text: `❌ Wrong! Correct: ${this.correctPoint.name}`, ok: false };
-      this.playWrongSound();
-      
-      // Move to next question after delay
-      setTimeout(() => this.nextQuestion(), 1500);
+      // انتهت كل الأسئلة لهذا المستوى
+      this.showCelebration = true;
+      this.stopTimer();
     }
+  }
 
-    this.highlightCorrectPath();
+  /**
+ * Handles user answer selection and updates game state accordingly
+ * @param choice The selected answer text
+ * @param index The index of the selected answer in the options array
+ */
+selectAnswer(choice: string, index: number): void {
+  // Prevent multiple answers
+  if (this.answered || !this.currentQuestion || !this.options?.length) {
+    return;
+  }
+
+  this.answered = true;
+  this.selectedAnswer = choice;
+
+  // Normalize strings for comparison
+  const normalizedChoice = choice?.toLowerCase().trim() || '';
+  const normalizedCorrect = this.currentQuestion.name?.toLowerCase().trim() || '';
+  const isCorrect = normalizedChoice === normalizedCorrect;
+
+  // Update answer status for the selected option
+  this.answerStatus = [...this.answerStatus]; // Ensure change detection
+  this.answerStatus[index] = isCorrect ? 'correct' : 'wrong';
+
+  if (isCorrect) {
+    this.handleCorrectAnswer();
+  } else {
+    this.handleIncorrectAnswer(normalizedCorrect);
+  }
+
+  this.highlightCorrectPath();
+  this.cdr.detectChanges(); // Trigger change detection
+}
+
+/**
+ * Handles logic for correct answer
+ */
+private handleCorrectAnswer(): void {
+  this.score++;
+  this.bonusPoints = this.calculateBonusPoints();
+  this.feedback = { text: '✅ Correct!', ok: true };
+  this.playSound('correct');
+}
+
+/**
+ * Handles logic for incorrect answer
+ * @param normalizedCorrect The correct answer in normalized form
+ */
+private handleIncorrectAnswer(normalizedCorrect: string): void {
+  this.feedback = { 
+    text: `❌ Wrong! Correct: ${this.currentQuestion.name}`, 
+    ok: false 
+  };
+  this.playSound('wrong');
+  this.highlightCorrectOption(normalizedCorrect);
+}
+
+/**
+ * Highlights the correct answer option
+ * @param normalizedCorrect The correct answer in normalized form
+ */
+private highlightCorrectOption(normalizedCorrect: string): void {
+  const correctIndex = this.options.findIndex(
+    opt => (opt?.toLowerCase().trim() || '') === normalizedCorrect
+  );
+  
+  if (correctIndex >= 0) {
+    this.answerStatus[correctIndex] = 'correct';
+  }
+}
+
+/**
+ * Calculates bonus points based on time elapsed
+ * @returns The calculated bonus points
+ */
+private calculateBonusPoints(): number {
+  const timeBonus = 10 - Math.floor(this.timeElapsed / 10);
+  return Math.max(0, timeBonus);
+}
+
+/**
+ * Plays sound based on answer correctness
+ * @param type The type of sound to play ('correct' or 'wrong')
+ */
+private playSound(type: 'correct' | 'wrong'): void {
+  try {
+    const sound = type === 'correct' ? this.playCorrectSound() : this.playWrongSound();
+    sound?.catch(err => console.error('Error playing sound:', err));
+  } catch (error) {
+    console.error('Error in playSound:', error);
+  }
+}
+
+  nextQuestion(): void {
+    this.clearHighlight();
+  
+    this.currentQuestionIndex++;
+  
+    if (this.currentQuestionIndex >= this.points.length) {
+      // انتهت كل الأسئلة لهذا المستوى
+      this.showCelebration = true;
+      this.stopTimer();
+    } else {
+      this.setCurrentQuestion();
+    }
+  
+    this.cdr.detectChanges();
   }
   
-  // Alias for template compatibility
-  checkAnswer(choice: string, index: number): void {
-    this.selectAnswer(choice, index);
-  }
-  
-  // Alias for template compatibility
-  nextRound(): void {
-    this.nextQuestion();
-  }
-
- 
-
-  private pickRandomTarget(): PointDef {
-    if (this.points.length === 0) throw new Error('No points available');
-    return this.points[Math.floor(Math.random() * this.points.length)];
-  }
-
-  private generateOptions(correctName: string, distractorCount = 3): string[] {
-    const names = new Set<string>([correctName]);
-    const pool = this.points.map(p => p.name).filter(n => n !== correctName);
-
-    while (names.size <= distractorCount) {
-      if (pool.length === 0) break;
-      const idx = Math.floor(Math.random() * pool.length);
-      names.add(pool.splice(idx, 1)[0]);
-    }
-
-    const opts = Array.from(names);
-    return opts.sort(() => Math.random() - 0.5);
-  }
-
   // =========================
-  // SVG / MAP HANDLING
+  // SVG HANDLING
   // =========================
   private placeMarker(cx: number, cy: number): void {
     if (!this.svgEl) return;
     this.markerEl?.remove();
-
     const svgns = 'http://www.w3.org/2000/svg';
     const circle = document.createElementNS(svgns, 'circle');
     circle.setAttribute('cx', String(cx));
@@ -205,15 +257,14 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
     circle.setAttribute('stroke', '#fff');
     circle.setAttribute('stroke-width', '2');
     circle.style.cursor = 'pointer';
-
     this.svgEl.appendChild(circle);
     this.markerEl = circle;
   }
 
   private highlightCorrectPath(): void {
-    if (!this.usingPathMode || !this.svgEl || !this.correctPoint) return;
+    if (!this.usingPathMode || !this.svgEl || !this.currentQuestion) return;
     const paths = Array.from(this.svgEl.querySelectorAll<SVGPathElement>('path[id]'));
-    const found = paths.find(p => this.humanizeId(p.getAttribute('id') || '') === this.correctPoint!.name);
+    const found = paths.find(p => this.humanizeId(p.getAttribute('id') || '') === this.currentQuestion.name);
     if (found) {
       found.classList.add('country-highlight');
       this.highlightedPath = found;
@@ -233,6 +284,39 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   }
 
   // =========================
+  // HELPERS
+  // =========================
+  private generateOptions(correctName: string, distractorCount = 3): string[] {
+    const names = new Set<string>([correctName]);
+    const pool = this.points.map(p => p.name).filter(n => n !== correctName);
+    while (names.size <= distractorCount) {
+      if (pool.length === 0) break;
+      const idx = Math.floor(Math.random() * pool.length);
+      names.add(pool.splice(idx, 1)[0]);
+    }
+    const opts = Array.from(names);
+    return opts.sort(() => Math.random() - 0.5);
+  }
+
+  getOptionLetter(index: number): string {
+    return String.fromCharCode(65 + index);
+  }
+
+  formatTime(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  getQuestionNumber(): number {
+    return this.currentQuestionIndex + 1;
+  }
+
+  getTotalQuestions(): number {
+    return this.points.length;
+  }
+
+  // =========================
   // TIMER
   // =========================
   private startTimer(): void {
@@ -247,110 +331,73 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   // =========================
   // AUDIO
   // =========================
-  private playCorrectSound(): void {
-    this.correctAudio.currentTime = 0;
-    this.correctAudio.play().catch(() => {});
+  /**
+ * Plays the correct answer sound effect
+ * @returns Promise that resolves when sound starts playing, or rejects on error
+ */
+private async playCorrectSound(): Promise<void> {
+  return this.playAudio(this.correctAudio);
+}
+
+/**
+ * Plays the wrong answer sound effect
+ * @returns Promise that resolves when sound starts playing, or rejects on error
+ */
+private async playWrongSound(): Promise<void> {
+  return this.playAudio(this.wrongAudio);
+}
+
+/**
+ * Helper method to play audio with proper error handling
+ * @param audio The HTMLAudioElement to play
+ * @returns Promise that resolves when audio starts playing
+ */
+private async playAudio(audio: HTMLAudioElement): Promise<void> {
+  if (!audio) {
+    console.warn('Audio element not initialized');
+    return;
   }
 
-  private playWrongSound(): void {
-    this.wrongAudio.currentTime = 0;
-    this.wrongAudio.play().catch(() => {});
-  }
-
-  // =========================
-  // UI HELPERS
-  // =========================
-  getOptionLetter(index: number): string {
-    return String.fromCharCode(65 + index);
-  }
-
-  getLevelScorePercentage(): number {
-    return Math.round((this.score / 5) * 100);
-  }
-
-  getScoreMessage(): string {
-    const pct = this.getLevelScorePercentage();
-    if (pct === 100) return 'Parfait ! Expert en géographie !';
-    if (pct >= 80) return 'Excellent !';
-    if (pct >= 60) return 'Bon travail !';
-    if (pct >= 40) return 'Pas mal !';
-    return 'Continuez à vous entraîner !';
-  }
-
-  getDifficultyClass(): string {
-    return `difficulty-${this.currentWord.difficulty}`;
-  }
-
-  formatTime(seconds: number): string {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
-  }
-
-
-  // inside GeoQuizComponent
-level = 1;
-totalQuestionsPerLevel = 5;
-showCelebration = false;
-
-// called after user clicks "Next Question"
-nextQuestion(): void {
-  this.clearHighlight();
-  if (this.answered) {
-    // increment questions correct in level
-    if (this.selectedAnswer?.toLowerCase().trim() === this.correctPoint?.name.toLowerCase().trim()) {
-      this.questionsCorrectInLevel++;
+  try {
+    // Reset audio to start if it's already playing
+    if (!audio.paused) {
+      audio.pause();
+      audio.currentTime = 0;
     }
 
-    // Check if level is completed
-    this.checkLevelCompletion();
+    // Play the sound and handle potential autoplay restrictions
+    const playPromise = audio.play();
+    
+    if (playPromise !== undefined) {
+      await playPromise.catch(error => {
+        // Handle autoplay restrictions
+        if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
+          console.warn('Autoplay prevented. User interaction required to play sounds.');
+        } else {
+          console.error('Error playing audio:', error);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Unexpected error in playAudio:', error);
   }
-  
-  // reset question state for next
-  this.resetQuestion();
 }
 
-// Check if the current level is completed
-private checkLevelCompletion(): void {
-  if (this.questionsCorrectInLevel >= this.totalQuestionsPerLevel) {
-    // stop the timer
-    this.stopTimer();
-
-    // show celebration modal
-    this.showCelebration = true;
-  }
-}
-private resetTimer(): void {
-  this.stopTimer();
-  this.startTimer();
-}
-
-// Celebration modal handlers
-onCloseCelebration(): void {
-  this.showCelebration = false;
-}
-
-onNextLevel(level: number): void {
-  this.showCelebration = false;
-
-  if (level > 0) {
-    // Increase level and reset stats
+  // =========================
+  // CELEBRATION / NEXT LEVEL
+  // =========================
+  onNextLevel(level: number): void {
     this.showCelebration = false;
-
-    // زود المستوى +1 دايمًا
-    this.level += 1;
-  
-    // reset الحالة
-    this.questionsCorrectInLevel = 0;
-    this.currentQuestion = 1;
-    this.score = 0;
-    this.attempts = 0;
-    this.resetTimer();
-    this.resetQuestion();
-  } else {
-    // Game completed
-    console.log('Game completed!');
+    if (level > 0) {
+      this.level = level;
+      this.score = 0;
+      this.initializeGame();
+    } else {
+      console.log('Game completed!');
+    }
   }
-}
 
+  onCloseCelebration(): void {
+    this.showCelebration = false;
+  }
 }

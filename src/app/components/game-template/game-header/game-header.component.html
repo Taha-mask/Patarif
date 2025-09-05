@@ -2,7 +2,7 @@
 <div class="game-header">
     <div class="level-progress">
       <div class="level-info">
-        <span class="level-text">Level {{ level }}</span>
+        <span class="level-text">Niveau {{ level }}</span>
         <span class="progress-text">Question {{ currentQuestion }}/{{ totalQuestions }}</span>
       </div>
       <div class="progress-bar">
@@ -18,7 +18,7 @@
     </div>
     
     <div class="difficulty-badge" [ngClass]="getDifficultyClass()">
-      {{ difficulty.toUpperCase() }}
+      {{ getDifficultyInFrench() }}
     </div>
     
     

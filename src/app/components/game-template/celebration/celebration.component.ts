@@ -7,7 +7,7 @@ export interface CelebrationData {
   questionsCorrect: number;
   totalQuestions: number;
   timeElapsed: number;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: 'facile' | 'moyen' | 'difficile';
 }
 
 @Component({
@@ -61,4 +61,6 @@ export class CelebrationComponent implements OnChanges {
     const nextLevel = this.nextLevel > 0 ? this.nextLevel : 0;
     this.goToNext.emit(nextLevel);
   }
+
+  
 }

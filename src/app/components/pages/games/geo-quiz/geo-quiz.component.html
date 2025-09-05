@@ -1,29 +1,21 @@
 <app-game-template
-  [level]="1"
-  [currentQuestion]="currentQuestion"
-  [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [level]="level"
+  [currentQuestion]="currentQuestionIndex + 1"
+  [questionsCorrectInLevel]="currentQuestionIndex + 1"
   [timeElapsed]="timeElapsed"
-  [currentWord]="currentWord.correct || ''"
-  [difficulty]="currentDifficulty"
-  [totalQuestions]="totalQuestions"
+  [currentWord]="currentQuestion?.name || ''"
+  [difficulty]="currentQuestion?.difficulty || 'facile'"
+  [totalQuestions]="points.length"
 >  
   <div class="game-layout">
     <div class="question-section">
-      <div class="card-title">   
-          Le lieu sur la carte ?
-</div>
-</div>
-<!-- ===== TWO COLUMN LAYOUT ===== -->
+      <div class="card-title">Le lieu sur la carte ?</div>
+    </div>
+
     <div class="two-column-layout mt-3">
-      
-      <!-- ===== LEFT COLUMN - MAP ===== -->
       <div class="left-column">
         <div class="map-card">
-          <div #svgHost class="svg-container">
-
-          </div>
-          
-          <!-- Loading -->
+          <div #svgHost class="svg-container"></div>
           <div *ngIf="loading" class="loading-container">
             <div class="spinner-border text-primary" role="status"></div>
             <div class="loading-text mt-3">Chargement de la carte...</div>
@@ -31,12 +23,7 @@
         </div>
       </div>
 
-      <!-- ===== RIGHT COLUMN - QUESTION & OPTIONS ===== -->
       <div class="right-column">
-        
-   
-
-        <!-- Answer Section -->
         <div class="answer-section mb-3">
           <div class="answer-grid">
             <div *ngFor="let option of options; let i = index" 
@@ -47,20 +34,11 @@
                    'btn-danger': answered && answerStatus[i] === 'wrong',
                    'correct-answer': answered && answerStatus[i] === 'correct'
                  }"
-                 (click)="!answered && checkAnswer(option, i)">
+                 (click)="!answered && selectAnswer(option, i)">
               
               <div class="answer-content">
-                <!-- Option Badge (A, B, C, D) -->
-                <div class="option-badge">
-                  {{ getOptionLetter(i) }}
-                </div>
-                
-                <!-- Option Text -->
-                <div class="option-text">
-                  {{ option }}
-                </div>
-                
-                <!-- Result Icon -->
+                <div class="option-badge">{{ getOptionLetter(i) }}</div>
+                <div class="option-text">{{ option }}</div>
                 <div class="result-icon" *ngIf="answered">
                   <i *ngIf="answerStatus[i] === 'correct'" class="fas fa-check"></i>
                   <i *ngIf="answerStatus[i] === 'wrong'" class="fas fa-times"></i>
@@ -69,44 +47,34 @@
             </div>
           </div>
         </div>
-        
-      
-        <!-- Action Section -->
+
         <div class="action-section">
           <div class="action-card">
             <button class="game-btn" 
                     [disabled]="!answered" 
-                    (click)="nextRound()"
+                    (click)="nextQuestion()"
                     [ngClass]="{'ready': answered}">
-              
-              <span class="button-text">
-                Question suivante
-              </span>
-              
-              <div class="button-icon">
-                <i class="fas fa-arrow-right"></i>
-              </div>
+              <span class="button-text">Question suivante</span>
+              <div class="button-icon"><i class="fas fa-arrow-right"></i></div>
             </button>
           </div>
         </div>
       </div>
     </div>
-
-
   </div>
-  <app-celebration
-  [show]="showCelebration"
-  [nextLevel]="level + 1"
-  [data]="{
-    level: level,
-    questionsCorrect: questionsCorrectInLevel,
-    totalQuestions: totalQuestionsPerLevel,
-    timeElapsed: timeElapsed,
-    difficulty: currentDifficulty
-  }"
-  (close)="onCloseCelebration()"
-  (goToNext)="onNextLevel($event)">
-</app-celebration>
 
+  <app-celebration
+    [show]="showCelebration"
+    [nextLevel]="level + 1"
+    [data]="{
+      level: level,
+      questionsCorrect: score,
+      totalQuestions: points.length,
+      timeElapsed: timeElapsed,
+      difficulty: currentQuestion?.difficulty || 'facile'
+    }"
+    (close)="onCloseCelebration()"
+    (goToNext)="onNextLevel($event)">
+  </app-celebration>
 
 </app-game-template>

@@ -31,6 +31,15 @@ export class GameHeaderComponent {
     if (this.timeElapsed < 30) return 'time-warning';
     return 'time-danger';
   }
+
+  getDifficultyInFrench(): string {
+    switch(this.difficulty) {
+      case 'easy': return 'FACILE';
+      case 'medium': return 'MOYEN';
+      case 'hard': return 'DIFFICILE';
+      default: return (this.difficulty as string).toUpperCase();
+    }
+  }
   getDifficultyClass(): string {
     return `difficulty-${this.difficulty}`;
   }

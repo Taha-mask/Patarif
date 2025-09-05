@@ -477,7 +477,13 @@ async getQuestionsByLevel(level: number) {
    * @param level The difficulty level to fetch data for
    * @returns Array of geo map entries with id, value, and chooses
    */
-  async getGeoMapByLevel(level: number): Promise<Array<{id: string, value: string, chooses: any[]}>> {
+  async getGeoMapByLevel(level: number): Promise<Array<{
+    id: string;
+    value: string;
+    chooses: string[];
+    location: number[];
+    difficulty: string | null;
+  }>> {
     try {
       const { data, error } = await this.supabase
         .from('geo_map')
@@ -491,6 +497,62 @@ async getQuestionsByLevel(level: number) {
       return [];
     }
   }
+  
 
+  // ==========================
+// geo-map
+// ==========================
+
+
+async getEmojisQuestions(level: number) {
+  const { data, error } = await this.supabase
+    .from('guessing_emojis')
+    .select('*')
+    .eq('level', level);
+
+  if (error) {
+    console.error('Error fetching emojis questions:', error);
+    return [];
+  }
+
+  return data;
+}
+
+
+  // ==========================
+// sort letter
+// ==========================
+
+
+
+// في SupabaseService
+async getSortingLettersQuestions(level: number) {
+  const { data, error } = await this.supabase
+    .from('sorting_letters')
+    .select('*')
+    .eq('level', level);
+
+  if (error) {
+    console.error('Error fetching sorting letters questions:', error);
+    return [];
+  }
+  return data;
+}
+
+// ==========================
+// sentence sorting
+// ==========================
+async getSentenceSorting(level: number) {
+  const { data, error } = await this.supabase
+    .from('sentence_sorting')
+    .select('*')
+    .eq('level', level);
+
+  if (error) {
+    console.error('Error fetching sentence sorting questions:', error);
+    return [];
+  }
+  return data;
+}
 }
 

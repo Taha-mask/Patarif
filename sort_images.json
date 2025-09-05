@@ -1,0 +1,14 @@
+angular.json
+dist
+environment
+node_modules
+package.json
+package-lock.json
+public
+README.md
+sort_images.json
+src
+tsconfig.app.json
+tsconfig.json
+tsconfig.spec.json
+vercel.json

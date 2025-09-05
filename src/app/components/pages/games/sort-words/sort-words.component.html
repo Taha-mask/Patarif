@@ -1,80 +1,98 @@
 <app-game-template
+  [level]="level"
   [questionsCorrectInLevel]="questionsCorrectInLevel"
+  [totalQuestions]="questionsInLevel"
   [timeElapsed]="timeElapsed"
-  [currentWord]="currentWord?.correct || ''"
-  >
+  [currentWord]="currentWord.correct || ''"
+  [difficulty]="currentWord.difficulty"
+>
+
 
   <div class="container d-flex justify-content-center align-items-center py-4">
-   
     <div class="game-card">
-  <!-- ===== QUESTION SECTION ===== -->
-    <div class="question-section">
-      <div class="card-title">
-        Arrange the Sentence
+
+      <!-- ===== QUESTION SECTION ===== -->
+      <div class="question-section">
+        <div class="card-title">
+          Arrangez la phrase
+        </div>
       </div>
-    </div>
+
       <div class="card-body">
-        
-        <!-- Instructions -->
-        <!-- <p class="text-muted mb-4">Click on the words below to arrange them into a correct sentence</p> -->
-        
-        <!-- Shuffled Words -->
+
+        <!-- Mots mélangés -->
         <div class="mb-3 d-flex flex-wrap justify-content-center">
           <button 
             *ngFor="let word of shuffledWords; let i = index"
-            class="btn"
+            class="btn me-2 mb-2"
             (click)="selectWord(word)"
-            [attr.aria-label]="'Select word: ' + word">
+            [style.backgroundColor]="getColor(word)"
+            [attr.aria-label]="'Sélectionner le mot : ' + word">
             {{ word }}
           </button>
         </div>
-        
-        <!-- Selected Words -->
+
+        <!-- Mots sélectionnés -->
         <div class="selected-words mb-4">
           <div *ngIf="selectedWords.length === 0" class="text-muted h-100 d-flex align-items-center justify-content-center">
             <div class="text-center">
               <i class="bi bi-arrow-up-circle fs-1 d-block mb-2"></i>
-              <span>Click on the words above to build your sentence</span>
+              <span>Cliquez sur les mots ci-dessus pour former votre phrase</span>
             </div>
           </div>
-          <div *ngIf="selectedWords.length > 0" class="selected-sentence">
-            <button 
+          <div *ngIf="selectedWords.length > 0" class="selected-sentence d-flex flex-wrap">
+            <span 
               *ngFor="let word of selectedWords; let i = index" 
-              class="btn"
+              class="btn me-2 mb-2"
+              [style.backgroundColor]="getColor(word)"
+              [attr.aria-label]="'Mot sélectionné : ' + word"
               (click)="removeWord(word, i)"
-              [attr.aria-label]="'Remove word: ' + word">
+            >
               {{ word }}
-              <i class="bi bi-x ms-2"></i>
-            </button>
+              <i class="bi bi-x ms-1"></i>
+            </span>
           </div>
         </div>
-        
+
         <!-- Feedback -->
-        <div *ngIf="feedback" class="feedback" 
+        <div *ngIf="feedback" class="feedback mb-3" 
              [ngClass]="{'correct': isCorrect, 'wrong': !isCorrect}">
           <i class="bi" [ngClass]="isCorrect ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
-          {{ feedback }}
+          {{ isCorrect ? '✅ Correct!' : '❌ Faux!' }}
         </div>
+
+        <!-- Boutons d'action -->
+        <section class="action-section">
+          <div class="action-card">
+            <button 
+              class="game-btn" 
+              [disabled]="selectedWords.length === 0"
+              (click)="handleButton()"
+              [ngClass]="{'ready': selectedWords.length > 0}"
+            >
+              <span class="button-text">
+                {{ !feedback ? 'Vérifier' : (isCorrect ? (currentIndex < sentences.length - 1 ? 'Question suivante' : 'Terminer le niveau') : 'Réessayer') }}
+              </span>
+              <span class="button-icon">
+                <i *ngIf="!feedback" class="fas fa-check"></i>
+                <i *ngIf="feedback && isCorrect && currentIndex < sentences.length - 1" class="fas fa-arrow-right"></i>
+                <i *ngIf="feedback && isCorrect && currentIndex >= sentences.length - 1" class="fas fa-flag-checkered"></i>
+                <i *ngIf="feedback && !isCorrect" class="fas fa-redo"></i>
+              </span>
+            </button>
+          </div>
+        </section>
         
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <button class="game-btn " 
-                  (click)="checkAnswer()"
-                  [disabled]="selectedWords.length === 0"
-                  [class.btn-success]="isCorrect"
-                  [class.btn-danger]="feedback && !isCorrect">
-            <i class="bi bi-check-lg me-1"></i>
-            {{ isCorrect ? 'Correct!' : 'Check Answer' }}
-          </button>
-          
-          <button class="game-btn " 
-                  (click)="nextSentence()"
-                  *ngIf="isCorrect || feedback">
-            <i class="bi bi-arrow-right me-1"></i>
-            Next
-          </button>
-        </div>
+        
       </div>
     </div>
   </div>
 </app-game-template>
+
+<!-- Celebration Modal -->
+<app-celebration
+  [show]="showCelebration"
+  [data]="celebrationData"
+  (close)="onCloseCelebration()"
+  (goToNext)="onNextLevel()">
+</app-celebration>

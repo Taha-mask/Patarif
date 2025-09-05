@@ -11,7 +11,7 @@ interface Question {
   image: string;
   options: string[];
   correctAnswer: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: 'facile' | 'moyen' | 'difficile';
   level: number;
 }
 
@@ -61,8 +61,8 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
   questionsByLevel: { [key: number]: Question[] } = {};
   usedQuestionIndices: { [key: number]: number[] } = {};
 
-  get currentDifficulty(): 'easy' | 'medium' | 'hard' {
-    return this.currentQuestionData?.difficulty || 'easy';
+  get currentDifficulty(): 'facile' | 'moyen' | 'difficile' {
+    return this.currentQuestionData?.difficulty || 'facil';
   }
 
   // ====== LIFECYCLE ======
@@ -152,37 +152,85 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
         image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
         options: ['France', 'Italie', 'Espagne', 'Allemagne'],
         correctAnswer: 'France',
-        difficulty: 'easy',
+        difficulty: 'facile',
         level: this.currentLevel
       }];
     }
   }
 
+  /**
+   * Shuffles an array using Fisher-Yates algorithm
+   * @param array The array to shuffle
+   * @returns A new shuffled array
+   */
+  private shuffleArray<T>(array: T[]): T[] {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  }
+
+  /**
+   * Sets the current question by selecting a random unused question from the current level
+   * and shuffling its options
+   */
   private setCurrentQuestion(): void {
-    const questions = this.questionsByLevel[this.currentLevel];
-    if (!questions || questions.length === 0) {
-      console.warn('No questions available for this level');
+    try {
+      const questions = this.questionsByLevel[this.currentLevel];
+      
+      // Validate questions array
+      if (!questions?.length) {
+        console.warn('No questions available for this level');
+        this.completeLevel();
+        return;
+      }
+      
+      // Initialize used indices array for this level if it doesn't exist
+      if (!Array.isArray(this.usedQuestionIndices[this.currentLevel])) {
+        this.usedQuestionIndices[this.currentLevel] = [];
+      }
+      
+      const usedIndices = this.usedQuestionIndices[this.currentLevel];
+      
+      // Check if we've used all questions
+      if (usedIndices.length >= questions.length) {
+        console.warn('All questions used in this level');
+        this.completeLevel();
+        return;
+      }
+      
+      // Get available question indices
+      const availableIndices = questions
+        .map((_, index) => index)
+        .filter(index => !usedIndices.includes(index));
+      
+      // Select a random question from available ones
+      const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+      const selectedQuestion = questions[randomIndex];
+      
+      // Mark question as used
+      this.usedQuestionIndices[this.currentLevel].push(randomIndex);
+      
+      // Shuffle options while ensuring the correct answer is included
+      const shuffledOptions = this.shuffleArray(selectedQuestion.options);
+      
+      // Update current question data with shuffled options
+      this.currentQuestionData = {
+        ...selectedQuestion,
+        options: shuffledOptions
+      };
+      
+      // Reset answer state
+      this.selectedAnswer = null;
+      this.showResult = false;
+      this.isCorrect = false;
+      
+    } catch (error) {
+      console.error('Error setting current question:', error);
       this.completeLevel();
-      return;
     }
-  
-    // لو خلصت كل الأسئلة
-    if (this.usedQuestionIndices[this.currentLevel].length >= questions.length) {
-      console.warn('All questions used in this level');
-      this.completeLevel();
-      return;
-    }
-  
-    let randomIndex: number;
-    do {
-      randomIndex = Math.floor(Math.random() * questions.length);
-    } while (this.usedQuestionIndices[this.currentLevel].includes(randomIndex));
-  
-    this.usedQuestionIndices[this.currentLevel].push(randomIndex);
-    this.currentQuestionData = questions[randomIndex];
-  
-    this.selectedAnswer = null;
-    this.showResult = false;
   }
   
 

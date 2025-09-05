@@ -70,7 +70,7 @@ function makeQuestion(level: number): Question {
   selector: 'app-math-stairs',
   standalone: true,
   imports: [CommonModule, GameTemplateComponent],
-  templateUrl: './math-ladder.component.html',
+  templateUrl:'./math-ladder.component.html',
   styleUrls: ['./math-ladder.component.css']
 })
 export class MathLadderComponent {
