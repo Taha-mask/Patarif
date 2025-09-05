@@ -14,5 +14,4 @@ export class HomeGamesComponent {
   onCardClicked(arg0: string) {
     throw new Error('Method not implemented.');
   }
-
 }
