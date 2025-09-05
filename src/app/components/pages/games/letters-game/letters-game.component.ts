@@ -4,6 +4,7 @@ import { GameTemplateComponent } from '../../../game-template/game-template.comp
 import { CelebrationComponent, CelebrationData } from '../../../game-template/celebration/celebration.component';
 import { GamesComponent } from '../games.component';
 import { SupabaseService } from '../../../../supabase.service';
+import { AudioService } from '../../../../services/audio.service';
 
 // Interfaces
 interface LetterTile {
@@ -52,7 +53,7 @@ const GAME_CONFIG = {
   styleUrls: ['./letters-game.component.css']
 })
 export class LettersGameComponent implements OnInit, OnDestroy {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
 
   // ===== Game State =====
   private gameState = {
@@ -88,8 +89,7 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   private currentWordIndex: number = 0;
   private timer: any;
 
-  private correctSound: HTMLAudioElement | null = null;
-  private wrongSound: HTMLAudioElement | null = null;
+
 
   availableLetters: LetterTile[] = [];
   wordSlots: (LetterTile | null)[] = [];
@@ -120,21 +120,25 @@ export class LettersGameComponent implements OnInit, OnDestroy {
 
   // ===== Game Initialization =====
   private initializeGame(): void {
-    this.initializeAudio();
     this.startTimer();
     this.resetForNewWord();
   }
 
-  private initializeAudio(): void {
-    this.correctSound = new Audio('/audio/correct.mp3'); this.correctSound.preload = 'auto';
-    this.wrongSound = new Audio('/audio/wrong.mp3'); this.wrongSound.preload = 'auto';
-  }
 
   private cleanup(): void {
-    if (this.timer) clearInterval(this.timer);
-    if (this.correctSound) { this.correctSound.pause(); this.correctSound = null; }
-    if (this.wrongSound) { this.wrongSound.pause(); this.wrongSound = null; }
+    // إيقاف المؤقت
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  
+    // مع AudioService، مش محتاج توقف الأصوات هنا لأنها بتدار من الخدمة نفسها
+    // لو عايز تتأكد إن الصوت متوقف عند الخروج:
+    if (!this.audioService.soundEnabled) {
+      this.audioService.toggleSound(); // اختياري لإيقاف أي صوت شغال
+    }
   }
+  
 
   private startTimer(): void {
     if (!this.timer) this.timer = setInterval(() => { this.gameState.timeElapsed++; }, GAME_CONFIG.TIMER_INTERVAL);
@@ -225,13 +229,20 @@ export class LettersGameComponent implements OnInit, OnDestroy {
     this.gameStats.attempts++;
     const formedWord = this.wordSlots.map(slot => slot?.letter||'').join('');
     if (formedWord === this._currentWord.correct) {
-      this.stopTimer(); this.gameState.questionsCorrectInLevel++; this.showSuccess = true; this.playCorrectSound();
+      this.stopTimer(); 
+      this.gameState.questionsCorrectInLevel++; 
+      this.showSuccess = true; 
+      this.audioService.playCorrect();  // ✅ استخدم الخدمة
       setTimeout(() => { this.showSuccess = false; this.nextWord(); }, GAME_CONFIG.SUCCESS_DELAY);
     } else {
-      this.shakeAnimation = true; this.showWrong = true; this.playWrongSound(); this.gameStats.firstAttempt = false;
+      this.shakeAnimation = true; 
+      this.showWrong = true; 
+      this.audioService.playWrong();  // ✅ استخدم الخدمة
+      this.gameStats.firstAttempt = false;
       setTimeout(() => { this.shakeAnimation = false; this.showWrong = false; }, GAME_CONFIG.WRONG_MESSAGE_DURATION);
     }
   }
+  
 
   private nextWord() {
     this.currentWordIndex++;
@@ -276,7 +287,12 @@ export class LettersGameComponent implements OnInit, OnDestroy {
     this.gameState.showLevelCompleteModal = false;
   }
 
-  // ===== Audio =====
-  playCorrectSound() { if (this.correctSound) { this.correctSound.currentTime = 0; this.correctSound.play().catch(e=>console.error(e)); } }
-  playWrongSound() { if (this.wrongSound) this.wrongSound.play(); }
+
+  private playCorrectSound() {
+    this.audioService.playCorrect();
+  }
+
+  private playWrongSound() {
+    this.audioService.playWrong();
+  }
 }

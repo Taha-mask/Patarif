@@ -1,6 +1,9 @@
-import { Component, AfterViewInit, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
+import { SupabaseService, MatchEmojiItem } from '../../../../supabase.service';
+import { CelebrationComponent } from '../../../game-template/celebration/celebration.component';
+import { AudioService } from '../../../../services/audio.service';
 interface MatchItem {
   id: number;
   word: string;
@@ -18,57 +21,70 @@ interface Connection {
 @Component({
   selector: 'app-matchint-words',
   standalone: true,
-  imports: [CommonModule, GameTemplateComponent],
+  imports: [CommonModule, GameTemplateComponent, CelebrationComponent],
   templateUrl: './matchint-words.component.html',
   styleUrls: ['./matchint-words.component.css']
 })
 export class MatchintWordsComponent implements OnInit {
+  // Game items
   items: MatchItem[] = [];
   words: MatchItem[] = [];
   emojis: MatchItem[] = [];
   selectedWord: MatchItem | null = null;
   connections: Connection[] = [];
   feedback: string | null = null;
-  isCorrect: boolean | null = null;
   score: number = 0;
   gameComplete: boolean = false;
+  questionsCorrectInLevel: number = 0; // عدد الأسئلة الصحيحة في المستوى
   
   // Game template properties
-  questionsCorrectInLevel: number = 0;
+  level: number = 1;
+  questionsInLevel: number = 6; // total questions per level
+  currentQuestion: number = 1;
+  currentWord = { correct: '', difficulty: 'facile' as 'facile' | 'moyen' | 'difficile' };
   timeElapsed: number = 0;
-  currentWord = { correct: '' }; // Simplified type inference
-  bonusPoints: number = 0;
-  currentDifficulty: 'easy' | 'medium' | 'hard' = 'medium';
+  showCelebration: boolean = false;
+  celebrationData: any = null;
+  timerInterval: any;
 
-  // Audio for correct and wrong answers
-  private correctAudio: HTMLAudioElement;
-  private wrongAudio: HTMLAudioElement;
+ 
 
-  constructor() {
-    this.correctAudio = new Audio('/audio/correct.mp3');
-    this.wrongAudio = new Audio('/audio/wrong.mp3');
-    this.initializeGame();
+  constructor(private supabaseService: SupabaseService, private audioService: AudioService) {
+   
   }
 
-  ngOnInit() {
-    this.initializeGame();
+  async ngOnInit() {
+    await this.loadGameItems(this.level);
+    this.startTimer();
   }
 
-  initializeGame() {
-    // Sample data - you can expand this list
-    const gameItems = [
-      { id: 1, word: 'Cat', emoji: '🐱', matched: false },
-      { id: 2, word: 'Dog', emoji: '🐶', matched: false },
-      { id: 3, word: 'Apple', emoji: '🍎', matched: false },
-      { id: 4, word: 'Car', emoji: '🚗', matched: false },
-      { id: 5, word: 'Book', emoji: '📚', matched: false },
-      { id: 6, word: 'Sun', emoji: '☀️', matched: false },
-    ];
+  private startTimer() {
+    this.timerInterval = setInterval(() => {
+      this.timeElapsed++;
+    }, 1000);
+  }
 
-    // Shuffle the items
-    this.items = this.shuffleArray([...gameItems]);
-    
-    // Split into words and emojis
+  private stopTimer() {
+    clearInterval(this.timerInterval);
+  }
+
+  private async loadGameItems(level: number) {
+    const matchItems: MatchEmojiItem[] = await this.supabaseService.getMatchItems(level);
+    if (!matchItems || matchItems.length === 0) return;
+
+    const items: MatchItem[] = [];
+    matchItems.forEach((item, itemIndex) => {
+      item.emojis.forEach((e, index) => {
+        items.push({
+          id: itemIndex * 100 + index,
+          word: e.word,
+          emoji: e.emoji,
+          matched: false
+        });
+      });
+    });
+
+    this.items = this.shuffleArray(items);
     this.words = this.shuffleArray([...this.items]);
     this.emojis = this.shuffleArray([...this.items]);
   }
@@ -84,89 +100,87 @@ export class MatchintWordsComponent implements OnInit {
 
   selectWord(item: MatchItem) {
     if (item.matched) return;
-    
-    // If already selected, deselect
-    if (this.selectedWord === item) {
-      this.selectedWord = null;
-      return;
-    }
-    
-    this.selectedWord = item;
-    this.checkForMatch();
+    this.selectedWord = this.selectedWord === item ? null : item;
   }
 
   selectEmoji(item: MatchItem) {
-    if (item.matched || !this.selectedWord) return;
-    
-    // Check if this is a match
+    if (!this.selectedWord || item.matched) return;
+
     if (this.selectedWord.word === item.word && this.selectedWord.emoji === item.emoji) {
-      // It's a match!
       this.selectedWord.matched = true;
       item.matched = true;
-      
+      this.questionsCorrectInLevel++; // ← أضف هذا السطر
+
       this.connections.push({
         wordId: this.selectedWord.id,
         emojiId: item.id,
         word: this.selectedWord.word,
         emoji: item.emoji
       });
-      
+
       this.score += 10;
-      this.playCorrectSound(); // Play correct sound
+      this.currentQuestion++;
+      this.playCorrectSound();
       this.checkGameComplete();
     } else {
-      // Wrong match
       this.feedback = 'Try again!';
-      this.playWrongSound(); // Play wrong sound
-      setTimeout(() => {
-        this.feedback = null;
-      }, 1000);
+      this.playWrongSound();
+      setTimeout(() => { this.feedback = null; }, 1000);
       this.score = Math.max(0, this.score - 2);
     }
-    
-    this.selectedWord = null;
-  }
 
-  private checkForMatch() {
-    // This can be enhanced with visual feedback
+    this.selectedWord = null;
   }
 
   private checkGameComplete() {
-    if (this.items.every(item => item.matched)) {
+    if (this.items.every(i => i.matched)) {
       this.gameComplete = true;
-      this.feedback = '🎉 Congratulations! You matched everything correctly!';
-    } else {
-      this.feedback = 'Good job! Keep going!';
-      setTimeout(() => {
-        this.feedback = null;
-      }, 1000);
     }
   }
 
-  resetGame() {
-    this.connections = [];
-    this.feedback = null;
-    this.isCorrect = null;
-    this.selectedWord = null;
-    this.score = 0;
-    this.gameComplete = false;
-    this.initializeGame();
+    resetGame() {
+      this.stopTimer();
+      this.connections = [];
+      this.feedback = null;
+      this.selectedWord = null;
+      this.score = 0;
+      this.gameComplete = false;
+      this.timeElapsed = 0;
+      this.currentQuestion = 1;
+      this.questionsCorrectInLevel = 0; // ← يبدأ من جديد
+      this.loadGameItems(this.level);
+      this.startTimer();
+    
   }
 
-  // Play correct sound
+  openCelebration() {
+    this.stopTimer();
+    this.celebrationData = {
+      level: this.level,
+      questionsCorrect: this.currentQuestion - 1,
+      totalQuestions: this.questionsInLevel,
+      timeElapsed: this.timeElapsed,
+      difficulty: this.currentWord.difficulty
+    };
+    this.showCelebration = true;
+  }
+
+  onCloseCelebration() {
+    this.showCelebration = false;
+  }
+
+  onNextLevel() {
+    this.level++;
+    this.resetGame();
+    this.showCelebration = false;
+  }
+
+
   private playCorrectSound() {
-    this.correctAudio.currentTime = 0;
-    this.correctAudio.play().catch(error => {
-      console.log('Audio playback failed:', error);
-    });
+    this.audioService.playCorrect();
   }
 
-  // Play wrong sound
   private playWrongSound() {
-    this.wrongAudio.currentTime = 0;
-    this.wrongAudio.play().catch(error => {
-      console.log('Audio playback failed:', error);
-    });
+    this.audioService.playWrong();
   }
-  }
-  
+}

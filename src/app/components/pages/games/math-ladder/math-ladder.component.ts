@@ -1,7 +1,7 @@
 import { Component, computed, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from "../../../game-template/game-template.component";
-
+import { AudioService } from "../../../../services/audio.service";
 type Op = '+' | '-' | '×' | '÷';
 
 interface Question {
@@ -88,12 +88,9 @@ export class MathLadderComponent {
   isWin = computed(() => this.step() >= this.totalSteps);
 
   // Audio for correct and wrong answers
-  private correctAudio: HTMLAudioElement;
-  private wrongAudio: HTMLAudioElement;
-
-  constructor() {
-    this.correctAudio = new Audio('/audio/correct.mp3');
-    this.wrongAudio = new Audio('/audio/wrong.mp3');
+ 
+  constructor(private audioService: AudioService) {
+   
     
     // كل ما نكسب: نزود المستوى شوية
     effect(() => {
@@ -104,19 +101,15 @@ export class MathLadderComponent {
   }
 
   // Play correct sound
+
+
+ 
   private playCorrectSound() {
-    this.correctAudio.currentTime = 0;
-    this.correctAudio.play().catch(error => {
-      console.log('Audio playback failed:', error);
-    });
+    this.audioService.playCorrect();
   }
 
-  // Play wrong sound
   private playWrongSound() {
-    this.wrongAudio.currentTime = 0;
-    this.wrongAudio.play().catch(error => {
-      console.log('Audio playback failed:', error);
-    });
+    this.audioService.playWrong();
   }
 
   pick(choice: number) {

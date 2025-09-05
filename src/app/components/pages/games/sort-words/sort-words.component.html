@@ -1,10 +1,12 @@
 <app-game-template
-  [level]="level"
-  [questionsCorrectInLevel]="questionsCorrectInLevel"
-  [totalQuestions]="questionsInLevel"
-  [timeElapsed]="timeElapsed"
-  [currentWord]="currentWord.correct || ''"
-  [difficulty]="currentWord.difficulty"
+[level]="level"
+[questionsCorrectInLevel]="questionsCorrectInLevel"
+[totalQuestions]="questionsInLevel"
+[currentWord]="currentWord.correct || ''"
+[difficulty]="currentWord.difficulty"
+[currentQuestion]="currentQuestion"
+
+[timeElapsed]="timeElapsed"
 >
 
 
@@ -96,3 +98,4 @@
   (close)="onCloseCelebration()"
   (goToNext)="onNextLevel()">
 </app-celebration>
+

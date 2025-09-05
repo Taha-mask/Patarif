@@ -4,7 +4,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { SupabaseService } from '../../../../supabase.service';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
 import { CelebrationComponent } from '../../../game-template/celebration/celebration.component';
-
+import { AudioService } from '../../../../services/audio.service';
 type GameDifficulty = 'facile' | 'moyen' | 'difficile';
 
 interface PointDef {
@@ -55,10 +55,9 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   private timerInterval: any;
 
   // ===== AUDIO =====
-  private correctAudio = new Audio('/audio/correct.mp3');
-  private wrongAudio = new Audio('/audio/wrong.mp3');
+ 
 
-  constructor(private http: HttpClient, private supabase: SupabaseService, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private supabase: SupabaseService, private cdr: ChangeDetectorRef, private audioService: AudioService) {}
 
   ngOnInit(): void {
     this.initializeGame();
@@ -219,7 +218,6 @@ private calculateBonusPoints(): number {
 private playSound(type: 'correct' | 'wrong'): void {
   try {
     const sound = type === 'correct' ? this.playCorrectSound() : this.playWrongSound();
-    sound?.catch(err => console.error('Error playing sound:', err));
   } catch (error) {
     console.error('Error in playSound:', error);
   }
@@ -331,23 +329,16 @@ private playSound(type: 'correct' | 'wrong'): void {
   // =========================
   // AUDIO
   // =========================
+
+
+  private playCorrectSound() {
+    this.audioService.playCorrect();
+  }
+
+  private playWrongSound() {
+    this.audioService.playWrong();
+  }
   /**
- * Plays the correct answer sound effect
- * @returns Promise that resolves when sound starts playing, or rejects on error
- */
-private async playCorrectSound(): Promise<void> {
-  return this.playAudio(this.correctAudio);
-}
-
-/**
- * Plays the wrong answer sound effect
- * @returns Promise that resolves when sound starts playing, or rejects on error
- */
-private async playWrongSound(): Promise<void> {
-  return this.playAudio(this.wrongAudio);
-}
-
-/**
  * Helper method to play audio with proper error handling
  * @param audio The HTMLAudioElement to play
  * @returns Promise that resolves when audio starts playing

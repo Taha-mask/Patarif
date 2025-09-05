@@ -5,7 +5,13 @@ import { environment } from '../../environment/environment';
 import { CartItem } from './services/data.service';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-
+// داخل SupabaseService
+export interface MatchEmojiItem {
+  id: string;
+  level: number;
+  difficulty?: string | null;
+  emojis: { word: string; emoji: string }[]; // كل عنصر فيه كلمة وإيموجي
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -554,5 +560,24 @@ async getSentenceSorting(level: number) {
   }
   return data;
 }
+
+
+
+async getMatchItems(level: number): Promise<MatchEmojiItem[]> {
+  const { data, error } = await this.supabase
+  .from<'match_emojis_with_words', any>('match_emojis_with_words')
+  .select('*')
+  .eq('level', level);
+
+return (data as MatchEmojiItem[]) || [];
+
+  if (error) {
+    console.error('Supabase fetch error:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
 }
 

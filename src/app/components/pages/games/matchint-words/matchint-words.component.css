@@ -4,6 +4,8 @@
   width: 100%;
   max-width: 900px;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-title {

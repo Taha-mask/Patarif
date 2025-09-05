@@ -7,8 +7,8 @@
     <button class="icon-btn" (click)="toggleMusic()" [class.playing]="isMusicPlaying">
       <img [src]="isMusicPlaying ? '/images/music.svg' : '/images/unmusic.svg'" alt="Music" />
     </button>
-    <button class="action-btn icon-btn">
-      <img src="/images/sound.svg"/>
+    <button class="action-btn icon-btn" (click)="toggleSound()" [class.muted]="!isSoundEnabled">
+      <img [src]="isSoundEnabled ? '/images/sound.svg' : '/images/mute.svg'" alt="Sound Effects"/>
     </button>
    </div>
     <button class="icon-btn exit" (click)="closeGame()">

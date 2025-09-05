@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
 import { SupabaseService } from '../../../../supabase.service';
 import { CelebrationComponent, CelebrationData } from '../../../game-template/celebration/celebration.component';
-
+import { AudioService } from '../../../../services/audio.service';
 interface Sentence {
   words: string[];
   difficulty?: 'facile' | 'moyen' | 'difficile';
@@ -27,6 +27,7 @@ export class SortWordsComponent implements OnInit, OnDestroy {
   wordColors: {[key: string]: string} = {};
 
   // Game state
+  currentQuestion = 1;
   questionsCorrectInLevel = 0;
   questionsInLevel = 5; // Number of questions per level
   timeElapsed = 0;
@@ -39,12 +40,9 @@ export class SortWordsComponent implements OnInit, OnDestroy {
   };
   private timer: any;
 
-  private correctAudio: HTMLAudioElement;
-  private wrongAudio: HTMLAudioElement;
 
-  constructor(private supabase: SupabaseService) {
-    this.correctAudio = new Audio('/audio/correct.mp3');
-    this.wrongAudio = new Audio('/audio/wrong.mp3');
+  constructor(private supabase: SupabaseService,private cd: ChangeDetectorRef, private audioService: AudioService) {
+    
   }
 
   async ngOnInit() {
@@ -134,11 +132,15 @@ export class SortWordsComponent implements OnInit, OnDestroy {
   }
 
   onNextLevel() {
-    this.level++;
-    this.questionsCorrectInLevel = 0;
+    this.level++;                  // زيادة المستوى
+    this.questionsCorrectInLevel = 0; // إعادة ضبط عداد الأسئلة
     this.showCelebration = false;
-    this.loadSentencesFromDB();
+    this.loadSentencesFromDB();    // تحميل أسئلة المستوى الجديد
+    this.currentIndex = 0;
+    this.loadSentence();
+    this.currentQuestion = 1;
   }
+  
 
   get celebrationData(): CelebrationData {
     return {
@@ -163,21 +165,20 @@ export class SortWordsComponent implements OnInit, OnDestroy {
     this.shuffledWords.push(word);
   }
 
+
   private playCorrectSound() {
-    this.correctAudio.currentTime = 0;
-    this.correctAudio.play().catch(console.error);
+    this.audioService.playCorrect();
   }
 
   private playWrongSound() {
-    this.wrongAudio.currentTime = 0;
-    this.wrongAudio.play().catch(console.error);
+    this.audioService.playWrong();
   }
-
   handleButton() {
     if (!this.feedback) {
       this.checkAnswer();
     } else if (this.isCorrect) {
       this.nextSentenceOrLevel();
+      this.currentQuestion++;
     } else {
       // الإجابة خاطئة → إعادة ترتيب الكلمات
       this.shuffledWords = this.shuffle([...this.sentences[this.currentIndex].words]);
@@ -196,7 +197,6 @@ export class SortWordsComponent implements OnInit, OnDestroy {
     if (isCorrect) {
       // زيادة عدد الأسئلة المكتملة
       this.questionsCorrectInLevel++;
-  
       this.playCorrectSound();
     } else {
       this.playWrongSound();

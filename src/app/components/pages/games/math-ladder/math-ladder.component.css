@@ -7,14 +7,6 @@
 .brand{ padding:.4rem .7rem; background:#ffb703; color:#3a2d0a; border-radius:999px; box-shadow:0 4px 0 #d99603; }
 .level{ padding:.3rem .6rem; background:rgba(255,255,255,.18); border-radius:999px; }
 
-.stage {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  height: 100%;
-  padding: 20px 24px;
-  box-sizing: border-box;
-}
 
 .ladder-container {
   width: 100%;
@@ -100,6 +92,18 @@ background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
   .choices {
     grid-template-columns: repeat(4, 1fr);
   }
+  .stage {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+    padding: 20px 24px;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+  }
+  
 }
 .choice{
   border:0; border-radius:16px; 
@@ -133,10 +137,36 @@ background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
 .game-wrap.win .question-card { 
   border: 4px solid #ffd166;
   animation: pulse 1.5s infinite;
+
 }
 
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.02); }
   100% { transform: scale(1); }
+}
+.stage {
+  display: flex;
+  flex-direction: row; /* الوضع العادي: أفقي */
+  gap: 44px;
+  height: 100%;
+  padding: 20px 24px;
+  box-sizing: border-box;
+}
+
+/* عناصر السلم والأسئلة */
+.ladder-container, .question-card {
+  flex: 1; /* ليملأ كل منهم نصف المساحة */
+}
+
+/* عند الشاشات الصغيرة */
+@media (max-width: 767px) {
+  .stage {
+    flex-direction: column; /* عمودي */
+    gap: 16px;
+  }
+
+  .ladder-container, .question-card {
+    width: 100%;
+  }
 }

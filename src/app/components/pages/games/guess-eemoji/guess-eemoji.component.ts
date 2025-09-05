@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { GameTemplateComponent } from "../../../game-template/game-template.component";
 import { SupabaseService } from '../../../../supabase.service';
 import { CelebrationComponent, CelebrationData } from '../../../game-template/celebration/celebration.component';
+import { AudioService } from '../../../../services/audio.service';
 
 interface Question {
   id: string;
@@ -39,15 +40,12 @@ export class GuessEemojiComponent implements OnInit, OnDestroy {
   readonly QUESTIONS_PER_LEVEL = 5;
   private timer: any;
 
-  // Audio
-  private correctAudio = new Audio('/audio/correct.mp3');
-  private wrongAudio = new Audio('/audio/wrong.mp3');
-
+  
   // Celebration modal
   showCelebration = false;
   celebrationData: CelebrationData | null = null;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
 
   ngOnInit() {
     this.loadQuestions(this.level);
@@ -153,16 +151,16 @@ public nextQuestion() {
     this.timer = setInterval(() => this.timeElapsed++, 1000);
   }
 
+ 
+
   private playCorrectSound() {
-    this.correctAudio.currentTime = 0;
-    this.correctAudio.play().catch(err => console.log('Audio failed', err));
+    this.audioService.playCorrect();
   }
 
   private playWrongSound() {
-    this.wrongAudio.currentTime = 0;
-    this.wrongAudio.play().catch(err => console.log('Audio failed', err));
+    this.audioService.playWrong();
   }
-
+  
   getOptionLetter(index: number): string {
     return String.fromCharCode(65 + index);
   }

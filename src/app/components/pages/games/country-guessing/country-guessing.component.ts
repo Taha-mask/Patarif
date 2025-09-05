@@ -5,6 +5,7 @@ import { trigger, style, animate, transition } from '@angular/animations';
 import { GameTemplateComponent } from '../../../game-template/game-template.component';
 import { CelebrationComponent } from '../../../game-template/celebration/celebration.component';
 import { SupabaseService } from '../../../../supabase.service';
+import { AudioService } from '../../../../services/audio.service';
 
 // ====== TYPES ======
 interface Question {
@@ -34,8 +35,15 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
   // ====== GAME CONFIGURATION ======
   readonly QUESTIONS_PER_LEVEL = 5;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
 
+  private playCorrectSound() {
+    this.audioService.playCorrect();
+  }
+
+  private playWrongSound() {
+    this.audioService.playWrong();
+  }
   // ====== GAME STATE ======
   currentLevel = 1;
   currentQuestionIndex = 0;

@@ -3,7 +3,6 @@
   [timeElapsed]="timeElapsed"
   [currentWord]="currentQuestion ? currentQuestion.correctAnswer.toString() : ''"
 > 
-  <div class="game-wrap" [class.win]="isWin()">
   <div class="hud">
     <!-- <img src="/images/logo-patarif.png" alt="logo" class="brand"> -->
   </div>
@@ -47,6 +46,6 @@
       </div>
     </div>
   </div>
-</div>
+
 
 </app-game-template>

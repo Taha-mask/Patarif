@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { GameTemplateComponent } from '../../../../components/game-template/game-template.component';
 import { CelebrationComponent, CelebrationData } from '../../../../components/game-template/celebration/celebration.component';
 import { SupabaseService } from '../../../../supabase.service';
+import { AudioService } from '../../../../services/audio.service';
 
 export interface FactQuestion {
   level: number;
@@ -20,8 +21,15 @@ export interface FactQuestion {
   styleUrls: ['./fact-game.component.css']
 })
 export class FactGameComponent implements OnInit, OnDestroy {
-  constructor(private supabase: SupabaseService, private router: Router) {}
+  constructor(private supabase: SupabaseService, private router: Router,private audioService: AudioService) {}
 
+  private playCorrectSound() {
+    this.audioService.playCorrect();
+  }
+
+  private playWrongSound() {
+    this.audioService.playWrong();
+  }
   // ===== GAME CONFIG =====
   readonly MAX_LEVEL = 5;
   readonly QUESTIONS_PER_LEVEL = 5;
@@ -48,10 +56,7 @@ export class FactGameComponent implements OnInit, OnDestroy {
   startTime = 0;
   timerInterval: any;
 
-  // ===== AUDIO =====
-  private correctAudio = new Audio('/audio/correct.mp3');
-  private wrongAudio = new Audio('/audio/wrong.mp3');
-
+ 
   isLoading = true;
 
   // ---- LIFECYCLE ----
@@ -200,15 +205,7 @@ private resetTimer() {
   // ========================
   // AUDIO
   // ========================
-  private playCorrectSound() {
-    this.correctAudio.currentTime = 0;
-    this.correctAudio.play().catch(() => {});
-  }
 
-  private playWrongSound() {
-    this.wrongAudio.currentTime = 0;
-    this.wrongAudio.play().catch(() => {});
-  }
 
   // ========================
   // HELPERS

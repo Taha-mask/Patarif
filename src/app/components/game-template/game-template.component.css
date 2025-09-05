@@ -13,12 +13,20 @@
   justify-content: end;
   margin-bottom: 12px;
   margin-right: 12px;}
-.btns img{
-background-color: #5EDC7D;
-padding:10px;
-border-radius: 18px;
-width: 50px;
-height: 50px;
+.btns .icon-btn img, .btns .action-btn img {
+  background-color: #5EDC7D;
+  padding: 10px;
+  border-radius: 18px;
+  width: 50px;
+  height: 50px;
+  transition: all 0.3s ease;
+}
+
+/* Style for muted sound button */
+.btns .action-btn.muted img {
+  background-color: #ff6b6b;
+  opacity: 0.7;
+  transform: scale(0.9);
 }
  .exit img{
   background-color: #ff0000;
