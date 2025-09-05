@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-type Difficulty = 'easy' | 'medium' | 'hard';
+type Difficulty = 'facile' | 'moyen' | 'difficile';
 
 @Component({
   selector: 'app-game-header',
@@ -16,7 +16,7 @@ export class GameHeaderComponent {
   @Input() currentQuestion: number = 1;
   @Input() timeElapsed: number = 0;
   @Input() currentWord: string = '';
-  @Input() difficulty: Difficulty = 'easy';
+  @Input() difficulty: Difficulty = 'facile';
   @Input() totalQuestions: number = 5;
 
   formatTime(seconds: number): string {
@@ -34,9 +34,9 @@ export class GameHeaderComponent {
 
   getDifficultyInFrench(): string {
     switch(this.difficulty) {
-      case 'easy': return 'FACILE';
-      case 'medium': return 'MOYEN';
-      case 'hard': return 'DIFFICILE';
+      case 'facile': return 'FACILE';
+      case 'moyen': return 'MOYEN';
+      case 'difficile': return 'DIFFICILE';
       default: return (this.difficulty as string).toUpperCase();
     }
   }

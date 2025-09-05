@@ -118,19 +118,7 @@ export class SortWordsComponent implements OnInit, OnDestroy {
     return this.wordColors[word];
   }
 
-  handleButton() {
-    if (!this.feedback) {
-      this.checkAnswer();
-    } else if (this.isCorrect) {
-      this.nextSentence(); // الإجابة صحيحة → انتقل للسؤال التالي
-    } else {
-      // الإجابة خاطئة → نعيد ترتيب الكلمات
-      this.shuffledWords = this.shuffle([...this.sentences[this.currentIndex].words]);
-      this.selectedWords = [];
-      this.feedback = null;
-      this.isCorrect = null;
-    }
-  }
+
   
   // Shuffle
   private shuffle(array: string[]): string[] {
@@ -185,35 +173,53 @@ export class SortWordsComponent implements OnInit, OnDestroy {
     this.wrongAudio.play().catch(console.error);
   }
 
-  private checkAnswer() {
-    const selectedSentence = this.selectedWords.join(' ');
-    const isCorrect = selectedSentence === this.currentWord.correct;
-    this.isCorrect = isCorrect;
-    this.feedback = isCorrect ? 'Correct!' : 'Try again!';
-
-    if (isCorrect) {
-      this.questionsCorrectInLevel++;
-      this.correctAudio.play();
-      
-      // Check if level is completed
-      if (this.questionsCorrectInLevel >= this.questionsInLevel) {
-        this.showCelebration = true;
-      }
+  handleButton() {
+    if (!this.feedback) {
+      this.checkAnswer();
+    } else if (this.isCorrect) {
+      this.nextSentenceOrLevel();
     } else {
-      this.wrongAudio.play();
-    }
-  }
-
-  nextSentence() {
-    if (this.currentIndex < this.sentences.length - 1) {
-      this.currentIndex++;
-      this.loadSentence();
-    } else {
-      // نهاية المستوى
-      this.showCelebration = true;
+      // الإجابة خاطئة → إعادة ترتيب الكلمات
+      this.shuffledWords = this.shuffle([...this.sentences[this.currentIndex].words]);
+      this.selectedWords = [];
+      this.feedback = null;
+      this.isCorrect = null;
     }
   }
   
- 
+  private checkAnswer() {
+    const selectedSentence = this.selectedWords.join(' ');
+    const isCorrect = selectedSentence.trim() === this.currentWord.correct.trim();
+    this.isCorrect = isCorrect;
+    this.feedback = isCorrect ? 'Correct!' : 'Try again!';
+  
+    if (isCorrect) {
+      // زيادة عدد الأسئلة المكتملة
+      this.questionsCorrectInLevel++;
+  
+      this.playCorrectSound();
+    } else {
+      this.playWrongSound();
+    }
+  }
+  
+  private nextSentenceOrLevel() {
+    if (this.questionsCorrectInLevel >= this.questionsInLevel) {
+      // انتهاء المستوى
+      this.showCelebration = true;
+    } else {
+      // الانتقال للسؤال التالي
+      if (this.currentIndex < this.sentences.length - 1) {
+        this.currentIndex++;
+        this.loadSentence();
+      }
+    }
+  
+    // إعادة ضبط الحالة
+    this.feedback = null;
+    this.isCorrect = null;
+    this.selectedWords = [];
+  }
+  
   
 }

@@ -42,7 +42,7 @@ export class GameTemplateComponent implements OnInit, OnDestroy {
   @Input() timeElapsed: number = 0;
   @Input() currentWord: string = '';
   @Input() bonusPoints: number = 0;
-  @Input() difficulty: 'easy' | 'medium' | 'hard' = 'easy';
+  @Input() difficulty: 'facile' | 'moyen' | 'difficile' = 'facile';
   private _stars: number = 0;
   starsArray: {filled: boolean, animated: boolean}[] = [];
 
