@@ -6,7 +6,7 @@ import { GamesComponent } from '../games.component';
 import { SupabaseService } from '../../../../supabase.service';
 import { AudioService } from '../../../../services/audio.service';
 
-// Interfaces
+// Interfaces (unchanged)
 interface LetterTile {
   id: string;
   letter: string;
@@ -53,6 +53,10 @@ const GAME_CONFIG = {
   styleUrls: ['./letters-game.component.css']
 })
 export class LettersGameComponent implements OnInit, OnDestroy {
+  // === Set this to the ID of this game in your DB ===
+  // change this number to match the `game_id` for "letters" in your system
+  private readonly GAME_ID: number = 1;
+
   constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
 
   // ===== Game State =====
@@ -64,12 +68,56 @@ export class LettersGameComponent implements OnInit, OnDestroy {
     showLevelCompleteModal: false
   };
   loading: boolean = true;
-  async ngOnInit() {
-    this.loading = true;
-    await this.loadAllQuestions();
-    this.initializeGame();
-    this.loading = false;
+async ngOnInit() {
+  this.loading = true;
+
+  // 1) load all questions first (so we can check bounds against available questions)
+  await this.loadAllQuestions();
+
+  // 2) fetch saved progress for this player & game
+  try {
+    const progress = await this.supabaseService.getPlayerProgress(this.GAME_ID);
+
+    if (progress) {
+      // restore saved progress, but sanitize / clamp to valid ranges
+      const savedLevel = Math.max(1, progress.level || 1);
+      let savedQuestion = Math.max(1, progress.question_num || 1);
+
+      // If questions for that level don't exist or question index out of range, clamp to 1
+      const levelQuestions = this.questionsByLevel[savedLevel];
+      if (!levelQuestions || levelQuestions.length === 0) {
+        // fallback to level 1
+        this.gameState.level = 1;
+        this.gameState.currentQuestion = 1;
+        this.currentWordIndex = 0;
+      } else {
+        // clamp question to available questions count
+        if (savedQuestion > levelQuestions.length) savedQuestion = 1;
+        this.gameState.level = savedLevel;
+        this.gameState.currentQuestion = savedQuestion + 1;
+        this.currentWordIndex = Math.max(0, this.gameState.currentQuestion - 1);
+      }
+    } else {
+      // no saved progress -> create initial record (optional but recommended)
+      await this.supabaseService.savePlayerProgress(this.GAME_ID, 1, 1);
+      this.gameState.level = 1;
+      this.gameState.currentQuestion = 1;
+      this.currentWordIndex = 0;
+    }
+  } catch (err) {
+    console.error('Error while fetching/creating player progress:', err);
+    // fall back to defaults
+    this.gameState.level = 1;
+    this.gameState.currentQuestion = 1;
+    this.currentWordIndex = 0;
   }
+
+  // 3) initialize game (uses level & currentWordIndex set above)
+  this.initializeGame();
+
+  this.loading = false;
+}
+
   
   private async loadAllQuestions() {
     const totalLevels = 5;
@@ -88,8 +136,6 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   private _currentWord: GameWord | null = null;
   private currentWordIndex: number = 0;
   private timer: any;
-
-
 
   availableLetters: LetterTile[] = [];
   wordSlots: (LetterTile | null)[] = [];
@@ -111,32 +157,19 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   get isWordComplete(): boolean { return this.wordSlots.every(slot => slot !== null); }
 
   // ===== Lifecycle =====
- 
-
   ngOnDestroy(): void { this.cleanup(); }
 
-  // ===== Load questions from Supabase =====
-
-
-  // ===== Game Initialization =====
   private initializeGame(): void {
     this.startTimer();
     this.resetForNewWord();
   }
 
-
   private cleanup(): void {
-    // إيقاف المؤقت
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
-  
-    // مع AudioService، مش محتاج توقف الأصوات هنا لأنها بتدار من الخدمة نفسها
-    // لو عايز تتأكد إن الصوت متوقف عند الخروج:
-  
   }
-  
 
   private startTimer(): void {
     if (!this.timer) this.timer = setInterval(() => { this.gameState.timeElapsed++; }, GAME_CONFIG.TIMER_INTERVAL);
@@ -222,53 +255,73 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   }
 
   // ===== Game Logic =====
-  checkWord() {
+  async checkWord() {
     if (!this._currentWord) return;
     this.gameStats.attempts++;
     const formedWord = this.wordSlots.map(slot => slot?.letter||'').join('');
     if (formedWord === this._currentWord.correct) {
-      this.stopTimer(); 
-      this.gameState.questionsCorrectInLevel++; 
-      this.showSuccess = true; 
-      this.audioService.playCorrectSound();  // ✅ استخدم الخدمة
+      this.stopTimer();
+      this.gameState.questionsCorrectInLevel++;
+      this.showSuccess = true;
+      this.audioService.playCorrectSound();
+
+      // --- SAVE PROGRESS: only when it's the first attempt for this question ---
+      if (this.gameStats.firstAttempt) {
+        // don't block UI; fire-and-forget but log failures
+        this.supabaseService.savePlayerProgress(this.GAME_ID, this.gameState.level, this.gameState.currentQuestion)
+          .then(saved => {
+            if (!saved) console.warn('Failed to save player progress for game', this.GAME_ID);
+          }).catch(err => {
+            console.error('savePlayerProgress exception:', err);
+          });
+      }
+
       setTimeout(() => { this.showSuccess = false; this.nextWord(); }, GAME_CONFIG.SUCCESS_DELAY);
     } else {
-      this.shakeAnimation = true; 
-      this.showWrong = true; 
-      this.audioService.playWrongSound();  // ✅ استخدم الخدمة
+      this.shakeAnimation = true;
+      this.showWrong = true;
+      this.audioService.playWrongSound();
       this.gameStats.firstAttempt = false;
       setTimeout(() => { this.shakeAnimation = false; this.showWrong = false; }, GAME_CONFIG.WRONG_MESSAGE_DURATION);
     }
   }
-  
 
   private nextWord() {
+    // increment the question counter
+    this.gameState.currentQuestion++;
+
     this.currentWordIndex++;
     const currentLevelQuestions = this.questionsByLevel[this.gameState.level];
     if (this.currentWordIndex >= currentLevelQuestions.length) this.completeLevel();
     else this.resetForNewWord();
   }
 
-  private completeLevel() {
-    // Prepare celebration data with only the defined properties
-    this.celebrationData = {
-      level: this.gameState.level,
-      questionsCorrect: this.gameState.questionsCorrectInLevel,
-      totalQuestions: this.questionsByLevel[this.gameState.level]?.length || GAME_CONFIG.QUESTIONS_PER_LEVEL,
-      timeElapsed: this.gameState.timeElapsed,
-      difficulty: this.currentWord?.difficulty ||  'facile'
-    };
+private completeLevel() {
+  this.celebrationData = {
+    level: this.gameState.level,
+    questionsCorrect: this.gameState.questionsCorrectInLevel,
+    totalQuestions: this.questionsByLevel[this.gameState.level]?.length || GAME_CONFIG.QUESTIONS_PER_LEVEL,
+    timeElapsed: this.gameState.timeElapsed,
+    difficulty: this.currentWord?.difficulty ||  'facile'
+  };
 
-    this.gameState.showLevelCompleteModal = true;
+  this.gameState.showLevelCompleteModal = true;
 
-    // Prepare for the next level
-    this.gameState.level++;
-    this.currentWordIndex = 0;
+  // Prepare for the next level
+  this.gameState.level++;
+  this.currentWordIndex = 0;
+  this.gameState.currentQuestion = 1;
+  this.gameState.questionsCorrectInLevel = 0;
 
-    if (!this.questionsByLevel[this.gameState.level]) {
-      this.stopTimer();
-    }
+  // 🔥 Save start of new level
+  this.supabaseService.savePlayerProgress(this.GAME_ID, this.gameState.level, this.gameState.currentQuestion)
+    .catch(err => console.error('Failed to save new level start:', err));
+
+  if (!this.questionsByLevel[this.gameState.level]) {
+    this.stopTimer();
   }
+}
+
 
   // ===== Template Functions =====
   trackByLetterId(index: number, item: LetterTile): string { return item.id; }
@@ -284,7 +337,6 @@ export class LettersGameComponent implements OnInit, OnDestroy {
     this.resetForNewWord();
     this.gameState.showLevelCompleteModal = false;
   }
-
 
   private playCorrectSound() {
     this.audioService.playCorrectSound();

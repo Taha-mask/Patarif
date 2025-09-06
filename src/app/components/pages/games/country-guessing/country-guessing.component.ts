@@ -32,8 +32,10 @@ interface Question {
   ]
 })
 export class CountryGuessingComponent implements OnInit, OnDestroy {
-  // ====== GAME CONFIGURATION ======
+  // ====== CONFIG ======
   readonly QUESTIONS_PER_LEVEL = 5;
+  // set the DB game id for this game
+  private readonly GAME_ID = 2; // <-- change this to the correct game_id for country-guessing
 
   constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
 
@@ -46,8 +48,8 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
   }
   // ====== GAME STATE ======
   currentLevel = 1;
-  currentQuestionIndex = 0;
-  currentQuestionNumber = 1;
+  currentQuestionIndex = 0;     // index in the questions array for the current level
+  currentQuestionNumber = 1;    // 1-based question number within the level
   currentQuestionData!: Question;
 
   score = 0;
@@ -74,8 +76,54 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
   }
 
   // ====== LIFECYCLE ======
-  ngOnInit(): void {
-    this.initLevel();
+  async ngOnInit(): Promise<void> {
+    this.isLoading = true;
+
+    // 1) try to restore saved progress
+    try {
+      const progress = await this.supabaseService.getPlayerProgress(this.GAME_ID);
+      if (progress && progress.level && progress.level >= 1) {
+        // clamp level to at least 1
+        this.currentLevel = Math.max(1, progress.level);
+      } else {
+        this.currentLevel = 1;
+      }
+
+      // 2) load questions for the restored level
+      await this.loadQuestions();
+
+      // 3) restore question number & used indices if available
+      if (progress && typeof progress.question_num === 'number' && progress.question_num >= 1) {
+        // clamp question number to [1, QUESTIONS_PER_LEVEL]
+        let qnum = Math.max(1, Math.min(this.QUESTIONS_PER_LEVEL, progress.question_num));
+        this.currentQuestionNumber = qnum;
+        // reconstruct an approximate used-question set by randomly choosing (qnum - 1) indices
+        this.markRandomUsedIndices(this.currentLevel, qnum - 1);
+        // set the index for the current question (we'll pick a fresh one when setCurrentQuestion runs)
+        this.currentQuestionIndex = this.currentQuestionNumber - 1;
+      } else {
+        // no saved progress: create initial DB row and defaults
+        await this.supabaseService.savePlayerProgress(this.GAME_ID, 1, 1);
+        this.currentLevel = 1;
+        this.currentQuestionNumber = 1;
+        this.currentQuestionIndex = 0;
+        this.usedQuestionIndices[this.currentLevel] = [];
+      }
+    } catch (err) {
+      console.error('Error restoring player progress:', err);
+      // fallback to defaults
+      this.currentLevel = 1;
+      this.currentQuestionNumber = 1;
+      this.currentQuestionIndex = 0;
+      this.usedQuestionIndices[this.currentLevel] = [];
+      // try to create initial DB row (best-effort)
+      try { await this.supabaseService.savePlayerProgress(this.GAME_ID, 1, 1); } catch (_) {}
+    }
+
+    // 4) initialize UI for current question
+    this.setCurrentQuestion();
+    this.startTimer();
+    this.isLoading = false;
   }
 
   ngOnDestroy(): void {
@@ -102,18 +150,26 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
     this.stopTimer();
   }
 
-  completeLevel(): void {
+  async completeLevel(): Promise<void> {
     this.stopTimer();
     this.showLevelComplete = true;
 
     const timeBonus = Math.max(0, 300 - this.timeElapsed) * 2;
     this.bonusPoints = timeBonus;
     this.score += timeBonus;
+
+    // Save progress: move player to next level with question_num = 1
+    try {
+      const nextLevel = this.currentLevel + 1;
+      await this.supabaseService.savePlayerProgress(this.GAME_ID, nextLevel, 1);
+    } catch (err) {
+      console.warn('Failed to save progress on level completion:', err);
+    }
   }
 
   onNextLevel(): void {
     this.currentLevel++;
-    this.isLoading = true;   // 🔥 أظهر لودينج مباشرة
+    this.isLoading = true;   // 🔥 show loading immediately
     this.showLevelComplete = false;
     this.initLevel();
   }
@@ -181,93 +237,133 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Helper: mark `count` distinct random indices in usedQuestionIndices[level]
+   * This reconstructs previously-used questions approximately when restoring progress.
+   */
+  private markRandomUsedIndices(level: number, count: number): void {
+    const questions = this.questionsByLevel[level] || [];
+    const total = questions.length;
+    if (!this.usedQuestionIndices[level]) this.usedQuestionIndices[level] = [];
+    if (count <= 0 || total === 0) {
+      this.usedQuestionIndices[level] = [];
+      return;
+    }
+
+    const indices = Array.from({ length: total }, (_, i) => i);
+    // shuffle and pick first `count`
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    this.usedQuestionIndices[level] = indices.slice(0, Math.min(count, total));
+  }
+
+  /**
    * Sets the current question by selecting a random unused question from the current level
    * and shuffling its options
    */
   private setCurrentQuestion(): void {
     try {
       const questions = this.questionsByLevel[this.currentLevel];
-      
+
       // Validate questions array
       if (!questions?.length) {
         console.warn('No questions available for this level');
         this.completeLevel();
         return;
       }
-      
+
       // Initialize used indices array for this level if it doesn't exist
       if (!Array.isArray(this.usedQuestionIndices[this.currentLevel])) {
         this.usedQuestionIndices[this.currentLevel] = [];
       }
-      
+
       const usedIndices = this.usedQuestionIndices[this.currentLevel];
-      
+
       // Check if we've used all questions
       if (usedIndices.length >= questions.length) {
         console.warn('All questions used in this level');
         this.completeLevel();
         return;
       }
-      
+
       // Get available question indices
       const availableIndices = questions
         .map((_, index) => index)
         .filter(index => !usedIndices.includes(index));
-      
+
       // Select a random question from available ones
       const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
       const selectedQuestion = questions[randomIndex];
-      
+
       // Mark question as used
       this.usedQuestionIndices[this.currentLevel].push(randomIndex);
-      
+
       // Shuffle options while ensuring the correct answer is included
       const shuffledOptions = this.shuffleArray(selectedQuestion.options);
-      
+
       // Update current question data with shuffled options
       this.currentQuestionData = {
         ...selectedQuestion,
         options: shuffledOptions
       };
-      
+
       // Reset answer state
       this.selectedAnswer = null;
       this.showResult = false;
       this.isCorrect = false;
-      
+
     } catch (error) {
       console.error('Error setting current question:', error);
       this.completeLevel();
     }
   }
-  
 
-  nextQuestion(): void {
+  // ========================
+  // NAVIGATION
+  // ========================
+  async nextQuestion(): Promise<void> {
     this.currentQuestionNumber++;
     this.currentQuestionIndex++;
 
     if (this.currentQuestionNumber > this.QUESTIONS_PER_LEVEL) {
-      this.completeLevel();
+      // finished level
+      await this.completeLevel();
     } else {
+      // save progress: player is now on this.currentQuestionNumber for currentLevel
+      try {
+        // best-effort save, don't block UI
+        this.supabaseService.savePlayerProgress(this.GAME_ID, this.currentLevel, this.currentQuestionNumber)
+          .then(saved => { if (!saved) console.warn('Failed to save progress (nextQuestion)'); })
+          .catch(err => console.warn('savePlayerProgress error:', err));
+      } catch (err) {
+        console.warn('Error saving progress in nextQuestion:', err);
+      }
+
       this.setCurrentQuestion();
     }
   }
 
-  selectAnswer(option: string): void {
-    if (this.showResult) return;
+selectAnswer(option: string): void {
+  if (this.showResult) return;
 
-    this.selectedAnswer = option;
-    this.isCorrect = option === this.currentQuestionData.correctAnswer;
-    this.showResult = true;
+  this.selectedAnswer = option;
+  this.isCorrect = option === this.currentQuestionData.correctAnswer;
+  this.showResult = true;
 
-    if (this.isCorrect) {
-      this.playSound('/audio/correct.mp3', 1500);
-      this.score++;
-      this.questionsCorrectInLevel++;
-    } else {
-      this.playSound('/audio/wrong.mp3', 2000);
-    }
+  if (this.isCorrect) {
+    this.playSound('/audio/correct.mp3', 1500);
+    this.score++;
+    this.questionsCorrectInLevel++;
+
+    // 🔥 Save progress immediately on correct answer
+    this.supabaseService.savePlayerProgress(this.GAME_ID, this.currentLevel, this.currentQuestionNumber)
+      .catch(err => console.warn('Failed to save progress after correct answer:', err));
+  } else {
+    this.playSound('/audio/wrong.mp3', 2000);
   }
+}
+
 
   // ========================
   // HELPERS
