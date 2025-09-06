@@ -44,7 +44,9 @@ body {
     height: 100%;
     display: block;
 }
-
+.cover img{
+    width: 100vw;
+}
 .cover-title {
     margin-top: 6%;
     margin-left: 7%;
