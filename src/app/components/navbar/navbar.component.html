@@ -68,7 +68,7 @@
 
     <!-- Right Side (Search + Avatar) -->
     <div class="d-flex align-items-center gap-3 user-menu">
-      <i (click)="openSearch()" class="bi bi-search fs-5 search-icon"></i>
+      <i *ngIf="isLogged" (click)="openSearch()" class="bi bi-search fs-5 search-icon"></i>
 
       <div class="dropdown" [class.show]="menuOpen">
         <img *ngIf="isLogged" [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from "../../../game-template/game-template.component";
 import { AudioService } from "../../../../services/audio.service";
 import { CelebrationComponent, CelebrationData } from '../../../game-template/celebration/celebration.component';
+import { SupabaseService } from '../../../../supabase.service';
 
 type Op = '+' | '-' | '×' | '÷';
 
@@ -74,6 +75,9 @@ function genererQuestion(niveau: number, difficulte: 'facile' | 'moyen' | 'diffi
   styleUrls: ['./math-ladder.component.css']
 })
 export class MathLadderComponent implements OnInit, OnDestroy {
+  // <-- set this to your DB game_id for this game
+  private readonly GAME_ID = 8;
+
   totalMarches = 10;
   totalQuestions = 10; // إجمالي الأسئلة المطلوبة
   niveau = signal(1);
@@ -92,22 +96,60 @@ export class MathLadderComponent implements OnInit, OnDestroy {
 
   private timerInterval?: number;
 
-  constructor(private audioService: AudioService) {
+  // inject Supabase + audio
+  constructor(private supabase: SupabaseService, private audioService: AudioService) {
+    // effect to react to finishing the mini-game
     effect(() => {
       if (this.estGagne()) {
         this.stopTimer();
         this.afficherCelebration.set(true);
+
+        // best-effort: save progress moving the player to the next level
+        const nextLevel = this.niveau() + 1;
+        this.supabase.savePlayerProgress(this.GAME_ID, nextLevel, 1)
+          .then(saved => { if (!saved) console.warn('Failed to save progress on level completion'); })
+          .catch(err => console.warn('Error saving progress on completion:', err));
       }
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    // restore progress if available, then start
+    await this.restoreProgress();
     this.startTimer();
     this.updateDifficulty();
   }
 
   ngOnDestroy() {
     this.stopTimer();
+  }
+
+  private async restoreProgress(): Promise<void> {
+    try {
+      const progress = await this.supabase.getPlayerProgress(this.GAME_ID);
+      if (progress) {
+        // restore level and answered count
+        this.niveau.set(Math.max(1, progress.level || 1));
+        const qnum = Math.max(1, Number(progress.question_num || 1)); // question_num is 1-based
+        this.questionsRepondues.set(Math.max(0, qnum - 1)); // restore answered count
+
+        // approximate marche & correct answers from answered count (can't reconstruct exact correctness)
+        const approxMarche = Math.min(this.totalMarches, this.questionsRepondues());
+        this.marche.set(approxMarche);
+        this.questionsCorrectes = approxMarche;
+
+        // regenerate a question appropriate to restored level
+        this.updateDifficulty();
+        this.question.set(genererQuestion(this.niveau(), this.difficulteActuelle));
+      } else {
+        // no saved progress -> create initial row (best-effort)
+        await this.supabase.savePlayerProgress(this.GAME_ID, 1, 1);
+      }
+    } catch (err) {
+      console.error('Error restoring progress:', err);
+      // continue with defaults
+      try { await this.supabase.savePlayerProgress(this.GAME_ID, 1, 1); } catch (_) {}
+    }
   }
 
   private startTimer() {
@@ -147,7 +189,7 @@ export class MathLadderComponent implements OnInit, OnDestroy {
   private jouerSonCorrect() { this.audioService.playCorrectSound(); }
   private jouerSonFaux() { this.audioService.playWrongSound(); }
 
-  choisir(choix: number) {
+  async choisir(choix: number) {
     if (this.estBloque() || this.estGagne()) return;
     this.estBloque.set(true);
 
@@ -195,13 +237,23 @@ export class MathLadderComponent implements OnInit, OnDestroy {
         }, 2000);
       }
 
-      setTimeout(() => {
+      setTimeout(async () => {
         // إزالة تأثيرات الأزرار
         buttons.forEach(button => {
           button.classList.remove('correct', 'wrong');
         });
         if (!this.estGagne()) this.questionSuivante();
         this.estBloque.set(false);
+
+        // Save progress: questionsRepondues is updated; we save next-question number = answered + 1
+        try {
+          const nextQuestionNum = Math.min(this.totalQuestions, this.questionsRepondues() + 1);
+          this.supabase.savePlayerProgress(this.GAME_ID, this.niveau(), nextQuestionNum)
+            .then(saved => { if (!saved) console.warn('Failed to save progress (choisir)'); })
+            .catch(err => console.warn('savePlayerProgress error (choisir):', err));
+        } catch (err) {
+          console.warn('Error saving progress after answer:', err);
+        }
       }, 1000);
     } else {
       this.jouerSonFaux();
@@ -217,13 +269,23 @@ export class MathLadderComponent implements OnInit, OnDestroy {
         }, 600);
       }
       
-      setTimeout(() => {
+      setTimeout(async () => {
         // إزالة تأثيرات الأزرار
         buttons.forEach(button => {
           button.classList.remove('correct', 'wrong');
         });
         if (!this.estGagne()) this.questionSuivante();
         this.estBloque.set(false);
+
+        // Save progress even after wrong answer (we still advanced)
+        try {
+          const nextQuestionNum = Math.min(this.totalQuestions, this.questionsRepondues() + 1);
+          this.supabase.savePlayerProgress(this.GAME_ID, this.niveau(), nextQuestionNum)
+            .then(saved => { if (!saved) console.warn('Failed to save progress (choisir wrong)'); })
+            .catch(err => console.warn('savePlayerProgress error (choisir wrong):', err));
+        } catch (err) {
+          console.warn('Error saving progress after wrong answer:', err);
+        }
       }, 600);
     }
   }
@@ -242,6 +304,13 @@ export class MathLadderComponent implements OnInit, OnDestroy {
     this.updateDifficulty();
     this.startTimer();
     this.questionSuivante();
+
+    // save restart progress (best-effort)
+    try {
+      this.supabase.savePlayerProgress(this.GAME_ID, this.niveau(), 1)
+        .then(saved => { if (!saved) console.warn('Failed to save progress (recommencer)'); })
+        .catch(err => console.warn('savePlayerProgress error (recommencer):', err));
+    } catch (_) {}
   }
 
   fermerCelebration() {
@@ -253,5 +322,12 @@ export class MathLadderComponent implements OnInit, OnDestroy {
     this.niveau.set(this.niveau() + 1);
     this.updateDifficulty();
     this.recommencerJeu();
+
+    // ensure DB knows we're on the new level with question 1
+    try {
+      this.supabase.savePlayerProgress(this.GAME_ID, this.niveau(), 1)
+        .then(saved => { if (!saved) console.warn('Failed to save progress (niveauSuivant)'); })
+        .catch(err => console.warn('savePlayerProgress error (niveauSuivant):', err));
+    } catch (_) {}
   }
 }
