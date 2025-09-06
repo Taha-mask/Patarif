@@ -381,13 +381,17 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // Canvas operations
   clearCanvas(): void {
     if (confirm('Are you sure you want to clear the canvas?')) {
-      this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+      if (this.backgroundImage) {
+        this.drawBackgroundImage(); // ارسم الصورة فقط
+      } else {
+        this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+      }
       this.saveState();
     }
   }
+  
 
   downloadImage(): void {
     if (!this.isBrowser) return;
@@ -558,57 +562,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   isLoading = false;
   loadError = '';
 
-  private loadImageToCanvas(imageUrl: string): void {
-    if (!imageUrl) {
-      console.error('No image URL provided');
-      return;
-    }
-
-    this.isLoading = true;
-    this.loadError = '';
-    
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    
-    img.onload = () => {
-      try {
-        const canvas = this.canvasRef.nativeElement;
-        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Calculate dimensions to maintain aspect ratio
-        const hRatio = canvas.width / img.width;
-        const vRatio = canvas.height / img.height;
-        const ratio = Math.min(hRatio, vRatio, 1);
-        
-        const centerX = (canvas.width - img.width * ratio) / 2;
-        const centerY = (canvas.height - img.height * ratio) / 2;
-        
-        // Draw the image centered on the canvas
-        this.ctx.drawImage(
-          img, 
-          0, 0, img.width, img.height,
-          centerX, centerY, 
-          img.width * ratio, 
-          img.height * ratio
-        );
-        
-        this.saveState();
-      } catch (error) {
-        console.error('Error loading image:', error);
-        this.loadError = 'Failed to load the image. Please try another one.';
-      } finally {
-        this.isLoading = false;
-      }
-    };
-    
-    img.onerror = (error) => {
-      console.error('Image load error:', error);
-      this.loadError = 'Failed to load the image. Please check the URL and try again.';
-      this.isLoading = false;
-    };
-    
-    img.src = imageUrl;
-  }
+  
 
   // Cursor management
   private updateCursor(): void {
@@ -763,4 +717,35 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       window.removeEventListener('keydown', this.handleKeyDown.bind(this));
     }
   }
+
+  private backgroundImage: HTMLImageElement | null = null;
+
+private loadImageToCanvas(imageUrl: string): void {
+  const img = new Image();
+  img.crossOrigin = 'Anonymous';
+  img.onload = () => {
+    this.backgroundImage = img; // خزّن الصورة
+    this.drawBackgroundImage();
+    this.saveState();
+  };
+  img.src = imageUrl;
+}
+
+private drawBackgroundImage(): void {
+  if (!this.backgroundImage) return;
+  const canvas = this.canvasRef.nativeElement;
+  const ctx = this.ctx;
+
+  const img = this.backgroundImage;
+  const hRatio = canvas.width / img.width;
+  const vRatio = canvas.height / img.height;
+  const ratio = Math.min(hRatio, vRatio, 1);
+
+  const centerX = (canvas.width - img.width * ratio) / 2;
+  const centerY = (canvas.height - img.height * ratio) / 2;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // نظّف الكانفاس
+  ctx.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
+}
+
 }

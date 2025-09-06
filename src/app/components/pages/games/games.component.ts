@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardsComponent } from '../../cards/cards.component';
 import { Card } from '../../../interface/card';
@@ -8,6 +9,7 @@ import { LettersGameComponent } from "../../pages/games/letters-game/letters-gam
 // import { FactGameComponent } from "../../games/fact-game/fact-game.component";
 import { StarsBackgroundComponent } from "../../stars-background/stars-background.component";
 import { LinesBackgroundComponent } from "../../lines-background/lines-background.component";
+
 @Component({
   selector: 'app-games',
   templateUrl: './games.component.html',
@@ -17,6 +19,10 @@ import { LinesBackgroundComponent } from "../../lines-background/lines-backgroun
 })
 export class GamesComponent {
   constructor(private router: Router) {}
+
+  navigateTo(route: string) {
+    this.router.navigate([route]);
+  }
 
   onCardClick(event: {card: Card, index: number}) {
     // If first card is clicked, navigate to letters game
@@ -50,24 +56,20 @@ export class GamesComponent {
     else if (event.index === 8) {
       this.router.navigate(['/geo-quiz']);
     }
-    
-    // You can add more navigation logic for other cards here
   }
 
   cardSet1: Card[] = [
     {
-      title: 'Organiser les lettres\nArrange the letters!',
-      subtitle: 'Try now for free',
-      img: '/images/sort.png',
+      img: '/images/1111.jpg',
+      route: '/gallery'
     },
     {
-      title: 'Guess the Country\nIdentify countries!',
-      img: 'images/card-3.png',
+      img: 'images/2222.jpg',
+      route: '/games/math-ladder'
     },
     {
-      title: 'True or False?\nTest your knowledge!',
-      subtitle: 'Try now for free',
-      img: 'images/card-1.png',
+      img: 'images/3333.jpg',
+      route: '/games/geo-quiz'
     }
   ];
   cardSet2: Card[] = [

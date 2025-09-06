@@ -1,51 +1,59 @@
 <app-game-template
-  [questionsCorrectInLevel]="questionsCorrectInLevel"
-  [timeElapsed]="timeElapsed"
-  [currentWord]="currentQuestion ? currentQuestion.correctAnswer.toString() : ''"
-> 
+  [level]="niveau()"
+  [questionsCorrectInLevel]="questionsCorrectes"
+  [totalQuestions]="questionsCorrectes"
+  [currentWord]="question().reponse.toString()"
+  [difficulty]="difficulteActuelle"
+  [currentQuestion]="question().reponseCorrecte"
+  [timeElapsed]="tempsEcoule"
+>
+
   <div class="hud">
     <!-- <img src="/images/logo-patarif.png" alt="logo" class="brand"> -->
   </div>
 
   <div class="stage">
-    <!-- Ladder at the top -->
+    <!-- Échelle en haut -->
     <div class="ladder-container">
       <div class="ladder">
-        <img src="images/math-stairs/Stairs.png" alt="ladder">
-        <!-- Star at the top of the ladder -->
-        <!-- <img class="star" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="star"> -->
-        <!-- Boy character -->
+        <img src="images/math-stairs/Stairs.png" alt="échelle">
+        <!-- Personnage -->
         <img class="boy"
-             [style.--p]="(step()/totalSteps)"
+             [style.--p]="marche() / totalMarches"
              src="images/math-stairs/the_kid.png"
-             alt="boy">
+             alt="enfant">
       </div>
     </div>
 
-    <!-- Question card at the bottom -->
+    <!-- Carte de question en bas -->
     <div class="question-section">
-      <div class="question-card" [class.locked]="isLocked()">
+      <div class="question-card" [class.locked]="estBloque()">
         <div class="qtext">
-          {{ question().a }} {{ question().op }} {{ question().b }} = ؟
+          {{ question().a }} {{ question().op }} {{ question().b }} = ?
         </div>
 
         <div class="choices">
           <button class="choice"
-                  *ngFor="let c of question().choices"
-                  (click)="pick(c)">
+                  *ngFor="let c of question().choix"
+                  (click)="choisir(c)">
             {{ c }}
           </button>
         </div>
         <div class="actions">
-          <button class="game-btn" (click)="nextQuestion()" *ngIf="!isWin()">Skip</button>
-          <div class="win-box" *ngIf="isWin()">
-            أحسنت! أخذت النجمة ⭐
-            <button class="again" (click)="resetGame()">إعادة</button>
+          <button class="game-btn" (click)="questionSuivante()" *ngIf="!estGagne()">Passer</button>
+          <div class="win-box" *ngIf="estGagne()">
+            <button class="again" (click)="niveauSuivant()">Niveau suivant</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <app-celebration
+    [show]="afficherCelebration()"
+    [data]="donneesCelebration"
+    (close)="fermerCelebration()"
+    (goToNext)="niveauSuivant()">
+  </app-celebration>
 
 </app-game-template>

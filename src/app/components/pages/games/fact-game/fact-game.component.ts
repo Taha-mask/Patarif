@@ -24,11 +24,11 @@ export class FactGameComponent implements OnInit, OnDestroy {
   constructor(private supabase: SupabaseService, private router: Router,private audioService: AudioService) {}
 
   private playCorrectSound() {
-    this.audioService.playCorrect();
+    this.audioService.playCorrectSound();
   }
 
   private playWrongSound() {
-    this.audioService.playWrong();
+    this.audioService.playWrongSound();
   }
   // ===== GAME CONFIG =====
   readonly MAX_LEVEL = 5;

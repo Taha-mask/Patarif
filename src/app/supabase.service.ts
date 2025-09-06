@@ -580,4 +580,3 @@ return (data as MatchEmojiItem[]) || [];
 }
 
 }
-

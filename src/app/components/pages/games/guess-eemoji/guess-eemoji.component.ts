@@ -154,11 +154,11 @@ public nextQuestion() {
  
 
   private playCorrectSound() {
-    this.audioService.playCorrect();
+    this.audioService.playCorrectSound();
   }
 
   private playWrongSound() {
-    this.audioService.playWrong();
+    this.audioService.playWrongSound();
   }
   
   getOptionLetter(index: number): string {

@@ -38,11 +38,11 @@ export class CountryGuessingComponent implements OnInit, OnDestroy {
   constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
 
   private playCorrectSound() {
-    this.audioService.playCorrect();
+    this.audioService.playCorrectSound();
   }
 
   private playWrongSound() {
-    this.audioService.playWrong();
+    this.audioService.playWrongSound();
   }
   // ====== GAME STATE ======
   currentLevel = 1;

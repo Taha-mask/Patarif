@@ -1,47 +1,77 @@
 import { Injectable } from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AudioService {
-  private isSoundEnabled = true;
+  private audio: HTMLAudioElement | null = null;
+  private correctSound: HTMLAudioElement | null = null;
+  private wrongSound: HTMLAudioElement | null = null;
 
-  private correctSound = new Audio('/audio/correct.mp3');
-  private wrongSound = new Audio('/audio/wrong.mp3');
+  isMusicPlaying = false;
+  isSoundEnabled = true;
 
-  constructor() {
-    this.correctSound.volume = 0.7;
-    this.wrongSound.volume = 0.7;
+  init() {
+    if (!this.audio) {
+      this.audio = new Audio('/audio/Billie Eilish - WILDFLOWER (Official Lyric Video).mp3');
+      this.audio.loop = true;
+      this.audio.volume = 0.3;
+    }
+
+    if (!this.correctSound) {
+      this.correctSound = new Audio('/audio/correct.mp3');
+      this.correctSound.volume = 0.7;
+    }
+
+    if (!this.wrongSound) {
+      this.wrongSound = new Audio('/audio/wrong.mp3');
+      this.wrongSound.volume = 0.7;
+    }
   }
 
-  // Activer / désactiver les sons
+  toggleMusic() {
+    if (!this.audio) return;
+    if (this.isMusicPlaying) {
+      this.audio.pause();
+    } else {
+      this.audio.play().catch(e => console.error('Erreur lecture musique:', e));
+    }
+    this.isMusicPlaying = !this.isMusicPlaying;
+  }
+
   toggleSound() {
     this.isSoundEnabled = !this.isSoundEnabled;
-
     if (!this.isSoundEnabled) {
-      this.correctSound.pause();
+      this.correctSound?.pause();
+      if (this.correctSound) this.correctSound.currentTime = 0;
+
+      this.wrongSound?.pause();
+      if (this.wrongSound) this.wrongSound.currentTime = 0;
+    }
+  }
+
+  playCorrectSound() {
+    if (this.isSoundEnabled && this.correctSound) {
       this.correctSound.currentTime = 0;
-      this.wrongSound.pause();
+      this.correctSound.play().catch(e => console.error('Erreur son correct:', e));
+    }
+  }
+
+  playWrongSound() {
+    if (this.isSoundEnabled && this.wrongSound) {
       this.wrongSound.currentTime = 0;
+      this.wrongSound.play().catch(e => console.error('Erreur son incorrect:', e));
     }
   }
 
-  // Jouer le son "correct"
-  playCorrect() {
-    if (this.isSoundEnabled) {
-      this.correctSound.currentTime = 0;
-      this.correctSound.play().catch(() => {});
-    }
-  }
+  cleanup() {
+    this.audio?.pause();
+    this.audio = null;
 
-  // Jouer le son "faux"
-  playWrong() {
-    if (this.isSoundEnabled) {
-      this.wrongSound.currentTime = 0;
-      this.wrongSound.play().catch(() => {});
-    }
-  }
+    this.correctSound?.pause();
+    this.correctSound = null;
 
-  // Vérifier si le son est activé
-  get soundEnabled() {
-    return this.isSoundEnabled;
+    this.wrongSound?.pause();
+    this.wrongSound = null;
   }
 }

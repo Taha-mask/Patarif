@@ -332,11 +332,11 @@ private playSound(type: 'correct' | 'wrong'): void {
 
 
   private playCorrectSound() {
-    this.audioService.playCorrect();
+    this.audioService.playWrongSound();
   }
 
   private playWrongSound() {
-    this.audioService.playWrong();
+    this.audioService.playWrongSound();
   }
   /**
  * Helper method to play audio with proper error handling

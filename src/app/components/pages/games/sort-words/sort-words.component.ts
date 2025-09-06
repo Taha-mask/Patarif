@@ -167,11 +167,11 @@ export class SortWordsComponent implements OnInit, OnDestroy {
 
 
   private playCorrectSound() {
-    this.audioService.playCorrect();
+    this.audioService.playCorrectSound();
   }
 
   private playWrongSound() {
-    this.audioService.playWrong();
+    this.audioService.playWrongSound();
   }
   handleButton() {
     if (!this.feedback) {

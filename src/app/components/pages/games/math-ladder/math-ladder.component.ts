@@ -2,153 +2,147 @@ import { Component, computed, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from "../../../game-template/game-template.component";
 import { AudioService } from "../../../../services/audio.service";
+import { CelebrationComponent, CelebrationData } from '../../../game-template/celebration/celebration.component';
+
 type Op = '+' | '-' | '×' | '÷';
 
 interface Question {
   a: number;
   b: number;
   op: Op;
-  answer: number;
-  choices: number[];
-  correctAnswer: number; // Add this line
+  reponse: number;
+  choix: number[];
+  reponseCorrecte: number;
 }
 
-function makeQuestion(level: number): Question {
+function genererQuestion(niveau: number): Question {
   const ops: Op[] = ['+', '-', '×', '÷'];
-  // زوّد الصعوبة تدريجيًا مع المستوى
-  const max = Math.min(10 + level * 2, 99);
+  const max = Math.min(10 + niveau * 2, 99);
 
   const op = ops[Math.floor(Math.random() * ops.length)];
   let a = 1 + Math.floor(Math.random() * max);
   let b = 1 + Math.floor(Math.random() * Math.max(2, Math.floor(max / 2)));
-
-  let answer = 0;
+  let reponse = 0;
 
   switch (op) {
-    case '+': answer = a + b; break;
+    case '+': reponse = a + b; break;
     case '-':
       if (b > a) [a, b] = [b, a];
-      answer = a - b; 
+      reponse = a - b; 
       break;
     case '×':
       a = Math.floor(Math.random() * Math.min(12, max)) + 1;
       b = Math.floor(Math.random() * Math.min(12, max)) + 1;
-      answer = a * b; 
+      reponse = a * b; 
       break;
     case '÷':
-      // نولّد قسمة بدون كسور: (a*b) ÷ b = a
       a = Math.floor(Math.random() * Math.min(12, max)) + 2;
       b = Math.floor(Math.random() * Math.min(12, max)) + 2;
-      answer = a;
-      const dividend = a * b;
-      a = dividend;
-      // الآن السؤال: a ÷ b = answer
+      reponse = a;
+      a = a * b;
       break;
   }
 
-  // اختيارات متعددة (منها الصحيحة)
-  const choices = new Set<number>([answer]);
-  while (choices.size < 4) {
-    const wrongAnswer = answer + (Math.floor(Math.random() * 10) - 5);
-    if (wrongAnswer > 0 && wrongAnswer !== answer) {
-      choices.add(wrongAnswer);
-    }
+  const choix = new Set<number>([reponse]);
+  while (choix.size < 4) {
+    const faux = reponse + (Math.floor(Math.random() * 10) - 5);
+    if (faux > 0 && faux !== reponse) choix.add(faux);
   }
 
-  const choicesArray = Array.from(choices).sort(() => Math.random() - 0.5);
-  return {
-    a,
-    b,
-    op,
-    answer,
-    choices: choicesArray,
-    correctAnswer: answer
-  };
+  const tableauChoix = Array.from(choix).sort(() => Math.random() - 0.5);
+  return { a, b, op, reponse, choix: tableauChoix, reponseCorrecte: reponse };
 }
 
 @Component({
-  selector: 'app-math-stairs',
+  selector: 'app-math-ladder',
   standalone: true,
-  imports: [CommonModule, GameTemplateComponent],
-  templateUrl:'./math-ladder.component.html',
+  imports: [CommonModule, GameTemplateComponent, CelebrationComponent],
+  templateUrl: './math-ladder.component.html',
   styleUrls: ['./math-ladder.component.css']
 })
 export class MathLadderComponent {
-  // إعدادات اللعبة
-  totalSteps = 7;        // عدد درجات السلم للوصول للنجمة
-  level = signal(1);     // مستوى الصعوبة
-  step = signal(0);      // الدرجة الحالية (0..totalSteps)
-  questionsCorrectInLevel = 0;  // عدد الإجابات الصحيحة في المستوى الحالي
-  timeElapsed = 0;               // الوقت المنقضي بالثواني
-  currentDifficulty: 'easy' | 'medium' | 'hard' = 'easy'; // مستوى الصعوبة الحالي
+  totalMarches = 10;
+  niveau = signal(1);
+  marche = signal(0);
+  questionsCorrectes = 0;
+  tempsEcoule = 0;
+  difficulteActuelle: 'facile' | 'moyen' | 'difficile' = 'facile';
   
-  question = signal<Question>(makeQuestion(this.level()));
-  currentQuestion = this.question(); // Initialize after question signal
-  isLocked = signal(false);
-  isWin = computed(() => this.step() >= this.totalSteps);
+  question = signal<Question>(genererQuestion(this.niveau()));
+  estBloque = signal(false);
 
-  // Audio for correct and wrong answers
- 
+  afficherCelebration = signal(false);
+
+  estGagne = computed(() => this.marche() >= this.totalMarches);
+
   constructor(private audioService: AudioService) {
-   
-    
-    // كل ما نكسب: نزود المستوى شوية
     effect(() => {
-      if (this.isWin()) {
-        this.level.set(this.level() + 1);
+      if (this.estGagne()) {
+        this.afficherCelebration.set(true);
       }
     });
   }
 
-  // Play correct sound
-
-
- 
-  private playCorrectSound() {
-    this.audioService.playCorrect();
+  get donneesCelebration(): CelebrationData {
+    return {
+      level: this.niveau(),
+      questionsCorrect: this.questionsCorrectes,
+      totalQuestions: this.questionsCorrectes,
+      timeElapsed: this.tempsEcoule,
+      difficulty: this.difficulteActuelle
+    };
   }
 
-  private playWrongSound() {
-    this.audioService.playWrong();
+  private jouerSonCorrect() { this.audioService.playCorrectSound(); }
+  private jouerSonFaux() { this.audioService.playWrongSound(); }
+
+  choisir(choix: number) {
+    if (this.estBloque() || this.estGagne()) return;
+    this.estBloque.set(true);
+
+    const correct = choix === this.question().reponse;
+
+    if (correct) {
+      this.marche.set(Math.min(this.totalMarches, this.marche() + 1));
+      this.questionsCorrectes++;
+      this.jouerSonCorrect();
+
+      const enfant = document.querySelector('.boy');
+      enfant?.classList.add('jump');
+      setTimeout(() => enfant?.classList.remove('jump'), 500);
+
+      setTimeout(() => {
+        if (!this.estGagne()) this.questionSuivante();
+        this.estBloque.set(false);
+      }, 600);
+    } else {
+      this.jouerSonFaux();
+      setTimeout(() => {
+        this.questionSuivante();
+        this.estBloque.set(false);
+      }, 400);
+    }
   }
 
-  pick(choice: number) {
-  if (this.isLocked() || this.isWin()) return;
-  this.isLocked.set(true);
-
-  const correct = choice === this.question().answer;
-
-  if (correct) {
-    // نطلع درجة
-    this.step.set(Math.min(this.totalSteps, this.step() + 1));
-    this.playCorrectSound(); // Play correct sound
-
-    // نضيف كلاس jump للولد
-    const boyEl = document.querySelector('.boy');
-    boyEl?.classList.add('jump');
-    setTimeout(() => boyEl?.classList.remove('jump'), 500);
-
-    setTimeout(() => {
-      if (!this.isWin()) this.nextQuestion();
-      this.isLocked.set(false);
-    }, 600);
-  } else {
-    this.playWrongSound(); // Play wrong sound
-    setTimeout(() => {
-      this.nextQuestion();
-      this.isLocked.set(false);
-    }, 400);
-  }
-}
-
-
-  nextQuestion() {
-    this.question.set(makeQuestion(this.level()));
+  questionSuivante() {
+    this.question.set(genererQuestion(this.niveau()));
   }
 
-  resetGame() {
-    this.step.set(0);
-    this.isLocked.set(false);
-    this.nextQuestion();
+  recommencerJeu() {
+    this.marche.set(0);
+    this.questionsCorrectes = 0;
+    this.estBloque.set(false);
+    this.afficherCelebration.set(false);
+    this.questionSuivante();
+  }
+
+  fermerCelebration() {
+    this.afficherCelebration.set(false);
+    this.recommencerJeu();
+  }
+
+  niveauSuivant() {
+    this.niveau.set(this.niveau() + 1);
+    this.recommencerJeu();
   }
 }

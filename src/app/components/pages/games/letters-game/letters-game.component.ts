@@ -134,9 +134,7 @@ export class LettersGameComponent implements OnInit, OnDestroy {
   
     // مع AudioService، مش محتاج توقف الأصوات هنا لأنها بتدار من الخدمة نفسها
     // لو عايز تتأكد إن الصوت متوقف عند الخروج:
-    if (!this.audioService.soundEnabled) {
-      this.audioService.toggleSound(); // اختياري لإيقاف أي صوت شغال
-    }
+  
   }
   
 
@@ -232,12 +230,12 @@ export class LettersGameComponent implements OnInit, OnDestroy {
       this.stopTimer(); 
       this.gameState.questionsCorrectInLevel++; 
       this.showSuccess = true; 
-      this.audioService.playCorrect();  // ✅ استخدم الخدمة
+      this.audioService.playCorrectSound();  // ✅ استخدم الخدمة
       setTimeout(() => { this.showSuccess = false; this.nextWord(); }, GAME_CONFIG.SUCCESS_DELAY);
     } else {
       this.shakeAnimation = true; 
       this.showWrong = true; 
-      this.audioService.playWrong();  // ✅ استخدم الخدمة
+      this.audioService.playWrongSound();  // ✅ استخدم الخدمة
       this.gameStats.firstAttempt = false;
       setTimeout(() => { this.shakeAnimation = false; this.showWrong = false; }, GAME_CONFIG.WRONG_MESSAGE_DURATION);
     }
@@ -289,10 +287,10 @@ export class LettersGameComponent implements OnInit, OnDestroy {
 
 
   private playCorrectSound() {
-    this.audioService.playCorrect();
+    this.audioService.playCorrectSound();
   }
 
   private playWrongSound() {
-    this.audioService.playWrong();
+    this.audioService.playWrongSound();
   }
 }

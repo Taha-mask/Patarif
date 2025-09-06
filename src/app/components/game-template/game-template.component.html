@@ -1,23 +1,30 @@
 <div class="game-bg">
   <div class="top-icons px-3">
-   <div class="btns">
-    <button class="icon-btn" (click)="toggleFullScreen()">
-      <img src="/images/fullscreen.svg" />
-    </button>
-    <button class="icon-btn" (click)="toggleMusic()" [class.playing]="isMusicPlaying">
-      <img [src]="isMusicPlaying ? '/images/music.svg' : '/images/unmusic.svg'" alt="Music" />
-    </button>
-    <button class="action-btn icon-btn" (click)="toggleSound()" [class.muted]="!isSoundEnabled">
-      <img [src]="isSoundEnabled ? '/images/sound.svg' : '/images/mute.svg'" alt="Sound Effects"/>
-    </button>
-   </div>
+    <div class="btns">
+      <button class="icon-btn" (click)="toggleFullScreen()">
+        <img src="/images/fullscreen.svg" />
+      </button>
+
+      <!-- استخدام AudioService مباشرة -->
+      <button class="icon-btn" (click)="audioService.toggleMusic()" 
+              [class.playing]="audioService.isMusicPlaying">
+        <img [src]="audioService.isMusicPlaying ? '/images/music.svg' : '/images/unmusic.svg'" alt="Music" />
+      </button>
+
+      <button class="action-btn icon-btn" (click)="audioService.toggleSound()" 
+              [class.muted]="!audioService.isSoundEnabled">
+        <img [src]="audioService.isSoundEnabled ? '/images/sound.svg' : '/images/unsound.svg'" alt="Sound Effects"/>
+      </button>
+    </div>
+
     <button class="icon-btn exit" (click)="closeGame()">
       <img src="/images/close.svg" width="24" height="24"/>
     </button>
   </div>
+
   <div class="game-card p-4" 
-  #gameCard
-  [class.no-bg]="noCardBackground">
+       #gameCard
+       [class.no-bg]="noCardBackground">
 
     <app-game-header *ngIf="shouldShowGameHeader()"
       [level]="level"
@@ -25,14 +32,12 @@
       [currentQuestion]="currentQuestion || 1"
       [timeElapsed]="timeElapsed || 0"
       [difficulty]="difficulty || 'facile'"
-      [totalQuestions]="totalQuestions ||  5"
-    ></app-game-header>
+      [totalQuestions]="totalQuestions || 5">
+    </app-game-header>
 
     <div class="game-content" [class.no-bg]="nogamecontent">
-
       <ng-content></ng-content>
     </div>
 
-   
   </div>
 </div>

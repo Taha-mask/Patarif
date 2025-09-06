@@ -1,7 +1,8 @@
 export interface Card {
-  title: string;
+  title?: string;
   subtitle?: string;
   img: string;
+  route?: string;
 }
 
 export interface CharacterCard {
