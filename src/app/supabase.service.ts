@@ -579,4 +579,131 @@ return (data as MatchEmojiItem[]) || [];
   return data || [];
 }
 
+
+
+
+// --- supabase.service.ts (fixed versions) ---
+
+/** ensure a players row exists (upsert by email) */
+async upsertPlayer(email: string): Promise<boolean> {
+  try {
+    const { error } = await this.supabase
+      .from('players')
+      // pass an array of rows and a string onConflict
+      .upsert([{ email }], { onConflict: 'email' }); 
+
+    if (error) {
+      console.error('upsertPlayer error:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('upsertPlayer exception:', err);
+    return false;
+  }
+}
+
+/** fallback UUID v4 generator (keeps TypeScript safe if crypto.randomUUID unavailable) */
+private generateUUID(): string {
+  if (typeof (globalThis as any).crypto?.randomUUID === 'function') {
+    return (globalThis as any).crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+/**
+ * Upsert player_level for given player/email and game.
+ * - uses onConflict as a string 'player_id,game_id'
+ * - passes an array of rows to upsert to satisfy the typed overload
+ * - chains .select() if you want the row(s) returned
+ */
+async upsertPlayerLevel(gameId: number, level: number, questionNum: number): Promise<boolean> {
+  try {
+    const email = await this.getCurrentUserEmail();
+    if (!email) {
+      console.warn('upsertPlayerLevel: no logged-in user.');
+      return false;
+    }
+
+    // ensure player exists first
+    const ok = await this.upsertPlayer(email);
+    if (!ok) {
+      console.warn('upsertPlayerLevel: failed to ensure player row.');
+      // we continue (FK might still fail) but at least attempted
+    }
+
+    const uuid = this.generateUUID();
+
+    const payload = {
+      uuid,
+      player_id: email,
+      game_id: gameId,
+      level,
+      question_num: questionNum,
+      updated_at: new Date().toISOString()
+    };
+
+    // note: pass payload as array and onConflict as string
+    const { data, error } = await this.supabase
+      .from('player_level')
+      .upsert([payload], { onConflict: 'player_id,game_id' })
+      .select(); // .select() returns the inserted/updated rows
+
+    if (error) {
+      console.error('upsertPlayerLevel error:', error);
+      return false;
+    }
+    // optionally inspect `data` if you need the saved row
+    return true;
+  } catch (err) {
+    console.error('upsertPlayerLevel exception:', err);
+    return false;
+  }
+}
+
+/** convenience wrapper */
+async savePlayerProgress(gameId: number, level: number, questionNum: number): Promise<boolean> {
+  return this.upsertPlayerLevel(gameId, level, questionNum);
+}
+
+
+
+
+// Add to your Supabase service (near the other helper methods)
+
+async getPlayerProgress(gameId: number): Promise<{ level: number; question_num: number } | null> {
+  try {
+    const email = await this.getCurrentUserEmail();
+    if (!email) {
+      console.warn('getPlayerProgress: no logged-in user');
+      return null;
+    }
+
+    // maybeSingle() returns null when no row exists (Supabase JS v2).
+    // If your version doesn't support maybeSingle(), replace with .limit(1).single() and handle the not-found error.
+    const { data, error } = await this.supabase
+      .from('player_level')
+      .select('level,question_num')
+      .eq('player_id', email)
+      .eq('game_id', gameId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('getPlayerProgress error:', error);
+      return null;
+    }
+
+    if (!data) return null;
+    // ensure numbers
+    return { level: Number(data.level || 1), question_num: Number(data.question_num || 1) };
+  } catch (err) {
+    console.error('getPlayerProgress exception:', err);
+    return null;
+  }
+}
+
 }

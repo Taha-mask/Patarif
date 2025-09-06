@@ -35,7 +35,10 @@
   background-clip: padding-box;
   font-family: var(--comic);
 }
-
+button.btn.login{
+  background-color: var(--orane);
+  border: none;
+}
 .nav-link {
   border: 0.5px solid #00000063;
   color: #00000063;
@@ -118,14 +121,16 @@
   transform: scale(1.15) rotate(3deg);
 }
 
-.user-avatar {
+.user-avatar, .user-avatar-side {
   position: relative;
   /* border: 1px solid #FF006E; */
   transition: transform 0.3s ease;
   cursor: pointer;
   z-index: 1;
 }
-
+.user-avatar-side{
+  margin-right: 4%;
+}
 .user-avatar:hover {
   transform: scale(1.05) rotate(3deg);
   /* border: 1.5px solid #FF006E; */
@@ -159,6 +164,8 @@
     opacity: 0.45;
   }
 }
+
+
 
 .dropdown-menu {
   border-radius: 12px;
@@ -273,12 +280,24 @@
 .side-menu li.account {
   border: none;
 }
-.side-menu li.logout{
+
+.side-menu li.login {
+  background-color: var(--orane) ;
+  border: none;
+}
+
+.side-menu li.login a {
+  color: rgb(255, 255, 255);
+}
+
+.side-menu li.logout {
   border: red 1px solid;
 }
-.side-menu li.logout a{
+
+.side-menu li.logout a {
   color: red;
 }
+
 li.account img {
   width: 10%;
   height: 10%;
@@ -304,6 +323,9 @@ li.account span {
 
 /* Mobile*/
 @media (max-width: 576px) {
+  button.btn.login{
+    display: none;
+  }
   .user-avatar {
     display: none;
   }

@@ -38,6 +38,10 @@ body {
 
 }
 
+.cover img{
+    width: 100vw;
+}
+
 .background img {
     object-fit: cover;
     width: 100vw;
