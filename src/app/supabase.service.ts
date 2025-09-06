@@ -26,121 +26,123 @@ export class SupabaseService {
     return this.supabase;
   }
 
-  // ==========================
-  // Auth
-  // ==========================
+    // ==========================
+    // Auth
+    // ==========================
 
-  async getCurrentUserEmail(): Promise<string | null> {
-    const { data, error } = await this.supabase.auth.getUser();
+    async getCurrentUserEmail(): Promise<string | null> {
+      const { data, error } = await this.supabase.auth.getUser();
 
-    if (error || !data.user) {
-      console.error('No user logged in:', error?.message);
-      return null;
-    }
-
-    return data.user.email ?? null;
-  }
-
-  async getCurrentUserName(): Promise<string | null> {
-    const email = await this.getCurrentUserEmail();
-    if (!email) return null;
-
-    // Extract the part before "@"
-    return email.split('@')[0];
-  }
-
-  async getCurrentUser() {
-    const { data } = await this.supabase.auth.getUser();
-    return data.user;
-  }
-
-  async getSession() {
-    const { data } = await this.supabase.auth.getSession();
-    return data.session;
-  }
-
-  async signIn(email: string, password: string) {
-    const { data, error } = await this.supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) throw error;
-
-    const user = data.user;
-    if (!user) throw new Error('User not found');
-
-    const { data: profile, error: profileError } = await this.supabase
-      .from('profiles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single();
-
-    if (profileError) throw profileError;
-
-    return { ...data, isAdmin: profile.role === 'admin' };
-  }
-
-  signUp(email: string, password: string, firstName: string, lastName: string) {
-    return this.supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          display_name: `${firstName} ${lastName}`
-        }
-      }
-    });
-  }
-
-  // login with facebook
-
-  async signInWithFacebook() {
-    const { data, error } = await this.supabase.auth.signInWithOAuth({
-      provider: 'facebook',
-    });
-    if (error) throw error;
-    return data;
-  }
-
-
-  // login with Google
-  async signInWithGoogle() {
-    try {
-      const { data, error } = await this.supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/home`
-        }
-      });
-
-      if (error) {
-        console.error('Error:', error.message);
+      if (error || !data.user) {
+        console.error('No user logged in:', error?.message);
         return null;
       }
 
-      return data;
-    } catch (err) {
-      console.error('Unexpected error:', err);
-      return null;
+      return data.user.email ?? null;
     }
-  }
 
-  getUser() {
-    return this.supabase.auth.getSession();
-  }
+    async getCurrentUserName(): Promise<string | null> {
+      const email = await this.getCurrentUserEmail();
+      if (!email) return null;
 
-  async changePassword(newPassword: string) {
-    const { data, error } = await this.supabase.auth.updateUser({
-      password: newPassword
-    });
-    if (error) throw error;
-    return data;
-  }
+      // Extract the part before "@"
+      return email.split('@')[0];
+    }
 
-  signOut() {
-    return this.supabase.auth.signOut();
-  }
+    async getCurrentUser() {
+      const { data } = await this.supabase.auth.getUser();
+      return data.user;
+    }
+
+    async getSession() {
+      const { data } = await this.supabase.auth.getSession();
+      return data.session;
+    }
+
+    async signIn(email: string, password: string) {
+      const { data, error } = await this.supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      const user = data.user;
+      if (!user) throw new Error('User not found');
+
+      const { data: profile, error: profileError } = await this.supabase
+        .from('profiles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      return { ...data, isAdmin: profile.role === 'admin' };
+    }
+
+    signUp(email: string, password: string, firstName: string, lastName: string) {
+      return this.supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            display_name: `${firstName} ${lastName}`
+          }
+        }
+      });
+    }
+
+    // login with facebook
+async signInWithFacebook() {
+  const { data, error } = await this.supabase.auth.signInWithOAuth({
+    provider: 'facebook',
+    options: {
+      redirectTo: `${window.location.origin}/home` // أو environment.redirectTo
+    }
+  });
+  if (error) throw error;
+  return data;
+}
+
+
+    // login with Google
+    async signInWithGoogle() {
+      try {
+        const { data, error } = await this.supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/home`
+          }
+        });
+
+        if (error) {
+          console.error('Error:', error.message);
+          return null;
+        }
+
+        return data;
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        return null;
+      }
+    }
+
+    getUser() {
+      return this.supabase.auth.getSession();
+    }
+
+    async changePassword(newPassword: string) {
+      const { data, error } = await this.supabase.auth.updateUser({
+        password: newPassword
+      });
+      if (error) throw error;
+      return data;
+    }
+
+    signOut() {
+      return this.supabase.auth.signOut();
+    }
 
   // ==========================
   // Carts
