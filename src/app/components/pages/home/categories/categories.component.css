@@ -12,9 +12,10 @@
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* responsive columns */
-  gap: 1.5rem;
+  gap:0rem;
   padding: 1rem;
   justify-items: center;
+  align-items: center;
 }
 
 /* Card Component */

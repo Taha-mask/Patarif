@@ -1,3 +1,10 @@
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+}
+
+
+
 body {
     margin: 0;
     padding: 0;
@@ -14,6 +21,9 @@ body {
     z-index: -2;
 }
 
+.cover img {
+    width: 100vw;
+}
 
 .main {
     position: absolute;
@@ -592,22 +602,17 @@ body {
     background-color: #945B25;
 }
 
-
 .benifits {
     width: 100%;
     background-color: #FCEFC5;
     overflow: hidden;
-
 }
 
 .benifits h3 {
     color: #AB3314;
     font-family: "Baloo 2", sans-serif;
     font-weight: bold;
-
-    text-shadow:
-        1px 4px 0 rgba(171, 51, 20, 0.15),
-
+    text-shadow: 1px 4px 0 rgba(171, 51, 20, 0.15),
         2px 0 0 #FCEFC5,
         -2px 0 0 #FCEFC5,
         0 2px 0 #FCEFC5,
@@ -616,84 +621,66 @@ body {
         -2px 2px 0 #FCEFC5,
         2px -2px 0 #FCEFC5,
         -2px -2px 0 #FCEFC5;
-
     font-size: clamp(2rem, 5vw, 4rem);
     margin-bottom: 10%;
     text-align: center;
 }
 
-/* ---------- Responsive grid (keeps same design & order) ---------- */
-.benifits .row {
-    /* override inline flex (so no HTML changes required) */
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 416px));
-    justify-content: center;
-    gap: 48px;
-    align-items: start;
-    padding-inline: 16px;
-}
+/* ---------- Responsive grid ---------- */
+/* .benifits .row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 416px));
+  justify-content: center;
+  gap: 48px;
+  padding-inline: 16px;
+} */
 
-/* make each card flexible but cap at original width */
 .benifit {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
-    width: 100%;
     max-width: 416px;
-    /* preserves original card max width */
     min-width: 240px;
-    /* allows shrinking on small screens */
-    height: auto;
-    /* let content determine height for responsiveness */
-    min-height: 480px;
-    /* keep a similar visual height on large screens */
+    width: 100%;
     position: relative;
 }
 
-/* keep the description styling but keep it responsive */
+/* description */
 .benifit .benifit-desc {
     padding: 18px 32px 14px 32px;
     border: 2.5px solid #9B8150;
     border-radius: 64px;
     background-color: #F5E1A6;
-
     margin-bottom: -24px;
     z-index: 2;
-    box-shadow: 0 2px 8px 0 rgba(171, 51, 20, 0.08);
+    box-shadow: 0 2px 8px rgba(171, 51, 20, 0.08);
     width: 100%;
     position: relative;
     top: 60px;
-    box-sizing: border-box;
-}
-
-.benifit-desc {
-    font-family: "Comic Neue", cursive;
+    text-align: center;
+    font-family: var(--comic);
     font-weight: bold;
     font-size: 20px;
     color: #474747;
-    text-align: center;
 }
 
+/* image */
 .benifit .benifit-img {
     width: 100%;
-    max-width: 420px;
-    min-width: 0;
-    height: auto;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    margin-top: 0;
     z-index: 1;
+        padding: 0 8%;
+
 }
 
 .benifit .benifit-img img {
     width: 100%;
     height: auto;
-    display: block;
     object-fit: contain;
 }
 
+/* individual offsets */
 .benifit1 {
     margin-top: -80px;
 }
@@ -726,59 +713,59 @@ body {
     margin-bottom: 20px;
 }
 
-/* special image inside benifit5 (keeps original styling but responsive) */
+/* ---------- Responsive grid ---------- */
+.benifits .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 416px));
+    justify-content: center;
+    gap: 48px;
+    padding-inline: 16px;
+}
 
+/* small screen => force 2 columns */
+@media (max-width: 900px) {
+
+
+
+
+    .benifits .row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        /* تصغير المسافة في الموبايل */
+    }
+}
 
 /* --------- Responsive breakpoints --------- */
-@media (max-width: 900px) {
-    .benifits .row {
-        gap: 24px;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-
-    .benifit {
-        min-height: 420px;
-    }
-
-    .benifit .benifit-desc {
-        top: 40px;
-        padding: 14px 20px 12px 20px;
-        font-size: clamp(16px, 3.5vw, 20px);
-    }
+/* @media (max-width: 900px) {
+  .benifits .row {
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .benifit .benifit-desc {
+    top: 40px;
+    padding: 14px 20px;
+    font-size: clamp(16px, 3.5vw, 20px);
+  }
 }
 
 @media (max-width: 420px) {
-    .benifits .row {
-        gap: 16px;
-        grid-template-columns: 1fr;
-        padding-inline: 8px;
-    }
-
-    .benifit {
-        min-height: 380px;
-    }
-
-    .benifit .benifit-desc {
-        top: 30px;
-        padding: 12px 16px;
-        font-size: 16px;
-    }
-
-    .benifit4,
-    .benifit1 {
-        margin-top: 80px;
-    }
-
-    /* scale benifit5 logo a bit for small screens */
-    .benifit5 {
-        display: none;
-    }
-
-    .benifits h3 {
-        font-size: clamp(1.6rem, 7vw, 2.2rem);
-        margin-bottom: 8%;
-    }
-}
+  .benifits .row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding-inline: 8px;
+  }
+  .benifit .benifit-desc {
+    top: 30px;
+    padding: 12px 16px;
+    font-size: 16px;
+  }
+  .benifit4, .benifit1 { margin-top: 80px; }
+  .benifit5 { display: none; } 
+  .benifits h3 {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+    margin-bottom: 8%;
+  }
+} */
 
 
 .last-shown {
@@ -851,24 +838,32 @@ body {
     0% {
         transform: rotate(30deg) scale(0.5);
     }
+
     50% {
         transform: rotate(-10deg) scale(1.2);
     }
+
     100% {
         transform: rotate(0deg) scale(1);
     }
 }
 
 @keyframes shake {
-    0%, 90%, 100% {
+
+    0%,
+    90%,
+    100% {
         transform: rotate(0deg);
     }
+
     92% {
         transform: rotate(-1deg);
     }
+
     96% {
         transform: rotate(1deg);
     }
+
     98% {
         transform: rotate(-1deg);
     }
@@ -885,9 +880,10 @@ body {
 /* mobile*/
 
 @media (max-width: 480px) {
-    .content{
+    .content {
         position: fixed;
     }
+
     .rotate-message {
         display: block;
     }
@@ -929,7 +925,6 @@ body {
 
 @media (min-width: 481px) and (max-width: 1100px) {
 
-
     .mainCloud img {
         object-fit: cover;
         width: 100%;
@@ -946,9 +941,11 @@ body {
     .benifit1 {
         margin-top: 80px;
     }
-    .benifit6{
+
+    .benifit6 {
         margin-top: -160vh;
     }
+
     /* scale benifit5 logo a bit for small screens */
     .benifit5 {
         display: none;

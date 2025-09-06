@@ -26,6 +26,10 @@ interface PointDef {
 export class GeoQuizComponent implements OnInit, OnDestroy {
   @ViewChild('svgHost', { static: true }) svgHost!: ElementRef<HTMLDivElement>;
 
+  // ===== CONFIG =====
+  // <-- set this to your DB game_id for the geo quiz
+  private readonly GAME_ID = 7;
+
   // ===== GAME STATE =====
   loading = true;
   points: PointDef[] = [];
@@ -54,13 +58,10 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   timeElapsed = 0;
   private timerInterval: any;
 
-  // ===== AUDIO =====
- 
-
   constructor(private http: HttpClient, private supabase: SupabaseService, private cdr: ChangeDetectorRef, private audioService: AudioService) {}
 
-  ngOnInit(): void {
-    this.initializeGame();
+  async ngOnInit(): Promise<void> {
+    await this.restoreAndInit();
   }
 
   ngOnDestroy(): void {
@@ -68,27 +69,48 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
   }
 
   // =========================
-  // INITIALIZATION
+  // RESTORE + INITIALIZATION
   // =========================
-  private async initializeGame(): Promise<void> {
+  private async restoreAndInit(): Promise<void> {
     this.loading = true;
     this.cdr.detectChanges();
     try {
+      // Try to restore progress for this game & player
+      const progress = await this.supabase.getPlayerProgress(this.GAME_ID);
+
+      if (progress && typeof progress.level === 'number' && progress.level >= 1) {
+        this.level = Math.max(1, progress.level);
+      } else {
+        this.level = 1;
+      }
+
+      // load svg and map points for the (restored) level
       await this.loadSvg();
 
       const maps = await this.supabase.getGeoMapByLevel(this.level);
       this.points = maps.map(m => ({
         id: m.id,
         name: m.value || '',
-        x: m.location[0] || 0,   // <-- استخدم الرقم مباشرة
-        y: m.location[1] || 0,   // <-- استخدم الرقم مباشرة
+        x: Array.isArray(m.location) ? (m.location[0] || 0) : 0,
+        y: Array.isArray(m.location) ? (m.location[1] || 0) : 0,
         chooses: m.chooses || [],
-        difficulty: m.difficulty as GameDifficulty || 'facile'
+        difficulty: (m.difficulty as GameDifficulty) || 'facile'
       }));
-      
-      
 
-      this.currentQuestionIndex = 0;
+      // If player had saved question_num, restore it (1-based)
+      if (progress && typeof progress.question_num === 'number' && progress.question_num >= 1) {
+        const qnum = Math.max(1, Math.min(progress.question_num, this.points.length || 1));
+        this.currentQuestionIndex = qnum - 1;
+      } else {
+        // no saved progress -> create initial DB row (best-effort)
+        this.currentQuestionIndex = 0;
+        try { await this.supabase.savePlayerProgress(this.GAME_ID, 1, 1); } catch (_) {}
+      }
+
+      // clamp index and set question
+      if (this.currentQuestionIndex < 0) this.currentQuestionIndex = 0;
+      if (this.currentQuestionIndex >= this.points.length) this.currentQuestionIndex = Math.max(0, this.points.length - 1);
+
       this.setCurrentQuestion();
       this.startTimer();
     } catch (err) {
@@ -126,113 +148,129 @@ export class GeoQuizComponent implements OnInit, OnDestroy {
       this.bonusPoints = 0;
       this.answerStatus = [];
     } else {
-      // انتهت كل الأسئلة لهذا المستوى
+      // finished all questions for this level
       this.showCelebration = true;
       this.stopTimer();
     }
   }
 
   /**
- * Handles user answer selection and updates game state accordingly
- * @param choice The selected answer text
- * @param index The index of the selected answer in the options array
- */
-selectAnswer(choice: string, index: number): void {
-  // Prevent multiple answers
-  if (this.answered || !this.currentQuestion || !this.options?.length) {
-    return;
+   * Handles user answer selection and updates game state accordingly
+   * @param choice The selected answer text
+   * @param index The index of the selected answer in the options array
+   */
+  selectAnswer(choice: string, index: number): void {
+    // Prevent multiple answers
+    if (this.answered || !this.currentQuestion || !this.options?.length) {
+      return;
+    }
+
+    this.answered = true;
+    this.selectedAnswer = choice;
+
+    // Normalize strings for comparison
+    const normalizedChoice = choice?.toLowerCase().trim() || '';
+    const normalizedCorrect = this.currentQuestion.name?.toLowerCase().trim() || '';
+    const isCorrect = normalizedChoice === normalizedCorrect;
+
+    // Update answer status for the selected option
+    this.answerStatus = [...this.answerStatus]; // Ensure change detection
+    this.answerStatus[index] = isCorrect ? 'correct' : 'wrong';
+
+    if (isCorrect) {
+      this.handleCorrectAnswer();
+    } else {
+      this.handleIncorrectAnswer(normalizedCorrect);
+    }
+
+    this.highlightCorrectPath();
+    this.cdr.detectChanges(); // Trigger change detection
   }
 
-  this.answered = true;
-  this.selectedAnswer = choice;
-
-  // Normalize strings for comparison
-  const normalizedChoice = choice?.toLowerCase().trim() || '';
-  const normalizedCorrect = this.currentQuestion.name?.toLowerCase().trim() || '';
-  const isCorrect = normalizedChoice === normalizedCorrect;
-
-  // Update answer status for the selected option
-  this.answerStatus = [...this.answerStatus]; // Ensure change detection
-  this.answerStatus[index] = isCorrect ? 'correct' : 'wrong';
-
-  if (isCorrect) {
-    this.handleCorrectAnswer();
-  } else {
-    this.handleIncorrectAnswer(normalizedCorrect);
+  /**
+   * Handles logic for correct answer
+   */
+  private handleCorrectAnswer(): void {
+    this.score++;
+    this.bonusPoints = this.calculateBonusPoints();
+    this.feedback = { text: '✅ Correct!', ok: true };
+    this.playSound('correct');
   }
 
-  this.highlightCorrectPath();
-  this.cdr.detectChanges(); // Trigger change detection
-}
-
-/**
- * Handles logic for correct answer
- */
-private handleCorrectAnswer(): void {
-  this.score++;
-  this.bonusPoints = this.calculateBonusPoints();
-  this.feedback = { text: '✅ Correct!', ok: true };
-  this.playSound('correct');
-}
-
-/**
- * Handles logic for incorrect answer
- * @param normalizedCorrect The correct answer in normalized form
- */
-private handleIncorrectAnswer(normalizedCorrect: string): void {
-  this.feedback = { 
-    text: `❌ Wrong! Correct: ${this.currentQuestion.name}`, 
-    ok: false 
-  };
-  this.playSound('wrong');
-  this.highlightCorrectOption(normalizedCorrect);
-}
-
-/**
- * Highlights the correct answer option
- * @param normalizedCorrect The correct answer in normalized form
- */
-private highlightCorrectOption(normalizedCorrect: string): void {
-  const correctIndex = this.options.findIndex(
-    opt => (opt?.toLowerCase().trim() || '') === normalizedCorrect
-  );
-  
-  if (correctIndex >= 0) {
-    this.answerStatus[correctIndex] = 'correct';
+  /**
+   * Handles logic for incorrect answer
+   * @param normalizedCorrect The correct answer in normalized form
+   */
+  private handleIncorrectAnswer(normalizedCorrect: string): void {
+    this.feedback = { 
+      text: `❌ Wrong! Correct: ${this.currentQuestion.name}`, 
+      ok: false 
+    };
+    this.playSound('wrong');
+    this.highlightCorrectOption(normalizedCorrect);
   }
-}
 
-/**
- * Calculates bonus points based on time elapsed
- * @returns The calculated bonus points
- */
-private calculateBonusPoints(): number {
-  const timeBonus = 10 - Math.floor(this.timeElapsed / 10);
-  return Math.max(0, timeBonus);
-}
-
-/**
- * Plays sound based on answer correctness
- * @param type The type of sound to play ('correct' or 'wrong')
- */
-private playSound(type: 'correct' | 'wrong'): void {
-  try {
-    const sound = type === 'correct' ? this.playCorrectSound() : this.playWrongSound();
-  } catch (error) {
-    console.error('Error in playSound:', error);
+  /**
+   * Highlights the correct answer option
+   * @param normalizedCorrect The correct answer in normalized form
+   */
+  private highlightCorrectOption(normalizedCorrect: string): void {
+    const correctIndex = this.options.findIndex(
+      opt => (opt?.toLowerCase().trim() || '') === normalizedCorrect
+    );
+    
+    if (correctIndex >= 0) {
+      this.answerStatus[correctIndex] = 'correct';
+    }
   }
-}
 
-  nextQuestion(): void {
+  /**
+   * Calculates bonus points based on time elapsed
+   * @returns The calculated bonus points
+   */
+  private calculateBonusPoints(): number {
+    const timeBonus = 10 - Math.floor(this.timeElapsed / 10);
+    return Math.max(0, timeBonus);
+  }
+
+  /**
+   * Plays sound based on answer correctness
+   * @param type The type of sound to play ('correct' or 'wrong')
+   */
+  private playSound(type: 'correct' | 'wrong'): void {
+    try {
+      if (type === 'correct') this.playCorrectSound();
+      else this.playWrongSound();
+    } catch (error) {
+      console.error('Error in playSound:', error);
+    }
+  }
+
+  async nextQuestion(): Promise<void> {
     this.clearHighlight();
   
     this.currentQuestionIndex++;
   
     if (this.currentQuestionIndex >= this.points.length) {
-      // انتهت كل الأسئلة لهذا المستوى
+      // finished all questions for this level
       this.showCelebration = true;
       this.stopTimer();
+
+      // Save progress: move player to next level with question_num = 1
+      try {
+        const nextLevel = this.level + 1;
+        await this.supabase.savePlayerProgress(this.GAME_ID, nextLevel, 1);
+      } catch (err) {
+        console.warn('Failed to save progress on level completion:', err);
+      }
     } else {
+      // Save progress: player is now at question (currentQuestionIndex + 1)
+      const currentQuestionNum = this.currentQuestionIndex + 1; // 1-based
+      // best-effort, non-blocking
+      this.supabase.savePlayerProgress(this.GAME_ID, this.level, currentQuestionNum)
+        .then(saved => { if (!saved) console.warn('Failed to save progress (nextQuestion)'); })
+        .catch(err => console.warn('savePlayerProgress error (nextQuestion):', err));
+
       this.setCurrentQuestion();
     }
   
@@ -329,8 +367,6 @@ private playSound(type: 'correct' | 'wrong'): void {
   // =========================
   // AUDIO
   // =========================
-
-
   private playCorrectSound() {
     this.audioService.playCorrectSound();
   }
@@ -338,55 +374,57 @@ private playSound(type: 'correct' | 'wrong'): void {
   private playWrongSound() {
     this.audioService.playWrongSound();
   }
+
   /**
- * Helper method to play audio with proper error handling
- * @param audio The HTMLAudioElement to play
- * @returns Promise that resolves when audio starts playing
- */
-private async playAudio(audio: HTMLAudioElement): Promise<void> {
-  if (!audio) {
-    console.warn('Audio element not initialized');
-    return;
-  }
-
-  try {
-    // Reset audio to start if it's already playing
-    if (!audio.paused) {
-      audio.pause();
-      audio.currentTime = 0;
+   * Helper method to play audio with proper error handling
+   * @param audio The HTMLAudioElement to play
+   * @returns Promise that resolves when audio starts playing
+   */
+  private async playAudio(audio: HTMLAudioElement): Promise<void> {
+    if (!audio) {
+      console.warn('Audio element not initialized');
+      return;
     }
 
-    // Play the sound and handle potential autoplay restrictions
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-      await playPromise.catch(error => {
-        // Handle autoplay restrictions
-        if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
-          console.warn('Autoplay prevented. User interaction required to play sounds.');
-        } else {
-          console.error('Error playing audio:', error);
-        }
-      });
+    try {
+      // Reset audio to start if it's already playing
+      if (!audio.paused) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+
+      // Play the sound and handle potential autoplay restrictions
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        await playPromise.catch(error => {
+          // Handle autoplay restrictions
+          if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
+            console.warn('Autoplay prevented. User interaction required to play sounds.');
+          } else {
+            console.error('Error playing audio:', error);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Unexpected error in playAudio:', error);
     }
-  } catch (error) {
-    console.error('Unexpected error in playAudio:', error);
   }
-}
 
   // =========================
   // CELEBRATION / NEXT LEVEL
   // =========================
-  onNextLevel(level: number): void {
-    this.showCelebration = false;
-    if (level > 0) {
-      this.level = level;
-      this.score = 0;
-      this.initializeGame();
-    } else {
-      console.log('Game completed!');
-    }
+onNextLevel(level: number): void {
+  this.showCelebration = false;
+  if (level > 0) {
+    this.level = level;
+    this.score = 0;
+    this.restoreAndInit();   // ✅ بدل initializeGame
+  } else {
+    console.log('Game completed!');
   }
+}
+
 
   onCloseCelebration(): void {
     this.showCelebration = false;

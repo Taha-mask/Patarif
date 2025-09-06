@@ -26,6 +26,9 @@ interface Connection {
   styleUrls: ['./matchint-words.component.css']
 })
 export class MatchintWordsComponent implements OnInit {
+  // <-- set this to your DB game_id
+  private readonly GAME_ID = 6;
+
   // Game items
   items: MatchItem[] = [];
   words: MatchItem[] = [];
@@ -36,7 +39,7 @@ export class MatchintWordsComponent implements OnInit {
   score: number = 0;
   gameComplete: boolean = false;
   questionsCorrectInLevel: number = 0; // عدد الأسئلة الصحيحة في المستوى
-  
+
   // Game template properties
   level: number = 1;
   questionsInLevel: number = 6; // total questions per level
@@ -47,14 +50,43 @@ export class MatchintWordsComponent implements OnInit {
   celebrationData: any = null;
   timerInterval: any;
 
- 
-
-  constructor(private supabaseService: SupabaseService, private audioService: AudioService) {
-   
-  }
+  constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
 
   async ngOnInit() {
-    await this.loadGameItems(this.level);
+    // Try to restore saved progress first
+    try {
+      const progress = await this.supabaseService.getPlayerProgress(this.GAME_ID);
+
+      if (progress && typeof progress.level === 'number' && progress.level >= 1) {
+        this.level = Math.max(1, progress.level);
+      } else {
+        this.level = 1;
+      }
+
+      // load items for the resolved level
+      await this.loadGameItems(this.level);
+
+      // restore matched pairs approximately if question_num > 1
+      if (progress && typeof progress.question_num === 'number' && progress.question_num > 1) {
+        const toRestore = Math.max(0, progress.question_num - 1); // number of already-correct matches
+        this.markRandomMatches(toRestore);
+        this.currentQuestion = Math.min(progress.question_num, this.questionsInLevel + 1);
+      } else {
+        // no saved progress -> create initial db row (best-effort)
+        this.currentQuestion = 1;
+        try {
+          await this.supabaseService.savePlayerProgress(this.GAME_ID, 1, 1);
+        } catch (err) { /* ignore */ }
+      }
+    } catch (err) {
+      console.error('Error restoring progress:', err);
+      // fallback to defaults
+      this.level = 1;
+      await this.loadGameItems(this.level);
+      this.currentQuestion = 1;
+      try { await this.supabaseService.savePlayerProgress(this.GAME_ID, 1, 1); } catch (_) {}
+    }
+
     this.startTimer();
   }
 
@@ -122,6 +154,15 @@ export class MatchintWordsComponent implements OnInit {
       this.currentQuestion++;
       this.playCorrectSound();
       this.checkGameComplete();
+
+      // Save progress: best-effort, non-blocking (player is now at currentQuestion)
+      try {
+        this.supabaseService.savePlayerProgress(this.GAME_ID, this.level, this.currentQuestion)
+          .then(saved => { if (!saved) console.warn('Failed to save progress (match)'); })
+          .catch(err => console.warn('savePlayerProgress error (match):', err));
+      } catch (err) {
+        console.warn('Error saving progress after match:', err);
+      }
     } else {
       this.feedback = 'Try again!';
       this.playWrongSound();
@@ -138,19 +179,18 @@ export class MatchintWordsComponent implements OnInit {
     }
   }
 
-    resetGame() {
-      this.stopTimer();
-      this.connections = [];
-      this.feedback = null;
-      this.selectedWord = null;
-      this.score = 0;
-      this.gameComplete = false;
-      this.timeElapsed = 0;
-      this.currentQuestion = 1;
-      this.questionsCorrectInLevel = 0; // ← يبدأ من جديد
-      this.loadGameItems(this.level);
-      this.startTimer();
-    
+  resetGame() {
+    this.stopTimer();
+    this.connections = [];
+    this.feedback = null;
+    this.selectedWord = null;
+    this.score = 0;
+    this.gameComplete = false;
+    this.timeElapsed = 0;
+    this.currentQuestion = 1;
+    this.questionsCorrectInLevel = 0; // ← يبدأ من جديد
+    this.loadGameItems(this.level);
+    this.startTimer();
   }
 
   openCelebration() {
@@ -163,6 +203,16 @@ export class MatchintWordsComponent implements OnInit {
       difficulty: this.currentWord.difficulty
     };
     this.showCelebration = true;
+
+    // Save progress: move player to next level with question_num = 1
+    try {
+      const nextLevel = this.level + 1;
+      this.supabaseService.savePlayerProgress(this.GAME_ID, nextLevel, 1)
+        .then(() => {})
+        .catch(err => console.warn('Failed to save progress on level completion:', err));
+    } catch (err) {
+      console.warn('Failed to save progress on level completion:', err);
+    }
   }
 
   onCloseCelebration() {
@@ -175,12 +225,72 @@ export class MatchintWordsComponent implements OnInit {
     this.showCelebration = false;
   }
 
-
   private playCorrectSound() {
     this.audioService.playCorrectSound();
   }
 
   private playWrongSound() {
     this.audioService.playWrongSound();
+  }
+
+  /**
+   * Approximate restoration: mark `count` distinct random pairs as already matched.
+   * Updates items/words/emojis arrays, connections, score and questionsCorrectInLevel.
+   */
+  private markRandomMatches(count: number) {
+    if (!this.items || this.items.length === 0 || count <= 0) return;
+
+    const totalPairs = this.items.length;
+    const toPick = Math.min(count, totalPairs);
+
+    // build array of ids
+    const ids = this.items.map(i => i.id);
+    // shuffle ids
+    for (let i = ids.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+    }
+    const chosen = ids.slice(0, toPick);
+
+    // mark chosen ids as matched across items, words and emojis arrays
+    chosen.forEach(chosenId => {
+      // mark in this.items
+      this.items.forEach(it => { if (it.id === chosenId) it.matched = true; });
+      // mark in words and emojis arrays (they hold same objects/ids)
+      this.words.forEach(w => { if (w.id === chosenId) w.matched = true; });
+      this.emojis.forEach(e => { if (e.id === chosenId) e.matched = true; });
+
+      // add connection if not present
+      const first = this.items.find(it => it.id === chosenId);
+      if (first) {
+        const exists = this.connections.find(c => c.wordId === chosenId && c.emojiId === chosenId);
+        if (!exists) {
+          this.connections.push({
+            wordId: chosenId,
+            emojiId: chosenId,
+            word: first.word,
+            emoji: first.emoji
+          });
+        }
+      }
+    });
+
+    // update counters
+    this.questionsCorrectInLevel = Math.min(this.questionsInLevel, this.questionsCorrectInLevel + toPick);
+    this.score += toPick * 10;
+    this.currentQuestion = Math.min(this.questionsInLevel + 1, this.currentQuestion + toPick);
+
+    // if all matched, mark gameComplete
+    if (this.items.every(i => i.matched)) {
+      this.gameComplete = true;
+    }
+  }
+
+  getProgress(): { level: number; question: number } {
+    return { level: this.level, question: this.currentQuestion };
+  }
+
+  getQuestionCounterText(): string {
+    return `${Math.min(this.currentQuestion - 1, this.questionsInLevel)}/${this.questionsInLevel}`;
   }
 }

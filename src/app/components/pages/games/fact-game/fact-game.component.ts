@@ -21,18 +21,17 @@ export interface FactQuestion {
   styleUrls: ['./fact-game.component.css']
 })
 export class FactGameComponent implements OnInit, OnDestroy {
-  constructor(private supabase: SupabaseService, private router: Router,private audioService: AudioService) {}
-
-  private playCorrectSound() {
-    this.audioService.playCorrectSound();
-  }
-
-  private playWrongSound() {
-    this.audioService.playWrongSound();
-  }
-  // ===== GAME CONFIG =====
+  // ====== CONFIG =====
   readonly MAX_LEVEL = 5;
   readonly QUESTIONS_PER_LEVEL = 5;
+  // set DB game id for this component (change to your real id)
+  private readonly GAME_ID = 3;
+
+  constructor(private supabase: SupabaseService, private router: Router, private audioService: AudioService) {}
+
+  private playCorrectSound() { this.audioService.playCorrectSound(); }
+  private playWrongSound() { this.audioService.playWrongSound(); }
+
   // ===== GAME STATE =====
   currentLevel = 1;
   currentQuestionIndex = 0;
@@ -42,7 +41,7 @@ export class FactGameComponent implements OnInit, OnDestroy {
 
   questionsByLevel: Record<number, FactQuestion[]> = {};
   usedQuestions: Record<number, Set<string>> = {};
-  
+
   answered = false;
   answerStatus: string[] = [];
   selectedAnswer: string | null = null;
@@ -56,13 +55,36 @@ export class FactGameComponent implements OnInit, OnDestroy {
   startTime = 0;
   timerInterval: any;
 
- 
   isLoading = true;
 
   // ---- LIFECYCLE ----
   async ngOnInit() {
-    await this.startLevel();
+    this.isLoading = true;
+    // Try restore progress first
+    try {
+      const progress = await this.supabase.getPlayerProgress(this.GAME_ID);
+      if (progress && progress.level && progress.level >= 1) {
+        this.currentLevel = Math.max(1, progress.level);
+      } else {
+        this.currentLevel = 1;
+      }
+      // start level with restored question number if available
+      const startQuestionNum = progress && progress.question_num ? Math.max(1, Math.min(this.QUESTIONS_PER_LEVEL, progress.question_num)) : 1;
+      await this.startLevel(startQuestionNum);
+      // If there was no DB row, create initial one
+      if (!progress) {
+        await this.supabase.savePlayerProgress(this.GAME_ID, 1, 1);
+      }
+    } catch (err) {
+      console.error('Error restoring progress:', err);
+      // fallback to default start
+      this.currentLevel = 1;
+      await this.startLevel(1);
+      try { await this.supabase.savePlayerProgress(this.GAME_ID, 1, 1); } catch (_) {}
+    }
+
     this.startTimer();
+    this.isLoading = false;
   }
 
   ngOnDestroy() {
@@ -72,21 +94,36 @@ export class FactGameComponent implements OnInit, OnDestroy {
   // ========================
   // LEVEL FLOW
   // ========================
-  private async startLevel() {
+  /**
+   * Starts (or restores) a level.
+   * @param startQuestionNum - 1-based question number to resume at (default 1).
+   */
+  private async startLevel(startQuestionNum: number = 1) {
     this.isLoading = true;
     this.currentQuestionIndex = 0;
     this.questionsCorrectInLevel = 0;
-  
+
     if (!this.usedQuestions[this.currentLevel]) this.usedQuestions[this.currentLevel] = new Set();
-  
+
     await this.loadQuestionsForLevel(this.currentLevel);
+
+    // If restoring mid-level, mark (startQuestionNum - 1) random questions as already used
+    if (startQuestionNum > 1) {
+      this.markRandomUsedQuestionTexts(this.currentLevel, startQuestionNum - 1);
+      this.currentQuestionIndex = startQuestionNum - 1;
+    } else {
+      this.usedQuestions[this.currentLevel] = new Set();
+      this.currentQuestionIndex = 0;
+    }
+
+    // set currentQuestionNumber implicitly via currentQuestionIndex
     this.setCurrentQuestion();
     this.isLoading = false;
-  
-    // إعادة ضبط التايمر لكل مستوى
+
+    // reset timer for this level
     this.resetTimer();
   }
-  
+
   private async loadQuestionsForLevel(level: number) {
     try {
       const data = await this.supabase.getQuestionsByLevel(level);
@@ -101,7 +138,7 @@ export class FactGameComponent implements OnInit, OnDestroy {
       }));
     } catch (err) {
       console.error('Error loading questions:', err);
-      // Fallback single question
+      // fallback single question
       this.questionsByLevel[level] = [
         {
           level,
@@ -118,8 +155,16 @@ export class FactGameComponent implements OnInit, OnDestroy {
 
   private setCurrentQuestion() {
     const questions = this.questionsByLevel[this.currentLevel] || [];
+    if (!questions.length) {
+      this.showLevelCompleteModal();
+      return;
+    }
+
+    if (!this.usedQuestions[this.currentLevel]) this.usedQuestions[this.currentLevel] = new Set();
+
     const available = questions.filter(q => !this.usedQuestions[this.currentLevel].has(q.questionText));
 
+    // If we've used all questions or reached max questions per level => finish
     if (available.length === 0 || this.currentQuestionIndex >= this.QUESTIONS_PER_LEVEL) {
       this.showLevelCompleteModal();
       return;
@@ -156,12 +201,36 @@ export class FactGameComponent implements OnInit, OnDestroy {
     }
   }
 
-  nextQuestion() {
+  /**
+   * Advance to the next question.
+   * Saves progress for the player (current level + question number).
+   */
+  async nextQuestion() {
     this.currentQuestionIndex++;
+
+    // If exceeded QUESTIONS_PER_LEVEL -> finish level
+    if (this.currentQuestionIndex >= this.QUESTIONS_PER_LEVEL) {
+      await this.showLevelCompleteModal();
+      return;
+    }
+
+    // Save progress: this player is now at question (currentQuestionIndex + 1)
+    const currentQuestionNum = this.currentQuestionIndex + 1; // 1-based
+    try {
+      // best-effort (non-blocking UI)
+      this.supabase.savePlayerProgress(this.GAME_ID, this.currentLevel, currentQuestionNum)
+        .then(saved => { if (!saved) console.warn('Failed to save progress (nextQuestion)'); })
+        .catch(err => console.warn('savePlayerProgress error (nextQuestion):', err));
+    } catch (err) {
+      console.warn('Error saving progress in nextQuestion:', err);
+    }
+
+    // pick new question
     this.setCurrentQuestion();
   }
 
-  private showLevelCompleteModal() {
+  private async showLevelCompleteModal() {
+    // compute elapsed for the level
     this.timeElapsed = Math.floor((Date.now() - this.startTime) / 1000);
     this.celebrationData = {
       level: this.currentLevel,
@@ -171,6 +240,14 @@ export class FactGameComponent implements OnInit, OnDestroy {
       difficulty: this.currentQuestion?.difficulty || 'facile'
     };
     this.showCelebration = true;
+
+    // Save progress: move player to next level with question_num = 1
+    try {
+      const nextLevel = Math.min(this.MAX_LEVEL, this.currentLevel + 1);
+      await this.supabase.savePlayerProgress(this.GAME_ID, nextLevel, 1);
+    } catch (err) {
+      console.warn('Failed to save progress on level completion:', err);
+    }
   }
 
   async onNextLevel(event: any) {
@@ -178,9 +255,10 @@ export class FactGameComponent implements OnInit, OnDestroy {
 
     if (this.currentLevel < this.MAX_LEVEL) {
       this.currentLevel++;
-      await this.startLevel();
+      await this.startLevel(1);
     } else {
-      this.router.navigate(['/games']); // Game completed
+      // Game completed — optionally clear progress or set to MAX+1 as you want
+      this.router.navigate(['/games']);
     }
   }
 
@@ -189,23 +267,20 @@ export class FactGameComponent implements OnInit, OnDestroy {
   // ========================
   startTimer() {
     this.timeElapsed = 0;
+    this.startTime = Date.now();
     this.timerInterval = setInterval(() => this.timeElapsed++, 1000);
   }
 
   stopTimer() {
     if (this.timerInterval) clearInterval(this.timerInterval);
   }
-private resetTimer() {
-  this.stopTimer();
-  this.timeElapsed = 0;
-  this.startTime = Date.now();
-  this.startTimer();
-}
 
-  // ========================
-  // AUDIO
-  // ========================
-
+  private resetTimer() {
+    this.stopTimer();
+    this.timeElapsed = 0;
+    this.startTime = Date.now();
+    this.startTimer();
+  }
 
   // ========================
   // HELPERS
@@ -220,5 +295,29 @@ private resetTimer() {
 
   get isLastQuestion(): boolean {
     return this.currentQuestionIndex + 1 >= this.QUESTIONS_PER_LEVEL;
+  }
+
+  /**
+   * Mark `count` distinct random question texts as used for `level`.
+   * This is an approximate reconstruction of prior progress when restoring.
+   */
+  private markRandomUsedQuestionTexts(level: number, count: number): void {
+    const questions = this.questionsByLevel[level] || [];
+    const total = questions.length;
+    if (!this.usedQuestions[level]) this.usedQuestions[level] = new Set();
+    if (count <= 0 || total === 0) {
+      this.usedQuestions[level] = new Set();
+      return;
+    }
+
+    const indices = Array.from({ length: total }, (_, i) => i);
+    // shuffle indices
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+
+    const chosen = indices.slice(0, Math.min(count, total));
+    this.usedQuestions[level] = new Set(chosen.map(i => questions[i].questionText));
   }
 }
