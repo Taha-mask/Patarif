@@ -35,6 +35,7 @@ import { AdminContactMessagesComponent } from './admin-dashboard/admin-contact-m
 import { AuthGuard } from './guards/auth.guard';
 import { AdminProfileComponent } from './admin-dashboard/admin-profile/admin-profile.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -89,6 +90,7 @@ export const routes: Routes = [
   },
   { path: 'cart', component: CartComponent },
 
+  { path: 'privacy', component: PrivacyPolicyComponent },
   // Page Not Found
   { path: 'page-not-found', component: PageNotFoundComponent },
   { path: '**', component: PageNotFoundComponent },

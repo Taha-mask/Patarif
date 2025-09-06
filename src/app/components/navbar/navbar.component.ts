@@ -91,6 +91,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     document.getElementById('sideMenu')?.classList.remove('open');
   }
 
+   async onLogout() {
+    try {
+      await this.supabaseService.signOut();
+      this.router.navigate(['/signup']); // بعد اللوجآوت روح signup
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  }
   // search
   isOpen = false;
   openSearch() { this.isOpen = true; }
