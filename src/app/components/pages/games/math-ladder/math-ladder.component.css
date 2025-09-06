@@ -1,5 +1,14 @@
-:host { display:block; font-family: system-ui, sans-serif; }
-
+:host { 
+  display: block; 
+  font-family: 'Fredoka One', system-ui, sans-serif; 
+  position: relative;
+}
+.game-wrap{
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  height: 100vh;
+}
 .hud{
   position:absolute; inset:16px auto auto 16px; display:flex; gap:16px; align-items:center;
   color:#fff; font-weight:700;
@@ -13,31 +22,36 @@
   display: flex;
   justify-content: center;
   padding: 20px 0;
+  order: 1; /* السلم في الأعلى على الموبايل */
 }
 
 .ladder {
   position: relative;
-  width: min(440px, 80vw); /* السلم أصغر */
+  width: min(400px, 85vw);
   aspect-ratio: 16/10;
   margin: 0 auto;
 }
 .ladder > img{
   position:absolute; inset:auto;
 }
-.ladder > img[alt="ladder"]{
+.ladder > img[alt="échelle"]{
   width:100%; height:100%; object-fit:contain; left:0; top:0;
   filter: drop-shadow(0 10px 20px rgba(0,0,0,.25));
 }
 .ladder .star{
-  width:13%;
-  left:64%; top:0;
+  width:15%;
+  left:65%; top:5%;
   transform: translate(-50%, -50%);
   animation: twinkle 1.2s infinite ease-in-out;
+  filter: drop-shadow(0 0 20px #FFD700);
 }
-@keyframes twinkle { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-50%,-50%) scale(1.12);} }
+@keyframes twinkle { 
+  0%,100%{ transform:translate(-50%,-50%) scale(1); } 
+  50%{ transform:translate(-50%,-50%) scale(1.15);} 
+}
 
 .ladder .boy {
-  width:25%;
+  width:28%;
   --p: 0;
   position:absolute;
   left: clamp(6%, 10% + calc(var(--p) * 41%), 50%);
@@ -58,78 +72,122 @@
   100% { transform: translateY(0) rotate(0deg); }
 }
 
-.question-card{
-  width:100%;
-  border-radius: 24px;
+.question-section {
+  order: 2; /* الأسئلة في الأسفل على الموبايل */
+  width: 100%;
+  display: flex;
+  justify-content: center;
   padding: 20px;
-  text-align:center;
+}
+
+.question-card{
+  width: 100%;
+  max-width: 500px;
+  border-radius: 24px;
+  padding: 0;
+  text-align: center;
+  background: transparent;
 }
 .question-card.locked{ opacity:.8; pointer-events:none; }
 
 .qtext{
-   color: #2c3e50;
-  margin-bottom: 2rem;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
+  background: linear-gradient(135deg, #FF8C42, #FF6B35, #FF9F40);
   color: white;
   font-family: 'Fredoka One', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 900;
-  border-radius: 40px;
-  border: 3px solid #ffffff;
-  padding: 1rem;
+  font-size: 1.8rem;
+  font-weight: 400;
+  border-radius: 25px;
+  border: 4px solid #ffffff;
+  padding: 1.2rem 2rem;
   text-align: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 20px rgba(255, 140, 66, 0.3);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
 .choices {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 20px;
+  gap: 16px;
+  margin: 20px 0;
 }
 
 @media (min-width: 480px) {
   .choices {
     grid-template-columns: repeat(4, 1fr);
   }
-  .stage {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    height: 100%;
-    padding: 20px 24px;
-    box-sizing: border-box;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-  }
-  
 }
-.choice{
-  border:0; border-radius:16px; 
-  padding:14px 8px;
-   font-weight:800; 
-   font-size:17px;
-   margin-bottom: 20px;
-  background:#f0f4ff; cursor:pointer; box-shadow: 0 6px 0 #c2cdfa;
-}
-.choice:active{ transform: translateY(2px); box-shadow: 0 4px 0 #c2cdfa; }
 
-.done, .again{
-    margin: 0 auto;
+.choice{
+  border: 0; 
+  border-radius: 20px; 
+  padding: 20px 16px;
+  font-weight: 900; 
+  font-size: 1.4rem;
+  font-family: 'Fredoka One', sans-serif;
+  cursor: pointer; 
+  box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.choice-1 {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  box-shadow: 0 8px 0 #DAA520;
+}
+
+.choice-2 {
+  background: linear-gradient(135deg, #87CEEB, #4682B4);
+  box-shadow: 0 8px 0 #5F9EA0;
+}
+
+.choice-3 {
+  background: linear-gradient(135deg, #90EE90, #32CD32);
+  box-shadow: 0 8px 0 #228B22;
+}
+
+.choice-4 {
+  background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+  box-shadow: 0 8px 0 #DC143C;
+}
+
+.choice:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 0 rgba(0,0,0,0.25);
+}
+
+.choice:active{ 
+  transform: translateY(4px); 
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2); 
+}
+
+.done-btn, .again{
+  margin: 20px auto 0;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1.2rem;
-  margin: 0.3rem;
-  font-size: 1rem;
-  font-weight: 600;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 25px;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  font-family: 'Fredoka One', sans-serif;
+  box-shadow: 0 6px 0 #4CAF50;
   transition: all 0.2s ease;
   cursor: pointer;
-  border: 2px solid rgba(255, 255, 255, 0.938);
-  border-radius: 50px;
-  background: linear-gradient(13deg, #5EDC7D, #49D06A, #A8FFBE);
+  border: 3px solid #ffffff;
+  background: linear-gradient(135deg, #4CAF50, #66BB6A, #81C784);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  display: block;
+}
+
+.done-btn:hover, .again:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #388E3C;
+}
+
+.done-btn:active, .again:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #388E3C;
 }
 .win-box{
   margin-top:12px; font-weight:800; color:#2d6a4f;
@@ -147,26 +205,50 @@ background: linear-gradient(13deg, #F29F4B, #E29344, #FFBD7A);
 }
 .stage {
   display: flex;
-  flex-direction: row; /* الوضع العادي: أفقي */
-  gap: 44px;
+  flex-direction: column; /* عمودي على جميع الشاشات */
+  gap: 20px;
   height: 100%;
-  padding: 20px 24px;
+  padding: 20px;
+  width: 100%;
+  height: 80vh;
+  margin: auto;
   box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
 }
 
-/* عناصر السلم والأسئلة */
-.ladder-container, .question-card {
-  flex: 1; /* ليملأ كل منهم نصف المساحة */
-}
-
-/* عند الشاشات الصغيرة */
-@media (max-width: 767px) {
+/* على الشاشات الكبيرة، يمكن أن يكون أفقي */
+@media (min-width: 1024px) {
   .stage {
-    flex-direction: column; /* عمودي */
+    flex-direction: row;
+    gap: 40px;
+    align-items: center;
+  }
+  
+  .ladder-container {
+    flex: 1;
+    order: 1;
+  }
+  
+  .question-section {
+    flex: 1;
+    order: 2;
+  }
+}
+
+/* على الموبايل، السلم في الأعلى والأسئلة في الأسفل */
+@media (max-width: 1023px) {
+  .stage {
+    flex-direction: column;
     gap: 16px;
   }
-
-  .ladder-container, .question-card {
-    width: 100%;
+  
+  .ladder-container {
+    order: 1;
+  }
+  
+  .question-section {
+    order: 2;
   }
 }

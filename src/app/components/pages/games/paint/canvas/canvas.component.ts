@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GameTemplateComponent } from '../../../../game-template/game-template.component';
+import jsPDF from 'jspdf';
 
 type Tool = 'pen' | 'eraser' | 'brush' | 'marker' | 'spray' | 'calligraphy';
 type BrushShape = 'round' | 'square' | 'calligraphy';
@@ -31,6 +32,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private lastX = 0;
   private lastY = 0;
   private animationFrameId: number | null = null;
+  private resizeTimeout: any = null;
   
   // Drawing state
   drawingHistory: string[] = [];
@@ -49,6 +51,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   showBrushOptions = false;
   isFullscreen = false;
   hoveredSize: number | null = null;
+  
+  // Zoom state
+  zoomLevel: number = 1;
+  readonly MIN_ZOOM = 0.1;
+  readonly MAX_ZOOM = 5;
+  private readonly ZOOM_STEP = 0.1;
   
   // Basic colors for the bottom palette
   basicColors = [
@@ -110,24 +118,64 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     const canvas = this.canvasRef.nativeElement;
     const container = canvas.parentElement!;
     
+    // حفظ المحتوى الحالي قبل تغيير الحجم
+    const currentImageData = this.ctx ? this.ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
+    
     // Set canvas display size (CSS)
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     
     // Set canvas drawing buffer size
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    const newWidth = container.clientWidth;
+    const newHeight = container.clientHeight;
+    
+    // تحديث حجم الكانفاس
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+    
+    // إعادة تطبيق إعدادات الرسم
+    this.updateDrawingSettings();
+    
+    // إعادة رسم المحتوى المحفوظ إذا كان موجوداً
+    if (currentImageData && this.ctx) {
+      // إنشاء canvas مؤقت لرسم المحتوى القديم
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d')!;
+      tempCanvas.width = currentImageData.width;
+      tempCanvas.height = currentImageData.height;
+      tempCtx.putImageData(currentImageData, 0, 0);
+      
+      // رسم المحتوى القديم على الكانفاس الجديد مع الحفاظ على النسب
+      const scaleX = newWidth / currentImageData.width;
+      const scaleY = newHeight / currentImageData.height;
+      const scale = Math.min(scaleX, scaleY, 1); // لا نكبر أكثر من الحجم الأصلي
+      
+      const scaledWidth = currentImageData.width * scale;
+      const scaledHeight = currentImageData.height * scale;
+      const offsetX = (newWidth - scaledWidth) / 2;
+      const offsetY = (newHeight - scaledHeight) / 2;
+      
+      this.ctx.drawImage(tempCanvas, offsetX, offsetY, scaledWidth, scaledHeight);
+      
+      // إعادة رسم الصورة الخلفية إذا كانت موجودة
+      if (this.backgroundImage) {
+        this.drawBackgroundImage();
+      }
+    }
   }
 
 
   @HostListener('window:resize')
   private onResize(): void {
-    this.updateCanvasSize();
-    
-    // Redraw the last state if available
-    if (this.drawingHistory.length > 0 && this.historyIndex >= 0) {
-      this.restoreState();
+    // استخدام debounce لتجنب استدعاءات متكررة
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
     }
+    
+    this.resizeTimeout = setTimeout(() => {
+      this.updateCanvasSize();
+      // لا نحتاج لاستدعاء restoreState() لأن updateCanvasSize() يتعامل مع المحتوى
+    }, 100);
   }
 
   private updateDrawingSettings(): void {
@@ -182,6 +230,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     
     // Draw initial point for better responsiveness
     this.drawPoint(this.lastX, this.lastY);
+    
+    // إعادة رسم الصورة فوق التلوين
+    this.redrawImageOverDrawing();
   }
 
   draw(e: MouseEvent | TouchEvent | PointerEvent): void {
@@ -212,6 +263,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     
     this.lastX = pos.x;
     this.lastY = pos.y;
+    
+    // إعادة رسم الصورة فوق التلوين
+    this.redrawImageOverDrawing();
   }
 
   stopDrawing(): void {
@@ -276,10 +330,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       clientY = (e as MouseEvent | PointerEvent).clientY;
     }
     
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top
-    };
+    // حساب الموضع مع مراعاة التكبير
+    const x = (clientX - rect.left) / this.zoomLevel;
+    const y = (clientY - rect.top) / this.zoomLevel;
+    
+    return { x, y };
   }
 
   // Tool selection methods
@@ -383,11 +438,14 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   clearCanvas(): void {
     if (confirm('Are you sure you want to clear the canvas?')) {
+      // مسح الكانفاس بالكامل
+      this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+      
+      // إذا كانت هناك صورة خلفية، ارسمها
       if (this.backgroundImage) {
-        this.drawBackgroundImage(); // ارسم الصورة فقط
-      } else {
-        this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+        this.drawBackgroundImage();
       }
+      
       this.saveState();
     }
   }
@@ -406,6 +464,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     finalCanvas.width = canvas.width;
     finalCanvas.height = canvas.height;
     
+    // Fill with white background first
+    finalCtx.fillStyle = '#ffffff';
+    finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+    
     // Draw the original canvas
     finalCtx.drawImage(canvas, 0, 0);
     
@@ -422,6 +484,77 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  downloadPDF(): void {
+    if (!this.isBrowser) return;
+    
+    const canvas = this.canvasRef.nativeElement;
+    
+    // Create a new canvas for the final image with watermark
+    const finalCanvas = document.createElement('canvas');
+    const finalCtx = finalCanvas.getContext('2d')!;
+    
+    // Set final canvas size
+    finalCanvas.width = canvas.width;
+    finalCanvas.height = canvas.height;
+    
+    // Fill with white background first
+    finalCtx.fillStyle = '#ffffff';
+    finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+    
+    // Draw the original canvas
+    finalCtx.drawImage(canvas, 0, 0);
+    
+    // Add watermark synchronously
+    this.addWatermarkSync(finalCtx, finalCanvas.width, finalCanvas.height);
+    
+    // Convert to data URL
+    const dataUrl = finalCanvas.toDataURL('image/png');
+    
+    // Create PDF with A4 size
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    // A4 dimensions in mm
+    const a4Width = 210;
+    const a4Height = 297;
+    const margin = 10;
+    const contentWidth = a4Width - (margin * 2);
+    const contentHeight = a4Height - (margin * 2);
+    
+    // Calculate image dimensions to fit A4 while maintaining aspect ratio
+    const imageAspectRatio = finalCanvas.width / finalCanvas.height;
+    const contentAspectRatio = contentWidth / contentHeight;
+    
+    let imageWidth, imageHeight, imageX, imageY;
+    
+    if (imageAspectRatio > contentAspectRatio) {
+      // Image is wider than content area
+      imageWidth = contentWidth;
+      imageHeight = contentWidth / imageAspectRatio;
+      imageX = margin;
+      imageY = margin + (contentHeight - imageHeight) / 2;
+    } else {
+      // Image is taller than content area
+      imageHeight = contentHeight;
+      imageWidth = contentHeight * imageAspectRatio;
+      imageX = margin + (contentWidth - imageWidth) / 2;
+      imageY = margin;
+    }
+    
+    // Add image to PDF
+    pdf.addImage(dataUrl, 'PNG', imageX, imageY, imageWidth, imageHeight);
+    
+    // Add watermark logo to PDF
+    this.addPDFWatermark(pdf, a4Width, a4Height);
+    
+    // Download PDF
+    const fileName = `painting-${new Date().toISOString().slice(0, 10)}.pdf`;
+    pdf.save(fileName);
   }
 
   private addWatermark(ctx: CanvasRenderingContext2D, width: number, height: number): void {
@@ -548,6 +681,83 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       ctx.fillText('PATARIF', x + watermarkSize / 2, y + watermarkSize / 2);
     };
   }
+
+  private addPDFWatermark(pdf: jsPDF, width: number, height: number): void {
+    // Watermark size in mm (proportional to A4)
+    const watermarkSize = Math.min(width, height) * 0.15; // 15% of page size
+    const margin = 5; // 5mm margin
+    const x = width - watermarkSize - margin;
+    const y = height - watermarkSize - margin;
+    
+    // Create a temporary canvas for the watermark
+    const watermarkCanvas = document.createElement('canvas');
+    const watermarkCtx = watermarkCanvas.getContext('2d')!;
+    
+    // Set canvas size (convert mm to pixels, assuming 96 DPI)
+    const dpi = 96;
+    const mmToPx = dpi / 25.4;
+    const canvasSize = watermarkSize * mmToPx;
+    watermarkCanvas.width = canvasSize;
+    watermarkCanvas.height = canvasSize;
+    
+    // Draw watermark background (semi-transparent circle)
+    watermarkCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    watermarkCtx.beginPath();
+    watermarkCtx.arc(canvasSize / 2, canvasSize / 2, canvasSize / 2, 0, Math.PI * 2);
+    watermarkCtx.fill();
+    
+    // Draw watermark border
+    watermarkCtx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    watermarkCtx.lineWidth = 2;
+    watermarkCtx.stroke();
+    
+    // Load and draw logo
+    const logoImg = new Image();
+    logoImg.crossOrigin = 'anonymous';
+    logoImg.onload = () => {
+      // Calculate logo size (60% of watermark size)
+      const logoSize = canvasSize * 0.6;
+      const logoX = (canvasSize - logoSize) / 2;
+      const logoY = (canvasSize - logoSize) / 2 - canvasSize * 0.05;
+      
+      // Draw logo
+      watermarkCtx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+      
+      // Add text below logo
+      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      watermarkCtx.font = `bold ${canvasSize * 0.12}px Arial`;
+      watermarkCtx.textAlign = 'center';
+      watermarkCtx.textBaseline = 'middle';
+      watermarkCtx.fillText('PATARIF', canvasSize / 2, canvasSize / 2 + canvasSize * 0.25);
+      
+      // Add smaller text
+      watermarkCtx.font = `${canvasSize * 0.08}px Arial`;
+      watermarkCtx.fillText('GAMING', canvasSize / 2, canvasSize / 2 + canvasSize * 0.35);
+      
+      // Convert canvas to data URL and add to PDF
+      const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
+      pdf.addImage(watermarkDataUrl, 'PNG', x, y, watermarkSize, watermarkSize);
+    };
+    
+    logoImg.onerror = () => {
+      // Fallback to text-only watermark if image fails to load
+      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      watermarkCtx.font = `bold ${canvasSize * 0.15}px Arial`;
+      watermarkCtx.textAlign = 'center';
+      watermarkCtx.textBaseline = 'middle';
+      watermarkCtx.fillText('PATARIF', canvasSize / 2, canvasSize / 2 - canvasSize * 0.05);
+      
+      watermarkCtx.font = `${canvasSize * 0.08}px Arial`;
+      watermarkCtx.fillText('GAMING', canvasSize / 2, canvasSize / 2 + canvasSize * 0.08);
+      
+      // Convert canvas to data URL and add to PDF
+      const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
+      pdf.addImage(watermarkDataUrl, 'PNG', x, y, watermarkSize, watermarkSize);
+    };
+    
+    // Set image source
+    logoImg.src = '/images/logo-patarif.png';
+  }
   
 
   toggleFullscreen(): void {
@@ -569,7 +779,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (!this.cursorElement?.nativeElement) return;
     
     const cursor = this.cursorElement.nativeElement;
-    const size = this.brushSize;
+    // تطبيق التكبير على حجم المؤشر
+    const size = this.brushSize * this.zoomLevel;
     
     cursor.style.width = `${size}px`;
     cursor.style.height = `${size}px`;
@@ -594,6 +805,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.hideCursor();
   }
 
+  onMouseEnter(): void {
+    // إعادة تحديث المؤشر عند العودة للكانفاس
+    this.updateCursor();
+  }
+
   onTouchMove(event: TouchEvent): void {
     event.preventDefault();
     if (event.touches.length > 0) {
@@ -615,8 +831,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       clientY >= rect.top &&
       clientY <= rect.bottom
     ) {
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
+      // حساب الموضع مع مراعاة التكبير
+      const x = (clientX - rect.left) / this.zoomLevel;
+      const y = (clientY - rect.top) / this.zoomLevel;
       
       const cursor = this.cursorElement.nativeElement;
       cursor.style.left = `${Math.round(x)}px`;
@@ -693,6 +910,25 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
           }
           break;
       }
+      
+      // Zoom shortcuts
+      if (event.ctrlKey || event.metaKey) {
+        switch (event.key) {
+          case '=':
+          case '+':
+            event.preventDefault();
+            this.zoomIn();
+            break;
+          case '-':
+            event.preventDefault();
+            this.zoomOut();
+            break;
+          case '0':
+            event.preventDefault();
+            this.resetZoom();
+            break;
+        }
+      }
     } catch (error) {
       console.error('Error handling keyboard event:', error);
     }
@@ -705,6 +941,40 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  // Zoom functionality
+  zoomIn(): void {
+    this.zoomLevel = Math.min(this.zoomLevel + this.ZOOM_STEP, this.MAX_ZOOM);
+    this.applyZoom();
+  }
+
+  zoomOut(): void {
+    this.zoomLevel = Math.max(this.zoomLevel - this.ZOOM_STEP, this.MIN_ZOOM);
+    this.applyZoom();
+  }
+
+  resetZoom(): void {
+    this.zoomLevel = 1;
+    this.applyZoom();
+  }
+
+  private applyZoom(): void {
+    const canvas = this.canvasRef.nativeElement;
+    const canvasWrapper = canvas.parentElement;
+    
+    if (canvasWrapper) {
+      // Apply zoom transform to the canvas wrapper
+      canvasWrapper.style.transform = `scale(${this.zoomLevel})`;
+      canvasWrapper.style.transformOrigin = 'center center';
+      
+      // Update cursor size and position based on zoom level
+      this.updateCursor();
+    }
+  }
+
+  getZoomPercentage(): number {
+    return Math.round(this.zoomLevel * 100);
+  }
+
   goBack(): void {
     this.router.navigate(['/gallery']);
   }
@@ -713,6 +983,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (this.isBrowser) {
       if (this.animationFrameId) {
         cancelAnimationFrame(this.animationFrameId);
+      }
+      if (this.resizeTimeout) {
+        clearTimeout(this.resizeTimeout);
       }
       window.removeEventListener('keydown', this.handleKeyDown.bind(this));
     }
@@ -725,6 +998,8 @@ private loadImageToCanvas(imageUrl: string): void {
   img.crossOrigin = 'Anonymous';
   img.onload = () => {
     this.backgroundImage = img; // خزّن الصورة
+    // مسح الكانفاس أولاً ثم رسم الصورة
+    this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
     this.drawBackgroundImage();
     this.saveState();
   };
@@ -744,8 +1019,31 @@ private drawBackgroundImage(): void {
   const centerX = (canvas.width - img.width * ratio) / 2;
   const centerY = (canvas.height - img.height * ratio) / 2;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // نظّف الكانفاس
+  // رسم الصورة الخلفية مع الحفاظ على النسب
+  ctx.save();
+  ctx.globalCompositeOperation = 'source-over';
   ctx.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
+  ctx.restore();
+}
+
+private redrawImageOverDrawing(): void {
+  if (!this.backgroundImage) return;
+  const canvas = this.canvasRef.nativeElement;
+  const ctx = this.ctx;
+
+  const img = this.backgroundImage;
+  const hRatio = canvas.width / img.width;
+  const vRatio = canvas.height / img.height;
+  const ratio = Math.min(hRatio, vRatio, 1);
+
+  const centerX = (canvas.width - img.width * ratio) / 2;
+  const centerY = (canvas.height - img.height * ratio) / 2;
+
+  // رسم الصورة فوق التلوين مع الحفاظ على النسب
+  ctx.save();
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
+  ctx.restore();
 }
 
 }

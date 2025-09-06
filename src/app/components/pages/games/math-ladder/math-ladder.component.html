@@ -1,11 +1,11 @@
 <app-game-template
   [level]="niveau()"
   [questionsCorrectInLevel]="questionsCorrectes"
-  [totalQuestions]="questionsCorrectes"
+  [totalQuestions]="totalQuestions"
   [currentWord]="question().reponse.toString()"
   [difficulty]="difficulteActuelle"
-  [currentQuestion]="question().reponseCorrecte"
-  [timeElapsed]="tempsEcoule"
+  [currentQuestion]="questionsRepondues()"
+  [timeElapsed]="tempsEcoule()"
 >
 
   <div class="hud">
@@ -17,6 +17,8 @@
     <div class="ladder-container">
       <div class="ladder">
         <img src="images/math-stairs/Stairs.png" alt="échelle">
+        <!-- Étoile au sommet -->
+        <img class="star" src="images/star.png" alt="étoile">
         <!-- Personnage -->
         <img class="boy"
              [style.--p]="marche() / totalMarches"
@@ -29,18 +31,19 @@
     <div class="question-section">
       <div class="question-card" [class.locked]="estBloque()">
         <div class="qtext">
-          {{ question().a }} {{ question().op }} {{ question().b }} = ?
+          {{ question().a }} {{ question().op }} {{ question().b }} = .....?
         </div>
 
         <div class="choices">
           <button class="choice"
-                  *ngFor="let c of question().choix"
+                  *ngFor="let c of question().choix; let i = index"
+                  [class]="'choice choice-' + (i + 1)"
                   (click)="choisir(c)">
             {{ c }}
           </button>
         </div>
         <div class="actions">
-          <button class="game-btn" (click)="questionSuivante()" *ngIf="!estGagne()">Passer</button>
+          <button class="done-btn" (click)="questionSuivante()" *ngIf="!estGagne()">DONE</button>
           <div class="win-box" *ngIf="estGagne()">
             <button class="again" (click)="niveauSuivant()">Niveau suivant</button>
           </div>
@@ -48,7 +51,6 @@
       </div>
     </div>
   </div>
-
   <app-celebration
     [show]="afficherCelebration()"
     [data]="donneesCelebration"

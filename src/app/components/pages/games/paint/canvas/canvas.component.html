@@ -9,7 +9,7 @@
     <!-- Top Logo -->
    <div class="header d-flex justify-content-between px-3 py-2">
     <div class="Logo">
-      <img src="/images/logo-patarif.png" alt="p" style="width: 50px; height: 50px;">
+      <img src="/images/logo-patarif.png" alt="p" style="width: 100px; height: 100px;">
     </div>
    <div class="back d-flex gap-3"> 
     
@@ -40,6 +40,7 @@
                   (mousedown)="startDrawing($event)"
                   (mousemove)="onMouseMove($event)"
                   (mouseup)="stopDrawing()"
+                  (mouseenter)="onMouseEnter()"
                   (mouseleave)="onMouseLeave()"
                   (touchstart)="startDrawing($event)"
                   (touchmove)="onTouchMove($event)"
@@ -55,8 +56,13 @@
         
         <button class="tool-btn" 
                 (click)="downloadImage()"
-                title="Download">
+                title="Download PNG">
           <i class="fas fa-download"></i>
+        </button>
+        <button class="tool-btn" 
+                (click)="downloadPDF()"
+                title="Download PDF">
+          <i class="fas fa-file-pdf"></i>
         </button>
         <button class="tool-btn" 
                 [class.active]="currentTool === 'eraser'"
@@ -82,6 +88,31 @@
                 title="Color Picker">
           <i class="fas fa-eye-dropper"></i>
         </button>
+
+        <!-- Zoom Controls -->
+        <button class="tool-btn" 
+                (click)="zoomIn()"
+                [disabled]="zoomLevel >= MAX_ZOOM"
+                title="Zoom In (Ctrl + +)">
+          <i class="fas fa-search-plus"></i>
+        </button>
+        <button class="tool-btn" 
+                (click)="zoomOut()"
+                [disabled]="zoomLevel <= MIN_ZOOM"
+                title="Zoom Out (Ctrl + -)">
+          <i class="fas fa-search-minus"></i>
+        </button>
+        <button class="tool-btn" 
+                (click)="resetZoom()"
+                [disabled]="zoomLevel === 1"
+                title="Reset Zoom (Ctrl + 0)">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </button>
+        
+        <!-- Zoom Level Display -->
+        <div class="zoom-display">
+          {{ getZoomPercentage() }}%
+        </div>
 
         <!-- Line Size Control -->
         <div class="line-size-wrapper">

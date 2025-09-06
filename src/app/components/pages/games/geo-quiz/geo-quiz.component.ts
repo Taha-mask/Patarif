@@ -332,7 +332,7 @@ private playSound(type: 'correct' | 'wrong'): void {
 
 
   private playCorrectSound() {
-    this.audioService.playWrongSound();
+    this.audioService.playCorrectSound();
   }
 
   private playWrongSound() {

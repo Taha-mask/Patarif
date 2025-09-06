@@ -27,7 +27,7 @@ h1 {
   color: white;
   font-family: 'Fredoka One', sans-serif;
   font-size: 1.5rem;
-  font-weight: 900;
+  font-weight: 400;
   border-radius: 40px;
   border: 3px solid #ffffff;
   padding: 0.8rem 2rem;
@@ -84,6 +84,7 @@ app-cards {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 15px;
+  
 }
 
 /* Add smooth transitions */

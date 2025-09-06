@@ -1,4 +1,4 @@
-import { Component, computed, effect, signal } from '@angular/core';
+import { Component, computed, effect, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameTemplateComponent } from "../../../game-template/game-template.component";
 import { AudioService } from "../../../../services/audio.service";
@@ -15,9 +15,22 @@ interface Question {
   reponseCorrecte: number;
 }
 
-function genererQuestion(niveau: number): Question {
+function genererQuestion(niveau: number, difficulte: 'facile' | 'moyen' | 'difficile'): Question {
   const ops: Op[] = ['+', '-', '×', '÷'];
-  const max = Math.min(10 + niveau * 2, 99);
+  
+  // تحديد الحد الأقصى حسب مستوى الصعوبة
+  let max: number;
+  switch (difficulte) {
+    case 'facile':
+      max = Math.min(5 + niveau, 20);
+      break;
+    case 'moyen':
+      max = Math.min(10 + niveau * 2, 50);
+      break;
+    case 'difficile':
+      max = Math.min(15 + niveau * 3, 99);
+      break;
+  }
 
   const op = ops[Math.floor(Math.random() * ops.length)];
   let a = 1 + Math.floor(Math.random() * max);
@@ -60,35 +73,73 @@ function genererQuestion(niveau: number): Question {
   templateUrl: './math-ladder.component.html',
   styleUrls: ['./math-ladder.component.css']
 })
-export class MathLadderComponent {
+export class MathLadderComponent implements OnInit, OnDestroy {
   totalMarches = 10;
+  totalQuestions = 10; // إجمالي الأسئلة المطلوبة
   niveau = signal(1);
   marche = signal(0);
   questionsCorrectes = 0;
-  tempsEcoule = 0;
+  questionsRepondues = signal(0); // عدد الأسئلة التي تم الإجابة عليها
+  tempsEcoule = signal(0); // الوقت المنقضي
   difficulteActuelle: 'facile' | 'moyen' | 'difficile' = 'facile';
   
-  question = signal<Question>(genererQuestion(this.niveau()));
+  question = signal<Question>(genererQuestion(this.niveau(), this.difficulteActuelle));
   estBloque = signal(false);
 
   afficherCelebration = signal(false);
 
-  estGagne = computed(() => this.marche() >= this.totalMarches);
+  estGagne = computed(() => this.questionsRepondues() >= this.totalQuestions);
+
+  private timerInterval?: number;
 
   constructor(private audioService: AudioService) {
     effect(() => {
       if (this.estGagne()) {
+        this.stopTimer();
         this.afficherCelebration.set(true);
       }
     });
+  }
+
+  ngOnInit() {
+    this.startTimer();
+    this.updateDifficulty();
+  }
+
+  ngOnDestroy() {
+    this.stopTimer();
+  }
+
+  private startTimer() {
+    this.timerInterval = window.setInterval(() => {
+      this.tempsEcoule.set(this.tempsEcoule() + 1);
+    }, 1000);
+  }
+
+  private stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = undefined;
+    }
+  }
+
+  private updateDifficulty() {
+    // تحديث مستوى الصعوبة حسب المستوى
+    if (this.niveau() <= 3) {
+      this.difficulteActuelle = 'facile';
+    } else if (this.niveau() <= 6) {
+      this.difficulteActuelle = 'moyen';
+    } else {
+      this.difficulteActuelle = 'difficile';
+    }
   }
 
   get donneesCelebration(): CelebrationData {
     return {
       level: this.niveau(),
       questionsCorrect: this.questionsCorrectes,
-      totalQuestions: this.questionsCorrectes,
-      timeElapsed: this.tempsEcoule,
+      totalQuestions: this.totalQuestions,
+      timeElapsed: this.tempsEcoule(),
       difficulty: this.difficulteActuelle
     };
   }
@@ -101,6 +152,22 @@ export class MathLadderComponent {
     this.estBloque.set(true);
 
     const correct = choix === this.question().reponse;
+    
+    // إضافة تأثيرات بصرية على الأزرار
+    const buttons = document.querySelectorAll('.choice');
+    buttons.forEach(button => {
+      const buttonElement = button as HTMLElement;
+      if (parseInt(buttonElement.textContent || '0') === choix) {
+        if (correct) {
+          buttonElement.classList.add('correct');
+        } else {
+          buttonElement.classList.add('wrong');
+        }
+      }
+    });
+    
+    // زيادة عدد الأسئلة المجابة دائماً
+    this.questionsRepondues.set(this.questionsRepondues() + 1);
 
     if (correct) {
       this.marche.set(Math.min(this.totalMarches, this.marche() + 1));
@@ -108,31 +175,72 @@ export class MathLadderComponent {
       this.jouerSonCorrect();
 
       const enfant = document.querySelector('.boy');
-      enfant?.classList.add('jump');
-      setTimeout(() => enfant?.classList.remove('jump'), 500);
+      const etoile = document.querySelector('.star');
+      
+      if (enfant) {
+        // إضافة تأثيرات النجاح
+        enfant.classList.add('jump', 'success');
+        
+        // إزالة التأثيرات بعد انتهاء الحركة
+        setTimeout(() => {
+          enfant.classList.remove('jump', 'success');
+        }, 1000);
+      }
+      
+      // تأثير النجمة عند الوصول للقمة
+      if (this.marche() === this.totalMarches && etoile) {
+        etoile.classList.add('celebrate');
+        setTimeout(() => {
+          etoile.classList.remove('celebrate');
+        }, 2000);
+      }
 
       setTimeout(() => {
+        // إزالة تأثيرات الأزرار
+        buttons.forEach(button => {
+          button.classList.remove('correct', 'wrong');
+        });
+        if (!this.estGagne()) this.questionSuivante();
+        this.estBloque.set(false);
+      }, 1000);
+    } else {
+      this.jouerSonFaux();
+      
+      const enfant = document.querySelector('.boy');
+      if (enfant) {
+        // إضافة تأثير الاهتزاز للخطأ
+        enfant.classList.add('wrong');
+        
+        // إزالة التأثير بعد انتهاء الحركة
+        setTimeout(() => {
+          enfant.classList.remove('wrong');
+        }, 600);
+      }
+      
+      setTimeout(() => {
+        // إزالة تأثيرات الأزرار
+        buttons.forEach(button => {
+          button.classList.remove('correct', 'wrong');
+        });
         if (!this.estGagne()) this.questionSuivante();
         this.estBloque.set(false);
       }, 600);
-    } else {
-      this.jouerSonFaux();
-      setTimeout(() => {
-        this.questionSuivante();
-        this.estBloque.set(false);
-      }, 400);
     }
   }
 
   questionSuivante() {
-    this.question.set(genererQuestion(this.niveau()));
+    this.question.set(genererQuestion(this.niveau(), this.difficulteActuelle));
   }
 
   recommencerJeu() {
     this.marche.set(0);
     this.questionsCorrectes = 0;
+    this.questionsRepondues.set(0);
+    this.tempsEcoule.set(0);
     this.estBloque.set(false);
     this.afficherCelebration.set(false);
+    this.updateDifficulty();
+    this.startTimer();
     this.questionSuivante();
   }
 
@@ -143,6 +251,7 @@ export class MathLadderComponent {
 
   niveauSuivant() {
     this.niveau.set(this.niveau() + 1);
+    this.updateDifficulty();
     this.recommencerJeu();
   }
 }

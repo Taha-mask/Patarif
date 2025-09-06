@@ -25,6 +25,13 @@ export class GamesComponent {
   }
 
   onCardClick(event: {card: Card, index: number}) {
+    // Check if the card has a route property and use it
+    if (event.card.route) {
+      this.router.navigate([event.card.route]);
+      return;
+    }
+    
+    // Fallback to index-based navigation for cards without route property
     // If first card is clicked, navigate to letters game
     if (event.index === 0) {
       this.router.navigate(['/letters-game']);
@@ -65,11 +72,11 @@ export class GamesComponent {
     },
     {
       img: 'images/2222.jpg',
-      route: '/games/math-ladder'
+      route: '/math-ladder'
     },
     {
       img: 'images/3333.jpg',
-      route: '/games/geo-quiz'
+      route: '/geo-quiz'
     }
   ];
   cardSet2: Card[] = [
