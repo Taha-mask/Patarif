@@ -40,7 +40,7 @@
 }
 .ladder .star{
   width:15%;
-  left:65%; top:5%;
+  left:75%; top:-10%;
   transform: translate(-50%, -50%);
   animation: twinkle 1.2s infinite ease-in-out;
   filter: drop-shadow(0 0 20px #FFD700);
@@ -51,11 +51,11 @@
 }
 
 .ladder .boy {
-  width:28%;
+  width:32%;
   --p: 0;
   position:absolute;
-  left: clamp(6%, 10% + calc(var(--p) * 41%), 50%);
-  bottom: clamp(6%, 8% + calc(var(--p) * 72%), 82%);
+  left: clamp(3%, 5% + calc(var(--p) * 50%), 70%);
+  bottom: clamp(1%, 9% + calc(var(--p) * 90%), 100%);
   transition: left .45s ease, bottom .45s ease, transform .12s ease;
 }
 
