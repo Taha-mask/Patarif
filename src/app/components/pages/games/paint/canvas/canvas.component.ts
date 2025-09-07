@@ -821,9 +821,14 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       clientY = (e as MouseEvent | PointerEvent).clientY;
     }
     
-    // حساب الموضع مع مراعاة التكبير والبانينج
-    const x = (clientX - rect.left) / this.zoomLevel - this.panOffsetX;
-    const y = (clientY - rect.top) / this.zoomLevel - this.panOffsetY;
+    // حساب الموضع مع مراعاة التكبير والبانينج بشكل صحيح
+    // أولاً: تحويل من إحداثيات الشاشة إلى إحداثيات الكانفاس
+    const canvasX = clientX - rect.left;
+    const canvasY = clientY - rect.top;
+    
+    // ثانياً: تطبيق التكبير والبانينج العكسي للحصول على الموضع الصحيح
+    const x = (canvasX - this.panOffsetX) / this.zoomLevel;
+    const y = (canvasY - this.panOffsetY) / this.zoomLevel;
     
     return { x, y };
   }
@@ -1214,6 +1219,15 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (!this.cursorElement?.nativeElement) return;
     
     const cursor = this.cursorElement.nativeElement;
+    
+    // إعادة تعيين التحويلات للماوس
+    cursor.style.transform = '';
+    cursor.style.left = '';
+    cursor.style.top = '';
+    
+    // إزالة CSS class للشاشات اللمسية
+    cursor.classList.remove('touch-cursor');
+    
     // تطبيق التكبير على حجم المؤشر
     const size = this.brushSize * this.zoomLevel;
     
@@ -1264,7 +1278,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (event.touches.length === 1) {
       // Single touch - continue drawing
       const touch = event.touches[0];
-      this.updateCursorPosition(touch.clientX, touch.clientY);
+      this.updateTouchCursorPosition(touch.clientX, touch.clientY);
       this.draw(event);
     } else if (event.touches.length === 2) {
       // Two touches - handle zoom or pan
@@ -1390,9 +1404,14 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       clientY >= rect.top &&
       clientY <= rect.bottom
     ) {
-      // حساب الموضع مع مراعاة التكبير والبانينج
-      const x = (clientX - rect.left) / this.zoomLevel - this.panOffsetX;
-      const y = (clientY - rect.top) / this.zoomLevel - this.panOffsetY;
+      // حساب الموضع مع مراعاة التكبير والبانينج بشكل صحيح
+      // أولاً: تحويل من إحداثيات الشاشة إلى إحداثيات الكانفاس
+      const canvasX = clientX - rect.left;
+      const canvasY = clientY - rect.top;
+      
+      // ثانياً: تطبيق التكبير والبانينج العكسي للحصول على الموضع الصحيح
+      const x = (canvasX - this.panOffsetX) / this.zoomLevel;
+      const y = (canvasY - this.panOffsetY) / this.zoomLevel;
       
       const cursor = this.cursorElement.nativeElement;
       cursor.style.left = `${Math.round(x)}px`;
@@ -1406,6 +1425,42 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private hideCursor(): void {
     if (this.cursorElement?.nativeElement) {
       this.cursorElement.nativeElement.style.display = 'none';
+    }
+  }
+
+  private updateTouchCursorPosition(clientX: number, clientY: number): void {
+    if (!this.cursorElement?.nativeElement) return;
+    
+    const canvas = this.canvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    
+    if (
+      clientX >= rect.left &&
+      clientX <= rect.right &&
+      clientY >= rect.top &&
+      clientY <= rect.bottom
+    ) {
+      // حساب موضع المؤشر للشاشات اللمسية مع مراعاة التكبير والبانينج
+      const canvasX = clientX - rect.left;
+      const canvasY = clientY - rect.top;
+      
+      // تطبيق التحويلات العكسية للحصول على الموضع الصحيح
+      const x = (canvasX - this.panOffsetX) / this.zoomLevel;
+      const y = (canvasY - this.panOffsetY) / this.zoomLevel;
+      
+      const cursor = this.cursorElement.nativeElement;
+      
+      // إضافة CSS class للشاشات اللمسية
+      cursor.classList.add('touch-cursor');
+      
+      // تطبيق التحويلات على المؤشر نفسه ليتطابق مع الكانفاس
+      const transform = `translate(${x}px, ${y}px) scale(${this.zoomLevel})`;
+      cursor.style.transform = transform;
+      cursor.style.left = '0px';
+      cursor.style.top = '0px';
+      cursor.style.display = 'block';
+    } else {
+      this.hideCursor();
     }
   }
 
