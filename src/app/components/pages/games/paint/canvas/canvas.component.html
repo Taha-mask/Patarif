@@ -32,7 +32,7 @@
           <div #cursorElement class="cursor" [class.pen]="currentTool !== 'eraser'"
             [class.eraser]="currentTool === 'eraser'"></div>
         </div>
-        <div class="watermark-overlay" aria-hidden="true">
+        <div *ngIf="isAppeared == true" class="watermark-overlay" aria-hidden="true">
           <div class="watermark-circle">
             <img src="/images/logo-patarif.png" alt="PATARIF logo" class="watermark-img" />
           </div>
