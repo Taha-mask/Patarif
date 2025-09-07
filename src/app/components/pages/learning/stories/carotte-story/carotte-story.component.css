@@ -54,7 +54,7 @@ body {
     margin-left: 60px;
     display: inline-flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 0px;
 
 }
 
@@ -71,6 +71,7 @@ body {
 .firstDesc {
     font-size: clamp(0.8rem, 2vw, 2rem);
     font-weight: bold;
+    margin-bottom: 12px;
     font-family: var(--mainFont);
     animation: popup 0.6s ease-out forwards;
     animation-delay: 0.6s;
@@ -79,6 +80,7 @@ body {
 }
 
 .title {
+    margin: 0;
     color: var(--carotteColor);
     font-size: clamp(1.2rem, 6vw, 6rem);
     font-family: var(--mainFont);
@@ -116,9 +118,9 @@ body {
 
 
 .cover-title .btn {
-    visibility: hi;
-    width: 120px;
-    height: 42px;
+    margin-top: 12px;
+   width: 30%;
+    height: 5%;
     background-color: #81BEAE;
     color: white;
     border: none;
@@ -199,7 +201,10 @@ body {
     overflow-x: hidden;
 }
 
-
+    .mainCloud img {
+        object-fit: cover;
+        width: 100%;
+    }
 .section {
     display: block;
     position: relative;
@@ -337,6 +342,44 @@ body {
     border-radius: 64px;
 }
 
+.story:not(.section3 .story){
+    animation: storyAnimOne 8s ease-in-out infinite alternate;
+    transition: all 1s ease;
+}
+
+.story:hover {
+    margin-top: 0%;
+    rotate: 0deg;
+    animation-play-state: paused;
+}
+
+@keyframes storyAnimOne {
+    0% {
+        margin-top: 2%;
+        rotate: 0deg;
+    }
+
+    25% {
+        margin-top: 0%;
+        rotate: 4deg;
+    }
+
+    50% {
+        margin-top: 2%;
+        rotate: -4deg;
+    }
+
+    75% {
+        margin-top: 2%;
+        rotate: 4deg;
+    }
+
+    100% {
+        margin-top: 2%;
+        rotate: 0deg;
+    }
+}
+
 .story p {
     font-family: var(--mainFont);
     font-size: clamp(0.7rem, 1.5vw, 2.8rem);
@@ -387,6 +430,9 @@ body {
     width: fit-content;
     height: fit-content;
 } */
+
+
+
 .section3 .story .first p {
     font-family: var(--comic);
     font-size: clamp(0.7rem, 1.5vw, 1.5rem);
@@ -395,6 +441,20 @@ body {
     margin: 0;
     /* text-align: right; */
     text-wrap: nowrap;
+    
+animation: paddingMove 3s ease-in-out infinite alternate;
+}
+
+@keyframes paddingMove {
+    0% {
+        padding-left: 0;
+    }
+    50% {
+        padding-left: 20px;
+    }
+    100% {
+        padding-left: 0;
+    }
 }
 
 .section3 .story .first h1 {
@@ -402,8 +462,7 @@ body {
     font-size: clamp(1rem, 3vw, 2.5rem);
     color: #E06913;
     font-weight: bold;
-    text-wrap: nowrap;
-}
+    text-wrap: nowrap;}
 
 .section4 .story {
     background-color: #F5E1A6;
@@ -506,7 +565,35 @@ body {
     left: 75%;
     width: 28%;
     height: auto;
+
+    animation: marIcon 3s ease-in-out infinite;
+    transform-origin: center;
 }
+
+
+@keyframes marIcon {
+    0% {
+        margin-top: 0;
+        scale: 1;
+    }
+    30% {
+        margin-top: -10px;
+        scale: 1.1;
+    }
+    50% {
+        margin-top: 0;
+        scale: 1;
+    }
+    80% {
+        margin-top: -6px; 
+        scale: 1.05;
+    }
+    100% {
+        margin-top: 0;
+        scale: 1;
+    }
+}
+
 
 .section5 .june {
     position: absolute;
@@ -532,6 +619,32 @@ body {
     left: 68%;
     width: 28%;
     height: auto;
+    animation: juneIcon 4s ease-in-out infinite;
+    transform-origin: center;
+}
+
+
+@keyframes juneIcon {
+    0% {
+        rotate: 0deg;
+        scale: 1;
+    }
+    25% {
+        rotate: 8deg;
+        scale: 1.1;
+    }
+    50% {
+        rotate: -8deg;
+        scale: 1.1;
+    }
+    75% {
+        rotate: 5deg;
+        scale: 1.05;
+    }
+    100% {
+        rotate: 0deg;
+        scale: 1;
+    }
 }
 
 .section6 .message {
@@ -738,7 +851,9 @@ body {
     display: block;
 }
 
-
+.section9 {
+    margin-top: 4%;
+}
 .section9-text {
     position: absolute;
     transform: translate(-50%, -50%);
