@@ -93,6 +93,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
+          this.preloadLogo().catch(()=>{}); 
+
       this.setupCanvas();
       this.saveState();
       this.setupEventListeners();
@@ -450,189 +452,143 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
   
+async downloadImage(): Promise<void> {
+  if (!this.isBrowser) return;
+  const canvas = this.canvasRef.nativeElement;
 
-  downloadImage(): void {
-    if (!this.isBrowser) return;
-    
-    const canvas = this.canvasRef.nativeElement;
-    
-    // Create a new canvas for the final image with watermark
-    const finalCanvas = document.createElement('canvas');
-    const finalCtx = finalCanvas.getContext('2d')!;
-    
-    // Set final canvas size
-    finalCanvas.width = canvas.width;
-    finalCanvas.height = canvas.height;
-    
-    // Fill with white background first
-    finalCtx.fillStyle = '#ffffff';
-    finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-    
-    // Draw the original canvas
-    finalCtx.drawImage(canvas, 0, 0);
-    
-    // Add watermark synchronously
-    this.addWatermarkSync(finalCtx, finalCanvas.width, finalCanvas.height);
-    
-    // Convert to data URL and download
-    const dataUrl = finalCanvas.toDataURL('image/png');
-    
-    const link = document.createElement('a');
-    link.download = `painting-${new Date().toISOString().slice(0, 10)}.png`;
-    link.href = dataUrl;
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const finalCanvas = document.createElement('canvas');
+  finalCanvas.width = canvas.width;
+  finalCanvas.height = canvas.height;
+  const finalCtx = finalCanvas.getContext('2d')!;
+
+  finalCtx.fillStyle = '#ffffff';
+  finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+  finalCtx.drawImage(canvas, 0, 0);
+
+  // انتظر رسم watermark
+  await this.addWatermarkToContext(finalCtx, finalCanvas.width, finalCanvas.height);
+
+  const dataUrl = finalCanvas.toDataURL('image/png');
+  const link = document.createElement('a');
+  link.download = `painting-${new Date().toISOString().slice(0,10)}.png`;
+  link.href = dataUrl;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+async downloadPDF(): Promise<void> {
+  if (!this.isBrowser) return;
+
+  const canvas = this.canvasRef.nativeElement;
+
+  // Create a new canvas for the final image with watermark
+  const finalCanvas = document.createElement('canvas');
+  const finalCtx = finalCanvas.getContext('2d')!;
+
+  // Set final canvas size
+  finalCanvas.width = canvas.width;
+  finalCanvas.height = canvas.height;
+
+  // Fill with white background first
+  finalCtx.fillStyle = '#ffffff';
+  finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+  // Draw the original canvas
+  finalCtx.drawImage(canvas, 0, 0);
+
+  // ✅ Add watermark (wait for logo to load)
+  await this.addWatermarkToContext(finalCtx, finalCanvas.width, finalCanvas.height);
+
+  // Convert to data URL
+  const dataUrl = finalCanvas.toDataURL('image/png');
+
+  // Create PDF with A4 size
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  // A4 dimensions in mm
+  const a4Width = 210;
+  const a4Height = 297;
+  const margin = 10;
+  const contentWidth = a4Width - (margin * 2);
+  const contentHeight = a4Height - (margin * 2);
+
+  // Calculate image dimensions to fit A4 while maintaining aspect ratio
+  const imageAspectRatio = finalCanvas.width / finalCanvas.height;
+  const contentAspectRatio = contentWidth / contentHeight;
+
+  let imageWidth, imageHeight, imageX, imageY;
+
+  if (imageAspectRatio > contentAspectRatio) {
+    // Image is wider than content area
+    imageWidth = contentWidth;
+    imageHeight = contentWidth / imageAspectRatio;
+    imageX = margin;
+    imageY = margin + (contentHeight - imageHeight) / 2;
+  } else {
+    // Image is taller than content area
+    imageHeight = contentHeight;
+    imageWidth = contentHeight * imageAspectRatio;
+    imageX = margin + (contentWidth - imageWidth) / 2;
+    imageY = margin;
   }
 
-  downloadPDF(): void {
-    if (!this.isBrowser) return;
-    
-    const canvas = this.canvasRef.nativeElement;
-    
-    // Create a new canvas for the final image with watermark
-    const finalCanvas = document.createElement('canvas');
-    const finalCtx = finalCanvas.getContext('2d')!;
-    
-    // Set final canvas size
-    finalCanvas.width = canvas.width;
-    finalCanvas.height = canvas.height;
-    
-    // Fill with white background first
-    finalCtx.fillStyle = '#ffffff';
-    finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-    
-    // Draw the original canvas
-    finalCtx.drawImage(canvas, 0, 0);
-    
-    // Add watermark synchronously
-    this.addWatermarkSync(finalCtx, finalCanvas.width, finalCanvas.height);
-    
-    // Convert to data URL
-    const dataUrl = finalCanvas.toDataURL('image/png');
-    
-    // Create PDF with A4 size
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-    
-    // A4 dimensions in mm
-    const a4Width = 210;
-    const a4Height = 297;
-    const margin = 10;
-    const contentWidth = a4Width - (margin * 2);
-    const contentHeight = a4Height - (margin * 2);
-    
-    // Calculate image dimensions to fit A4 while maintaining aspect ratio
-    const imageAspectRatio = finalCanvas.width / finalCanvas.height;
-    const contentAspectRatio = contentWidth / contentHeight;
-    
-    let imageWidth, imageHeight, imageX, imageY;
-    
-    if (imageAspectRatio > contentAspectRatio) {
-      // Image is wider than content area
-      imageWidth = contentWidth;
-      imageHeight = contentWidth / imageAspectRatio;
-      imageX = margin;
-      imageY = margin + (contentHeight - imageHeight) / 2;
-    } else {
-      // Image is taller than content area
-      imageHeight = contentHeight;
-      imageWidth = contentHeight * imageAspectRatio;
-      imageX = margin + (contentWidth - imageWidth) / 2;
-      imageY = margin;
-    }
-    
-    // Add image to PDF
-    pdf.addImage(dataUrl, 'PNG', imageX, imageY, imageWidth, imageHeight);
-    
-    // Add watermark logo to PDF
-    this.addPDFWatermark(pdf, a4Width, a4Height);
-    
-    // Download PDF
-    const fileName = `painting-${new Date().toISOString().slice(0, 10)}.pdf`;
-    pdf.save(fileName);
+  // Add the canvas (with logo) to PDF
+  pdf.addImage(dataUrl, 'PNG', imageX, imageY, imageWidth, imageHeight);
+
+  // ✅ (اختياري) لو عايز تضيف اللوجو الكبير كـ watermark مستقل فوق الصفحة كلها
+  // await this.addPDFWatermark(pdf, a4Width, a4Height);
+
+  // Download PDF
+  const fileName = `painting-${new Date().toISOString().slice(0, 10)}.pdf`;
+  pdf.save(fileName);
+}
+
+
+private async addWatermarkToContext(ctx: CanvasRenderingContext2D, width: number, height: number): Promise<void> {
+  const watermarkSize = Math.min(width, height) * 0.2;
+  const margin = watermarkSize * 0.1;
+  const x = width - watermarkSize - margin;
+  const y = height - watermarkSize - margin;
+
+  // الخلفية الدائرية
+  ctx.save();
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+  ctx.beginPath();
+  ctx.arc(x + watermarkSize / 2, y + watermarkSize / 2, watermarkSize / 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // الحدود
+  ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+  ctx.lineWidth = Math.max(2, watermarkSize * 0.02);
+  ctx.stroke();
+
+  // نضمن تحميل اللوجو قبل الرسم
+  await this.preloadLogo();
+
+  if (this.logoLoaded && this.logoImg) {
+    const logoSize = watermarkSize * 0.6;
+    const logoX = x + (watermarkSize - logoSize) / 2;
+    const logoY = y + (watermarkSize - logoSize) / 2 - watermarkSize * 0.08;
+    ctx.drawImage(this.logoImg, logoX, logoY, logoSize, logoSize);
+
+
+  } else {
+    // fallback: نص فقط
+    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+    ctx.font = `bold ${Math.max(12, watermarkSize * 0.12)}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('PATARIF', x + watermarkSize / 2, y + watermarkSize / 2);
   }
 
-  private addWatermark(ctx: CanvasRenderingContext2D, width: number, height: number): void {
-    // Create watermark image
-    const watermarkCanvas = document.createElement('canvas');
-    const watermarkCtx = watermarkCanvas.getContext('2d')!;
-    
-    // Set watermark canvas size
-    const watermarkSize = Math.min(width, height) * 0.2; // 20% of canvas size
-    watermarkCanvas.width = watermarkSize;
-    watermarkCanvas.height = watermarkSize;
-    
-    // Draw watermark background (semi-transparent circle)
-    watermarkCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    watermarkCtx.beginPath();
-    watermarkCtx.arc(watermarkSize / 2, watermarkSize / 2, watermarkSize / 2, 0, Math.PI * 2);
-    watermarkCtx.fill();
-    
-    // Draw watermark border
-    watermarkCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
-    watermarkCtx.lineWidth = 2;
-    watermarkCtx.stroke();
-    
-    // Load and draw logo image
-    const logoImg = new Image();
-    logoImg.crossOrigin = 'anonymous';
-    logoImg.onload = () => {
-      // Calculate logo size (60% of watermark size)
-      const logoSize = watermarkSize * 0.6;
-      const logoX = (watermarkSize - logoSize) / 2;
-      const logoY = (watermarkSize - logoSize) / 2 - watermarkSize * 0.05;
-      
-      // Draw logo
-      watermarkCtx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
-      
-      // Add text below logo
-      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      watermarkCtx.font = `bold ${watermarkSize * 0.12}px Arial`;
-      watermarkCtx.textAlign = 'center';
-      watermarkCtx.textBaseline = 'middle';
-      watermarkCtx.fillText('PATARIF', watermarkSize / 2, watermarkSize / 2 + watermarkSize * 0.25);
-      
-      // Add smaller text
-      watermarkCtx.font = `${watermarkSize * 0.08}px Arial`;
-      watermarkCtx.fillText('GAMING', watermarkSize / 2, watermarkSize / 2 + watermarkSize * 0.35);
-      
-      // Position watermark in bottom-right corner
-      const margin = watermarkSize * 0.1;
-      const x = width - watermarkSize - margin;
-      const y = height - watermarkSize - margin;
-      
-      // Draw watermark on final canvas
-      ctx.drawImage(watermarkCanvas, x, y);
-    };
-    
-    logoImg.onerror = () => {
-      // Fallback to text-only watermark if image fails to load
-      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      watermarkCtx.font = `bold ${watermarkSize * 0.15}px Arial`;
-      watermarkCtx.textAlign = 'center';
-      watermarkCtx.textBaseline = 'middle';
-      watermarkCtx.fillText('PATARIF', watermarkSize / 2, watermarkSize / 2 - watermarkSize * 0.05);
-      
-      watermarkCtx.font = `${watermarkSize * 0.08}px Arial`;
-      watermarkCtx.fillText('GAMING', watermarkSize / 2, watermarkSize / 2 + watermarkSize * 0.08);
-      
-      // Position watermark in bottom-right corner
-      const margin = watermarkSize * 0.1;
-      const x = width - watermarkSize - margin;
-      const y = height - watermarkSize - margin;
-      
-      // Draw watermark on final canvas
-      ctx.drawImage(watermarkCanvas, x, y);
-    };
-    
-    // Set image source
-    logoImg.src = '/images/PataUG1.svg';
-  }
+  ctx.restore();
+}
+
 
   private addWatermarkSync(ctx: CanvasRenderingContext2D, width: number, height: number): void {
     const watermarkSize = Math.min(width, height) * 0.2;
@@ -1045,5 +1001,29 @@ private redrawImageOverDrawing(): void {
   ctx.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
   ctx.restore();
 }
+
+// properties
+private logoImg: HTMLImageElement | null = null;
+private logoLoaded = false;
+
+// استعمل عند الـ ngAfterViewInit لتحميل الشعار مبكراً
+private preloadLogo(): Promise<void> {
+  if (this.logoLoaded) return Promise.resolve();
+  return new Promise((resolve) => {
+    this.logoImg = new Image();
+    this.logoImg.crossOrigin = 'anonymous';
+    this.logoImg.src = '/images/logo-patarif.png';
+    this.logoImg.onload = () => {
+      this.logoLoaded = true;
+      resolve();
+    };
+    this.logoImg.onerror = () => {
+      console.warn('Logo failed to load, will fallback to text watermark.');
+      this.logoLoaded = false;
+      resolve();
+    };
+  });
+}
+
 
 }
