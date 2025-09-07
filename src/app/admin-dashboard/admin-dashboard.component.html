@@ -13,17 +13,6 @@
 
       <!-- Top Bar -->
       <div class="top-bar">
-        <!-- Search -->
-        <!-- <div class="search">
-          <input type="search" placeholder="Search...">
-          <i class="bi bi-search prefix"></i>
-        </div> -->
-
-        <!-- Notifications -->
-        <!-- <button class="notifications" [class.notifi]="notifications != 0">
-          <i class="bi bi-bell-fill"></i>
-        </button> -->
-
         <!-- Account -->
         <a class="account-link" [routerLink]="['/admin-profile']">
           <div class="account">
@@ -31,22 +20,22 @@
               <img [src]="profileImage || 'images/admin.png'" (error)="onImageError($event)"
                 class="dropdown-toggle rounded-circle user-avatar" style="width:50px; height:50px; cursor:pointer;"
                 role="button" tabindex="0" (click)="toggleMenu($event)" (keydown.enter)="toggleMenu($event)"
-                [attr.aria-expanded]="menuOpen" alt="User" /> 
+                [attr.aria-expanded]="menuOpen" alt="Utilisateur" /> 
             </div>
             <h4>{{userName}}</h4>
           </div>
         </a>
-
       </div>
 
       <!-- Page Content -->
       <div class="content d-flex flex-column justify-content-center align-items-center">
-        <div class="section1  col-6">
+        <div class="section1 col-6">
           <div class="row justify-content-between g-4 align-items-stretch">
-            <div class="col-12 col-md-6 col-lg-4  d-flex flex-column gap-3">
-              <!-- total requests [0] -->
-              <div class=" part">
-                <h5>Total requests</h5>
+
+            <!-- Total Requests -->
+            <div class="col-12 col-md-6 col-lg-4 d-flex flex-column gap-3">
+              <div class="part">
+                <h5>Total des commandes</h5>
                 <h1>{{totalCarts}}</h1>
                 <p *ngIf="trend">
                   <i class="bi" [ngClass]="{
@@ -54,14 +43,13 @@
       'bi-arrow-down-circle text-danger': trend.trend === 'down',
       'bi-dash-circle text-secondary': trend.trend === 'equal'
     }"></i>
-
-                  {{ trend.percentage.toFixed(2) }}% compared to yesterday
+                  {{ trend.percentage.toFixed(2) }}% par rapport à hier
                 </p>
               </div>
-              <!-- New clients [1] -->
 
+              <!-- New Clients -->
               <div class="part clients-part d-flex flex-column gap-2">
-                <h5>new clients in last month</h5>
+                <h5>Nouveaux clients ce mois</h5>
                 <h1>{{newProfiles.length}}</h1>
                 <p *ngIf="userStats">
                   <i class="bi" [ngClass]="{
@@ -69,20 +57,15 @@
       'bi-arrow-down-circle text-danger': userStats.trend === 'down',
       'bi-dash-circle text-secondary': userStats.trend === 'equal'
     }"></i>
-                  {{ userStats.percentage.toFixed(2) }}% more users this month
+                  {{ userStats.percentage.toFixed(2) }}% d’utilisateurs en plus ce mois
                 </p>
-                <!-- <div class="clients">
-                  
-                  <div *ngFor="let i of [].constructor(5); let idx = index" class="circle">
-                    solimanali512_gmail.com
-                  </div>
-
-                </div> -->
               </div>
             </div>
+
+            <!-- Total Sales & Best Products -->
             <div class="col-12 col-md-6 col-lg-4 d-flex flex-column gap-3">
-              <div class=" part">
-                <h5>Total sales</h5>
+              <div class="part">
+                <h5>Total des ventes</h5>
                 <h1>{{deliveredCarts}}</h1>
                 <p *ngIf="deliveredStats">
                   <i class="bi" [ngClass]="{
@@ -90,48 +73,54 @@
       'bi-arrow-down-circle text-danger': deliveredStats.trend === 'down',
       'bi-dash-circle text-secondary': deliveredStats.trend === 'equal'
     }"></i>
-                  {{ deliveredStats.percentage.toFixed(2) }}% more delivered orders today
+                  {{ deliveredStats.percentage.toFixed(2) }}% de commandes livrées aujourd’hui
                 </p>
               </div>
-              <!-- more sales products -->
-              <div class="part">
-                <h5>Best-selling products</h5>
-                <div class="best-products">
 
+              <div class="part">
+                <h5>Produits les plus vendus</h5>
+                <div class="best-products">
                   <div *ngFor="let item of top3CartItems">
                     <div class="product"> {{ item.name }} ({{ item.count }})</div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-12  col-md-6 col-lg-3 part side-bar d-flex justify-content-start align-items-center">
-              <h5 class="mb-3">almost finished</h5>
+
+            <!-- Low Stock -->
+            <div class="col-12 col-md-6 col-lg-3 part side-bar d-flex justify-content-start align-items-center">
+              <h5 class="mb-3">Presque épuisé</h5>
               <div *ngFor="let product of lowStockProducts">
                 <app-admin-product-card [img]="product.images[0]" [title]="product.title" [price]="product.final_price"
                   [isAlmostFinished]="true"></app-admin-product-card>
               </div>
             </div>
+
           </div>
         </div>
 
+        <!-- Section 2 -->
         <div class="section2 col-6">
           <div class="row justify-content-between g-4 align-items-stretch">
-            <div class="col-12 col-md-6 col-lg-8  d-flex flex-column gap-3">
+            
+            <!-- Chart -->
+            <div class="col-12 col-md-6 col-lg-8 d-flex flex-column gap-3">
               <div class="part chart"><app-chart></app-chart></div>
-
             </div>
-            <div
-              class="col-12 col-md-12 col-lg-3 part side-bar d-flex flex-column justify-content-start  align-items-center">
-              <h5 class="mb-3">Awaiting replenishment</h5>
+
+            <!-- Out of Stock -->
+            <div class="col-12 col-md-12 col-lg-3 part side-bar d-flex flex-column justify-content-start align-items-center">
+              <h5 class="mb-3">En attente de réapprovisionnement</h5>
               <div *ngFor="let product of outOfStockProducts">
                 <app-admin-product-card [img]="product.images[0]" [title]="product.title" [price]="product.final_price"
                   [isAlmostFinished]="false"></app-admin-product-card>
               </div>
             </div>
+
           </div>
         </div>
-      </div>
 
+      </div>
 
     </div>
   </div>

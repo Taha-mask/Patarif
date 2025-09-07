@@ -15,7 +15,7 @@ export class AdminOrdersComponent {
   orders: any[] = [];
   loading = false;
 
-  constructor(private supabaseService: SupabaseService, private router: Router) { }
+  constructor(private supabaseService: SupabaseService, private router: Router) {}
 
   async ngOnInit() {
     await this.loadOrders();
@@ -27,6 +27,9 @@ export class AdminOrdersComponent {
       const data = await this.supabaseService.getAllOrders();
       this.orders = data.filter((order: any) => order.isDelivered === false);
 
+      // افتراضياً خليها من الأحدث
+      this.sortNewest();
+
     } catch (err) {
       console.error(err);
     } finally {
@@ -34,11 +37,16 @@ export class AdminOrdersComponent {
     }
   }
 
+  sortNewest() {
+    this.orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }
 
+  sortOldest() {
+    this.orders.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  }
 
   async onDeliverOrder(orderId: string) {
     await this.supabaseService.markAsDelivered(orderId);
     window.location.reload();
   }
-
 }
