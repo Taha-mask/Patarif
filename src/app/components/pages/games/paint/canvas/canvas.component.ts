@@ -368,7 +368,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       // تحديث العرض النهائي
       this.updateDisplay();
       
-      this.saveState();
+      // Save state after drawing is complete
+      setTimeout(() => {
+        this.saveState();
+      }, 10); // Small delay to ensure display is updated
     }
     
     // Stop panning if we were panning
@@ -783,6 +786,23 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     // (لا نحتاج لرسمه لأنه موجود بالفعل)
   }
 
+  private restoreDisplayFromHistory(): void {
+    if (!this.ctx) return;
+
+    const canvas = this.canvasRef.nativeElement;
+    
+    // مسح الكانفاس الرئيسي
+    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // مسح background canvas
+    if (this.backgroundCtx) {
+      this.backgroundCtx.clearRect(0, 0, this.backgroundCanvasRef.nativeElement.width, this.backgroundCanvasRef.nativeElement.height);
+    }
+    
+    // إعادة تعيين الصورة الخلفية
+    this.backgroundImage = null;
+  }
+
   private drawBackgroundImageOnMainCanvas(): void {
     if (!this.backgroundImage || !this.ctx) return;
     
@@ -880,7 +900,44 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     // Initialize with empty state
     this.drawingHistory = [];
     this.historyIndex = -1;
-    this.saveState(); // Save initial empty state
+    this.saveInitialState(); // Save initial empty state
+  }
+
+  private saveInitialState(): void {
+    if (!this.isBrowser || !this.canvasRef?.nativeElement) return;
+    
+    try {
+      // Create a temporary canvas for initial state
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d')!;
+      
+      const mainCanvas = this.canvasRef.nativeElement;
+      const backgroundCanvas = this.backgroundCanvasRef?.nativeElement;
+      
+      // Set temp canvas size
+      tempCanvas.width = mainCanvas.width;
+      tempCanvas.height = mainCanvas.height;
+      
+      // Fill with white background
+      tempCtx.fillStyle = '#ffffff';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      
+      // Draw background canvas first (if exists)
+      if (backgroundCanvas) {
+        tempCtx.drawImage(backgroundCanvas, 0, 0);
+      }
+      
+      // Draw main canvas on top
+      tempCtx.drawImage(mainCanvas, 0, 0);
+      
+      // Get the combined state
+      const state = tempCanvas.toDataURL('image/png');
+      
+      this.drawingHistory.push(state);
+      this.historyIndex = 0;
+    } catch (error) {
+      console.error('Error saving initial state:', error);
+    }
   }
 
   private saveState(): void {
@@ -919,11 +976,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       }
       
       this.drawingHistory.push(state);
+      this.historyIndex = this.drawingHistory.length - 1;
       
       // Limit history size
       if (this.drawingHistory.length > this.MAX_HISTORY) {
         this.drawingHistory.shift();
-      } else {
         this.historyIndex = this.drawingHistory.length - 1;
       }
     } catch (error) {
@@ -952,11 +1009,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       const img = new Image();
       img.onload = () => {
         if (this.ctx) {
-          // Clear both canvases
-          this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-          if (this.backgroundCtx) {
-            this.backgroundCtx.clearRect(0, 0, this.backgroundCanvasRef.nativeElement.width, this.backgroundCanvasRef.nativeElement.height);
-          }
+          // Clear everything first
+          this.restoreDisplayFromHistory();
           
           // If this is the first state (empty), just clear everything
           if (this.historyIndex === 0) {
@@ -964,7 +1018,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
             return;
           }
           
-          // Restore the combined state
+          // Restore the combined state to main canvas
           this.ctx.drawImage(img, 0, 0);
           
           // Update display to show the restored state
