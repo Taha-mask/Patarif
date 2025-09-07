@@ -94,7 +94,7 @@ async ngOnInit() {
         // clamp question to available questions count
         if (savedQuestion > levelQuestions.length) savedQuestion = 1;
         this.gameState.level = savedLevel;
-        this.gameState.currentQuestion = savedQuestion + 1;
+        this.gameState.currentQuestion = savedQuestion;
         this.currentWordIndex = Math.max(0, this.gameState.currentQuestion - 1);
       }
     } else {

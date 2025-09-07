@@ -45,7 +45,7 @@ body {
     display: block;
 }
 
-.cover img{
+.cover img {
     width: 100vw;
 }
 
@@ -111,8 +111,8 @@ h3 {
 
 
 .cover-title .btn {
-    margin-top: 16px;
-    width: 40%;
+    margin-top: 2rem;
+    width: 52%;
     height: 5%;
     background-color: #81BEAE;
     color: white;
@@ -182,7 +182,8 @@ h3 {
 .content {
     position: relative;
     margin-top: 40%;
-    }
+}
+
 .mainCloud {
     z-index: 10;
     animation: fadeIn 1s ease-in-out;
@@ -198,7 +199,7 @@ h3 {
     position: relative;
     width: 100%;
     /* height: 100vh; */
-    animation: appearSection 1s linear;
+    /* animation: appearSection 1s linear; */
     animation-timeline: view();
     animation-range: entry cover 50%;
     scroll-snap-align: start;
@@ -250,6 +251,43 @@ h3 {
     border-radius: 64px;
 }
 
+.story{
+    animation: storyAnimOne 8s ease-in-out infinite alternate;
+    transition: all 1s ease;
+}
+
+.story:hover {
+    margin-top: 0%;
+    rotate: 0deg;
+    animation-play-state: paused;
+}
+
+@keyframes storyAnimOne {
+    0% {
+        margin-top: 1%;
+        rotate: 0deg;
+    }
+
+    25% {
+        margin-top: 0%;
+        rotate: 2deg;
+    }
+
+    50% {
+        margin-top: 1%;
+        rotate: -2deg;
+    }
+
+    75% {
+        margin-top: 1%;
+        rotate: 2deg;
+    }
+
+    100% {
+        margin-top: 1%;
+        rotate: 0deg;
+    }
+}
 .story p {
     font-family: var(--mainFont);
     font-size: clamp(0.7rem, 1.5vw, 2.8rem);
@@ -324,7 +362,21 @@ h3 {
     color: #B81F15;
     font-size: clamp(0.7rem, 3vw, 3rem);
     font-weight: 600;
+ animation: paddingMove 3s ease-in-out infinite alternate;
 }
+
+@keyframes paddingMove {
+    0% {
+        padding-left: 0;
+    }
+    50% {
+        padding-left: 20px;
+    }
+    100% {
+        padding-left: 0;
+    }
+}
+
 
 
 .section4 .story:first-of-type {
@@ -562,24 +614,32 @@ h3 {
     0% {
         transform: rotate(30deg) scale(0.5);
     }
+
     50% {
         transform: rotate(-10deg) scale(1.2);
     }
+
     100% {
         transform: rotate(0deg) scale(1);
     }
 }
 
 @keyframes shake {
-    0%, 90%, 100% {
+
+    0%,
+    90%,
+    100% {
         transform: rotate(0deg);
     }
+
     92% {
         transform: rotate(-1deg);
     }
+
     96% {
         transform: rotate(1deg);
     }
+
     98% {
         transform: rotate(-1deg);
     }
@@ -591,9 +651,10 @@ h3 {
 
 /* mobile */
 @media (max-width: 480px) {
-    .content{
+    .content {
         position: fixed;
     }
+
     .rotate-message {
         display: block;
     }

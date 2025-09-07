@@ -203,6 +203,43 @@ body {
     justify-content: center;
 }
 
+.story{
+    animation: storyAnimOne 8s ease-in-out infinite alternate;
+    transition: all 1s ease;
+}
+
+.story:hover {
+    margin-top: 0%;
+    rotate: 0deg;
+    animation-play-state: paused;
+}
+
+@keyframes storyAnimOne {
+    0% {
+        margin-top: 2%;
+        rotate: 0deg;
+    }
+
+    25% {
+        margin-top: 0%;
+        rotate: 4deg;
+    }
+
+    50% {
+        margin-top: 2%;
+        rotate: -4deg;
+    }
+
+    75% {
+        margin-top: 2%;
+        rotate: 4deg;
+    }
+
+    100% {
+        margin-top: 2%;
+        rotate: 0deg;
+    }
+}
 
 .section {
   position: relative;
@@ -274,7 +311,6 @@ body {
     gap: 24px;
     text-align: left;
 }
-
 .banane-id .info-title {
     color: var(--background);
     font-family: var(--comic);
@@ -286,7 +322,19 @@ body {
     font-family: var(--mainFont);
     font-size: clamp(0.7rem, 3.5vw, 4rem);
     font-weight: 900;
+    animation: paddingMove 3s ease-in-out infinite alternate;
+}
 
+@keyframes paddingMove {
+    0% {
+        padding-left: 0;
+    }
+    50% {
+        padding-left: 20px;
+    }
+    100% {
+        padding-left: 0;
+    }
 }
 
 
@@ -389,7 +437,6 @@ body {
     font-family: var(--mainFont);
     font-size: clamp(0.7rem, 2vw, 2rem);
 }
-
 .section6 .bam {
     position: absolute;
     font-family: var(--mainFont);
@@ -399,7 +446,46 @@ body {
     font-weight: 900;
     top: 14%;
     right: 35%;
+
+    /* BAM Animation */
+    animation: bamEffect 4s ease-out infinite;
+    transform-origin: center;
 }
+
+@keyframes bamEffect {
+    0% {
+        opacity: 0;
+        scale: 0.2;
+        rotate: -20deg;
+    }
+
+    /* الانفجار (BAM) */
+    10% {
+        opacity: 1;
+        scale: 1.2;
+        rotate: 5deg;
+    }
+
+    20% {
+        scale: 0.9;
+        rotate: -5deg;
+        opacity: 1;
+    }
+
+    25% {
+        scale: 1.05;
+        rotate: 2deg;
+        opacity: 1;
+    }
+
+    50%,
+    100% {
+        opacity: 0;
+        scale: 0.2;
+        rotate: 0deg;
+    }
+}
+
 
 .section6 .diet {
     position: absolute;
@@ -441,21 +527,73 @@ body {
 .section8 .story p {
     font-size: clamp(0.7rem, 2.6vw, 2.6rem);
 }
-
 .muscle1,
 .muscle2 {
     position: absolute;
     width: 16%;
     height: auto;
     top: 10%;
+    transform-origin: center;
 }
 
+/* اليسار */
 .muscle1 {
     left: 18%;
+    animation: muscleLeft 3s ease-in-out infinite;
 }
 
+/* اليمين */
 .muscle2 {
     right: 18%;
+    animation: muscleRight 3s ease-in-out infinite;
+}
+
+/* حركة العضلة اليسار */
+@keyframes muscleLeft {
+    0% {
+        rotate: 0deg;
+        scale: 1;
+    }
+    30% {
+        rotate: 20deg;
+        scale: 1.1;
+    }
+    45% {
+        rotate: 15deg;
+        scale: 1.05;
+    }
+    60% {
+        rotate: 20deg;
+        scale: 1.1;
+    }
+    100% {
+        rotate: 0deg;
+        scale: 1;
+    }
+}
+
+/* حركة العضلة اليمين (عكس الاتجاه) */
+@keyframes muscleRight {
+    0% {
+        rotate: 0deg;
+        scale: 1;
+    }
+    30% {
+        rotate: -20deg;
+        scale: 1.1;
+    }
+    45% {
+        rotate: -15deg;
+        scale: 1.05;
+    }
+    60% {
+        rotate: -20deg;
+        scale: 1.1;
+    }
+    100% {
+        rotate: 0deg;
+        scale: 1;
+    }
 }
 
 
@@ -524,6 +662,11 @@ body {
     bottom: 0;
     right: 0;
     animation: showRotateMessage 0.5s, shake 2.2s infinite 2s;
+}
+
+.footer{
+    z-index: 1000000;
+    margin-top: -9%;
 }
 
 @keyframes showRotateMessage {

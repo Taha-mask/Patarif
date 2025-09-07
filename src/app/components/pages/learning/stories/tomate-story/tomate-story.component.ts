@@ -33,6 +33,7 @@ import {
   ]
 })
 export class TomateStoryComponent {
+  
   sections: string[] = ['section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7', 'section8',
     'section9', 'section10', 'section11',
     'section12',
@@ -67,29 +68,17 @@ export class TomateStoryComponent {
     }
   }
 
-  @HostListener('window:keydown.arrowdown', ['$event'])
-  onArrowDown(event: KeyboardEvent) {
-    if (!this.isScrolling) {
-      this.scrollToSection(this.currentIndex + 1);
-    }
-  }
+  // @HostListener('window:keydown.arrowdown', ['$event'])
+  // onArrowDown(event: KeyboardEvent) {
+  //   if (!this.isScrolling) {
+  //     this.scrollToSection(this.currentIndex + 1);
+  //   }
+  // }
 
-  @HostListener('window:keydown.arrowup', ['$event'])
-  onArrowUp(event: KeyboardEvent) {
-    if (!this.isScrolling) {
-      this.scrollToSection(this.currentIndex - 1);
-    }
-  }
-
-  @HostListener('window:wheel', ['$event'])
-  onWheel(event: WheelEvent) {
-    if (this.isScrolling) return;
-
-    if (event.deltaY > 0) {
-      this.scrollToSection(this.currentIndex + 1);
-    } else if (event.deltaY < 0) {
-      this.scrollToSection(this.currentIndex - 1);
-    }
-  }
-  
+  // @HostListener('window:keydown.arrowup', ['$event'])
+  // onArrowUp(event: KeyboardEvent) {
+  //   if (!this.isScrolling) {
+  //     this.scrollToSection(this.currentIndex - 1);
+  //   }
+  // }
 }

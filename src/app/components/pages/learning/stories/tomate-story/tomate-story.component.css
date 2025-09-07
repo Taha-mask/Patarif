@@ -1,8 +1,12 @@
 :host {
     --mainFont: 'Baloo 2';
     --comic: 'Comic Relief';
+    --story-border: #9B8150;
+    --story-bg: #F5E1A6;
+    --story-duration: 6s;
+    --story-ease: cubic-bezier(.22, .9, .3, 1);
+    --story-delay: 0s;
 }
-
 
 
 body {
@@ -168,6 +172,10 @@ body {
     top: -3%;
 }
 
+.mainCloud img {
+    object-fit: cover;
+    width: 100%;
+}
 
 @keyframes fadeIn {
     from {
@@ -179,7 +187,6 @@ body {
     }
 }
 
-
 .story {
     position: absolute;
     padding: 24px;
@@ -190,6 +197,43 @@ body {
     justify-content: center;
 }
 
+.story:not(.seventh-shown .story){
+    animation: storyAnimOne 8s ease-in-out infinite alternate;
+    transition: all 1s ease;
+}
+
+.story:hover {
+    margin-top: 0%;
+    rotate: 0deg;
+    animation-play-state: paused;
+}
+
+@keyframes storyAnimOne {
+    0% {
+        margin-top: 2%;
+        rotate: 0deg;
+    }
+
+    25% {
+        margin-top: 0%;
+        rotate: 4deg;
+    }
+
+    50% {
+        margin-top: 2%;
+        rotate: -4deg;
+    }
+
+    75% {
+        margin-top: 2%;
+        rotate: 4deg;
+    }
+
+    100% {
+        margin-top: 2%;
+        rotate: 0deg;
+    }
+}
 
 .section {
     position: relative;
@@ -213,7 +257,6 @@ body {
 }
 
 
-
 .story h3 {
     color: #474747;
     font-size: clamp(1.2rem, 2vw, 2rem);
@@ -222,12 +265,27 @@ body {
     text-align: center;
     text-wrap: nowrap;
     margin: 0;
+    animation: appearStory 0.8s ease-out;
+}
 
+@keyframes appearStory {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 
-
-/* ========================= COPY TO HERE BITCH !! ==============================*/
 
 .first-shown .story {
     left: 50%;
@@ -253,6 +311,9 @@ body {
     pointer-events: none;
 }
 
+.second-shown {
+    margin-top: -20%;
+}
 
 .second-shown .story {
     padding: 0;
@@ -279,7 +340,8 @@ body {
 .second-shown .story .end {
     text-align: end;
     margin-top: auto;
-    margin-right: -20%;
+    
+    /* margin-right: -20%; */
 }
 
 
@@ -291,10 +353,11 @@ body {
     transform: translateX(-50%);
 }
 
+
 .third-shown .bottom-story {
     position: absolute;
-    padding: 1.3%;
-    border: #9B8150 4px solid;
+    padding: 12px 24px;
+    border: 4px solid #9B8150;
     border-radius: 64px;
     background-color: #F5E1A6;
     left: 50%;
@@ -302,10 +365,17 @@ body {
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
-    text-wrap: nowrap;
-    text-align: center;
+
 }
 
+.third-shown .bottom-story h3 {
+    font-weight: 900;
+    color: #474747;
+    font-family: var(--mainFont);
+    text-align: center;
+    white-space: nowrap;
+    margin: 0;
+}
 
 .forth-shown .story {
     padding: 0;
@@ -385,6 +455,8 @@ body {
     background-color: #F5E1A6;
     display: flex;
     justify-content: center;
+    animation: storyAnimOne 8s ease-in-out infinite alternate;
+    transition: all 1s ease;
 }
 
 
@@ -622,7 +694,7 @@ body {
         2px -2px 0 #FCEFC5,
         -2px -2px 0 #FCEFC5;
     font-size: clamp(2rem, 5vw, 4rem);
-    margin-bottom: 10%;
+    margin: 4% 0;
     text-align: center;
 }
 
@@ -670,7 +742,7 @@ body {
     display: flex;
     justify-content: center;
     z-index: 1;
-        padding: 0 8%;
+    padding: 0 8%;
 
 }
 
@@ -924,6 +996,9 @@ body {
 /* tablet */
 
 @media (min-width: 481px) and (max-width: 1100px) {
+    .second-shown {
+        margin-top: -28%;
+    }
 
     .mainCloud img {
         object-fit: cover;

@@ -88,16 +88,16 @@ export class FraiseComponent {
     }
   }
 
-  @HostListener('window:wheel', ['$event'])
-  onWheel(event: WheelEvent) {
-    if (this.isScrolling) return;
+  // @HostListener('window:wheel', ['$event'])
+  // onWheel(event: WheelEvent) {
+  //   if (this.isScrolling) return;
 
-    if (event.deltaY > 0) {
-      this.scrollToSection(this.currentIndex + 1);
-    } else if (event.deltaY < 0) {
-      this.scrollToSection(this.currentIndex - 1);
-    }
-  }
+  //   if (event.deltaY > 0) {
+  //     this.scrollToSection(this.currentIndex + 1);
+  //   } else if (event.deltaY < 0) {
+  //     this.scrollToSection(this.currentIndex - 1);
+  //   }
+  // }
 
 
 }
