@@ -34,7 +34,7 @@
     <li><a routerLink="/games" (click)="closeSideMenu()">Playground</a></li>
     <li><a routerLink="/shop" (click)="closeSideMenu()">Shop</a></li>
     <li><a routerLink="/contact-us" (click)="closeSideMenu()">contact</a></li>
-    <li class="logout" *ngIf="isLogged"><a routerLink="/login" (click)="closeSideMenu()">Logout</a></li>
+    <li class="logout" *ngIf="isLogged"><a routerLink="/login" (click)="onLogout()">Logout</a></li>
   </ul>
 </div>
 
@@ -68,7 +68,7 @@
 
     <!-- Right Side (Search + Avatar) -->
     <div class="d-flex align-items-center gap-3 user-menu">
-      <i (click)="openSearch()" class="bi bi-search fs-5 search-icon"></i>
+      <i *ngIf="isLogged" (click)="openSearch()" class="bi bi-search fs-5 search-icon"></i>
 
       <div class="dropdown" [class.show]="menuOpen">
         <img *ngIf="isLogged" [src]="profileImage || 'images/account.png'" (error)="onImageError($event)"
@@ -90,11 +90,15 @@
             <li>
               <hr class="dropdown-divider" />
             </li>
-            <li>
-              <a class="dropdown-item logout d-flex align-items-center gap-2 text-danger" href="signup">
-                <i class="bi bi-box-arrow-right fs-5"></i> Logout
-              </a>
-            </li>
+           <li>
+  <a 
+    class="dropdown-item logout d-flex align-items-center gap-2 text-danger" 
+    (click)="onLogout()"
+  >
+    <i class="bi bi-box-arrow-right fs-5"></i> Logout
+  </a>
+</li>
+
           </ng-container>
 
           <ng-template #guestMenu>

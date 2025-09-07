@@ -2,7 +2,7 @@
   --mainFont: 'Baloo 2';
   --comic: 'Comic Relief';
   --pink: rgb(255, 0, 55);
-  --orane: rgb(252, 71, 86);
+  --orange: rgb(252, 71, 86);
 }
 
 .navbar {
@@ -36,7 +36,7 @@
   font-family: var(--comic);
 }
 button.btn.login{
-  background-color: var(--orane);
+  background-color: var(--orange);
   border: none;
 }
 .nav-link {
@@ -282,7 +282,7 @@ button.btn.login{
 }
 
 .side-menu li.login {
-  background-color: var(--orane) ;
+  background-color: var(--orange) ;
   border: none;
 }
 
