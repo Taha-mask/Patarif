@@ -1,3 +1,10 @@
+:host {
+    --mainFont: 'Baloo 2';
+    --comic: 'Comic Relief';
+}
+
+
+
 .games-carousel-container {
   width: 100%;
   margin: 10px auto 0;
@@ -312,6 +319,19 @@ margin: auto;
   margin: 20px 10px;
 
 }
+.list-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%; 
+  border-radius: inherit;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.726), transparent);
+  z-index: 0;
+  pointer-events: none;
+}
+
 
 .list-cards.dragging {
   cursor: grabbing;
@@ -369,6 +389,7 @@ margin: auto;
   text-align: center;
   font-size: 30px;
   font-weight: 800;
+  font-family: var(--mainFont);
 }
 
 .list-card {
