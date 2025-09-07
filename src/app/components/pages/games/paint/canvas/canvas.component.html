@@ -6,7 +6,7 @@
       <div class="Logo">
         <img src="/images/logo-patarif.png" alt="p" style="width: 100px; height: 100px;">
       </div>
-      <div class="back d-flex gap-3">
+      <div class="back d-flex gap-3 mt-4">
 
         <button class="tool-btn" (click)="undo()" [disabled]="historyIndex <= 0" title="Undo">
           <i class="fas fa-undo"></i>
@@ -43,28 +43,24 @@
       <div class="right-toolbar">
 
         <button class="tool-btn" (click)="downloadImage()" title="Download PNG">
-          <i class="fas fa-download"></i>
+          <i class="fas fa-file-pdf"></i>
+
         </button>
         <button class="tool-btn" 
                 (click)="downloadPDF()"
                 title="Download PDF">
-          <i class="fas fa-file-pdf"></i>
-        </button>
+                <i class="fas fa-download"></i>
+              </button>
         <button class="tool-btn" [class.active]="currentTool === 'eraser'" (click)="selectTool('eraser')"
           title="Eraser">
           <i class="fas fa-eraser"></i>
         </button>
-        <button class="tool-btn" [class.active]="currentTool === 'pen'" (click)="selectTool('pen')" title="Pencil">
-          <i class="fas fa-pencil-alt"></i>
-        </button>
+ 
         <button class="tool-btn" [class.active]="currentTool === 'brush'" (click)="selectTool('brush')" title="Brush">
           <i class="fas fa-paint-brush"></i>
         </button>
 
-        <button class="tool-btn" (click)="openColorPicker()" title="Color Picker">
-          <i class="fas fa-eye-dropper"></i>
-        </button>
-
+       
         <!-- Zoom Controls -->
         <button class="tool-btn" (click)="zoomIn()" [disabled]="zoomLevel >= MAX_ZOOM" title="Zoom In (Ctrl + +)">
           <i class="fas fa-search-plus"></i>

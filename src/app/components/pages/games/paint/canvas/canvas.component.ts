@@ -510,13 +510,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     // الرسم الأصلي
     finalCtx.drawImage(canvas, 0, 0);
 
-    // ✅ هنا نفعل الظهور مؤقت
-    this.isAppeared = true;
-    if (this.isAppeared) {
-      await this.addWatermarkToContext(finalCtx, finalCanvas.width, finalCanvas.height);
-    }
-    this.isAppeared = false;
-
     // نحول لصورة
     const dataUrl = finalCanvas.toDataURL('image/png');
 
@@ -529,27 +522,30 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
     const a4Width = 210;
     const a4Height = 297;
-    const margin = 10;
-    const contentWidth = a4Width - margin * 2;
-    const contentHeight = a4Height - margin * 2;
 
+    // جعل الصورة تملأ الصفحة بالكامل
     const imgRatio = finalCanvas.width / finalCanvas.height;
-    const contentRatio = contentWidth / contentHeight;
+    const pageRatio = a4Width / a4Height;
 
     let w, h, x, y;
-    if (imgRatio > contentRatio) {
-      w = contentWidth;
-      h = contentWidth / imgRatio;
-      x = margin;
-      y = margin + (contentHeight - h) / 2;
+    if (imgRatio > pageRatio) {
+      // الصورة أوسع من الصفحة - نملأ العرض
+      w = a4Width;
+      h = a4Width / imgRatio;
+      x = 0;
+      y = (a4Height - h) / 2;
     } else {
-      h = contentHeight;
-      w = contentHeight * imgRatio;
-      x = margin + (contentWidth - w) / 2;
-      y = margin;
+      // الصورة أطول من الصفحة - نملأ الارتفاع
+      h = a4Height;
+      w = a4Height * imgRatio;
+      x = (a4Width - w) / 2;
+      y = 0;
     }
 
     pdf.addImage(dataUrl, 'PNG', x, y, w, h);
+
+    // إضافة اللوجو في أسفل الصفحة على اليمين
+    await this.addPDFWatermark(pdf, a4Width, a4Height);
 
     // نعمل داونلود
     const fileName = `painting-${new Date().toISOString().slice(0, 10)}.pdf`;
@@ -559,37 +555,25 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
 
   private async addWatermarkToContext(ctx: CanvasRenderingContext2D, width: number, height: number): Promise<void> {
-    const watermarkSize = Math.min(width, height) * 0.2;
+    const watermarkSize = Math.min(width, height) * 0.15;
     const margin = watermarkSize * 0.1;
     const x = width - watermarkSize - margin;
     const y = height - watermarkSize - margin;
 
-    // الخلفية الدائرية
     ctx.save();
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-    ctx.beginPath();
-    ctx.arc(x + watermarkSize / 2, y + watermarkSize / 2, watermarkSize / 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // الحدود
-    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-    ctx.lineWidth = Math.max(2, watermarkSize * 0.02);
-    ctx.stroke();
 
     // نضمن تحميل اللوجو قبل الرسم
     await this.preloadLogo();
 
     if (this.logoLoaded && this.logoImg) {
-      const logoSize = watermarkSize * 0.6;
-      const logoX = x + (watermarkSize - logoSize) / 2;
-      const logoY = y + (watermarkSize - logoSize) / 2 - watermarkSize * 0.08;
+      const logoSize = watermarkSize;
+      const logoX = x;
+      const logoY = y;
       ctx.drawImage(this.logoImg, logoX, logoY, logoSize, logoSize);
-
-
     } else {
       // fallback: نص فقط
       ctx.fillStyle = 'rgba(0,0,0,0.8)';
-      ctx.font = `bold ${Math.max(12, watermarkSize * 0.12)}px Arial`;
+      ctx.font = `bold ${Math.max(12, watermarkSize * 0.8)}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('PATARIF', x + watermarkSize / 2, y + watermarkSize / 2);
@@ -647,9 +631,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     };
   }
 
-  private addPDFWatermark(pdf: jsPDF, width: number, height: number): void {
+  private async addPDFWatermark(pdf: jsPDF, width: number, height: number): Promise<void> {
     // Watermark size in mm (proportional to A4)
-    const watermarkSize = Math.min(width, height) * 0.15; // 15% of page size
+    const watermarkSize = Math.min(width, height) * 0.12; // 12% of page size
     const margin = 5; // 5mm margin
     const x = width - watermarkSize - margin;
     const y = height - watermarkSize - margin;
@@ -665,39 +649,17 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     watermarkCanvas.width = canvasSize;
     watermarkCanvas.height = canvasSize;
 
-    // Draw watermark background (semi-transparent circle)
-    watermarkCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    watermarkCtx.beginPath();
-    watermarkCtx.arc(canvasSize / 2, canvasSize / 2, canvasSize / 2, 0, Math.PI * 2);
-    watermarkCtx.fill();
-
-    // Draw watermark border
-    watermarkCtx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
-    watermarkCtx.lineWidth = 2;
-    watermarkCtx.stroke();
-
     // Load and draw logo
     const logoImg = new Image();
     logoImg.crossOrigin = 'anonymous';
     logoImg.onload = () => {
-      // Calculate logo size (60% of watermark size)
-      const logoSize = canvasSize * 0.6;
-      const logoX = (canvasSize - logoSize) / 2;
-      const logoY = (canvasSize - logoSize) / 2 - canvasSize * 0.05;
+      // Draw logo directly without background circle
+      const logoSize = canvasSize;
+      const logoX = 0;
+      const logoY = 0;
 
       // Draw logo
       watermarkCtx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
-
-      // Add text below logo
-      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      watermarkCtx.font = `bold ${canvasSize * 0.12}px Arial`;
-      watermarkCtx.textAlign = 'center';
-      watermarkCtx.textBaseline = 'middle';
-      watermarkCtx.fillText('PATARIF', canvasSize / 2, canvasSize / 2 + canvasSize * 0.25);
-
-      // Add smaller text
-      watermarkCtx.font = `${canvasSize * 0.08}px Arial`;
-      watermarkCtx.fillText('GAMING', canvasSize / 2, canvasSize / 2 + canvasSize * 0.35);
 
       // Convert canvas to data URL and add to PDF
       const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
@@ -707,13 +669,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     logoImg.onerror = () => {
       // Fallback to text-only watermark if image fails to load
       watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      watermarkCtx.font = `bold ${canvasSize * 0.15}px Arial`;
+      watermarkCtx.font = `bold ${canvasSize * 0.6}px Arial`;
       watermarkCtx.textAlign = 'center';
       watermarkCtx.textBaseline = 'middle';
-      watermarkCtx.fillText('PATARIF', canvasSize / 2, canvasSize / 2 - canvasSize * 0.05);
-
-      watermarkCtx.font = `${canvasSize * 0.08}px Arial`;
-      watermarkCtx.fillText('GAMING', canvasSize / 2, canvasSize / 2 + canvasSize * 0.08);
+      watermarkCtx.fillText('PATARIF', canvasSize / 2, canvasSize / 2);
 
       // Convert canvas to data URL and add to PDF
       const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');

@@ -1,12 +1,27 @@
 /* Paint App Container */
 
 .container{
-
 overflow:hidden;
 border-radius: 18px;
 background-color: white;
 height: 100%;
 overflow: hidden;
+}
+
+/* Hide scrollbars globally for cleaner mobile experience */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* Ensure smooth scrolling on mobile */
+html {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 .logo-container {
@@ -90,11 +105,11 @@ overflow: hidden;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  padding: 16px 12px;
+  padding: 1px 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #000000;
-  height: 100%; 
+  height: 94%; 
   box-sizing: border-box;
   padding-right: 4px;
 }
@@ -439,89 +454,474 @@ button.line-size-wrapper{
   }
 }
 
+/* Mobile Tablet Styles */
 @media (max-width: 768px) {
-  .top-logo {
-    top: 10px;
-    left: 10px;
+  .container {
+    height: 80vh;
+    overflow: hidden;
   }
   
-  .logo-container {
-    padding: 6px 10px;
+  .header {
+    padding: 8px 12px !important;
+    position: relative;
+    z-index: 1000;
   }
   
-  .logo-image {
-    width: 28px;
-    height: 28px;
+  .header .Logo img {
+    width: 60px !important;
+    height: 60px !important;
   }
   
-  .logo-text {
-    font-size: 9px;
+  .header .back {
+    margin-top: 0 !important;
+    gap: 8px !important;
   }
   
   .main-container {
-    padding: 80px 10px 20px 10px;
-    gap: 15px;
+    flex-direction: column;
+    padding: 10px 8px 80px 8px;
+    gap: 10px;
+    height: calc(100vh - 140px);
   }
   
   .canvas-area {
+    flex: 1;
     max-width: 100%;
-    max-height: 400px;
+    max-height: 60vh;
+    min-height: 300px;
+  }
+  
+  .canvas-wrapper {
+    width: 100%;
+    height: 100%;
+    max-height: 60vh;
+    margin: 0;
+    border-radius: 12px;
   }
   
   .right-toolbar {
-    gap: 8px;
-    padding: 10px 12px;
+    flex-direction: row;
+    gap: 6px;
+    padding: 8px 12px;
+    height: auto;
+    border-radius: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 5px 0;
   }
   
-  .tool-btn,.line-size-control {
-    width: 40px;
-    height: 40px;
+  .tool-btn, .line-size-control {
+    width: 42px;
+    height: 42px;
     font-size: 14px;
+    flex-shrink: 0;
   }
   
   .bottom-palette {
-    padding: 12px 15px;
-    gap: 15px;
-
+    padding: 8px 12px;
+    gap: 12px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 1000;
   }
   
   .color-swatch,
   .color-picker-btn {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
   }
   
   .rainbow-circle {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .color-swatches {
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 0;
+  }
+  
+  .zoom-display {
+    font-size: 10px;
+    padding: 2px 6px;
+    min-width: 35px;
   }
 }
 
+/* Mobile Phone Styles */
 @media (max-width: 480px) {
-  .color-swatches {
-    gap: 8px;
+  .container {
+    height: 100vh;
+    overflow: hidden;
   }
   
-  .color-swatch,
-  .color-picker-btn {
-    width: 32px;
-    height: 32px;
+  .header {
+    padding: 8px 10px !important;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
   
-  .rainbow-circle {
-    width: 24px;
-    height: 24px;
+  .header .Logo img {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header .back {
+    gap: 8px !important;
+  }
+  
+  .main-container {
+    padding: 10px 6px 80px 6px;
+    gap: 10px;
+    height: calc(100vh - 130px);
+  }
+  
+  .canvas-area {
+    max-height: 60vh;
+    min-height: 280px;
+    padding: 0 2px;
+  }
+  
+  .canvas-wrapper {
+    border-radius: 12px;
+    border-width: 2px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
   }
   
   .right-toolbar {
     gap: 6px;
     padding: 8px 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
   
-  .tool-btn {
+  .tool-btn, .line-size-control {
+    width: 42px;
+    height: 42px;
+    font-size: 13px;
+    margin: 3px;
+    border-radius: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .bottom-palette {
+    padding: 10px 12px;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  
+  .color-swatch,
+  .color-picker-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .rainbow-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
+  }
+  
+  .color-swatches {
+    gap: 10px;
+    padding: 4px 0;
+  }
+  
+  .zoom-display {
+    font-size: 10px;
+    padding: 4px 8px;
+    min-width: 35px;
+    border-radius: 8px;
+    background: rgba(255, 68, 68, 0.1);
+    color: #ff4444;
+    font-weight: 600;
+  }
+  
+  /* Enhanced touch feedback */
+  .tool-btn:active {
+    transform: scale(0.9);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .color-swatch:active,
+  .color-picker-btn:active {
+    transform: scale(0.9);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Better spacing for size presets on mobile */
+  .size-presets {
+    right: 115%;
+    margin-right: 10px;
+    padding: 10px 8px;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(15px);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  .size-option {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  /* Improved active states */
+  .tool-btn.active {
+    background: linear-gradient(135deg, #ff4444, #ff6666);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 68, 68, 0.4);
+  }
+  
+  .color-swatch.active {
+    border-color: #ff4444;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 360px) {
+  .header {
+    padding: 6px 8px !important;
+  }
+  
+  .header .Logo img {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  
+  .main-container {
+    padding: 8px 4px 75px 4px;
+    gap: 8px;
+  }
+  
+  .canvas-area {
+    max-height: 55vh;
+    min-height: 260px;
+  }
+  
+  .canvas-wrapper {
+    border-radius: 10px;
+  }
+  
+  .right-toolbar {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  
+  .tool-btn, .line-size-control {
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+    margin: 2px;
+  }
+  
+  .bottom-palette {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  
+  .color-swatch,
+  .color-picker-btn {
     width: 36px;
     height: 36px;
-    font-size: 12px;
+  }
+  
+  .rainbow-circle {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .color-swatches {
+    gap: 8px;
+  }
+  
+  .zoom-display {
+    font-size: 9px;
+    padding: 3px 6px;
+    min-width: 32px;
+  }
+}
+
+/* Mobile-specific enhancements */
+@media (max-width: 768px) {
+  /* Prevent zoom on double tap */
+  .drawing-canvas {
+    touch-action: none;
+  }
+  
+  /* Hide all scrollbars for cleaner look */
+  .color-swatches,
+  .right-toolbar,
+  .bottom-palette {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+  
+  .color-swatches::-webkit-scrollbar,
+  .right-toolbar::-webkit-scrollbar,
+  .bottom-palette::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
+  
+  /* Better touch feedback with improved animations */
+  .tool-btn:active,
+  .color-swatch:active,
+  .color-picker-btn:active {
+    transform: scale(0.85);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Prevent text selection on mobile */
+  .tool-btn,
+  .color-swatch,
+  .color-picker-btn,
+  .drawing-canvas,
+  .canvas-wrapper,
+  .main-container {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Improve focus states for accessibility */
+  .tool-btn:focus-visible,
+  .color-swatch:focus-visible,
+  .color-picker-btn:focus-visible {
+    outline: 3px solid #ff4444;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px rgba(255, 68, 68, 0.2);
+  }
+  
+  /* Better spacing for toolbar on very small screens */
+  .right-toolbar {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  
+  /* Ensure canvas is always visible with better proportions */
+  .canvas-wrapper {
+    min-height: 250px;
+    max-height: 65vh;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* Better watermark positioning on mobile */
+  .watermark-overlay {
+    bottom: 12px;
+    right: 12px;
+  }
+  
+  .watermark-circle {
+    width: clamp(55px, 12%, 90px);
+    height: clamp(55px, 12%, 90px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Improved color palette scrolling */
+  .color-swatches {
+    padding: 8px 0;
+    gap: 12px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Better button spacing and sizing */
+  .tool-btn, .line-size-control {
+    min-width: 44px;
+    min-height: 44px;
+    margin: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Enhanced hover effects for mobile */
+  .tool-btn:hover,
+  .color-swatch:hover,
+  .color-picker-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Better container spacing */
+  .main-container {
+    padding: 12px 8px 90px 8px;
+    gap: 12px;
+  }
+  
+  /* Improved canvas area */
+  .canvas-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+  
+  /* Enhanced mobile performance */
+  .drawing-canvas {
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  
+  /* Better visual hierarchy */
+  .right-toolbar {
+    order: 2;
+  }
+  
+  .canvas-area {
+    order: 1;
+  }
+  
+  .bottom-palette {
+    order: 3;
+  }
+  
+  /* Improved touch scrolling */
+  .color-swatches {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .color-swatch {
+    scroll-snap-align: start;
+  }
+  
+  /* Better focus management */
+  .tool-btn:focus,
+  .color-swatch:focus,
+  .color-picker-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.3);
   }
 }
 
