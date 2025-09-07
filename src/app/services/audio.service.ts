@@ -13,7 +13,7 @@ export class AudioService {
 
   init() {
     if (!this.audio) {
-      this.audio = new Audio('/audio/Billie Eilish - WILDFLOWER (Official Lyric Video).mp3');
+      this.audio = new Audio('audio/Background music for games&full website.mp3');
       this.audio.loop = true;
       this.audio.volume = 0.3;
     }

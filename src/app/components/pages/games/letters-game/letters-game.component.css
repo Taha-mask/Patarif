@@ -5,6 +5,7 @@
   margin: 0 auto;
   padding: 1rem;
   position: relative;
+  overflow-x: hidden;
 }
 
 .enhanced-game-content.shake {
@@ -25,21 +26,101 @@
   gap: 2rem;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
+}
+
+/* تحسين التخطيط على التلفون */
+@media (max-width: 768px) {
+  .game-main {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
   
+  .image-section {
+    order: 1;
+  }
+  
+  .letters-section {
+    order: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-main {
+    gap: 1rem;
+  }
 }
 
 .image-container img {
   width: 100%;
-  height: 50vh;
+  height: 60vh;
   object-fit: cover;
   border-radius: 1rem;
 }
 .image-container{
 margin: 1rem;
+overflow-x: hidden;
 }
 
 .image-section{
 width:100%;
+overflow-x: hidden;
+}
+
+/* تحسين حجم الصورة على التلفون */
+@media (max-width: 768px) {
+  .image-container img {
+    height: 45vh;
+    width: 100%;
+    max-height: 400px;
+  }
+  
+  .image-container {
+    margin: 0.5rem;
+
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container img {
+    height: 40vh;
+    max-height: 350px;
+  }
+  
+  .image-container {
+    margin: 0.3rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .image-container img {
+    height: 35vh;
+    max-height: 280px;
+  }
+  
+  .image-container {
+    margin: 0.2rem;
+  }
+  
+  .game-main {
+    gap: 0.8rem;
+  }
+}
+
+/* تحسينات إضافية للشاشات الصغيرة جداً */
+@media (max-width: 320px) {
+  .image-container img {
+    height: 32vh;
+    max-height: 250px;
+  }
+  
+  .image-container {
+    margin: 0.1rem;
+  }
+  
+  .game-main {
+    gap: 0.5rem;
+  }
 }
   
 @keyframes pulse {
@@ -105,6 +186,8 @@ width:100%;
   flex-direction: column;
   padding: 1rem;
   gap: 1rem;
+  overflow-x: hidden;
+
 
 }
 
@@ -112,6 +195,7 @@ width:100%;
 
 .word-area {
   padding: 1rem;
+  overflow-x: hidden;
 }
 
 .word-slots {
@@ -204,6 +288,7 @@ width:100%;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  overflow-x: hidden;
   justify-content: center;
   min-height: 100px;
   padding: 1.5rem;
@@ -540,7 +625,13 @@ width:100%;
   }
   
   .word-image {
-    height: 250px;
+    height: 300px;
+    max-height: 300px;
+  }
+  
+  .image-container img {
+    height: 280px;
+    max-height: 280px;
   }
   
   .game-header {
