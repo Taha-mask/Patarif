@@ -60,6 +60,33 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   readonly MAX_ZOOM = 5;
   private readonly ZOOM_STEP = 0.1;
   
+  // Panning state
+  private isPanning = false;
+  private panStartX = 0;
+  private panStartY = 0;
+  private panOffsetX = 0;
+  private panOffsetY = 0;
+  private lastPanX = 0;
+  private lastPanY = 0;
+  private isSpacePressed = false;
+  
+  // Touch gesture state
+  private isZooming = false;
+  private initialDistance = 0;
+  private initialZoom = 1;
+  private lastTouchCenter = { x: 0, y: 0 };
+  private touchStartTime = 0;
+  
+  // Trackpad gesture state
+  private isTrackpadZooming = false;
+  private trackpadZoomStartTime = 0;
+  private lastWheelTime = 0;
+  private wheelAccumulator = 0;
+  private trackpadZoomTimeout: any = null;
+  private readonly WHEEL_ZOOM_SENSITIVITY = 0.01;
+  private readonly WHEEL_ZOOM_THRESHOLD = 0.1;
+  private readonly TRACKPAD_ZOOM_TIMEOUT = 150; // ms
+  
   // Basic colors for the bottom palette
   basicColors = [
     '#ff0000', '#0000ff', '#00bfff', '#00ff00', '#00ffff', 
@@ -238,6 +265,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     // Keyboard shortcuts
     window.addEventListener('keydown', this.handleKeyDown.bind(this));
     
+    // Trackpad wheel events for zoom
+    this.canvasRef.nativeElement.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
+    
     // Pressure sensitivity for supported devices
     if ('PointerEvent' in window) {
       this.canvasRef.nativeElement.addEventListener('pointerdown', this.handlePointerDown.bind(this));
@@ -249,6 +279,19 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   // Enhanced drawing methods with pressure sensitivity
   startDrawing(e: MouseEvent | TouchEvent | PointerEvent): void {
     e.preventDefault();
+    
+    // Prevent context menu on right-click
+    if ('button' in e && e.button === 2) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Check if we should start panning instead of drawing
+    if (this.shouldStartPanning(e)) {
+      this.startPanning(e);
+      return;
+    }
+    
     this.isDrawing = true;
     
     const pos = this.getEventPosition(e);
@@ -277,8 +320,15 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   draw(e: MouseEvent | TouchEvent | PointerEvent): void {
-    if (!this.isDrawing) return;
     e.preventDefault();
+    
+    // Handle panning if we're in pan mode
+    if (this.isPanning) {
+      this.handlePanning(e);
+      return;
+    }
+    
+    if (!this.isDrawing) return;
     
     const pos = this.getEventPosition(e);
     
@@ -319,6 +369,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.updateDisplay();
       
       this.saveState();
+    }
+    
+    // Stop panning if we were panning
+    if (this.isPanning) {
+      this.stopPanning();
     }
   }
 
@@ -402,6 +457,309 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     ctx.restore();
   }
 
+  // ===== PANNING METHODS =====
+  private shouldStartPanning(e: MouseEvent | TouchEvent | PointerEvent): boolean {
+    // Start panning if:
+    // 1. Right mouse button is pressed (always allow right-click pan)
+    // 2. Middle mouse button is pressed AND we're zoomed in
+    // 3. Spacebar is held AND we're zoomed in
+    const isZoomed = this.zoomLevel > 1;
+    const isMiddleButton = 'button' in e && e.button === 1; // Middle mouse button
+    const isRightButton = 'button' in e && e.button === 2; // Right mouse button
+    
+    // Right-click always allows panning (even at 100% zoom)
+    if (isRightButton) return true;
+    
+    // Other methods require zoom
+    return isZoomed && (isMiddleButton || this.isSpacePressed);
+  }
+
+  private startPanning(e: MouseEvent | TouchEvent | PointerEvent): void {
+    this.isPanning = true;
+    this.isDrawing = false; // Stop any drawing
+    
+    // Prevent context menu and default behavior
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const pos = this.getEventPosition(e);
+    this.panStartX = pos.x;
+    this.panStartY = pos.y;
+    this.lastPanX = pos.x;
+    this.lastPanY = pos.y;
+    
+    // Add panning CSS classes
+    this.addPanningClasses();
+    
+    // Change cursor to indicate panning
+    this.updatePanningCursor();
+    
+    // Add event listeners for mouse up to stop panning
+    this.addPanningEventListeners();
+  }
+
+  private handlePanning(e: MouseEvent | TouchEvent | PointerEvent): void {
+    if (!this.isPanning) return;
+    
+    const pos = this.getEventPosition(e);
+    const deltaX = pos.x - this.lastPanX;
+    const deltaY = pos.y - this.lastPanY;
+    
+    // Update pan offset
+    this.panOffsetX += deltaX;
+    this.panOffsetY += deltaY;
+    
+    // Apply pan transform
+    this.applyPanTransform();
+    
+    this.lastPanX = pos.x;
+    this.lastPanY = pos.y;
+  }
+
+  private stopPanning(): void {
+    this.isPanning = false;
+    
+    // Remove panning CSS classes
+    this.removePanningClasses();
+    
+    // Remove event listeners
+    this.removePanningEventListeners();
+    
+    // Hide visual feedback
+    this.hidePanningFeedback();
+    
+    this.updateCursor(); // Reset to normal cursor
+  }
+
+  private applyPanTransform(): void {
+    const canvas = this.canvasRef.nativeElement;
+    const canvasWrapper = canvas.parentElement;
+    
+    if (canvasWrapper) {
+      // Apply both zoom and pan transforms
+      const transform = `scale(${this.zoomLevel}) translate(${this.panOffsetX}px, ${this.panOffsetY}px)`;
+      canvasWrapper.style.transform = transform;
+      canvasWrapper.style.transformOrigin = 'center center';
+    }
+  }
+
+  private updatePanningCursor(): void {
+    if (this.cursorElement?.nativeElement) {
+      const cursor = this.cursorElement.nativeElement;
+      cursor.style.cursor = 'grab';
+      cursor.style.display = 'none'; // Hide custom cursor during panning
+    }
+    
+    // Update canvas cursor
+    const canvas = this.canvasRef.nativeElement;
+    canvas.style.cursor = 'grab';
+    
+    // Add visual feedback for right-click panning
+    this.showPanningFeedback();
+  }
+
+  private showPanningFeedback(): void {
+    // Add a subtle visual indicator that panning is active
+    const canvas = this.canvasRef.nativeElement;
+    const canvasWrapper = canvas.parentElement;
+    
+    if (canvasWrapper) {
+      canvasWrapper.style.boxShadow = '0 0 20px rgba(255, 68, 68, 0.3)';
+      canvasWrapper.style.borderColor = '#ff4444';
+    }
+  }
+
+  private hidePanningFeedback(): void {
+    // Remove visual feedback
+    const canvas = this.canvasRef.nativeElement;
+    const canvasWrapper = canvas.parentElement;
+    
+    if (canvasWrapper) {
+      canvasWrapper.style.boxShadow = '';
+      canvasWrapper.style.borderColor = '';
+    }
+  }
+
+  private addPanningClasses(): void {
+    const canvas = this.canvasRef.nativeElement;
+    const canvasWrapper = canvas.parentElement;
+    
+    if (canvasWrapper) {
+      canvasWrapper.classList.add('panning');
+      // Add right-click specific class for visual feedback
+      canvasWrapper.classList.add('right-click-panning');
+    }
+    canvas.classList.add('panning');
+    canvas.classList.add('right-click-panning');
+  }
+
+  private removePanningClasses(): void {
+    const canvas = this.canvasRef.nativeElement;
+    const canvasWrapper = canvas.parentElement;
+    
+    if (canvasWrapper) {
+      canvasWrapper.classList.remove('panning');
+      canvasWrapper.classList.remove('right-click-panning');
+    }
+    canvas.classList.remove('panning');
+    canvas.classList.remove('right-click-panning');
+  }
+
+  private addZoomingClasses(): void {
+    const canvas = this.canvasRef.nativeElement;
+    const canvasWrapper = canvas.parentElement;
+    
+    if (canvasWrapper) {
+      canvasWrapper.classList.add('zooming');
+      // Add trackpad specific class if it's trackpad zoom
+      if (this.isTrackpadZooming) {
+        canvasWrapper.classList.add('trackpad-zooming');
+      }
+    }
+    canvas.classList.add('zooming');
+    if (this.isTrackpadZooming) {
+      canvas.classList.add('trackpad-zooming');
+    }
+  }
+
+  private removeZoomingClasses(): void {
+    const canvas = this.canvasRef.nativeElement;
+    const canvasWrapper = canvas.parentElement;
+    
+    if (canvasWrapper) {
+      canvasWrapper.classList.remove('zooming');
+      canvasWrapper.classList.remove('trackpad-zooming');
+    }
+    canvas.classList.remove('zooming');
+    canvas.classList.remove('trackpad-zooming');
+  }
+
+  private addPanningEventListeners(): void {
+    // Add global mouse up listener to stop panning
+    document.addEventListener('mouseup', this.handleGlobalMouseUp.bind(this));
+    document.addEventListener('contextmenu', this.handleContextMenu.bind(this));
+  }
+
+  private removePanningEventListeners(): void {
+    // Remove global mouse up listener
+    document.removeEventListener('mouseup', this.handleGlobalMouseUp.bind(this));
+    document.removeEventListener('contextmenu', this.handleContextMenu.bind(this));
+  }
+
+  private handleGlobalMouseUp(e: MouseEvent): void {
+    if (this.isPanning) {
+      this.stopPanning();
+    }
+  }
+
+  private handleContextMenu(e: MouseEvent): void {
+    // Prevent context menu during panning
+    if (this.isPanning) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+
+  // ===== TRACKPAD ZOOM METHODS =====
+  private handleWheel(e: WheelEvent): void {
+    e.preventDefault();
+    
+    // Check if this is a trackpad pinch gesture (Ctrl key is usually held during pinch)
+    const isTrackpadPinch = e.ctrlKey || Math.abs(e.deltaY) < 1;
+    
+    if (isTrackpadPinch) {
+      this.handleTrackpadZoom(e);
+    } else {
+      // Regular scroll wheel - could be used for panning when zoomed
+      this.handleScrollWheel(e);
+    }
+  }
+
+  private handleTrackpadZoom(e: WheelEvent): void {
+    const currentTime = Date.now();
+    
+    // Start trackpad zoom if not already active
+    if (!this.isTrackpadZooming) {
+      this.isTrackpadZooming = true;
+      this.trackpadZoomStartTime = currentTime;
+      this.wheelAccumulator = 0;
+      this.addZoomingClasses();
+    }
+    
+    // Clear existing timeout
+    if (this.trackpadZoomTimeout) {
+      clearTimeout(this.trackpadZoomTimeout);
+    }
+    
+    // Accumulate wheel delta for smooth zooming
+    this.wheelAccumulator += e.deltaY;
+    
+    // Calculate zoom factor
+    const zoomFactor = 1 - (this.wheelAccumulator * this.WHEEL_ZOOM_SENSITIVITY);
+    const newZoom = Math.max(this.MIN_ZOOM, Math.min(this.MAX_ZOOM, this.zoomLevel * zoomFactor));
+    
+    // Apply zoom
+    this.zoomLevel = newZoom;
+    
+    // Calculate zoom center (mouse position)
+    const canvas = this.canvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    const centerX = e.clientX - rect.left;
+    const centerY = e.clientY - rect.top;
+    
+    // Adjust pan offset to zoom towards mouse position
+    this.adjustPanForZoomCenter(centerX, centerY, zoomFactor);
+    
+    // Apply transforms
+    this.applyZoom();
+    
+    // Reset accumulator for next frame
+    this.wheelAccumulator = 0;
+    this.lastWheelTime = currentTime;
+    
+    // Set timeout to stop trackpad zoom
+    this.trackpadZoomTimeout = setTimeout(() => {
+      this.stopTrackpadZoom();
+    }, this.TRACKPAD_ZOOM_TIMEOUT);
+  }
+
+  private handleScrollWheel(e: WheelEvent): void {
+    // Use scroll wheel for panning when zoomed in
+    if (this.zoomLevel > 1) {
+      const panSpeed = 2;
+      this.panOffsetX -= e.deltaX * panSpeed;
+      this.panOffsetY -= e.deltaY * panSpeed;
+      this.applyZoom();
+    }
+  }
+
+  private adjustPanForZoomCenter(centerX: number, centerY: number, zoomFactor: number): void {
+    // Calculate the point that should remain stationary during zoom
+    const canvas = this.canvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    
+    // Convert screen coordinates to canvas coordinates
+    const canvasX = centerX - rect.width / 2;
+    const canvasY = centerY - rect.height / 2;
+    
+    // Adjust pan offset to keep the zoom center stationary
+    this.panOffsetX = this.panOffsetX * zoomFactor + canvasX * (1 - zoomFactor);
+    this.panOffsetY = this.panOffsetY * zoomFactor + canvasY * (1 - zoomFactor);
+  }
+
+  private stopTrackpadZoom(): void {
+    this.isTrackpadZooming = false;
+    this.wheelAccumulator = 0;
+    
+    // Clear timeout
+    if (this.trackpadZoomTimeout) {
+      clearTimeout(this.trackpadZoomTimeout);
+      this.trackpadZoomTimeout = null;
+    }
+    
+    this.removeZoomingClasses();
+  }
+
   // ===== DISPLAY MANAGEMENT =====
   private updateDisplay(): void {
     if (!this.ctx) return;
@@ -463,9 +821,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       clientY = (e as MouseEvent | PointerEvent).clientY;
     }
     
-    // حساب الموضع مع مراعاة التكبير
-    const x = (clientX - rect.left) / this.zoomLevel;
-    const y = (clientY - rect.top) / this.zoomLevel;
+    // حساب الموضع مع مراعاة التكبير والبانينج
+    const x = (clientX - rect.left) / this.zoomLevel - this.panOffsetX;
+    const y = (clientY - rect.top) / this.zoomLevel - this.panOffsetY;
     
     return { x, y };
   }
@@ -887,12 +1245,136 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.updateCursor();
   }
 
+  onTouchStart(event: TouchEvent): void {
+    event.preventDefault();
+    this.touchStartTime = Date.now();
+    
+    if (event.touches.length === 1) {
+      // Single touch - start drawing
+      this.startDrawing(event);
+    } else if (event.touches.length === 2) {
+      // Two touches - start zoom gesture
+      this.startTouchZoom(event);
+    }
+  }
+
   onTouchMove(event: TouchEvent): void {
     event.preventDefault();
-    if (event.touches.length > 0) {
+    
+    if (event.touches.length === 1) {
+      // Single touch - continue drawing
       const touch = event.touches[0];
       this.updateCursorPosition(touch.clientX, touch.clientY);
       this.draw(event);
+    } else if (event.touches.length === 2) {
+      // Two touches - handle zoom or pan
+      this.handleTouchZoom(event);
+    }
+  }
+
+  onTouchEnd(event: TouchEvent): void {
+    event.preventDefault();
+    
+    if (event.touches.length === 0) {
+      // All touches ended
+      this.stopDrawing();
+      this.stopTouchZoom();
+    } else if (event.touches.length === 1) {
+      // One touch ended, continue with remaining touch
+      this.stopTouchZoom();
+    }
+  }
+
+  // ===== TOUCH ZOOM METHODS =====
+  private startTouchZoom(event: TouchEvent): void {
+    if (event.touches.length !== 2) return;
+    
+    this.isZooming = true;
+    this.isDrawing = false; // Stop any drawing
+    
+    const touch1 = event.touches[0];
+    const touch2 = event.touches[1];
+    
+    // Calculate initial distance between touches
+    this.initialDistance = this.getTouchDistance(touch1, touch2);
+    this.initialZoom = this.zoomLevel;
+    
+    // Calculate center point
+    this.lastTouchCenter = this.getTouchCenter(touch1, touch2);
+    
+    // Add zooming CSS classes
+    this.addZoomingClasses();
+  }
+
+  private handleTouchZoom(event: TouchEvent): void {
+    if (event.touches.length !== 2 || !this.isZooming) return;
+    
+    const touch1 = event.touches[0];
+    const touch2 = event.touches[1];
+    
+    // Calculate current distance
+    const currentDistance = this.getTouchDistance(touch1, touch2);
+    const currentCenter = this.getTouchCenter(touch1, touch2);
+    
+    // Calculate zoom factor
+    const zoomFactor = currentDistance / this.initialDistance;
+    const newZoom = Math.max(this.MIN_ZOOM, Math.min(this.MAX_ZOOM, this.initialZoom * zoomFactor));
+    
+    // Apply zoom
+    this.zoomLevel = newZoom;
+    
+    // Calculate pan offset to zoom towards the center point
+    const deltaX = currentCenter.x - this.lastTouchCenter.x;
+    const deltaY = currentCenter.y - this.lastTouchCenter.y;
+    
+    // Update pan offset
+    this.panOffsetX += deltaX;
+    this.panOffsetY += deltaY;
+    
+    // Apply transforms
+    this.applyZoom();
+    
+    // Update last center for next frame
+    this.lastTouchCenter = currentCenter;
+  }
+
+  private stopTouchZoom(): void {
+    this.isZooming = false;
+    this.initialDistance = 0;
+    this.initialZoom = 1;
+    
+    // Remove zooming CSS classes
+    this.removeZoomingClasses();
+  }
+
+  private getTouchDistance(touch1: Touch, touch2: Touch): number {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  private getTouchCenter(touch1: Touch, touch2: Touch): { x: number, y: number } {
+    return {
+      x: (touch1.clientX + touch2.clientX) / 2,
+      y: (touch1.clientY + touch2.clientY) / 2
+    };
+  }
+
+  private handleTouchPanning(event: TouchEvent): void {
+    if (event.touches.length === 2 && this.zoomLevel > 1) {
+      // Use two-finger touch for panning
+      const touch1 = event.touches[0];
+      const touch2 = event.touches[1];
+      
+      // Calculate center point between two touches
+      const centerX = (touch1.clientX + touch2.clientX) / 2;
+      const centerY = (touch1.clientY + touch2.clientY) / 2;
+      
+      if (!this.isPanning) {
+        this.startPanning({ clientX: centerX, clientY: centerY, button: 0 } as MouseEvent);
+      } else {
+        this.handlePanning({ clientX: centerX, clientY: centerY, button: 0 } as MouseEvent);
+      }
     }
   }
 
@@ -908,9 +1390,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       clientY >= rect.top &&
       clientY <= rect.bottom
     ) {
-      // حساب الموضع مع مراعاة التكبير
-      const x = (clientX - rect.left) / this.zoomLevel;
-      const y = (clientY - rect.top) / this.zoomLevel;
+      // حساب الموضع مع مراعاة التكبير والبانينج
+      const x = (clientX - rect.left) / this.zoomLevel - this.panOffsetX;
+      const y = (clientY - rect.top) / this.zoomLevel - this.panOffsetY;
       
       const cursor = this.cursorElement.nativeElement;
       cursor.style.left = `${Math.round(x)}px`;
@@ -946,6 +1428,14 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (!this.isBrowser) return;
     
     try {
+      // Handle spacebar for panning
+      if (event.code === 'Space' && this.zoomLevel > 1) {
+        event.preventDefault();
+        this.isSpacePressed = true;
+        this.updatePanningCursor();
+        return;
+      }
+      
       if (event.ctrlKey || event.metaKey) {
         switch (event.key) {
           case 'z':
@@ -1011,6 +1501,25 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  @HostListener('document:keyup', ['$event'])
+  private handleKeyUp(event: KeyboardEvent): void {
+    if (!this.isBrowser) return;
+    
+    try {
+      // Handle spacebar release
+      if (event.code === 'Space') {
+        event.preventDefault();
+        this.isSpacePressed = false;
+        if (this.isPanning) {
+          this.stopPanning();
+        }
+        this.updateCursor(); // Reset to normal cursor
+      }
+    } catch (error) {
+      console.error('Error handling keyboard event:', error);
+    }
+  }
+
   openColorPicker(): void {
     const colorPicker = document.querySelector('.hidden-color-picker') as HTMLInputElement;
     if (colorPicker) {
@@ -1031,6 +1540,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   resetZoom(): void {
     this.zoomLevel = 1;
+    this.panOffsetX = 0;
+    this.panOffsetY = 0;
     this.applyZoom();
   }
 
@@ -1039,8 +1550,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     const canvasWrapper = canvas.parentElement;
     
     if (canvasWrapper) {
-      // Apply zoom transform to the canvas wrapper
-      canvasWrapper.style.transform = `scale(${this.zoomLevel})`;
+      // Apply both zoom and pan transforms
+      const transform = `scale(${this.zoomLevel}) translate(${this.panOffsetX}px, ${this.panOffsetY}px)`;
+      canvasWrapper.style.transform = transform;
       canvasWrapper.style.transformOrigin = 'center center';
       
       // Update cursor size and position based on zoom level
@@ -1063,6 +1575,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       }
       if (this.resizeTimeout) {
         clearTimeout(this.resizeTimeout);
+      }
+      if (this.trackpadZoomTimeout) {
+        clearTimeout(this.trackpadZoomTimeout);
       }
       window.removeEventListener('keydown', this.handleKeyDown.bind(this));
     }

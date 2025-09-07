@@ -29,8 +29,8 @@
           <!-- Drawing Canvas -->
           <canvas #drawingCanvas class="drawing-canvas" (mousedown)="startDrawing($event)"
             (mousemove)="onMouseMove($event)" (mouseup)="stopDrawing()" (mouseenter)="onMouseEnter()"
-            (mouseleave)="onMouseLeave()" (touchstart)="startDrawing($event)" (touchmove)="onTouchMove($event)"
-            (touchend)="stopDrawing()" (contextmenu)="$event.preventDefault()">
+            (mouseleave)="onMouseLeave()" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)"
+            (touchend)="onTouchEnd($event)" (contextmenu)="$event.preventDefault()">
           </canvas>
           <canvas #backgroundCanvas
           class="background-canvas"
