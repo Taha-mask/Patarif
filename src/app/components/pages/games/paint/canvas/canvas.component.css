@@ -219,6 +219,34 @@ i{
   z-index: 1000;
 }
 
+/* Mobile: horizontal layout for size presets */
+@media (max-width: 768px) {
+  .size-presets {
+    flex-direction: row;
+    top: 100%;
+    right: 50%;
+    transform: translateX(50%);
+    margin-right: 0;
+    margin-top: 10px;
+    padding: 8px 12px;
+    gap: 12px;
+    min-width: 200px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .size-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+}
+
 /* Show menu when hovering over wrapper (button or menu) */
 button.line-size-wrapper{
   border-radius: 50%;
@@ -435,6 +463,13 @@ button.line-size-wrapper{
 .cursor.touch-cursor {
   transform-origin: center center;
   transition: transform 0.05s ease;
+}
+
+/* Hide cursor on mobile devices */
+@media (max-width: 768px) {
+  .cursor {
+    display: none !important;
+  }
 }
 
 .cursor.pen {
@@ -684,10 +719,14 @@ button.line-size-wrapper{
   
   /* Better spacing for size presets on mobile */
   .size-presets {
-    right: 115%;
-    margin-right: 10px;
-    padding: 10px 8px;
-    gap: 8px;
+    flex-direction: row;
+    top: 100%;
+    right: 50%;
+    transform: translateX(50%);
+    margin-right: 0;
+    margin-top: 10px;
+    padding: 8px 12px;
+    gap: 12px;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(15px);
     border-radius: 12px;
@@ -695,10 +734,28 @@ button.line-size-wrapper{
   }
   
   .size-option {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 8px;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Extra small mobile devices - smaller size options */
+@media (max-width: 480px) {
+  .size-presets {
+    min-width: 180px;
+    padding: 6px 10px;
+    gap: 10px;
+  }
+  
+  .size-option {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
   }
   
   /* Improved active states */
@@ -777,6 +834,19 @@ button.line-size-wrapper{
     font-size: 9px;
     padding: 3px 6px;
     min-width: 32px;
+  }
+  
+  /* Extra small size presets */
+  .size-presets {
+    min-width: 160px;
+    padding: 4px 8px;
+    gap: 8px;
+  }
+  
+  .size-option {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
   }
 }
 

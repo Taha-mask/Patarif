@@ -125,7 +125,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.preloadLogo().catch(() => { });
 
       this.setupCanvas();
-      this.saveState();
+      this.initializeHistory();
       this.setupEventListeners();
       
       // Load image from query params if provided
@@ -876,12 +876,42 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   // History management
+  private initializeHistory(): void {
+    // Initialize with empty state
+    this.drawingHistory = [];
+    this.historyIndex = -1;
+    this.saveState(); // Save initial empty state
+  }
+
   private saveState(): void {
     if (!this.isBrowser || !this.canvasRef?.nativeElement) return;
     
     try {
-      const canvas = this.canvasRef.nativeElement;
-      const state = canvas.toDataURL('image/png');
+      // Create a temporary canvas to combine both canvases
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d')!;
+      
+      const mainCanvas = this.canvasRef.nativeElement;
+      const backgroundCanvas = this.backgroundCanvasRef?.nativeElement;
+      
+      // Set temp canvas size
+      tempCanvas.width = mainCanvas.width;
+      tempCanvas.height = mainCanvas.height;
+      
+      // Fill with white background
+      tempCtx.fillStyle = '#ffffff';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      
+      // Draw background canvas first (if exists)
+      if (backgroundCanvas) {
+        tempCtx.drawImage(backgroundCanvas, 0, 0);
+      }
+      
+      // Draw main canvas on top
+      tempCtx.drawImage(mainCanvas, 0, 0);
+      
+      // Get the combined state
+      const state = tempCanvas.toDataURL('image/png');
       
       // Remove future states if we're in the middle of history
       if (this.historyIndex < this.drawingHistory.length - 1) {
@@ -922,8 +952,23 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       const img = new Image();
       img.onload = () => {
         if (this.ctx) {
+          // Clear both canvases
           this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+          if (this.backgroundCtx) {
+            this.backgroundCtx.clearRect(0, 0, this.backgroundCanvasRef.nativeElement.width, this.backgroundCanvasRef.nativeElement.height);
+          }
+          
+          // If this is the first state (empty), just clear everything
+          if (this.historyIndex === 0) {
+            this.updateDisplay();
+            return;
+          }
+          
+          // Restore the combined state
           this.ctx.drawImage(img, 0, 0);
+          
+          // Update display to show the restored state
+          this.updateDisplay();
         }
       };
       img.src = this.drawingHistory[this.historyIndex];
@@ -945,6 +990,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       // إزالة الصورة الخلفية
       this.backgroundImage = null;
       
+      // إعادة تعيين التاريخ
+      this.drawingHistory = [];
+      this.historyIndex = -1;
+      
+      // حفظ الحالة الفارغة
       this.saveState();
     }
   }
@@ -1647,6 +1697,11 @@ moveCurrentDrawingToBackground(): void {
     this.backgroundCtx.drawImage(this.canvasRef.nativeElement, 0, 0);
     // مسح drawingCanvas بعد النقل
     this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+    
+    // تحديث العرض
+    this.updateDisplay();
+    
+    // حفظ الحالة الجديدة
     this.saveState();
   }
 }
