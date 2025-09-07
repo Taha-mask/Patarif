@@ -31,14 +31,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 
   constructor(private supabase: SupabaseService) { }
-ngOnInit() {
-  const welcomeMessage = localStorage.getItem('welcomeMessage');
-  if (welcomeMessage) {
-    const { title, text, icon } = JSON.parse(welcomeMessage);
-    Swal.fire({ title, text, icon });
-    localStorage.removeItem('welcomeMessage');
+  ngOnInit() {
+    const welcomeMessage = localStorage.getItem('welcomeMessage');
+    if (welcomeMessage) {
+      const { title, text, icon } = JSON.parse(welcomeMessage);
+
+      const frenchTitle = title === 'Welcome' ? 'Bienvenue' : title;
+      const frenchText = text === 'Have a nice day!' ? 'Bonne journée !' : text;
+
+      Swal.fire({ title: frenchTitle, text: frenchText, icon });
+      localStorage.removeItem('welcomeMessage');
+    }
   }
-}
 
 
   ngAfterViewInit() {

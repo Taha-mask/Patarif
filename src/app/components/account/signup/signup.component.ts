@@ -44,13 +44,12 @@ export class SignupComponent {
     this.isLoading = true; // بدأ التحميل
 
     const { firstName, lastName, email, password } = this.regirster.value;
-
     this.auth.signUp(email, password, firstName, lastName)
       .then((res) => {
         console.log('تم التسجيل بنجاح:', res);
         Swal.fire({
-          title: "Registration successful",
-          text: "You will be directed to login, and register with the same account.",
+          title: "Inscription réussie",
+          text: "Vous serez redirigé vers la page de connexion et pourrez vous connecter avec le même compte.",
           icon: "success"
         }).then(() => {
           window.location.replace('/login');
@@ -59,16 +58,15 @@ export class SignupComponent {
       .catch((error) => {
         console.error('حدث خطأ أثناء التسجيل:', error);
         Swal.fire({
-          title: "Error",
+          title: "Erreur",
           text: error,
           icon: "error"
         });
       })
       .finally(() => {
-        this.isLoading = false; // انتهى التحميل
+        this.isLoading = false;
       });
   }
-
 
 
 
@@ -81,10 +79,10 @@ export class SignupComponent {
 
 
 
-    // google sign in
+  // google sign in
 
   async signUPWithGoogle() {
-   await this.auth.signInWithGoogle();
+    await this.auth.signInWithGoogle();
   }
 
 

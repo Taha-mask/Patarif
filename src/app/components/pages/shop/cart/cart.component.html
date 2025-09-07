@@ -3,25 +3,25 @@
 <div *ngIf="showContactInfo == true" class="modal-background">
 
     <div class="order-info-modal">
-        <h1>Contact <span>info</span>rmation</h1>
+        <h1>Informations <span>de contact</span></h1>
         <form action="" (ngSubmit)="saveContact()">
             <div class="form-home row justify-content-evenly align-items-center">
                 <span></span>
 
                 <div class="col-lg-6 col-sm-12">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" placeholder="Your name" [(ngModel)]="contact.name" name="name">
+                    <label for="name">Nom</label>
+                    <input type="text" id="name" placeholder="Votre nom" [(ngModel)]="contact.name" name="name">
                 </div>
                 <!-- <span></span> -->
 
                 <div class="col-lg-6 col-sm-12">
-                    <label for="phone">Number</label>
-                    <input type="text" id="phone" placeholder="Your number" [(ngModel)]="contact.phone" name="phone">
+                    <label for="phone">Numéro</label>
+                    <input type="text" id="phone" placeholder="Votre numéro" [(ngModel)]="contact.phone" name="phone">
                 </div>
                 <span></span>
 
                 <div class="col-12">
-                    <label for="department">Department</label>
+                    <label for="department">Département</label>
                     <select id="department" class="form-select" [(ngModel)]="contact.department" name="department">
                         <option *ngFor="let dep of frenchDepartments" [value]="dep.code +' '+ dep.name">
                             {{ dep.code }} - {{ dep.name }}
@@ -32,31 +32,26 @@
                 <span></span>
 
                 <div *ngIf="contact.department === 'Other Other'" class="col-12">
-                    <label for="otherPlace">Other place</label>
-                    <input type="text" id="otherPlace" placeholder="Where...?" [(ngModel)]="contact.otherPlace"
+                    <label for="otherPlace">Autre lieu</label>
+                    <input type="text" id="otherPlace" placeholder="Où...?" [(ngModel)]="contact.otherPlace"
                         name="otherPlace">
                 </div>
                 <span></span>
 
                 <div class="col-12">
-                    <label for="note">Notes or detailed address</label>
-                    <input type="text" id="note" placeholder="Any notes...?" [(ngModel)]="contact.note" name="note">
+                    <label for="note">Notes ou adresse détaillée</label>
+                    <input type="text" id="note" placeholder="Des remarques...?" [(ngModel)]="contact.note" name="note">
                 </div>
 
                 <span></span>
-
-
-
-
             </div>
             <div class="row mt-3">
-
                 <div class="col-3">
                     <button (click)="showContactInfo = false" type="button"
-                        class="btn btn-outline-secondary w-100">Cancel</button>
+                        class="btn btn-outline-secondary w-100">Annuler</button>
                 </div>
                 <div class="col-9">
-                    <button type="submit" class="btn btn-primary w-100">Save</button>
+                    <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
                 </div>
             </div>
         </form>
@@ -65,21 +60,20 @@
 
 <div class="main">
     <div class="pageTitle">
-
-        <h1 class="title">Shop Cart</h1>
-        <p class="links"><span>home</span> > <span>shop</span> > cart</p>
+        <h1 class="title">Panier</h1>
+        <p class="links"><span>Accueil</span> > <span>Boutique</span> > Panier</p>
     </div>
 
     <table border="0" class="products-table">
         <thead>
             <tr>
-                <th>product</th>
-                <th>size</th>
-                <th>price</th>
-                <th>color</th>
-                <th>quantity</th>
-                <th>subtotal</th>
-                <th>remove</th>
+                <th>Produit</th>
+                <th>Taille</th>
+                <th>Prix</th>
+                <th>Couleur</th>
+                <th>Quantité</th>
+                <th>Sous-total</th>
+                <th>Supprimer</th>
             </tr>
         </thead>
         <tbody>
@@ -107,42 +101,39 @@
                 <td data-label="remove" class="remove">
                     <button (click)="removeItem(item)"><i class="bi bi-trash3"></i></button>
                 </td>
-
             </tr>
         </tbody>
     </table>
+
     <div class="section2">
         <button *ngIf="!isContactInfoNotNull()" (click)="showContactInfo = true"
-            class="btn btn-primary confirm">Confirm</button>
-
-
+            class="btn btn-primary confirm">Confirmer</button>
 
         <div *ngIf="isContactInfoNotNull() == true" class="invoice">
-            <div class="discount-code">
+            <!-- <div class="discount-code">
                 <form action="">
-
-                    <input type="text" placeholder="Discount Code">
-                    <button type="submit">applay</button>
+                    <input type="text" placeholder="Code promo">
+                    <button type="submit">Appliquer</button>
                 </form>
-            </div>
+            </div> -->
             <div class="cash-on-delivery">
-                <i class="bi bi-exclamation-octagon"></i> Cash on delivery
+                <i class="bi bi-exclamation-octagon"></i> Paiement à la livraison
             </div>
             <div class="checkout">
-                <p class="no-products" *ngIf="total == 0">select products first</p>
+                <p class="no-products" *ngIf="total == 0">Sélectionnez d’abord des produits</p>
                 <div class="cart-details" *ngIf="total != 0">
                     <div class="part">
-                        <p class="part-title">Subtotal</p>
+                        <p class="part-title">Sous-total</p>
                         <p class="value">{{total}} €</p>
                     </div>
                     <div class="divider"></div>
                     <div class="part">
-                        <p class="part-title">Shipping</p>
+                        <p class="part-title">Livraison</p>
                         <p class="value">{{ shipping }} €</p>
                     </div>
                     <div class="divider"></div>
                     <div class="part">
-                        <p class="part-title">Estimate for</p>
+                        <p class="part-title">Estimation pour</p>
                         <p *ngIf="contact.department !== 'Other Other'" class="value">{{ contact.department }} </p>
                         <p *ngIf="contact.department === 'Other Other'" class="value">{{ contact.otherPlace }} </p>
                     </div>
@@ -152,19 +143,16 @@
                         <p class="value">{{totalAfterShipping()}} €</p>
                     </div>
                     <div class="row align-items-center justify-content-evenly mt-5">
-
                         <button *ngIf="isContactInfoNotNull()" (click)="showContactInfo = true"
-                            class="p-3 col-3 btn btn-outline-secondary">Re-enter</button>
-                        <button class="p-3 col-8 checkout-button" (click)="verifyCheckout()">Proceed To
-                            CheckOut</button>
+                            class="p-3 col-3 btn btn-outline-secondary">Re</button>
+                        <button class="p-3 col-8 checkout-button" (click)="verifyCheckout()">Passer à
+                            la caisse</button>
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
-
 </div>
+
 <div class="before-footer"></div>
 <app-home-footer></app-home-footer>
