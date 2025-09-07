@@ -25,46 +25,48 @@ interface DrawingState {
 })
 export class CanvasComponent implements AfterViewInit, OnDestroy {
   @ViewChild('drawingCanvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('backgroundCanvas', { static: false }) backgroundCanvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('cursorElement', { static: false }) cursorElement!: ElementRef<HTMLDivElement>;
-
+  
   private ctx!: CanvasRenderingContext2D;
+  private backgroundCtx!: CanvasRenderingContext2D;
   private isDrawing = false;
   private lastX = 0;
   private lastY = 0;
   private animationFrameId: number | null = null;
   private resizeTimeout: any = null;
-
+  
   // Drawing state
   drawingHistory: string[] = [];
   historyIndex: number = -1;
   private readonly MAX_HISTORY = 50;
-
+  
   // Current drawing settings
   currentTool: Tool = 'pen';
   selectedColor: string = '#000000';
   brushSize: number = 5;
   opacity: number = 1;
   brushShape: BrushShape = 'round';
-
+  
   // UI state
   showColorPalette = false;
   showBrushOptions = false;
   isFullscreen = false;
   hoveredSize: number | null = null;
-
+  
   // Zoom state
   zoomLevel: number = 1;
   readonly MIN_ZOOM = 0.1;
   readonly MAX_ZOOM = 5;
   private readonly ZOOM_STEP = 0.1;
-
+  
   // Basic colors for the bottom palette
   basicColors = [
-    '#ff0000', '#0000ff', '#00bfff', '#00ff00', '#00ffff',
-    '#ffff00', '#ffa500', '#ff69b4', '#dda0dd', '#d3d3d3',
+    '#ff0000', '#0000ff', '#00bfff', '#00ff00', '#00ffff', 
+    '#ffff00', '#ffa500', '#ff69b4', '#dda0dd', '#d3d3d3', 
     '#808080', '#ffffff'
   ];
-
+  
   // Brush presets
   brushPresets = [
     { name: 'Fine', size: 2, shape: 'round' as BrushShape },
@@ -73,7 +75,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     { name: 'Calligraphy', size: 10, shape: 'calligraphy' as BrushShape },
     { name: 'Marker', size: 12, shape: 'square' as BrushShape }
   ];
-
+  
   private isBrowser: boolean;
   private pressure = 1; // For pressure sensitivity
 
@@ -98,7 +100,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.setupCanvas();
       this.saveState();
       this.setupEventListeners();
-
+      
       // Load image from query params if provided
       this.route.queryParams.subscribe(params => {
         if (params['imageUrl']) {
@@ -112,6 +114,13 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private setupCanvas() {
     const canvas = this.canvasRef.nativeElement;
     this.ctx = canvas.getContext('2d')!;
+    
+    // إنشاء canvas للخلفية إذا كان موجود في template
+    if (this.backgroundCanvasRef?.nativeElement) {
+      const backgroundCanvas = this.backgroundCanvasRef.nativeElement;
+      this.backgroundCtx = backgroundCanvas.getContext('2d')!;
+    }
+    
     this.updateCanvasSize();
     this.updateDrawingSettings();
   }
@@ -122,18 +131,27 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
     // حفظ المحتوى الحالي قبل تغيير الحجم
     const currentImageData = this.ctx ? this.ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
-
+    
     // Set canvas display size (CSS)
     canvas.style.width = '100%';
     canvas.style.height = '100%';
-
+    
     // Set canvas drawing buffer size
     const newWidth = container.clientWidth;
     const newHeight = container.clientHeight;
 
-    // تحديث حجم الكانفاس
+    // تحديث حجم الكانفاس الرئيسي
     canvas.width = newWidth;
     canvas.height = newHeight;
+
+    // تحديث حجم background canvas إذا كان موجود
+    if (this.backgroundCanvasRef?.nativeElement) {
+      const backgroundCanvas = this.backgroundCanvasRef.nativeElement;
+      backgroundCanvas.width = newWidth;
+      backgroundCanvas.height = newHeight;
+      backgroundCanvas.style.width = '100%';
+      backgroundCanvas.style.height = '100%';
+    }
 
     // إعادة تطبيق إعدادات الرسم
     this.updateDrawingSettings();
@@ -159,8 +177,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
       this.ctx.drawImage(tempCanvas, offsetX, offsetY, scaledWidth, scaledHeight);
       
-      // لا نعيد رسم الصورة الخلفية هنا لتجنب إضافة صور جديدة
-      // الصورة الخلفية موجودة بالفعل في المحتوى المحفوظ
+      // إعادة رسم الصورة الخلفية على background canvas
+      if (this.backgroundImage) {
+        this.drawBackgroundImage();
+      }
     } else if (this.backgroundImage) {
       // إذا لم يكن هناك محتوى محفوظ ولكن هناك صورة خلفية، ارسمها
       this.drawBackgroundImage();
@@ -183,13 +203,14 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private updateDrawingSettings(): void {
     if (!this.ctx) return;
-
+    
     this.ctx.lineCap = this.brushShape === 'square' ? 'square' : 'round';
     this.ctx.lineJoin = 'round';
     this.ctx.globalAlpha = this.opacity;
     this.ctx.lineWidth = this.brushSize;
-
+    
     if (this.currentTool === 'eraser') {
+      // 🔥 في Layer System، الممحاة تشتغل عادي على layer الرسم فقط
       this.ctx.globalCompositeOperation = 'destination-out';
     } else {
       this.ctx.globalCompositeOperation = 'source-over';
@@ -198,10 +219,25 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  private updateDrawingSettingsForContext(ctx: CanvasRenderingContext2D): void {
+    ctx.lineCap = this.brushShape === 'square' ? 'square' : 'round';
+    ctx.lineJoin = 'round';
+    ctx.globalAlpha = this.opacity;
+    ctx.lineWidth = this.brushSize * this.pressure;
+    
+    if (this.currentTool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = this.selectedColor;
+      ctx.fillStyle = this.selectedColor;
+    }
+  }
+
   private setupEventListeners(): void {
     // Keyboard shortcuts
     window.addEventListener('keydown', this.handleKeyDown.bind(this));
-
+    
     // Pressure sensitivity for supported devices
     if ('PointerEvent' in window) {
       this.canvasRef.nativeElement.addEventListener('pointerdown', this.handlePointerDown.bind(this));
@@ -214,67 +250,74 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   startDrawing(e: MouseEvent | TouchEvent | PointerEvent): void {
     e.preventDefault();
     this.isDrawing = true;
-
+    
     const pos = this.getEventPosition(e);
     this.lastX = pos.x;
     this.lastY = pos.y;
-
+    
     // Handle pressure sensitivity
     if ('pressure' in e && e.pressure !== undefined) {
       this.pressure = e.pressure;
-      this.ctx.lineWidth = this.brushSize * this.pressure;
     }
-
-    this.updateDrawingSettings();
-
-    // Start path
-    this.ctx.beginPath();
-    this.ctx.moveTo(this.lastX, this.lastY);
-
-    // Draw initial point for better responsiveness
-    this.drawPoint(this.lastX, this.lastY);
-
-    // إعادة رسم الصورة فوق التلوين
-    this.redrawImageOverDrawing();
+    
+    // الرسم على background canvas مباشرة
+    if (this.backgroundCtx) {
+      this.updateDrawingSettingsForContext(this.backgroundCtx);
+      
+      // Start path
+      this.backgroundCtx.beginPath();
+      this.backgroundCtx.moveTo(this.lastX, this.lastY);
+      
+      // Draw initial point for better responsiveness
+      this.drawPointOnContext(this.backgroundCtx, this.lastX, this.lastY);
+    }
+    
+    // تحديث العرض المباشر
+    this.updateDisplay();
   }
 
   draw(e: MouseEvent | TouchEvent | PointerEvent): void {
     if (!this.isDrawing) return;
     e.preventDefault();
-
+    
     const pos = this.getEventPosition(e);
-
-    // Handle pressure sensitivity
+    
     if ('pressure' in e && e.pressure !== undefined) {
       this.pressure = e.pressure;
       this.ctx.lineWidth = this.brushSize * this.pressure;
     }
-
-    this.updateDrawingSettings();
-
-    // Draw based on tool
-    switch (this.currentTool) {
-      case 'spray':
-        this.drawSpray(pos.x, pos.y);
-        break;
-      case 'calligraphy':
-        this.drawCalligraphy(this.lastX, this.lastY, pos.x, pos.y);
-        break;
-      default:
-        this.drawLine(this.lastX, this.lastY, pos.x, pos.y);
+    
+    // الرسم على background canvas مباشرة
+    if (this.backgroundCtx) {
+      this.updateDrawingSettingsForContext(this.backgroundCtx);
+      
+      switch (this.currentTool) {
+        case 'spray':
+          this.drawSprayOnContext(this.backgroundCtx, pos.x, pos.y);
+          break;
+        case 'calligraphy':
+          this.drawCalligraphyOnContext(this.backgroundCtx, this.lastX, this.lastY, pos.x, pos.y);
+          break;
+        default:
+          this.drawLineOnContext(this.backgroundCtx, this.lastX, this.lastY, pos.x, pos.y);
+      }
     }
-
+    
     this.lastX = pos.x;
     this.lastY = pos.y;
-
-    // إعادة رسم الصورة فوق التلوين
-    this.redrawImageOverDrawing();
+    
+    // تحديث العرض المباشر
+    this.updateDisplay();
   }
 
   stopDrawing(): void {
     if (this.isDrawing) {
       this.isDrawing = false;
       this.pressure = 1;
+      
+      // تحديث العرض النهائي
+      this.updateDisplay();
+      
       this.saveState();
     }
   }
@@ -286,32 +329,61 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.ctx.stroke();
   }
 
+  private drawLineOnContext(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number): void {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+
   private drawPoint(x: number, y: number): void {
     this.ctx.beginPath();
     this.ctx.arc(x, y, this.ctx.lineWidth / 2, 0, Math.PI * 2);
     this.ctx.fill();
   }
 
+  private drawPointOnContext(ctx: CanvasRenderingContext2D, x: number, y: number): void {
+    ctx.beginPath();
+    ctx.arc(x, y, ctx.lineWidth / 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   private drawSpray(x: number, y: number): void {
     const density = 20;
     const radius = this.brushSize;
-
+    
     for (let i = 0; i < density; i++) {
       const angle = Math.random() * Math.PI * 2;
       const distance = Math.random() * radius;
       const sprayX = x + Math.cos(angle) * distance;
       const sprayY = y + Math.sin(angle) * distance;
-
+      
       this.ctx.beginPath();
       this.ctx.arc(sprayX, sprayY, 1, 0, Math.PI * 2);
       this.ctx.fill();
     }
   }
 
+  private drawSprayOnContext(ctx: CanvasRenderingContext2D, x: number, y: number): void {
+    const density = 20;
+    const radius = this.brushSize;
+    
+    for (let i = 0; i < density; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * radius;
+      const sprayX = x + Math.cos(angle) * distance;
+      const sprayY = y + Math.sin(angle) * distance;
+      
+      ctx.beginPath();
+      ctx.arc(sprayX, sprayY, 1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
   private drawCalligraphy(x1: number, y1: number, x2: number, y2: number): void {
     const angle = Math.atan2(y2 - y1, x2 - x1);
     const width = this.brushSize;
-
+    
     this.ctx.save();
     this.ctx.translate(x1, y1);
     this.ctx.rotate(angle);
@@ -319,12 +391,70 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.ctx.restore();
   }
 
+  private drawCalligraphyOnContext(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number): void {
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const width = this.brushSize;
+    
+    ctx.save();
+    ctx.translate(x1, y1);
+    ctx.rotate(angle);
+    ctx.fillRect(0, -width / 2, Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2), width);
+    ctx.restore();
+  }
+
+  // ===== DISPLAY MANAGEMENT =====
+  private updateDisplay(): void {
+    if (!this.ctx) return;
+
+    const canvas = this.canvasRef.nativeElement;
+    
+    // مسح الكانفاس الرئيسي
+    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 1. رسم خطوط الفرشة من background canvas (الطبقة السفلى)
+    if (this.backgroundCtx) {
+      this.ctx.drawImage(this.backgroundCanvasRef.nativeElement, 0, 0);
+    }
+    
+    // 2. رسم الصورة الخلفية فوق خطوط الفرشة (الطبقة الوسطى)
+    if (this.backgroundImage) {
+      this.drawBackgroundImageOnMainCanvas();
+    }
+    
+    // 3. الرسم الحالي يبقى على الكانفاس الرئيسي (الطبقة العليا)
+    // (لا نحتاج لرسمه لأنه موجود بالفعل)
+  }
+
+  private drawBackgroundImageOnMainCanvas(): void {
+    if (!this.backgroundImage || !this.ctx) return;
+    
+    const canvas = this.canvasRef.nativeElement;
+    this.drawBackgroundImageOnContext(this.ctx, canvas);
+  }
+
+  private drawBackgroundImageOnContext(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
+    if (!this.backgroundImage) return;
+    
+    const img = this.backgroundImage;
+    const hRatio = canvas.width / img.width;
+    const vRatio = canvas.height / img.height;
+    const ratio = Math.min(hRatio, vRatio, 1);
+
+    const centerX = (canvas.width - img.width * ratio) / 2;
+    const centerY = (canvas.height - img.height * ratio) / 2;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
+    ctx.restore();
+  }
+
   private getEventPosition(e: MouseEvent | TouchEvent | PointerEvent): { x: number, y: number } {
     const canvas = this.canvasRef.nativeElement;
     const rect = canvas.getBoundingClientRect();
-
+    
     let clientX: number, clientY: number;
-
+    
     if ('touches' in e) {
       clientX = e.touches[0].clientX;
       clientY = e.touches[0].clientY;
@@ -332,11 +462,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       clientX = (e as MouseEvent | PointerEvent).clientX;
       clientY = (e as MouseEvent | PointerEvent).clientY;
     }
-
+    
     // حساب الموضع مع مراعاة التكبير
     const x = (clientX - rect.left) / this.zoomLevel;
     const y = (clientY - rect.top) / this.zoomLevel;
-
+    
     return { x, y };
   }
 
@@ -385,18 +515,18 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   // History management
   private saveState(): void {
     if (!this.isBrowser || !this.canvasRef?.nativeElement) return;
-
+    
     try {
       const canvas = this.canvasRef.nativeElement;
       const state = canvas.toDataURL('image/png');
-
+      
       // Remove future states if we're in the middle of history
       if (this.historyIndex < this.drawingHistory.length - 1) {
         this.drawingHistory = this.drawingHistory.slice(0, this.historyIndex + 1);
       }
-
+      
       this.drawingHistory.push(state);
-
+      
       // Limit history size
       if (this.drawingHistory.length > this.MAX_HISTORY) {
         this.drawingHistory.shift();
@@ -424,7 +554,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private restoreState(): void {
     if (!this.isBrowser || this.drawingHistory.length === 0 || this.historyIndex < 0) return;
-
+    
     try {
       const img = new Image();
       img.onload = () => {
@@ -441,39 +571,52 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   clearCanvas(): void {
     if (confirm('Are you sure you want to clear the canvas?')) {
-      // مسح الكانفاس بالكامل
+      // مسح الكانفاس الرئيسي
       this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
-
-      // إذا كانت هناك صورة خلفية، ارسمها
-      if (this.backgroundImage) {
-        this.drawBackgroundImage();
+      
+      // مسح background canvas
+      if (this.backgroundCtx) {
+        this.backgroundCtx.clearRect(0, 0, this.backgroundCanvasRef.nativeElement.width, this.backgroundCanvasRef.nativeElement.height);
       }
-
+      
+      // إزالة الصورة الخلفية
+      this.backgroundImage = null;
+      
       this.saveState();
     }
   }
-
+  
   isAppeared = false;
 
   async downloadImage(): Promise<void> {
     if (!this.isBrowser) return;
-
+    
     const canvas = this.canvasRef.nativeElement;
-
+    
     // نعمل نسخة جديدة من الكانڤاس
     const finalCanvas = document.createElement('canvas');
     const finalCtx = finalCanvas.getContext('2d')!;
-
+    
     finalCanvas.width = canvas.width;
     finalCanvas.height = canvas.height;
-
+    
     // خلفية بيضاء
     finalCtx.fillStyle = '#ffffff';
     finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+    
+    // 1. رسم خطوط الفرشة من background canvas (الطبقة السفلى)
+    if (this.backgroundCtx) {
+      finalCtx.drawImage(this.backgroundCanvasRef.nativeElement, 0, 0);
+    }
 
-    // الرسم الأصلي
+    // 2. رسم الصورة الخلفية فوق خطوط الفرشة (الطبقة الوسطى)
+    if (this.backgroundImage) {
+      this.drawBackgroundImageOnContext(finalCtx, finalCanvas);
+    }
+
+    // 3. رسم الكانفاس الرئيسي (الرسم الحالي) - الطبقة العليا
     finalCtx.drawImage(canvas, 0, 0);
-
+    
     // ✅ اللوجو يظهر فقط وقت التحميل
     this.isAppeared = true;
     if (this.isAppeared) {
@@ -483,7 +626,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
     // ناخد الصورة باللوجو
     const dataUrl = finalCanvas.toDataURL('image/png');
-
+    
     // نعمل لينك للتحميل
     const link = document.createElement('a');
     link.href = dataUrl;
@@ -494,32 +637,42 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   async downloadPDF(): Promise<void> {
     if (!this.isBrowser) return;
-
+    
     const canvas = this.canvasRef.nativeElement;
-
+    
     // نسخة جديدة من الكانڤاس
     const finalCanvas = document.createElement('canvas');
     const finalCtx = finalCanvas.getContext('2d')!;
     finalCanvas.width = canvas.width;
     finalCanvas.height = canvas.height;
-
+    
     // خلفية بيضاء
     finalCtx.fillStyle = '#ffffff';
     finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+    
+    // 1. رسم خطوط الفرشة من background canvas (الطبقة السفلى)
+    if (this.backgroundCtx) {
+      finalCtx.drawImage(this.backgroundCanvasRef.nativeElement, 0, 0);
+    }
 
-    // الرسم الأصلي
+    // 2. رسم الصورة الخلفية فوق خطوط الفرشة (الطبقة الوسطى)
+    if (this.backgroundImage) {
+      this.drawBackgroundImageOnContext(finalCtx, finalCanvas);
+    }
+
+    // 3. رسم الكانفاس الرئيسي (الرسم الحالي) - الطبقة العليا
     finalCtx.drawImage(canvas, 0, 0);
-
+    
     // نحول لصورة
     const dataUrl = finalCanvas.toDataURL('image/png');
-
+    
     // نضيف للصورة في PDF
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4'
     });
-
+    
     const a4Width = 210;
     const a4Height = 297;
 
@@ -556,10 +709,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private async addWatermarkToContext(ctx: CanvasRenderingContext2D, width: number, height: number): Promise<void> {
     const watermarkSize = Math.min(width, height) * 0.15;
-    const margin = watermarkSize * 0.1;
-    const x = width - watermarkSize - margin;
-    const y = height - watermarkSize - margin;
-
+      const margin = watermarkSize * 0.1;
+      const x = width - watermarkSize - margin;
+      const y = height - watermarkSize - margin;
+      
     ctx.save();
 
     // نضمن تحميل اللوجو قبل الرسم
@@ -588,18 +741,18 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     const margin = watermarkSize * 0.1;
     const x = width - watermarkSize - margin;
     const y = height - watermarkSize - margin;
-
+  
     // Background circle
     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.beginPath();
     ctx.arc(x + watermarkSize / 2, y + watermarkSize / 2, watermarkSize / 2, 0, Math.PI * 2);
     ctx.fill();
-
+  
     // Border
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
     ctx.lineWidth = 2;
     ctx.stroke();
-
+  
     // --- Load and draw logo ---
     const logoImg = new Image();
     logoImg.src = '/images/logo-patarif.png';
@@ -607,20 +760,20 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       const logoSize = watermarkSize * 0.6;
       const logoX = x + (watermarkSize - logoSize) / 2;
       const logoY = y + (watermarkSize - logoSize) / 2 - watermarkSize * 0.1;
-
+  
       ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
-
+  
       // Add text below logo
       ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
       ctx.font = `bold ${watermarkSize * 0.12}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('PATARIF', x + watermarkSize / 2, y + watermarkSize / 2 + watermarkSize * 0.25);
-
+  
       ctx.font = `${watermarkSize * 0.08}px Arial`;
       ctx.fillText('GAMING', x + watermarkSize / 2, y + watermarkSize / 2 + watermarkSize * 0.35);
     };
-
+  
     logoImg.onerror = () => {
       // fallback: only text
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -637,18 +790,18 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     const margin = 5; // 5mm margin
     const x = width - watermarkSize - margin;
     const y = height - watermarkSize - margin;
-
+    
     // Create a temporary canvas for the watermark
     const watermarkCanvas = document.createElement('canvas');
     const watermarkCtx = watermarkCanvas.getContext('2d')!;
-
+    
     // Set canvas size (convert mm to pixels, assuming 96 DPI)
     const dpi = 96;
     const mmToPx = dpi / 25.4;
     const canvasSize = watermarkSize * mmToPx;
     watermarkCanvas.width = canvasSize;
     watermarkCanvas.height = canvasSize;
-
+    
     // Load and draw logo
     const logoImg = new Image();
     logoImg.crossOrigin = 'anonymous';
@@ -657,15 +810,15 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       const logoSize = canvasSize;
       const logoX = 0;
       const logoY = 0;
-
+      
       // Draw logo
       watermarkCtx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
-
+      
       // Convert canvas to data URL and add to PDF
       const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
       pdf.addImage(watermarkDataUrl, 'PNG', x, y, watermarkSize, watermarkSize);
     };
-
+    
     logoImg.onerror = () => {
       // Fallback to text-only watermark if image fails to load
       watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -673,16 +826,16 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       watermarkCtx.textAlign = 'center';
       watermarkCtx.textBaseline = 'middle';
       watermarkCtx.fillText('PATARIF', canvasSize / 2, canvasSize / 2);
-
+      
       // Convert canvas to data URL and add to PDF
       const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
       pdf.addImage(watermarkDataUrl, 'PNG', x, y, watermarkSize, watermarkSize);
     };
-
+    
     // Set image source
     logoImg.src = '/images/logo-patarif.png';
   }
-
+  
 
   toggleFullscreen(): void {
     if (!document.fullscreenElement) {
@@ -696,19 +849,19 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   isLoading = false;
   loadError = '';
 
-
+  
 
   // Cursor management
   private updateCursor(): void {
     if (!this.cursorElement?.nativeElement) return;
-
+    
     const cursor = this.cursorElement.nativeElement;
     // تطبيق التكبير على حجم المؤشر
     const size = this.brushSize * this.zoomLevel;
-
+    
     cursor.style.width = `${size}px`;
     cursor.style.height = `${size}px`;
-
+    
     if (this.currentTool === 'eraser') {
       cursor.className = 'cursor eraser';
       cursor.style.border = '2px solid #ff0000';
@@ -745,10 +898,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private updateCursorPosition(clientX: number, clientY: number): void {
     if (!this.cursorElement?.nativeElement) return;
-
+    
     const canvas = this.canvasRef.nativeElement;
     const rect = canvas.getBoundingClientRect();
-
+    
     if (
       clientX >= rect.left &&
       clientX <= rect.right &&
@@ -758,7 +911,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       // حساب الموضع مع مراعاة التكبير
       const x = (clientX - rect.left) / this.zoomLevel;
       const y = (clientY - rect.top) / this.zoomLevel;
-
+      
       const cursor = this.cursorElement.nativeElement;
       cursor.style.left = `${Math.round(x)}px`;
       cursor.style.top = `${Math.round(y)}px`;
@@ -791,7 +944,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   @HostListener('document:keydown', ['$event'])
   private handleKeyDown(event: KeyboardEvent): void {
     if (!this.isBrowser) return;
-
+    
     try {
       if (event.ctrlKey || event.metaKey) {
         switch (event.key) {
@@ -813,7 +966,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
             break;
         }
       }
-
+      
       // Tool shortcuts
       switch (event.key) {
         case 'b':
@@ -834,7 +987,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
           }
           break;
       }
-
+      
       // Zoom shortcuts
       if (event.ctrlKey || event.metaKey) {
         switch (event.key) {
@@ -884,7 +1037,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private applyZoom(): void {
     const canvas = this.canvasRef.nativeElement;
     const canvasWrapper = canvas.parentElement;
-
+    
     if (canvasWrapper) {
       // Apply zoom transform to the canvas wrapper
       canvasWrapper.style.transform = `scale(${this.zoomLevel})`;
@@ -917,58 +1070,52 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private backgroundImage: HTMLImageElement | null = null;
 
-  private loadImageToCanvas(imageUrl: string): void {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = () => {
-      this.backgroundImage = img; // خزّن الصورة
-      // مسح الكانفاس أولاً ثم رسم الصورة
-      this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
-      this.drawBackgroundImage();
-      this.saveState();
-    };
-    img.src = imageUrl;
+moveCurrentDrawingToBackground(): void {
+  if (this.backgroundCtx && this.ctx) {
+    // نقل الرسم الحالي من drawingCanvas لـ backgroundCanvas
+    this.backgroundCtx.clearRect(0, 0, this.backgroundCanvasRef.nativeElement.width, this.backgroundCanvasRef.nativeElement.height);
+    this.backgroundCtx.drawImage(this.canvasRef.nativeElement, 0, 0);
+    // مسح drawingCanvas بعد النقل
+    this.ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+    this.saveState();
   }
+}
 
-  private drawBackgroundImage(): void {
-    if (!this.backgroundImage) return;
-    const canvas = this.canvasRef.nativeElement;
-    const ctx = this.ctx;
+private loadImageToCanvas(imageUrl: string): void {
+  const img = new Image();
+  img.crossOrigin = 'Anonymous';
+  img.onload = () => {
+    this.backgroundImage = img; // خزّن الصورة
+    
+    // تحديث العرض مع الصورة الجديدة
+    this.updateDisplay();
+    
+    this.saveState();
+  };
+  img.src = imageUrl;
+}
 
-    const img = this.backgroundImage;
-    const hRatio = canvas.width / img.width;
-    const vRatio = canvas.height / img.height;
-    const ratio = Math.min(hRatio, vRatio, 1);
+private drawBackgroundImage(): void {
+  if (!this.backgroundImage) return;
+  
+  // استخدام background canvas إذا كان متوفر، وإلا استخدام الرئيسي
+  const targetCanvas = this.backgroundCanvasRef?.nativeElement || this.canvasRef.nativeElement;
+  const targetCtx = this.backgroundCtx || this.ctx;
 
-    const centerX = (canvas.width - img.width * ratio) / 2;
-    const centerY = (canvas.height - img.height * ratio) / 2;
+  // مسح الخلفية أولاً
+  targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
 
-    // رسم الصورة الخلفية مع الحفاظ على النسب
-    ctx.save();
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
-    ctx.restore();
-  }
+  const img = this.backgroundImage;
+  const hRatio = targetCanvas.width / img.width;
+  const vRatio = targetCanvas.height / img.height;
+  const ratio = Math.min(hRatio, vRatio, 1);
 
-  private redrawImageOverDrawing(): void {
-    if (!this.backgroundImage) return;
-    const canvas = this.canvasRef.nativeElement;
-    const ctx = this.ctx;
+  const centerX = (targetCanvas.width - img.width * ratio) / 2;
+  const centerY = (targetCanvas.height - img.height * ratio) / 2;
 
-    const img = this.backgroundImage;
-    const hRatio = canvas.width / img.width;
-    const vRatio = canvas.height / img.height;
-    const ratio = Math.min(hRatio, vRatio, 1);
+  targetCtx.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
+}
 
-    const centerX = (canvas.width - img.width * ratio) / 2;
-    const centerY = (canvas.height - img.height * ratio) / 2;
-
-    // رسم الصورة فوق التلوين مع الحفاظ على النسب
-    ctx.save();
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
-    ctx.restore();
-  }
 
   // properties
   private logoImg: HTMLImageElement | null = null;

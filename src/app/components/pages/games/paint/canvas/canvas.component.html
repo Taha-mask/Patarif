@@ -24,11 +24,18 @@
       <!-- Canvas Area -->
       <div class="canvas-area">
         <div class="canvas-wrapper">
+          <!-- Background Canvas for images -->
+         
+          <!-- Drawing Canvas -->
           <canvas #drawingCanvas class="drawing-canvas" (mousedown)="startDrawing($event)"
             (mousemove)="onMouseMove($event)" (mouseup)="stopDrawing()" (mouseenter)="onMouseEnter()"
             (mouseleave)="onMouseLeave()" (touchstart)="startDrawing($event)" (touchmove)="onTouchMove($event)"
             (touchend)="stopDrawing()" (contextmenu)="$event.preventDefault()">
           </canvas>
+          <canvas #backgroundCanvas
+          class="background-canvas"
+          style="position: absolute; top: 0; left: 0; z-index: 1;">
+  </canvas>
           <div #cursorElement class="cursor" [class.pen]="currentTool !== 'eraser'"
             [class.eraser]="currentTool === 'eraser'"></div>
         </div>
@@ -51,6 +58,11 @@
                 title="Download PDF">
                 <i class="fas fa-download"></i>
               </button>
+        <!-- <button class="tool-btn" 
+                (click)="moveCurrentDrawingToBackground()"
+                title="Move Current Drawing to Background">
+                <i class="fas fa-layer-group"></i>
+              </button> -->
         <button class="tool-btn" [class.active]="currentTool === 'eraser'" (click)="selectTool('eraser')"
           title="Eraser">
           <i class="fas fa-eraser"></i>
