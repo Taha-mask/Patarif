@@ -627,6 +627,59 @@ i{
 .canvas-wrapper {
   transition: transform 0.2s ease;
   transform-origin: center center;
+  position: relative;
+}
+
+/* Logo overlay when zoomed */
+.canvas-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 70px;
+  height: 70px;
+  background-image: url('/images/logo-patarif.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Show logo when zoomed */
+.canvas-wrapper.zoomed::before {
+  opacity: 1;
+  transform: scale(1.05);
+  animation: logoAppear 0.5s ease-out;
+}
+
+/* Logo animation */
+@keyframes logoAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1) translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+}
+
+/* Logo hover effect */
+.canvas-wrapper.zoomed::before:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 /* Zoom button specific styles */

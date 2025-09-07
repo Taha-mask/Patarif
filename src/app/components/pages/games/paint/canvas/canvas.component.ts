@@ -966,6 +966,13 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       canvasWrapper.style.transform = `scale(${this.zoomLevel})`;
       canvasWrapper.style.transformOrigin = 'center center';
       
+      // Add or remove zoomed class based on zoom level
+      if (this.zoomLevel > 1) {
+        canvasWrapper.classList.add('zoomed');
+      } else {
+        canvasWrapper.classList.remove('zoomed');
+      }
+      
       // Update cursor size and position based on zoom level
       this.updateCursor();
     }
