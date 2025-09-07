@@ -42,6 +42,27 @@
   padding: 5px 10px;
   border: none;
 }
+
+/* تحسين الأزرار على التلفون */
+@media (max-width: 768px) {
+  .arrow {
+    padding: 8px 12px;
+  }
+  
+  .arrow i {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .arrow {
+    padding: 6px 10px;
+  }
+  
+  .arrow i {
+    font-size: 16px;
+  }
+}
 .cards {
   display: flex;
   align-items: center;
@@ -50,6 +71,25 @@
   height: 220px;
   position: relative;
   margin: 0 18px;
+}
+
+/* تحسين الكاروسيل على التلفون */
+@media (max-width: 768px) {
+  .cards {
+    width: 90vw;
+    max-width: 500px;
+    height: 200px;
+    margin: 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cards {
+    width: 95vw;
+    max-width: 400px;
+    height: 180px;
+    margin: 0 5px;
+  }
 }
 
 .game-card {
@@ -72,7 +112,29 @@
   transition: all 0.4s cubic-bezier(.7,0,.3,1);
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   font-size: 1.3rem;
+}
+
+/* تحسين البطاقات على التلفون */
+@media (max-width: 768px) {
+  .game-card {
+    height: 160px;
+    top: 20px;
+    padding: 20px 24px;
+    font-size: 1.1rem;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-card {
+    height: 140px;
+    top: 20px;
+    padding: 16px 20px;
+    font-size: 1rem;
+    border-radius: 16px;
+  }
 }
 .game-card.center {
   transform: translateX(-50%) scale(1) rotate(0deg);
@@ -119,6 +181,41 @@
   background: #ffffff;
   width: 30px;
   border-radius: 10px;
+}
+
+/* تحسين النقاط على التلفون */
+@media (max-width: 768px) {
+  .dots {
+    padding: 8px;
+    margin: 0 2px 0px;
+  }
+  
+  .dots span {
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+  }
+  
+  .dots span.active {
+    width: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dots {
+    padding: 6px;
+    margin: 0 1px 0px;
+  }
+  
+  .dots span {
+    width: 6px;
+    height: 6px;
+    margin: 0 3px;
+  }
+  
+  .dots span.active {
+    width: 20px;
+  }
 }
 .scroll{
 margin: auto;
@@ -169,6 +266,21 @@ margin: auto;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+/* تحسين أزرار التنقل على التلفون */
+@media (max-width: 768px) {
+  .navigation-buttons .arrow {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navigation-buttons .arrow {
+    width: 50px;
+    height: 50px;
+  }
 }
 
 .navigation-buttons .arrow:first-child {
@@ -274,9 +386,12 @@ margin: auto;
 /* Responsive breakpoints */
 @media (max-width: 768px) {
   .list-card {
-    width: 200px;
-    height: 260px;
-    font-size: 1rem;
+    width: 220px;
+    height: 280px;
+    font-size: 1.1rem;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
   
   .list-header h2 {
@@ -291,9 +406,12 @@ margin: auto;
 
 @media (max-width: 480px) {
   .list-card {
-    width: 180px;
-    height: 240px;
-    font-size: 0.9rem;
+    width: 200px;
+    height: 260px;
+    font-size: 1rem;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
   
   .list-header h2 {
@@ -312,13 +430,30 @@ margin: auto;
 
 @media (max-width: 360px) {
   .list-card {
+    width: 180px;
+    height: 240px;
+    font-size: 0.9rem;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .list-header h2 {
+    font-size: 1.1rem;
+  }
+}
+
+/* تحسينات إضافية للشاشات الصغيرة جداً */
+@media (max-width: 320px) {
+  .list-card {
     width: 160px;
     height: 220px;
     font-size: 0.8rem;
   }
   
-  .list-header h2 {
-    font-size: 1.1rem;
+  .list-cards {
+    gap: 10px;
+    padding: 0 10px 10px 10px;
   }
 }
 

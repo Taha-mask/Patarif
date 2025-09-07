@@ -50,6 +50,7 @@ h1 {
   }
   .container{
     overflow: hidden;
+    padding: 0 10px;
   }
   h1 {
     font-size: 1.8rem;
@@ -60,6 +61,15 @@ h1 {
     font-size: 1.5rem;
     padding: 0.6rem 1.5rem;
     margin: 0.5rem auto 1.5rem;
+  }
+  
+  /* تحسين المسافات على التلفون */
+  .carousel {
+    margin-bottom: 30px;
+  }
+  
+  .list {
+    margin-bottom: 20px;
   }
 }
 
@@ -74,6 +84,32 @@ h1 {
     padding: 0.5rem 1.2rem;
     border-radius: 30px;
     margin: 0.5rem auto 1rem;
+  }
+  
+  .container {
+    padding: 0 5px;
+  }
+  
+  /* تحسينات إضافية للشاشات الصغيرة */
+  .carousel {
+    margin-bottom: 25px;
+  }
+  
+  .list {
+    margin-bottom: 15px;
+  }
+}
+
+/* تحسينات للشاشات الصغيرة جداً */
+@media (max-width: 360px) {
+  .container {
+    padding: 0 2px;
+  }
+  
+  .card-title {
+    font-size: 1rem;
+    padding: 0.4rem 1rem;
+    margin: 0.3rem auto 0.8rem;
   }
 }
 

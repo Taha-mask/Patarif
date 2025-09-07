@@ -157,10 +157,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       
       this.ctx.drawImage(tempCanvas, offsetX, offsetY, scaledWidth, scaledHeight);
       
-      // إعادة رسم الصورة الخلفية إذا كانت موجودة
-      if (this.backgroundImage) {
-        this.drawBackgroundImage();
-      }
+      // لا نعيد رسم الصورة الخلفية هنا لتجنب إضافة صور جديدة
+      // الصورة الخلفية موجودة بالفعل في المحتوى المحفوظ
+    } else if (this.backgroundImage) {
+      // إذا لم يكن هناك محتوى محفوظ ولكن هناك صورة خلفية، ارسمها
+      this.drawBackgroundImage();
     }
   }
 
@@ -175,7 +176,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.resizeTimeout = setTimeout(() => {
       this.updateCanvasSize();
       // لا نحتاج لاستدعاء restoreState() لأن updateCanvasSize() يتعامل مع المحتوى
-    }, 100);
+    }, 200);
   }
 
   private updateDrawingSettings(): void {
