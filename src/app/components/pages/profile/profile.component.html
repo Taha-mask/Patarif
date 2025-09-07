@@ -3,13 +3,13 @@
 <div class="main">
     <div class="image-section">
         <div class="profile-cover">
-            <img src="images/profileBackground.jpg" alt="cover">
+            <img src="images/profileBackground.jpg" alt="couverture">
         </div>
        <div class="profile-image">
   <img
     [src]="profileImageUrl || 'images/account.png'"
     (error)="onImageError($event)"
-    alt="Profile Image"
+    alt="Image de profil"
     class="rounded-circle"
     style="width:120px; height:120px; object-fit:cover;"
   />
@@ -32,45 +32,45 @@
 
     <div class="profile-data">
         <div class="data">
-            <h1>name</h1>
+            <h1>Nom</h1>
             <div class="divider"></div>
             <p>{{displayName}}</p>
         </div>
         <div class="data">
-            <h1>email</h1>
+            <h1>Email</h1>
             <div class="divider"></div>
             <p>{{email}}</p>
         </div>
         <div class="data password">
-            <h1>password</h1>
+            <h1>Mot de passe</h1>
             <div class="divider"></div>
-            <p>change password</p>
+            <p>Changer le mot de passe</p>
             <div class="change-password">
-                <input type="password" placeholder="New password" [(ngModel)]="newPassword">
-                <input type="password" placeholder="Confirm password" [(ngModel)]="confirmPassword">
-                <button class="btn btn-outline-primary" (click)="onChangePassword()">change passwrod</button>
+                <input type="password" placeholder="Nouveau mot de passe" [(ngModel)]="newPassword">
+                <input type="password" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword">
+                <button class="btn btn-outline-primary" (click)="onChangePassword()">Changer le mot de passe</button>
             </div>
 
         </div>
         <div class="data">
-            <h1>last sign in</h1>
+            <h1>Dernière connexion</h1>
             <div class="divider"></div>
             <p>{{lastSignIn}}</p>
         </div>
         <div class="data">
-            <h1>created in</h1>
+            <h1>Créé le</h1>
             <div class="divider"></div>
             <p>{{createdAt}}</p>
         </div>
         <div class="data">
-            <h1>provider</h1>
+            <h1>Fournisseur</h1>
             <div class="divider"></div>
             <p>{{provider}}</p>
         </div>
     </div>
 
     <div class="favourites">
-        <h1>Favourites</h1>
+        <h1>Favoris</h1>
 
         <div class="favs-items">
             <app-fav-pro-card *ngFor="let product of favouriteProducts" [title]="product.title"
