@@ -33,21 +33,20 @@ export class LoginComponent {
       this.toasts = this.toasts.filter(t => t.id !== id);
     }, 2000);
   }
-  isLoading = false; 
-  async onSubmit() {
+  isLoading = false; async onSubmit() {
     this.loginForm.markAllAsTouched();
 
     if (this.loginForm.invalid) {
       if (this.loginForm.get('email')?.invalid) {
-        this.showToast('📧 Email is required and must be valid');
+        this.showToast('📧 Email requis et doit être valide');
       }
       if (this.loginForm.get('password')?.invalid) {
-        this.showToast('🔒 Password must be at least 10 characters');
+        this.showToast('🔒 Le mot de passe doit contenir au moins 10 caractères');
       }
       return;
     }
 
-    this.isLoading = true; 
+    this.isLoading = true;
 
     const { email, password } = this.loginForm.value;
 
@@ -56,16 +55,16 @@ export class LoginComponent {
 
       if (!res.user) {
         Swal.fire({
-          title: "Error",
-          text: "Account does not exist or wrong password!",
+          title: "Erreur",
+          text: "Le compte n'existe pas ou le mot de passe est incorrect !",
           icon: "error"
         });
         return;
       }
 
       localStorage.setItem('welcomeMessage', JSON.stringify({
-        title: "Welcome back !",
-        text: "go and enjoy",
+        title: "Bienvenue !",
+        text: "Allez et profitez-en",
         icon: "success"
       }));
 
@@ -77,12 +76,12 @@ export class LoginComponent {
 
     } catch (error: any) {
       Swal.fire({
-        title: "Error",
-        text: error.message || "An unexpected problem occurred.",
+        title: "Erreur",
+        text: error.message || "Un problème inattendu est survenu.",
         icon: "error"
       });
     } finally {
-      this.isLoading = false; 
+      this.isLoading = false;
     }
   }
 

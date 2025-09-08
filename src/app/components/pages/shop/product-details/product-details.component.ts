@@ -185,17 +185,17 @@ export class ProductDetailsComponent implements OnInit {
   // ==========================
   // Cart
   // ==========================
-  async handleAddToCart(event: Event) {
+async handleAddToCart(event: Event) {
   event.preventDefault();
 
   if (await this.authService.isLoggedIn()) {
-   this.addToCart();
+    this.addToCart();
   } else {
     Swal.fire({
-      title: 'You need to log in',
-      text: 'You must have an account to add items to the cart.',
+      title: 'Vous devez vous connecter',
+      text: 'Vous devez avoir un compte pour ajouter des articles au panier.',
       icon: 'warning',
-      confirmButtonText: 'Login'
+      confirmButtonText: 'Connexion'
     }).then((result) => {
       if (result.isConfirmed) {
         this.router.navigate(['/login']);
@@ -204,51 +204,51 @@ export class ProductDetailsComponent implements OnInit {
   }
 }
 
-  addToCart() {
-    if (!this.selectedColor || !this.selectedSize) {
-      Swal.fire({
-        title: 'Select Options',
-        text: 'Please select color and size before adding to cart.',
-        icon: 'info',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
-
-    const newItem: CartItem = {
-      id: this.product.id,
-      name: this.product.title,
-      color: this.selectedColor,
-      size: this.selectedSize,
-      maxQuantity: this.maxQuantity,
-      price: this.product.final_price,
-      quantity: 1,
-      image: this.selectedImage
-    };
-
-    const added = this.dataService.addToCart(newItem);
-
-    if (added) {
-      Swal.fire({
-        title: 'Added to Cart',
-        text: `${this.product.title} has been added to your cart.`,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-    } else {
-      Swal.fire({
-        title: 'Already in Cart',
-        text: 'This item is already in your cart. You can increase the quantity from the cart page.',
-        icon: 'info',
-        confirmButtonText: 'Go to Cart'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.router.navigate(['/cart']);
-        }
-      });
-
-    }
+addToCart() {
+  if (!this.selectedColor || !this.selectedSize) {
+    Swal.fire({
+      title: 'Sélectionnez les options',
+      text: 'Veuillez sélectionner la couleur et la taille avant d’ajouter au panier.',
+      icon: 'info',
+      confirmButtonText: 'OK'
+    });
+    return;
   }
+
+  const newItem: CartItem = {
+    id: this.product.id,
+    name: this.product.title,
+    color: this.selectedColor,
+    size: this.selectedSize,
+    maxQuantity: this.maxQuantity,
+    price: this.product.final_price,
+    quantity: 1,
+    image: this.selectedImage
+  };
+
+  const added = this.dataService.addToCart(newItem);
+
+  if (added) {
+    Swal.fire({
+      title: 'Ajouté au panier',
+      text: `${this.product.title} a été ajouté à votre panier.`,
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  } else {
+    Swal.fire({
+      title: 'Déjà dans le panier',
+      text: 'Cet article est déjà dans votre panier. Vous pouvez augmenter la quantité depuis la page du panier.',
+      icon: 'info',
+      confirmButtonText: 'Aller au panier'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/cart']);
+      }
+    });
+  }
+}
+
 
   // ==========================
   // favourites

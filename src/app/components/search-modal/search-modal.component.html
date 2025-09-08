@@ -5,13 +5,13 @@
     </button>
 
     <h5 class="text-center mb-3 fw-bold">
-      Search about any games, stories and products
+      Recherchez des jeux, histoires et produits
       <span *ngIf="!isReady" class="ms-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     </h5>
 
-
-    <input type="text" class="form-control mb-3" placeholder="{{ isReady ? 'search....' : 'loading...'}}"
+    <input type="text" class="form-control mb-3" placeholder="{{ isReady ? 'recherche....' : 'chargement...'}}"
       [(ngModel)]="query" (ngModelChange)="search(query)" [disabled]="!isReady" aria-label="search" />
+
 
 
     <div *ngIf="query">
@@ -27,7 +27,7 @@
                 <i class="bi" [ngClass]="iconMap[game.category]" style="font-size:1.2rem;"></i>
               </div>
               <div class="flex-grow-1">
-                <div class="text-muted small">Game</div>
+                <div class="text-muted small">Jeu</div>
                 <div class="fw-semibold">{{ game.title }}</div>
               </div>
             </button>
@@ -47,7 +47,7 @@
                 <i class="bi" [ngClass]="iconMap[learn.category]" style="font-size:1.2rem;"></i>
               </div>
               <div class="flex-grow-1">
-                <div class="text-muted small">learn</div>
+                <div class="text-muted small">fruits</div>
                 <div class="fw-semibold">{{ learn.title }}</div>
               </div>
             </button>
@@ -67,7 +67,7 @@
                 <i class="bi" [ngClass]="iconMap[product.category]" style="font-size:1.2rem;"></i>
               </div>
               <div class="flex-grow-1">
-                <div class="text-muted small">Product</div>
+                <div class="text-muted small">Produit</div>
                 <div class="fw-semibold">{{ product.title }}</div>
               </div>
             </button>
@@ -77,7 +77,7 @@
 
       <div *ngIf="!results.games.length && !results.learning.length && !results.products.length"
         class="text-center text-muted py-3">
-        No results found.
+        Aucun résultat trouvé.
       </div>
     </div>
   </div>
