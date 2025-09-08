@@ -370,7 +370,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       
       // Save state after drawing is complete
       setTimeout(() => {
-        this.saveState();
+      this.saveState();
       }, 10); // Small delay to ensure display is updated
     }
     
@@ -1252,49 +1252,56 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   private async addPDFWatermark(pdf: jsPDF, width: number, height: number): Promise<void> {
-  // حجم اللوجو بالنسبة لصفحة A4
-  const watermarkSize = Math.min(width, height) * 0.12; // 12% من حجم الصفحة
-  const margin = 5; // هامش 5 ملم
-  const x = margin; // الموقع الأفقي (يسار)
-  const y = margin; // الموقع العمودي (أعلى)
-
-  // إنشاء canvas مؤقت للوجو
-  const watermarkCanvas = document.createElement('canvas');
-  const watermarkCtx = watermarkCanvas.getContext('2d')!;
-
-  // تحويل حجم اللوجو من ملم إلى بكسل (بافتراض 96 DPI)
-  const dpi = 96;
-  const mmToPx = dpi / 25.4;
-  const canvasSize = watermarkSize * mmToPx;
-  watermarkCanvas.width = canvasSize;
-  watermarkCanvas.height = canvasSize;
-
-  // تحميل اللوجو
-  await this.preloadLogo();
-  if (this.logoLoaded && this.logoImg) {
-    // رسم اللوجو مباشرة بدون دائرة خلفية
-    const logoSize = canvasSize;
-    const logoX = 0;
-    const logoY = 0;
-
-    watermarkCtx.drawImage(this.logoImg, logoX, logoY, logoSize, logoSize);
-
-    // تحويل الـ canvas إلى Data URL وإضافته إلى PDF
-    const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
-    pdf.addImage(watermarkDataUrl, 'PNG', x, y, watermarkSize, watermarkSize);
-  } else {
-    // الرجوع إلى نص إذا فشل تحميل اللوجو
-    watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    watermarkCtx.font = `bold ${canvasSize * 0.6}px Arial`;
-    watermarkCtx.textAlign = 'center';
-    watermarkCtx.textBaseline = 'middle';
-    watermarkCtx.fillText('PATARIF', canvasSize / 2, canvasSize / 2);
-
-    // تحويل الـ canvas إلى Data URL وإضافته إلى PDF
-    const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
-    pdf.addImage(watermarkDataUrl, 'PNG', x, y, watermarkSize, watermarkSize);
+    // Watermark size in mm (proportional to A4)
+    const watermarkSize = Math.min(width, height) * 0.12; // 12% of page size
+    const margin = 5; // 5mm margin
+    const x = width - watermarkSize - margin;
+    const y = height - watermarkSize - margin;
+    
+    // Create a temporary canvas for the watermark
+    const watermarkCanvas = document.createElement('canvas');
+    const watermarkCtx = watermarkCanvas.getContext('2d')!;
+    
+    // Set canvas size (convert mm to pixels, assuming 96 DPI)
+    const dpi = 96;
+    const mmToPx = dpi / 25.4;
+    const canvasSize = watermarkSize * mmToPx;
+    watermarkCanvas.width = canvasSize;
+    watermarkCanvas.height = canvasSize;
+    
+    // Load and draw logo
+    const logoImg = new Image();
+    logoImg.crossOrigin = 'anonymous';
+    logoImg.onload = () => {
+      // Draw logo directly without background circle
+      const logoSize = canvasSize;
+      const logoX = 0;
+      const logoY = 0;
+      
+      // Draw logo
+      watermarkCtx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+      
+      // Convert canvas to data URL and add to PDF
+      const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
+      pdf.addImage(watermarkDataUrl, 'PNG', x, y, watermarkSize, watermarkSize);
+    };
+    
+    logoImg.onerror = () => {
+      // Fallback to text-only watermark if image fails to load
+      watermarkCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      watermarkCtx.font = `bold ${canvasSize * 0.6}px Arial`;
+      watermarkCtx.textAlign = 'center';
+      watermarkCtx.textBaseline = 'middle';
+      watermarkCtx.fillText('PATARIF', canvasSize / 2, canvasSize / 2);
+      
+      // Convert canvas to data URL and add to PDF
+      const watermarkDataUrl = watermarkCanvas.toDataURL('image/png');
+      pdf.addImage(watermarkDataUrl, 'PNG', x, y, watermarkSize, watermarkSize);
+    };
+    
+    // Set image source
+    logoImg.src = '/images/logo-patarif.png';
   }
-}
   
 
   toggleFullscreen(): void {
