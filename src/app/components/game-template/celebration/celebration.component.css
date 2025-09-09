@@ -1,56 +1,176 @@
+/* celebration.component.css */
+
+/* overlay */
 .celebration-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
+  inset: 0;
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
-}
-
-.celebration-box {
-  background: #fff;
-  border-radius: 20px;
-  padding: 30px;
-  text-align: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  animation: pop 0.3s ease-in-out;
-}
-
-.celebration-box h2 {
-  margin-bottom: 20px;
-  color: #4CAF50;
-}
-
-.buttons {
-  margin-top: 20px;
-  display: flex;
-  gap: 15px;
   justify-content: center;
+  z-index: 1200;
+  backdrop-filter: blur(6px) saturate(1.1);
+  background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55));
+  padding: 24px;
+  overflow: hidden;
 }
 
-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
+/* confetti background container */
+.confetti-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-button:first-child {
-  background: #ccc;
+/* radial burst glows for fireworks feel */
+.burst {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(20px) saturate(1.4);
+  transform: translate(-50%, -50%) scale(0.2);
 }
 
-button:last-child {
-  background: #4CAF50;
+/* two bursts in different positions and timings */
+.burst-1 {
+  left: 20%;
+  top: 30%;
+  background: radial-gradient(circle, rgba(255,200,80,0.95), rgba(255,100,150,0.15));
+  width: 420px;
+  height: 420px;
+  animation: burstPop 900ms ease-out 0s forwards;
+}
+.burst-2 {
+  right: 18%;
+  top: 28%;
+  background: radial-gradient(circle, rgba(120,230,255,0.95), rgba(100,140,255,0.12));
+  width: 360px;
+  height: 360px;
+  animation: burstPop 1100ms cubic-bezier(.15,.9,.25,1) 0.08s forwards;
+}
+
+/* confetti pieces */
+.confetti-piece {
+  position: absolute;
+  bottom: -10%;
+  display: block;
+  border-radius: 3px;
+  opacity: 0;
+  transform-origin: center;
+  animation: confettiRise 1800ms forwards cubic-bezier(.2,.9,.2,1);
+  will-change: transform, opacity;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.18);
+}
+
+/* main celebration box */
+.celebration-box {
+  position: relative;
+  z-index: 10;
+  width: min(720px, 96%);
+  max-width: 720px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,250,255,0.90));
+  border-radius: 18px;
+  padding: 28px;
+  text-align: center;
+  box-shadow: 0 14px 40px rgba(12, 30, 50, 0.45);
+  border: 1px solid rgba(255,255,255,0.6);
+  transform-origin: center;
+  animation: popScale 360ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* small badge */
+.badge {
+  font-size: 34px;
+  position: absolute;
+  left: 20px;
+  top: -26px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #FFD166, #FF6B6B);
   color: #fff;
+  box-shadow: 0 6px 20px rgba(255,100,120,0.18);
 }
 
-@keyframes pop {
-  0% { transform: scale(0.7); }
-  100% { transform: scale(1); }
+/* heading */
+.title {
+  margin: 6px 0 16px;
+  font-size: clamp(20px, 3vw, 28px);
+  letter-spacing: -0.02em;
+  color: #1b2b4a;
+  font-weight: 700;
 }
- 
+
+/* stats grid */
+.stats-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: stretch;
+  margin: 12px 0 18px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  min-width: 140px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,255,0.85));
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: inset 0 -6px 14px rgba(0,0,0,0.02);
+}
+
+.stat-label { font-size: 12px; color: #7b8aa3; margin-bottom: 4px; }
+.stat-value { font-size: 15px; font-weight: 700; color: #243447; }
+
+/* buttons */
+.buttons { margin-top: 20px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 6px 18px rgba(33,60,90,0.08);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn:active { transform: translateY(2px); }
+
+.btn-muted {
+  background: linear-gradient(180deg, #f3f6fb, #e9eef9);
+  color: #475a77;
+}
+.btn-primary {
+  background: linear-gradient(90deg, #6EE7B7, #34D399);
+  color: white;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.08);
+  box-shadow: 0 10px 26px rgba(52,211,153,0.16);
+}
+
+/* animations */
+@keyframes popScale {
+  0% { transform: scale(.8); opacity: 0; }
+  60% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes burstPop {
+  0% { transform: translate(-50%, -50%) scale(0.25); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
+}
+
+@keyframes confettiRise {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-140vh) rotate(720deg); opacity: 0; }
+}
+
+/* responsive tweaks */
+@media (max-width: 480px) {
+  .stat { min-width: 100px; padding: 8px; }
+  .badge { left: 12px; top: -22px; width: 56px; height: 56px; font-size: 28px; }
+}

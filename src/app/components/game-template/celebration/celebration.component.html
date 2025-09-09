@@ -1,14 +1,71 @@
-<div *ngIf="show" @fadeIn class="celebration-overlay">
-  <div class="celebration-box">
-    <h2>🎉 Bravo ! Niveau {{ data?.level }} terminé 🎉</h2>
+<!-- celebration.component.html -->
+<!-- Using Bootstrap Icons (make sure bootstrap-icons is loaded in your project) -->
+<div *ngIf="show" @fadeIn class="celebration-overlay" (clickOutside)="onClose()">
+  <!-- colorful animated background particles -->
+  <div class="confetti-wrap" aria-hidden="true">
+    <!-- decorative radial bursts -->
+    <div class="burst burst-1"></div>
+    <div class="burst burst-2"></div>
 
-    <p>✔️ Réponses correctes : {{ data?.questionsCorrect }} / {{ data?.totalQuestions }}</p>
-    <p>⏱️ Temps : {{ formatTime(data?.timeElapsed || 0) }}</p>
-    <p>🎯 Difficulté : {{ data?.difficulty }}</p>
+    <!-- confetti pieces generated in TS -->
+    <ng-container *ngFor="let piece of confettiPieces">
+      <span class="confetti-piece"
+            [ngStyle]="{
+              left: piece.left + '%',
+              width: piece.size + 'px',
+              height: piece.size * 0.6 + 'px',
+              transform: 'rotate(' + piece.rotate + 'deg)',
+              background: piece.color,
+              animationDelay: piece.delay + 's'
+            }"
+            ></span>
+    </ng-container>
+  </div>
+
+  <div class="celebration-box" role="dialog" aria-live="polite" (click)="$event.stopPropagation()">
+    <!-- badge using bootstrap icon -->
+    <div class="badge" aria-hidden="true">
+      <i class="bi bi-trophy-fill" style="font-size:1.3rem;"></i>
+    </div>
+
+    <h2 class="title">Bravo! Level {{ data?.level }} Complete</h2>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-label">Correct</div>
+        <div class="stat-value">
+          <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+          {{ data?.questionsCorrect }} / {{ data?.totalQuestions }}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Time</div>
+        <div class="stat-value">
+          <i class="bi bi-clock-fill" aria-hidden="true"></i>
+          {{ formatTime(data?.timeElapsed || 0) }}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Difficulty</div>
+        <div class="stat-value">
+          <i class="bi bi-bullseye" aria-hidden="true"></i>
+          {{ data?.difficulty }}
+        </div>
+      </div>
+    </div>
 
     <div class="buttons">
-      <button (click)="onClose()">Fermer</button>
-      <button (click)="onNextLevel()">Niveau suivant →</button>
+      <button class="btn btn-muted" (click)="onClose()">
+        <i class="bi bi-x-lg me-2" aria-hidden="true"></i>
+        Close
+      </button>
+
+      <button class="btn btn-primary" (click)="onNextLevel()">
+        Next Level
+        <i class="bi bi-arrow-right-short ms-2" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
 </div>
