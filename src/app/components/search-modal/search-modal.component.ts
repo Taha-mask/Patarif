@@ -47,19 +47,17 @@ export class SearchModalComponent implements OnInit {
   async ngOnInit() {
     try {
       const products = await this.supabase.getProductsTitles();
-
       const games: SearchItem[] = [
-        { title: 'Guess Emoji', category: 'game', route: '/guess-eemoji' },
-        { title: 'Matching Words', category: 'game', route: '/matchint-words' },
-        { title: 'Sort Words', category: 'game', route: '/sort-words' },
-        { title: 'Gallery', category: 'game', route: '/gallery' },
         { title: 'Letters Game', category: 'game', route: '/letters-game' },
         { title: 'Country Guessing', category: 'game', route: '/country-guessing' },
-        { title: 'Fact Game', category: 'game', route: '/fact-game' },
+        { title: 'True or False', category: 'game', route: '/true-or-false' },
+        { title: 'Painting', category: 'game', route: '/painting' },
+        { title: 'Sort Words', category: 'game', route: '/sort-words' },
+        { title: 'Guess Emoji', category: 'game', route: '/guess-emoji' },
+        { title: 'Word to Image', category: 'game', route: '/word-to-image' },
         { title: 'Math Ladder', category: 'game', route: '/math-ladder' },
         { title: 'Geo Quiz', category: 'game', route: '/geo-quiz' }
       ];
-
 
       const learning: SearchItem[] = [
         { title: 'Tomate Story', category: 'story', route: '/tomate-story' },

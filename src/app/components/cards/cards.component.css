@@ -121,6 +121,7 @@
   background-position: center;
   background-repeat: no-repeat;
   font-size: 1.3rem;
+  cursor: pointer;
 }
 
 /* تحسين البطاقات على التلفون */
@@ -252,10 +253,13 @@ margin: auto;
 }
 
 .list-header h2 {
-  font-size: 26px;
+  font-size: 2.2rem;
   font-weight: 800;
   margin: 0;
   color: #000;
+  font-family: var(--mainFont);
+  margin-left: 2%;
+  
 }
 
 .navigation-buttons {
