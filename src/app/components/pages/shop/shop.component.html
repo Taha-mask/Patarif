@@ -36,15 +36,15 @@
       <div class="title-main row">
         <img class="title-character img-fluid col-4" src="images/shopping/mainCharacter.png" alt="title">
         <div class="title-sentince col-8">
-          <h1>Buy <span>Patarif</span> products to<br>be part of our family</h1>
-          <p>Many great products are waiting for you</p>
+          <h1>Achetez chez <span>Patarif</span> et<br>rejoignez-nous</h1>
+          <p>De nombreux produits formidables vous attendent</p>
         </div>
       </div>
     </div>
     <div class="products" *ngFor="let category of categories; let i = index">
       <div class="" *ngIf="productsByCategory[category].length > 0">
         <h1 class="title">
-          We have many beautiful <span>{{ category | titlecase }}</span>
+          Nous avons beaucoup de belles <span>{{ categoryMap[category] }}</span>
         </h1>
 
         <div class="cards-wrapper">
@@ -53,19 +53,11 @@
           </button>
 
           <div class="cards" #cardsContainer>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 main-card" *ngFor="let product of productsByCategory[category]">
-              <div class="merge-card">
-
-                <div class="product-card">
-                  <app-product-card [title]="product.title" [img]="product.images[0]" [price]="product.final_price"
-                    [rate]="product.rate" [product_stock]="product.product_stock">
-
-                  </app-product-card>
-                </div>
-                <button *ngIf="product.product_stock != 0" class="btn btn-primary add-to-cart"
-                  (click)="navigateToProduct(product.id)">
-                  Add to Cart <i class="bi bi-cart"></i>
-                </button>
+            <div class="main-card" *ngFor="let product of productsByCategory[category]">
+              <div class="product-card" (click)="navigateToProduct(product.id)" style="cursor:pointer;">
+                <app-product-card [title]="product.title" [img]="product.images[0]" [price]="product.final_price"
+                  [rate]="product.rate" [product_stock]="product.product_stock">
+                </app-product-card>
               </div>
 
             </div>
