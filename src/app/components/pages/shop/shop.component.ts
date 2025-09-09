@@ -32,6 +32,12 @@ export class ShopComponent implements OnInit {
   categoriesCount = 0; 
 
   categories = ['t-shirts', 'pants', 'shirts', 'other'];
+  categoryMap: { [key: string]: string } = {
+  't-shirts': 'T-shirts',
+  'shirts': 'Chemises',
+  'pants': 'Pantalons',
+  'other': 'Autres'
+};
   productsByCategory: Record<string, any[]> = {};
 
   @ViewChildren('cardsContainer') cardsContainers!: QueryList<ElementRef<HTMLDivElement>>;

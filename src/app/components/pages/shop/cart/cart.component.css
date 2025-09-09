@@ -3,20 +3,29 @@
     --link: #9B57FA;
     --mainColor: #6486FF;
     --comic: 'Comic Relief';
+    --row-height: 6.5rem;
+    --product-img-width: 8rem;
+    --offer-duration: 1.5s;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 body {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: var(--mainFont), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
+/* ---------- Layout ---------- */
 .main {
     margin: auto;
     padding: 40px;
     width: 95vw;
     height: fit-content;
-    /* border: green 1px solid; */
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -31,81 +40,148 @@ body {
     color: #000;
     font-weight: 900;
     text-align: center;
-    text-wrap: nowrap;
-    font-size: clamp(0.7rem, 3vw, 3rem);
+    white-space: nowrap;
+    font-size: clamp(0.7rem, 4vw, 4rem);
 }
 
 .main .links span {
-    font-family: 'Comic Relief';
-
+    font-family: 'Comic Relief', sans-serif;
     font-size: clamp(0.8rem, 1vw, 1rem);
     color: var(--link);
 }
 
+/* ---------- Products table + row-height control ---------- */
 .products-table {
     width: 100%;
     border-radius: 24px;
-    /* text-align: center; */
-    /* border: 1px solid red; */
-    /* border-collapse: separate; */
     overflow: hidden;
     padding: 4px;
-    /* background-color: #ffffffd8; */
     font-size: clamp(0.8rem, 1.5vw, 1.5rem);
-    font-family: 'Comic Relief';
-    /* align-items: center;
-    justify-content: center; */
+    font-family: 'Comic Relief', sans-serif;
+    --row-height: var(--row-height);
 }
 
+/* table header */
 .products-table thead {
     background-color: var(--mainColor);
     text-align: start;
 }
 
-/* tr{
-    padding: 4px;
-    } */
 .products-table thead th {
     padding-left: 16px;
     color: white;
-    font-family: 'Comic Relief';
+    font-family: 'Comic Relief', sans-serif;
     font-weight: 100;
 }
 
-.product-img {
-    width: 8rem;
-    /* بدل 20% */
-    border-radius: 24px;
-    height: auto;
-    /* display: flex; */
-    overflow: hidden;
-    margin-right: 4%;
+/* enforce fixed row height */
+.products-table tbody tr {
+    height: var(--row-height);
+    max-height: var(--row-height);
 }
 
-.product-img img {
-    object-fit: contain;
-    width: 100%;
-
-}
-
-/* *{
-    border: 1px solid green;
-} */
-
+/* product row container */
 .products-table .product {
-    /* width: fit-content; */
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: start;
+    gap: 1rem;
+    height: var(--row-height);
+    overflow: hidden;
     font-weight: 900;
 }
 
+/* cells */
 .products-table td {
-    padding: 16px;
-    /* text-align: center; */
+    padding: 12px 16px;
+    vertical-align: middle;
 }
 
+/* ---------- Product image box ---------- */
+.product-img {
+    flex: 0 0 var(--product-img-width);
+    width: var(--product-img-width);
+    height: var(--row-height);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-right: 1rem;
+    display: block;
+}
+
+.product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* crop الصورة لتملأ نفس الطول دون تشويه */
+    object-position: center;
+    display: block;
+}
+
+/* ---------- Offer badge animation (fast, multi-color) ---------- */
+.details .price .offer {
+    background-color: #34c759d3;
+    width: fit-content;
+    border-radius: 50px;
+    padding: 4px 12px;
+    animation: offerFlash var(--offer-duration) infinite linear;
+    display: inline-block;
+}
+
+.details .price .offer p {
+    color: #fff;
+    font-size: clamp(1.2rem, 1vw, 1rem);
+    font-weight: 600;
+    font-family: var(--comic);
+    margin: 0;
+}
+
+/* multi-color flash + glow, no scale */
+@keyframes offerFlash {
+    0% {
+        background-color: #ff4757;
+        /* Red */
+        box-shadow: 0 0 8px rgba(255, 71, 87, 0.85), 0 6px 18px rgba(255, 71, 87, 0.12);
+        transform: translateY(0);
+    }
+
+    20% {
+        background-color: #ffa502;
+        /* Orange */
+        box-shadow: 0 0 14px rgba(255, 165, 2, 0.85), 0 8px 24px rgba(255, 165, 2, 0.10);
+    }
+
+    40% {
+        background-color: #1e90ff;
+        /* Blue */
+        box-shadow: 0 0 18px rgba(30, 144, 255, 0.85), 0 10px 28px rgba(30, 144, 255, 0.08);
+    }
+
+    60% {
+        background-color: #2ed573;
+        /* Green */
+        box-shadow: 0 0 14px rgba(46, 213, 115, 0.85), 0 8px 24px rgba(46, 213, 115, 0.08);
+    }
+
+    80% {
+        background-color: #ffd43b;
+        /* Yellow */
+        box-shadow: 0 0 16px rgba(255, 212, 59, 0.85), 0 9px 26px rgba(255, 212, 59, 0.07);
+    }
+
+    100% {
+        background-color: #ff4757;
+        /* loop back to Red */
+        box-shadow: 0 0 8px rgba(255, 71, 87, 0.85), 0 6px 18px rgba(255, 71, 87, 0.12);
+    }
+}
+
+/* optional: small subtle vertical float to add life without scaling */
+.details .price .offer {
+    will-change: background-color, box-shadow, transform;
+}
+
+/* ---------- Quantity, remove, checkout styles (kept from original) ---------- */
 .quantity {
     border: 1px solid var(--mainColor);
     border-radius: 6px;
@@ -169,8 +245,8 @@ body {
     }
 }
 
+/* ---------- Section2 / invoice / checkout ---------- */
 .main .section2 {
-    /* border: red 1px solid; */
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -185,8 +261,8 @@ body {
     background-color: #9B57FA;
     border-radius: 4px;
     color: white;
-    font-family: 'Comic Relief';
-    font-family: 1rem;
+    font-family: 'Comic Relief', sans-serif;
+    font-size: 1rem;
     text-transform: capitalize;
     text-align: center;
     padding: 12px 0;
@@ -196,7 +272,6 @@ body {
 
 .section2 .invoice {
     width: 30%;
-    /* border: green 1px solid; */
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -206,7 +281,6 @@ body {
 
 .section2 .invoice .discount-code {
     width: 100%;
-    /* border: black 1px solid; */
     position: relative;
 }
 
@@ -215,9 +289,7 @@ body {
     height: 40px;
     border-radius: 12px;
     overflow: hidden;
-    width: 100%;
 }
-
 
 .section2 .invoice .discount-code form input {
     width: 100%;
@@ -228,8 +300,7 @@ body {
 
 .section2 .invoice .discount-code form input:focus {
     outline: none;
-    /* border: #9B57FA 1px solid; */
-
+    box-shadow: 0 0 5px rgba(30, 144, 255, 0.5);
 }
 
 .section2 .invoice .discount-code form button {
@@ -239,8 +310,7 @@ body {
     border-radius: 12px;
     background-color: #E3E3E3;
     color: #474747;
-    font-family: 'Comic Relief';
-    font-family: 1rem;
+    font-family: 'Comic Relief', sans-serif;
     text-transform: capitalize;
     height: 100%;
     width: 24%;
@@ -275,15 +345,15 @@ body {
 
 .checkout .part .part-title {
     color: #474747ab;
-    font-family: 'Comic Relief';
-    font-family: 0.9rem;
+    font-family: 'Comic Relief', sans-serif;
+    font-size: 0.9rem;
     text-transform: capitalize;
 }
 
 .checkout .part .value {
     color: #000000;
-    font-family: 'Comic Relief';
-    font-family: 1.1rem;
+    font-family: 'Comic Relief', sans-serif;
+    font-size: 1.1rem;
     text-transform: capitalize;
     font-weight: 800;
 }
@@ -294,42 +364,44 @@ body {
     background-color: rgba(156, 156, 156, 0.582);
     margin: 8px 0;
 }
-.cash-on-delivery{
+
+.cash-on-delivery {
     padding: 2%;
-    background-color: rgb(255, 255, 255);
+    background-color: #fff;
     border: #9B57FA 2px solid;
     align-items: center;
     color: #9B57FA;
     border-radius: 12px;
     width: 100%;
 }
-.cash-on-delivery i{
-    color: #9B57FA;
 
+.cash-on-delivery i {
+    color: #9B57FA;
 }
+
 .checkout .checkout-button {
     background-color: #9B57FA;
     color: white;
     border: none;
-    font-family: 'Comic Relief';
+    font-family: 'Comic Relief', sans-serif;
     font-weight: 600;
     transition: all 0.3s ease-in-out;
 }
-.checkout button{
-    border-radius: 4px;
 
+.checkout button {
+    border-radius: 4px;
     font-size: 1rem;
     text-transform: capitalize;
-    /* text-align: center; */
-    text-wrap: nowrap;
 }
-.checkout .checkout-button:hover{
+
+.checkout .checkout-button:hover {
     background: linear-gradient(135deg, #9B57FA, #cba6ff);
 }
+
 .checkout .no-products {
     color: grey;
-    font-family: 'Comic Relief';
-    font-family: 3rem;
+    font-family: 'Comic Relief', sans-serif;
+    font-size: 3rem;
     font-weight: 800;
     text-transform: capitalize;
     text-align: center;
@@ -339,7 +411,7 @@ body {
     height: 82px;
 }
 
-
+/* ---------- Modal ---------- */
 .modal-background {
     position: fixed;
     width: 100%;
@@ -361,7 +433,6 @@ body {
     height: fit-content;
     padding: 2%;
     animation: appear 0.5s;
-
 }
 
 @keyframes appear {
@@ -391,15 +462,12 @@ body {
 
 .order-info-modal form {
     margin-top: 2%;
-    /* border: green 1px solid; */
     border-radius: 24px;
     border: #acacac8c 1px solid;
     padding: 2%;
 }
 
-
 .form-home label {
-    /* margin-bottom: 5px; */
     text-align: center;
     font-family: var(--comic);
     font-size: 0.9rem;
@@ -414,7 +482,6 @@ select {
     border-radius: 8px;
     outline: none;
     width: 100%;
-    /* text-align: center; */
 }
 
 .form-home input:focus {
@@ -424,7 +491,6 @@ select {
 
 .form-home span {
     margin: 8px 0;
-
 }
 
 .order-info-modal button {
@@ -437,9 +503,15 @@ select {
     font-weight: 500;
 }
 
-/* resposive */
+/* ---------- Responsive ---------- */
 /* mobile */
 @media (max-width: 480px) {
+    :host {
+        --row-height: 5rem;
+        --product-img-width: 6rem;
+        --offer-duration: 1.2s;
+    }
+
     .order-info-modal {
         width: 80%;
     }
@@ -448,7 +520,12 @@ select {
         padding: 20px;
         gap: 32px;
     }
-
+    .main .title{
+        font-size: 2rem;
+    }
+.no-products{
+    font-size: 1rem;
+}
     .products-table {
         font-size: 0.8rem;
         display: block;
@@ -485,8 +562,15 @@ select {
 
     .product-img {
         width: 20%;
-        /* max-width: 150px; */
+        height: 100%;
         margin: 0 auto 12px;
+        overflow: hidden;
+    }
+
+    .product-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .section2 .invoice {
@@ -501,12 +585,22 @@ select {
         padding: 10px;
         font-size: 1rem;
     }
+        .order-info-modal .close{
+        font-size: 0.9rem;
+    }
 }
 
 /* tablet */
 @media (min-width: 481px) and (max-width: 968px) {
+    :host {
+        --row-height: 6rem;
+        --product-img-width: 7rem;
+        --offer-duration: 1.3s;
+    }
+
     .order-info-modal {
         width: 60%;
+        height: 60%;
     }
 
     .section2 .invoice {
@@ -517,14 +611,15 @@ select {
         font-size: 1rem;
     }
 
-    .product-img {
-        width: 6rem;
-    }
 }
 
-/* laptop */
+/* laptop+ */
 @media (min-width: 969px) {
     .section2 .invoice {
         width: 30%;
+    }
+
+    .order-info-modal {
+        width: 50%;
     }
 }

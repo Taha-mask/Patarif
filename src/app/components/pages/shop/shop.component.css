@@ -101,7 +101,7 @@
 
 
 .products {
-    margin-top: 10%;
+    margin-top: 4%;
 }
 
 .products .title {
@@ -112,7 +112,7 @@
     color: #000;
     text-wrap: nowrap;
     text-align: left;
-    margin-bottom: 16px;
+    margin-bottom: 2%;
 }
 
 .products .cards-wrapper {
@@ -169,12 +169,12 @@
     border: transparent 1px solid;
 
 }
-
+/* 
 
 .merge-card {
     width: fit-content;
     position: relative;
-}
+} */
 
 .scroll-btn {
     position: absolute;
@@ -209,6 +209,7 @@
 
 
 .footer {
+    margin-top: 10%;
     position: relative;
     bottom: 0;
 }
