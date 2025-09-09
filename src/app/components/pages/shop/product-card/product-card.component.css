@@ -122,6 +122,7 @@ button {
 }
 
 .product-card:hover .add-to-cart{
+    /* visibility: visible; */
         background: #FF006E;
     color: #fff;
     border: transparent 1px solid;
