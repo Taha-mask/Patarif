@@ -62,7 +62,7 @@ export class CelebrationComponent implements OnChanges, OnDestroy {
 
   private audio: HTMLAudioElement | null = null; // 🎵 keep a ref
 
-  /** Determine pass/fail: passed when correct >= ceil(total/2) */
+  /** original pass logic kept if needed */
   get isPassed(): boolean {
     if (!this.data) return false;
     const halfCeil = Math.ceil(this.data.totalQuestions / 2);
@@ -72,18 +72,22 @@ export class CelebrationComponent implements OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['show']) {
       if (changes['show'].currentValue === true) {
-        // Play sound once 🎶
-        this.playCelebrationSound();
+        // Decide pass/fail based on explicit threshold: fail if score < 3
+        const score = this.data?.questionsCorrect ?? 0;
+        const isFailByThreshold = score < 3;
 
-        // choose visual based on pass/fail
-        if (this.isPassed) {
-          this.startConfetti();
-        } else {
+        if (isFailByThreshold) {
+          this.playSound('audio/fail.mp3');
           this.startSad();
+        } else {
+          // score >= 3 -> celebration
+          this.playSound('audio/celebration.mp3');
+          this.startConfetti();
         }
       } else {
         this.stopConfetti();
         this.stopSad();
+        this.stopAudio();
       }
     }
   }
@@ -91,31 +95,46 @@ export class CelebrationComponent implements OnChanges, OnDestroy {
   ngOnDestroy() {
     this.stopConfetti();
     this.stopSad();
-    if (this.audio) {
-      this.audio.pause();
-      this.audio = null;
-    }
+    this.stopAudio();
   }
 
-  private playCelebrationSound() {
-    if (!this.audio) {
-      this.audio = new Audio('assets/audio/celebration.mp3'); // ⚡ make sure path is correct
+  /** Play given audio file (stops any previous audio) */
+  private playSound(src: string) {
+    // stop previous
+    if (this.audio) {
+      try { this.audio.pause(); } catch {}
+      this.audio = null;
     }
+    // create and play
+    this.audio = new Audio(src);
     this.audio.currentTime = 0;
-    this.audio.play().catch(err => console.warn('Audio play failed:', err));
+    this.audio.play().catch(err => {
+      // Common on mobile/autoplay restrictions; just log
+      console.warn('Audio play failed:', err);
+    });
+  }
+
+  private stopAudio() {
+    if (this.audio) {
+      try { this.audio.pause(); } catch {}
+      this.audio = null;
+    }
   }
 
   onClose() {
     this.stopConfetti();
     this.stopSad();
+    this.stopAudio();
     this.close.emit();
   }
 
   onNextLevel() {
     this.stopConfetti();
     this.stopSad();
-    // if passed, go to next level; if failed, emit 0 or keep same level to retry
-    const next = this.isPassed ? (this.nextLevel > 0 ? this.nextLevel : 0) : 0;
+    // if passed (by threshold) go to next level; if failed, emit 0 to retry
+    const score = this.data?.questionsCorrect ?? 0;
+    const isFailByThreshold = score < 3;
+    const next = isFailByThreshold ? 0 : (this.nextLevel > 0 ? this.nextLevel : 0);
     this.goToNext.emit(next);
   }
 
