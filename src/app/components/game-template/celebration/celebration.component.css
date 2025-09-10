@@ -32,8 +32,6 @@
   filter: blur(20px) saturate(1.4);
   transform: translate(-50%, -50%) scale(0.2);
 }
-
-/* two bursts in different positions and timings */
 .burst-1 {
   left: 20%;
   top: 30%;
@@ -64,6 +62,26 @@
   box-shadow: 0 1px 6px rgba(0,0,0,0.18);
 }
 
+/* sad wrap: small teardrops */
+.sad-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.teardrop {
+  position: absolute;
+  top: -8%;
+  display: block;
+  border-radius: 50% 50% 50% 50%;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(120,160,255,0.95), rgba(80,120,255,0.6));
+  filter: blur(0.6px);
+  transform-origin: center;
+  animation: teardropFall 1600ms forwards cubic-bezier(.2,.8,.2,1);
+  box-shadow: 0 2px 8px rgba(20,40,80,0.08);
+}
+
 /* main celebration box */
 .celebration-box {
   position: relative;
@@ -78,6 +96,11 @@
   border: 1px solid rgba(255,255,255,0.6);
   transform-origin: center;
   animation: popScale 360ms cubic-bezier(.2,.8,.2,1);
+}
+.celebration-box.sad {
+  background: linear-gradient(180deg, rgba(245,248,255,0.98), rgba(238,244,255,0.95));
+  box-shadow: 0 12px 30px rgba(10,30,60,0.26);
+  border: 1px solid rgba(180,200,230,0.6);
 }
 
 /* small badge */
@@ -94,6 +117,10 @@
   background: linear-gradient(135deg, #FFD166, #FF6B6B);
   color: #fff;
   box-shadow: 0 6px 20px rgba(255,100,120,0.18);
+}
+.badge.sad-badge {
+  background: linear-gradient(135deg, #8AA8FF, #5673D9);
+  box-shadow: 0 6px 18px rgba(60,90,160,0.12);
 }
 
 /* heading */
@@ -167,6 +194,13 @@
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   20% { opacity: 1; }
   100% { transform: translateY(-140vh) rotate(720deg); opacity: 0; }
+}
+
+/* teardrop animation */
+@keyframes teardropFall {
+  0% { transform: translateY(0) rotate(6deg); opacity: 1; }
+  30% { opacity: 1; }
+  100% { transform: translateY(80vh) rotate(10deg); opacity: 0; }
 }
 
 /* responsive tweaks */

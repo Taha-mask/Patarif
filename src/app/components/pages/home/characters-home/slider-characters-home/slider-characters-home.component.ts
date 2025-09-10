@@ -1,301 +1,80 @@
-import { Component, HostListener, ElementRef, AfterViewInit } from '@angular/core';
+// slider-characters-home.component.ts
+import { Component, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { CarachterCardComponent } from "../carachter-card/carachter-card.component";
 import { CommonModule } from '@angular/common';
+import { SupabaseService } from '../../../../../supabase.service';
+import { LoadingComponent } from "../../../../loading/loading.component";
 
 @Component({
   selector: 'app-slider-characters-home',
-  imports: [CarachterCardComponent, CommonModule],
+  imports: [CarachterCardComponent, CommonModule, LoadingComponent],
   standalone: true,
   templateUrl: './slider-characters-home.component.html',
   styleUrl: './slider-characters-home.component.css'
 })
-export class SliderCharactersHomeComponent implements AfterViewInit {
+export class SliderCharactersHomeComponent implements OnInit, AfterViewInit {
   designType: string = 'carousel';
 
-  characters = [
-    {
-      bgIcon: 'images/characters/yellow_Subtract.png',
-      character: 'images/characters/patadogg.png',
-      name: 'patadogg',
-      raiting: 4.8
-    },
-    {
-      bgIcon: 'images/characters/purple_Subtract.png',
-      character: 'images/characters/pata-beauxyeux.png',
-      name: 'pata-beauxyeux',
-      raiting: 6.0
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/bling.png',
-      name: 'bling',
-      raiting: 5.2
-    },
-    {
-      bgIcon: 'images/characters/blue_Subtract.png',
-      character: 'images/characters/cowboy-bananes.png',
-      name: 'cowboy-bananes',
-      raiting: 5.5
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patafouine.png',
-      name: 'patafouine',
-      raiting: 6.0
-    },
-    // ===================== [5]========================
-    {
-      bgIcon: 'images/characters/yellow_Subtract.png',
-      character: 'images/characters/Patafreko.png',
-      name: 'Patafreko',
-      raiting: 4.8
-    },
-    {
-      bgIcon: 'images/characters/purple_Subtract.png',
-      character: 'images/characters/patafreko-armure-seul.png',
-      name: 'patafreko-armure-seul',
-      raiting: 6.0
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patagaga.png',
-      name: 'patagaga',
-      raiting: 5.2
-    },
-    {
-      bgIcon: 'images/characters/blue_Subtract.png',
-      character: 'images/characters/Patago.png',
-      name: 'Patago',
-      raiting: 5.5
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/Pataiung.png',
-      name: 'Pataiung',
-      raiting: 6.0
-    },
-    // ===================== [10]========================
-    {
-      bgIcon: 'images/characters/yellow_Subtract.png',
-      character: 'images/characters/Patajohn.png',
-      name: 'Patajohn',
-      raiting: 4.8
-    },
-    {
-      bgIcon: 'images/characters/purple_Subtract.png',
-      character: 'images/characters/Patakaba.png',
-      name: 'Patakaba',
-      raiting: 8.0
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/Patalee.png',
-      name: 'Patalee',
-      raiting: 5.2
-    },
-    {
-      bgIcon: 'images/characters/blue_Subtract.png',
-      character: 'images/characters/Patalia.png',
-      name: 'Patalia',
-      raiting: 5.5
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patalia-armure-seule.png',
-      name: 'patalia-armure-seule',
-      raiting: 6.0
-    },
-    // ===================== [15]========================
-    {
-      bgIcon: 'images/characters/yellow_Subtract.png',
-      character: 'images/characters/Patalou.png',
-      name: 'Patalou',
-      raiting: 4.8
-    },
-    {
-      bgIcon: 'images/characters/purple_Subtract.png',
-      character: 'images/characters/patalou-armure-seule.png',
-      name: 'patalou-armure-seule',
-      raiting: 3.0
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/Pataluna.png',
-      name: 'Pataluna',
-      raiting: 5.2
-    },
-    {
-      bgIcon: 'images/characters/blue_Subtract.png',
-      character: 'images/characters/pataluna-armure-seule.png',
-      name: 'pataluna-armure-seule',
-      raiting: 5.5
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patamama.png',
-      name: 'patamama',
-      raiting: 6.0
-    },
-    // ===================== [20]========================
-    {
-      bgIcon: 'images/characters/yellow_Subtract.png',
-      character: 'images/characters/Patamed.png',
-      name: 'Patamed',
-      raiting: 4.8
-    },
-    {
-      bgIcon: 'images/characters/purple_Subtract.png',
-      character: 'images/characters/patamed-armure-seul.png',
-      name: 'patamed-armure-seul',
-      raiting: 1.0
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/Patamex.png',
-      name: 'Patamex',
-      raiting: 5.2
-    },
-    {
-      bgIcon: 'images/characters/blue_Subtract.png',
-      character: 'images/characters/Patanash.png',
-      name: 'Patanash',
-      raiting: 3.5
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/Patanouze.png',
-      name: 'Patanouze',
-      raiting: 1.5
-    },
-    // ===================== [25]========================
-    {
-      bgIcon: 'images/characters/yellow_Subtract.png',
-      character: 'images/characters/patanouze-armure-seule.png',
-      name: 'patanouze-armure-seule',
-      raiting: 4.8
-    },
-    {
-      bgIcon: 'images/characters/purple_Subtract.png',
-      character: 'images/characters/PataPJ.png',
-      name: 'PataPJ',
-      raiting: 6.0
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/Patapo.png',
-      name: 'Patapo',
-      raiting: 5.2
-    },
-    {
-      bgIcon: 'images/characters/blue_Subtract.png',
-      character: 'images/characters/patapo-armure-seule.png',
-      name: 'patapo-armure-seule',
-      raiting: 5.5
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/pataprano.png',
-      name: 'pataprano',
-      raiting: 2.0
-    },
-    // ===================== [30]========================
-    {
-      bgIcon: 'images/characters/yellow_Subtract.png',
-      character: 'images/characters/Patari.png',
-      name: 'Patari',
-      raiting: 4.8
-    },
-    {
-      bgIcon: 'images/characters/purple_Subtract.png',
-      character: 'images/characters/patarif.png',
-      name: 'patarif',
-      raiting: 6.0
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/patarif-armure-seul.png',
-      name: 'patarif-armure-seul',
-      raiting: 5.2
-    },
-    {
-      bgIcon: 'images/characters/blue_Subtract.png',
-      character: 'images/characters/Patarose.png',
-      name: 'Patarose',
-      raiting: 5.5
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/PataUG.png',
-      name: 'PataUG',
-      raiting: 6.0
-    },
-    // ===================== [35]========================
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/PataUG-autruche.png',
-      name: 'PataUG-autruche',
-      raiting: 5.2
-    },
-    {
-      bgIcon: 'images/characters/blue_Subtract.png',
-      character: 'images/characters/Patazak.png',
-      name: 'Patazak',
-      raiting: 5.5
-    },
-    {
-      bgIcon: 'images/characters/red_Subtract.png',
-      character: 'images/characters/Patazako.png',
-      name: 'Patazako',
-      raiting: 6.0
-    }
-    // ===================== [38]========================
-  ];
+  characters: Array<{ bgIcon: string; character: string; name: string; raiting: number }> = [];
   currentIndex = 2;
+
+  isLoading: boolean = false; // ✅ loading state
 
   private startX: number = 0;
   private endX: number = 0;
 
-  constructor(private el: ElementRef) {}
+  // Background icons used for alternating backgrounds
+  private bgIcons = [
+    'images/characters/yellow_Subtract.png',
+    'images/characters/purple_Subtract.png',
+    'images/characters/red_Subtract.png',
+    'images/characters/blue_Subtract.png'
+  ];
+
+  constructor(private el: ElementRef, private supabaseService: SupabaseService) {}
+
+  async ngOnInit() {
+    await this.loadCharactersFromDbOrStorage();
+  }
 
   ngAfterViewInit() {
     const cards = this.el.nativeElement.querySelector('.cards');
+    if (!cards) return;
 
+    // Touch start
     cards.addEventListener('touchstart', (e: TouchEvent) => {
       this.startX = e.touches[0].clientX;
     });
 
+    // Touch move
     cards.addEventListener('touchmove', (e: TouchEvent) => {
       this.endX = e.touches[0].clientX;
     });
 
+    // Touch end -> detect swipe
     cards.addEventListener('touchend', () => {
       const diff = this.startX - this.endX;
-      if (Math.abs(diff) > 50) { // لو السحب كفاية
-        if (diff > 0) {
-          this.nextSlide(); // سحب لليسار => next
-        } else {
-          this.prevSlide(); // سحب لليمين => prev
-        }
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) this.nextSlide();
+        else this.prevSlide();
       }
       this.startX = 0;
       this.endX = 0;
     });
   }
 
+  // ---------- index helpers ----------
   get leftIndex() {
     return this.currentIndex === 0 ? this.characters.length - 1 : this.currentIndex - 1;
   }
-
   get rightIndex() {
     return this.currentIndex === this.characters.length - 1 ? 0 : this.currentIndex + 1;
   }
-
   get left2Index() {
     if (this.currentIndex === 0) return this.characters.length - 2;
     if (this.currentIndex === 1) return this.characters.length - 1;
     return this.currentIndex - 2;
   }
-
   get right2Index() {
     if (this.currentIndex === this.characters.length - 1) return 1;
     if (this.currentIndex === this.characters.length - 2) return 0;
@@ -308,5 +87,142 @@ export class SliderCharactersHomeComponent implements AfterViewInit {
 
   nextSlide() {
     this.currentIndex = (this.currentIndex + 1) % this.characters.length;
+  }
+
+  // ---------- load data ----------
+  private async loadCharactersFromDbOrStorage() {
+    this.isLoading = true; // start loading
+
+    try {
+      // Try to get supabase client from the service
+      const supabaseClient: any =
+        (this.supabaseService as any).supabase ??
+        (this.supabaseService as any).client ??
+        (this.supabaseService as any);
+
+      if (!supabaseClient) {
+        console.error('Supabase client not found on SupabaseService.');
+        this.useFallbackHardcoded();
+        return;
+      }
+
+      // 1) Try to fetch rows from "patarif_characters"
+      const { data: rows, error: selectErr } = await supabaseClient
+        .from('patarif_characters')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (!selectErr && Array.isArray(rows) && rows.length > 0) {
+        this.characters = await Promise.all(
+          rows.map(async (r: any, idx: number) => {
+            const rawImage = r.image ?? '';
+            let publicUrl = '';
+
+            // Case 1: image is already a valid URL
+            if (typeof rawImage === 'string' && rawImage.startsWith('http')) {
+              publicUrl = rawImage;
+            } else {
+              // Case 2: image stored as a path inside a bucket
+              const bucket = 'characters';
+              const path =
+                typeof rawImage === 'string'
+                  ? rawImage.replace(new RegExp(`^${bucket}/`), '')
+                  : `${r.name}.png`;
+
+              try {
+                const { data: urlData } = supabaseClient.storage.from(bucket).getPublicUrl(path);
+                publicUrl = urlData?.publicUrl ?? '';
+              } catch {
+                const projectRef = (supabaseClient?.url ?? '').replace(/^https?:\/\//, '');
+                publicUrl = projectRef
+                  ? `https://${projectRef}/storage/v1/object/public/${bucket}/${path}`
+                  : `/assets/fallback/${path}`;
+              }
+            }
+
+            return {
+              bgIcon: this.bgIcons[idx % this.bgIcons.length],
+              character: publicUrl || `images/characters/${r.name}.png`,
+              name: r.name,
+              raiting: Number(r.rate ?? 0)
+            };
+          })
+        );
+
+        if (this.currentIndex >= this.characters.length) this.currentIndex = 0;
+        return;
+      }
+
+      // 2) If no rows, try to list files directly from storage
+      const bucket = 'characters';
+      const { data: list, error: listErr } = await supabaseClient.storage
+        .from(bucket)
+        .list('', { limit: 1000 });
+
+      if (!listErr && Array.isArray(list) && list.length > 0) {
+        const filtered = list.filter(
+          (f: any) =>
+            f.name !== '.emptyFolderPlaceholder' && /\.(png|jpg|jpeg|webp)$/i.test(f.name)
+        );
+
+        this.characters = filtered.map((file: any, idx: number) => {
+          let publicUrl = '';
+          try {
+            const { data: urlData } = supabaseClient.storage.from(bucket).getPublicUrl(file.name);
+            publicUrl = urlData?.publicUrl ?? '';
+          } catch {
+            const projectRef = (supabaseClient?.url ?? '').replace(/^https?:\/\//, '');
+            publicUrl = projectRef
+              ? `https://${projectRef}/storage/v1/object/public/${bucket}/${file.name}`
+              : `images/characters/${file.name}`;
+          }
+
+          const nameWithoutExt = file.name.replace(/^.*[\\/]/, '').replace(/\.[^.]+$/, '');
+          return {
+            bgIcon: this.bgIcons[idx % this.bgIcons.length],
+            character: publicUrl,
+            name: nameWithoutExt,
+            raiting: 0
+          };
+        });
+
+        if (this.currentIndex >= this.characters.length) this.currentIndex = 0;
+        return;
+      }
+    } catch (err) {
+      console.warn('Error while loading characters:', err);
+    } finally {
+      this.isLoading = false; // stop loading in all cases
+    }
+
+    // 3) Fallback to hardcoded array if nothing is found
+    this.useFallbackHardcoded();
+    this.isLoading = false;
+  }
+
+
+  
+  private useFallbackHardcoded() {
+    this.characters = [
+      {
+        bgIcon: 'images/characters/yellow_Subtract.png',
+        character: 'images/characters/patadogg.png',
+        name: 'patadogg',
+        raiting: 4.8
+      },
+      {
+        bgIcon: 'images/characters/purple_Subtract.png',
+        character: 'images/characters/pata-beauxyeux.png',
+        name: 'pata-beauxyeux',
+        raiting: 6.0
+      },
+      {
+        bgIcon: 'images/characters/red_Subtract.png',
+        character: 'images/characters/bling.png',
+        name: 'bling',
+        raiting: 5.2
+      }
+      // ... add more fallback characters if needed
+    ];
   }
 }

@@ -1,13 +1,10 @@
 <!-- celebration.component.html -->
-<!-- Using Bootstrap Icons (make sure bootstrap-icons is loaded in your project) -->
 <div *ngIf="show" @fadeIn class="celebration-overlay" (clickOutside)="onClose()">
-  <!-- colorful animated background particles -->
-  <div class="confetti-wrap" aria-hidden="true">
-    <!-- decorative radial bursts -->
+  <!-- confetti only when passed -->
+  <div class="confetti-wrap" aria-hidden="true" *ngIf="isPassed">
     <div class="burst burst-1"></div>
     <div class="burst burst-2"></div>
 
-    <!-- confetti pieces generated in TS -->
     <ng-container *ngFor="let piece of confettiPieces">
       <span class="confetti-piece"
             [ngStyle]="{
@@ -17,22 +14,35 @@
               transform: 'rotate(' + piece.rotate + 'deg)',
               background: piece.color,
               animationDelay: piece.delay + 's'
-            }"
-            ></span>
+            }"></span>
     </ng-container>
   </div>
 
-  <div class="celebration-box" role="dialog" aria-live="polite" (click)="$event.stopPropagation()">
-    <!-- badge using bootstrap icon -->
-    <div class="badge" aria-hidden="true">
-      <i class="bi bi-trophy-fill" style="font-size:1.3rem;"></i>
+  <!-- sad decoration when failed (no confetti) -->
+  <div class="sad-wrap" aria-hidden="true" *ngIf="!isPassed">
+    <ng-container *ngFor="let drop of sadPieces">
+      <span class="teardrop" [ngStyle]="{ left: drop.left + '%', width: drop.size + 'px', height: drop.size * 1.4 + 'px', animationDelay: drop.delay + 's' }"></span>
+    </ng-container>
+  </div>
+
+  <div class="celebration-box" role="dialog" aria-live="polite" (click)="$event.stopPropagation()" [ngClass]="{ 'sad': !isPassed }">
+    <div class="badge" aria-hidden="true" [ngClass]="{ 'sad-badge': !isPassed }">
+      <i class="bi" [ngClass]="isPassed ? 'bi-trophy-fill' : 'bi-emoji-frown-fill'" style="font-size:1.3rem;"></i>
     </div>
 
-    <h2 class="title">Bravo! Level {{ data?.level }} Complete</h2>
+    <h2 class="title">
+      <!-- french only -->
+      <ng-container *ngIf="isPassed; else failedText">
+        Félicitations ! Niveau {{ data?.level }} terminé
+      </ng-container>
+      <ng-template #failedText>
+        Dommage… Niveau {{ data?.level }} non validé
+      </ng-template>
+    </h2>
 
     <div class="stats-row">
       <div class="stat">
-        <div class="stat-label">Correct</div>
+        <div class="stat-label">Réponses correctes</div>
         <div class="stat-value">
           <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
           {{ data?.questionsCorrect }} / {{ data?.totalQuestions }}
@@ -40,7 +50,7 @@
       </div>
 
       <div class="stat">
-        <div class="stat-label">Time</div>
+        <div class="stat-label">Temps</div>
         <div class="stat-value">
           <i class="bi bi-clock-fill" aria-hidden="true"></i>
           {{ formatTime(data?.timeElapsed || 0) }}
@@ -48,7 +58,7 @@
       </div>
 
       <div class="stat">
-        <div class="stat-label">Difficulty</div>
+        <div class="stat-label">Difficulté</div>
         <div class="stat-value">
           <i class="bi bi-bullseye" aria-hidden="true"></i>
           {{ data?.difficulty }}
@@ -59,12 +69,18 @@
     <div class="buttons">
       <button class="btn btn-muted" (click)="onClose()">
         <i class="bi bi-x-lg me-2" aria-hidden="true"></i>
-        Close
+        Fermer
       </button>
 
       <button class="btn btn-primary" (click)="onNextLevel()">
-        Next Level
-        <i class="bi bi-arrow-right-short ms-2" aria-hidden="true"></i>
+        <ng-container>
+          Niveau suivant
+          <i class="bi bi-arrow-right-short ms-2" aria-hidden="true"></i>
+        </ng-container>
+        <!-- <ng-template #retryText>
+          Réessayer
+          <i class="bi bi-arrow-repeat ms-2" aria-hidden="true"></i>
+        </ng-template> -->
       </button>
     </div>
   </div>
