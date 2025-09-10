@@ -48,16 +48,17 @@ export class SearchModalComponent implements OnInit {
     try {
       const products = await this.supabase.getProductsTitles();
       const games: SearchItem[] = [
-        { title: 'Letters Game', category: 'game', route: '/letters-game' },
-        { title: 'Country Guessing', category: 'game', route: '/country-guessing' },
-        { title: 'True or False', category: 'game', route: '/true-or-false' },
-        { title: 'Painting', category: 'game', route: '/painting' },
-        { title: 'Sort Words', category: 'game', route: '/sort-words' },
-        { title: 'Guess Emoji', category: 'game', route: '/guess-emoji' },
-        { title: 'Word to Image', category: 'game', route: '/word-to-image' },
-        { title: 'Math Ladder', category: 'game', route: '/math-ladder' },
-        { title: 'Geo Quiz', category: 'game', route: '/geo-quiz' }
+        { title: 'Trier les lettres', category: 'game', route: '/letters-game' },
+        { title: 'Deviner le pays', category: 'game', route: '/country-guessing' },
+        { title: 'Vrai ou Faux', category: 'game', route: '/true-or-false' },
+        { title: 'Peinture', category: 'game', route: '/painting' },
+        { title: 'Trier les mots', category: 'game', route: '/sort-words' },
+        { title: 'Deviner l\'emoji', category: 'game', route: '/guess-emoji' },
+        { title: 'Mot à Image', category: 'game', route: '/word-to-image' },
+        { title: 'Escalier Mathématique', category: 'game', route: '/math-ladder' },
+        { title: 'Quiz Géographie', category: 'game', route: '/geo-quiz' }
       ];
+
 
       const learning: SearchItem[] = [
         { title: 'Tomate Story', category: 'story', route: '/tomate-story' },

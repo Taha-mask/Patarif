@@ -16,7 +16,7 @@ export class SliderCharactersHomeComponent implements OnInit, AfterViewInit {
   designType: string = 'carousel';
 
   characters: Array<{ bgIcon: string; character: string; name: string; raiting: number }> = [];
-  currentIndex = 2;
+  currentIndex = 0;
 
   isLoading: boolean = false; // ✅ loading state
 

@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDes
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 
+
 export interface CelebrationData {
   level: number;
   questionsCorrect: number;
@@ -59,6 +60,8 @@ export class CelebrationComponent implements OnChanges, OnDestroy {
   private confettiTimer: any = null;
   private sadTimer: any = null;
 
+  private audio: HTMLAudioElement | null = null; // 🎵 keep a ref
+
   /** Determine pass/fail: passed when correct >= ceil(total/2) */
   get isPassed(): boolean {
     if (!this.data) return false;
@@ -69,6 +72,9 @@ export class CelebrationComponent implements OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['show']) {
       if (changes['show'].currentValue === true) {
+        // Play sound once 🎶
+        this.playCelebrationSound();
+
         // choose visual based on pass/fail
         if (this.isPassed) {
           this.startConfetti();
@@ -80,15 +86,23 @@ export class CelebrationComponent implements OnChanges, OnDestroy {
         this.stopSad();
       }
     }
-
-    if (changes['data'] && changes['data'].currentValue) {
-      // nothing extra needed here
-    }
   }
 
   ngOnDestroy() {
     this.stopConfetti();
     this.stopSad();
+    if (this.audio) {
+      this.audio.pause();
+      this.audio = null;
+    }
+  }
+
+  private playCelebrationSound() {
+    if (!this.audio) {
+      this.audio = new Audio('assets/audio/celebration.mp3'); // ⚡ make sure path is correct
+    }
+    this.audio.currentTime = 0;
+    this.audio.play().catch(err => console.warn('Audio play failed:', err));
   }
 
   onClose() {
