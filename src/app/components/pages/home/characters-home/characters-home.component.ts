@@ -4,10 +4,11 @@ import { CardsComponent } from "../../../cards/cards.component";
 import { CharacterCard } from "../../../../interface/card";
 import { SliderCharactersHomeComponent } from "./slider-characters-home/slider-characters-home.component";
 import { StarsBackgroundComponent } from "../../../stars-background/stars-background.component";
+import { LoadingComponent } from "../../../loading/loading.component";
 
 @Component({
   selector: 'app-characters-home',
-  imports: [CarachterCardComponent, CardsComponent, SliderCharactersHomeComponent, StarsBackgroundComponent],
+  imports: [CarachterCardComponent, CardsComponent, SliderCharactersHomeComponent, StarsBackgroundComponent, LoadingComponent],
   templateUrl: './characters-home.component.html',
   styleUrl: './characters-home.component.css'
 })

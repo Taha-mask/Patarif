@@ -35,7 +35,7 @@
       [totalQuestions]="totalQuestions || 5">
     </app-game-header>
 
-    <div class="game-content" [class.no-bg]="nogamecontent">
+    <div class="game-content" *ngIf="showGameContent" [class.no-bg]="nogamecontent" [class.no-game-height]="disableGameContentHeight">
       <ng-content></ng-content>
     </div>
 

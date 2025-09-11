@@ -6,7 +6,10 @@ import { GamesComponent } from '../games.component';
 import { SupabaseService } from '../../../../supabase.service';
 import { AudioService } from '../../../../services/audio.service';
 
-// Interfaces (unchanged)
+/**
+ * Types used by the component
+ * All comments in this file are in English as requested.
+ */
 interface LetterTile {
   id: string;
   letter: string;
@@ -38,12 +41,10 @@ interface GameStats {
 const GAME_CONFIG = {
   QUESTIONS_PER_LEVEL: 5,
   TIMER_INTERVAL: 1000,
-  ANIMATION_DELAY: 500,
-  SHAKE_DURATION: 600,
   SUCCESS_DELAY: 2000,
   WRONG_MESSAGE_DURATION: 2000,
   LETTER_COLORS: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#FF9F43', '#A29BFE', '#6C5CE7']
-};
+} as const;
 
 @Component({
   selector: 'app-letters-game',
@@ -53,296 +54,331 @@ const GAME_CONFIG = {
   styleUrls: ['./letters-game.component.css']
 })
 export class LettersGameComponent implements OnInit, OnDestroy {
-  // === Set this to the ID of this game in your DB ===
-  // change this number to match the `game_id` for "letters" in your system
-  private readonly GAME_ID: number = 1;
+  // ID for progress save/load
+  private readonly GAME_ID = 1;
 
-  constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
+  // Configuration
+  maxLevels = 5;
+  incrementOnOpen = false; // enable only if you explicitly want level to increase on each open
 
-  // ===== Game State =====
-  private gameState = {
+  // Local UI state
+  loading = true;
+
+  // Centralized game state
+  private state = {
     level: 1,
     currentQuestion: 1,
     questionsCorrectInLevel: 0,
     timeElapsed: 0,
     showLevelCompleteModal: false
   };
-  loading: boolean = true;
-async ngOnInit() {
-  this.loading = true;
 
-  // 1) load all questions first (so we can check bounds against available questions)
-  await this.loadAllQuestions();
-
-  // 2) fetch saved progress for this player & game
-  try {
-    const progress = await this.supabaseService.getPlayerProgress(this.GAME_ID);
-
-    if (progress) {
-      // restore saved progress, but sanitize / clamp to valid ranges
-      const savedLevel = Math.max(1, progress.level || 1);
-      let savedQuestion = Math.max(1, progress.question_num || 1);
-
-      // If questions for that level don't exist or question index out of range, clamp to 1
-      const levelQuestions = this.questionsByLevel[savedLevel];
-      if (!levelQuestions || levelQuestions.length === 0) {
-        // fallback to level 1
-        this.gameState.level = 1;
-        this.gameState.currentQuestion = 1;
-        this.currentWordIndex = 0;
-      } else {
-        // clamp question to available questions count
-        if (savedQuestion > levelQuestions.length) savedQuestion = 1;
-        this.gameState.level = savedLevel;
-        this.gameState.currentQuestion = savedQuestion;
-        this.currentWordIndex = Math.max(0, this.gameState.currentQuestion - 1);
-      }
-    } else {
-      // no saved progress -> create initial record (optional but recommended)
-      await this.supabaseService.savePlayerProgress(this.GAME_ID, 1, 1);
-      this.gameState.level = 1;
-      this.gameState.currentQuestion = 1;
-      this.currentWordIndex = 0;
-    }
-  } catch (err) {
-    console.error('Error while fetching/creating player progress:', err);
-    // fall back to defaults
-    this.gameState.level = 1;
-    this.gameState.currentQuestion = 1;
-    this.currentWordIndex = 0;
-  }
-
-  // 3) initialize game (uses level & currentWordIndex set above)
-  this.initializeGame();
-
-  this.loading = false;
-}
-
-  
-  private async loadAllQuestions() {
-    const totalLevels = 5;
-    for (let level = 1; level <= totalLevels; level++) {
-      const questions = await this.supabaseService.getSortingLettersQuestions(level);
-      this.questionsByLevel[level] = questions.map((q: any) => ({
-        correct: q.value,
-        image: `/${q.image}`, // الصور
-        difficulty: q.difficulty
-      }));
-    }
-  }
-  
-  private gameStats: GameStats = { totalTime: 0, firstAttempt: true, attempts: 0 };
-  private dragState: DragState = { draggedItem: null, draggedFromSlot: -1, draggedFromAvailable: -1 };
+  // Internal helpers
+  private timer: any = null;
+  private currentWordIndex = 0;
   private _currentWord: GameWord | null = null;
-  private currentWordIndex: number = 0;
-  private timer: any;
 
+  // Gameplay data
   availableLetters: LetterTile[] = [];
   wordSlots: (LetterTile | null)[] = [];
-  showSuccess: boolean = false;
-  showWrong: boolean = false;
-  shakeAnimation: boolean = false;
 
+  // UI flags
+  showSuccess = false;
+  showWrong = false;
+  shakeAnimation = false;
+
+  // Drag state
+  private dragState: DragState = { draggedItem: null, draggedFromSlot: -1, draggedFromAvailable: -1 };
+
+  // Stats
+  private gameStats: GameStats = { totalTime: 0, firstAttempt: true, attempts: 0 };
+
+  // Questions store
+  private questionsByLevel: Record<number, GameWord[]> = {};
+
+  // Celebration payload
   celebrationData: CelebrationData | null = null;
 
-  private questionsByLevel: { [key: number]: GameWord[] } = {};
+  constructor(private supabaseService: SupabaseService, private audioService: AudioService) {}
 
-  // ===== Getters =====
-  get level(): number { return this.gameState.level; }
-  get currentQuestion(): number { return this.gameState.currentQuestion; }
-  get questionsCorrectInLevel(): number { return this.gameState.questionsCorrectInLevel; }
-  get timeElapsed(): number { return this.gameState.timeElapsed; }
-  get showLevelCompleteModal(): boolean { return this.gameState.showLevelCompleteModal; }
-  get currentWord(): GameWord | null { return this._currentWord; }
-  get isWordComplete(): boolean { return this.wordSlots.every(slot => slot !== null); }
+  // ---------- Getters ----------
+  get level() { return this.state.level; }
+  get currentQuestion() { return this.state.currentQuestion; }
+  get questionsCorrectInLevel() { return this.state.questionsCorrectInLevel; }
+  get timeElapsed() { return this.state.timeElapsed; }
+  get showLevelCompleteModal() { return this.state.showLevelCompleteModal; }
+  get currentWord() { return this._currentWord; }
+  get isWordComplete() { return this.wordSlots.every(s => s !== null); }
 
-  // ===== Lifecycle =====
-  ngOnDestroy(): void { this.cleanup(); }
-
-  private initializeGame(): void {
-    this.startTimer();
-    this.resetForNewWord();
+  /** Progress as percentage across global levels (1..maxLevels) */
+  get progressPercent() {
+    return Math.round((this.level / this.maxLevels) * 100);
   }
 
-  private cleanup(): void {
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
+  // ---------- Lifecycle ----------
+  async ngOnInit() {
+    this.loading = true;
+
+    await this.loadAllQuestions();
+
+    try {
+      const progress = await this.supabaseService.getPlayerProgress(this.GAME_ID);
+
+      if (progress) {
+        const savedLevel = clamp(Number(progress.level) || 1, 1, this.maxLevels);
+        const savedQuestion = Math.max(1, Number(progress.question_num) || 1);
+
+        await this.setLevel(savedLevel, false);
+
+        const levelQuestions = this.questionsByLevel[this.level] ?? [];
+        this.state.currentQuestion = savedQuestion > levelQuestions.length ? 1 : savedQuestion;
+        this.currentWordIndex = Math.max(0, this.state.currentQuestion - 1);
+      } else {
+        await this.supabaseService.savePlayerProgress(this.GAME_ID, 1, 1);
+        await this.setLevel(1, false);
+        this.state.currentQuestion = 1;
+        this.currentWordIndex = 0;
+      }
+    } catch (err) {
+      console.error('Failed loading progress', err);
+      await this.setLevel(1, false);
+      this.state.currentQuestion = 1;
+      this.currentWordIndex = 0;
+    }
+
+    if (this.incrementOnOpen) {
+      const next = Math.min(this.maxLevels, this.level + 1);
+      await this.setLevel(next, true);
+    }
+
+    this.initializeGame();
+    this.loading = false;
+  }
+
+  ngOnDestroy(): void { this.cleanupTimer(); }
+
+  // ---------- Initialization & Timer ----------
+  private initializeGame() {
+    this.resetForNewWord();
+    this.startTimer();
+  }
+
+  private startTimer() {
+    if (this.timer) return;
+    this.timer = setInterval(() => this.state.timeElapsed++, GAME_CONFIG.TIMER_INTERVAL);
+  }
+
+  private cleanupTimer() {
+    if (!this.timer) return;
+    clearInterval(this.timer);
+    this.timer = null;
+  }
+
+  private resetTimer() { this.state.timeElapsed = 0; }
+
+  // ---------- Data loading ----------
+  private async loadAllQuestions() {
+    // Load levels sequentially (small number) and ensure empty arrays if none
+    for (let lvl = 1; lvl <= this.maxLevels; lvl++) {
+      const questions = (await this.supabaseService.getSortingLettersQuestions(lvl)) || [];
+      this.questionsByLevel[lvl] = questions.map((q: any) => ({ correct: q.value, image: `/${q.image}`, difficulty: q.difficulty }));
     }
   }
 
-  private startTimer(): void {
-    if (!this.timer) this.timer = setInterval(() => { this.gameState.timeElapsed++; }, GAME_CONFIG.TIMER_INTERVAL);
+  // ---------- Level & Progress management ----------
+  private async setLevel(newLevel: number, save = false) {
+    const clamped = clamp(Math.floor(newLevel), 1, this.maxLevels);
+    this.state.level = clamped;
+
+    // reset per-level counters
+    this.state.questionsCorrectInLevel = 0;
+    this.state.currentQuestion = 1;
+    this.currentWordIndex = 0;
+
+    if (save) await safeSaveProgress(this.supabaseService, this.GAME_ID, this.state.level, this.state.currentQuestion);
   }
-  private stopTimer(): void { if (this.timer) { clearInterval(this.timer); this.timer = null; } }
-  private resetTimer(): void { this.gameState.timeElapsed = 0; }
 
-  // ===== Word Management =====
-  private resetForNewWord(): void {
-    this.gameStats.firstAttempt = true; this.gameStats.attempts = 0;
-    this.shakeAnimation = false; this.showSuccess = false; this.showWrong = false;
+  // ---------- Word flow ----------
+  private resetForNewWord() {
+    this.gameStats.firstAttempt = true;
+    this.gameStats.attempts = 0;
+    this.shakeAnimation = false;
+    this.showSuccess = false;
+    this.showWrong = false;
 
-    const currentLevelQuestions = this.questionsByLevel[this.gameState.level];
-    if (currentLevelQuestions && currentLevelQuestions[this.currentWordIndex]) {
-      this._currentWord = currentLevelQuestions[this.currentWordIndex];
+    const levelQs = this.questionsByLevel[this.state.level] ?? [];
+
+    if (levelQs[this.currentWordIndex]) {
+      this._currentWord = levelQs[this.currentWordIndex];
     } else {
-      this.gameState.level++;
-      this.currentWordIndex = 0;
-      const nextLevelQuestions = this.questionsByLevel[this.gameState.level];
-      if (nextLevelQuestions) this._currentWord = nextLevelQuestions[0];
+      // move to next level if current level exhausted
+      const nextLevel = Math.min(this.maxLevels, this.state.level + 1);
+      this.setLevel(nextLevel, true).catch(err => console.error('setLevel', err));
+      this._currentWord = this.questionsByLevel[this.state.level]?.[0] ?? null;
     }
 
     if (!this._currentWord) return;
 
-    const scrambledLetters = this.scrambleWord(this._currentWord.correct);
-    this.availableLetters = this.createLetterTiles(scrambledLetters);
+    const scrambled = scramble(this._currentWord.correct);
+    this.availableLetters = createTiles(scrambled);
     this.wordSlots = Array(this._currentWord.correct.length).fill(null);
 
-    if (this.gameState.currentQuestion === 1) { this.resetTimer(); this.startTimer(); }
+    if (this.state.currentQuestion === 1) { this.resetTimer(); this.startTimer(); }
   }
 
-  private scrambleWord(word: string): string[] {
-    const letters = word.split('');
-    for (let i = letters.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [letters[i], letters[j]] = [letters[j], letters[i]];
-    }
-    return letters;
-  }
-
-  private createLetterTiles(letters: string[]): LetterTile[] {
-    return letters.map((letter, index) => ({
-      id: `letter-${index}-${Date.now()}-${Math.random().toString(36).substr(2,9)}`,
-      letter,
-      color: GAME_CONFIG.LETTER_COLORS[Math.floor(Math.random() * GAME_CONFIG.LETTER_COLORS.length)],
-      isDragging: false, used: false, animationState: 'idle'
-    }));
-  }
-
-  // ===== Drag & Drop =====
-  onDragStart(event: DragEvent, item: LetterTile, fromSlot?: number, fromAvailable?: number) {
+  // ---------- Drag & Drop ----------
+  onDragStart(ev: DragEvent, item: LetterTile, fromSlot?: number, fromAvailable?: number) {
     this.dragState.draggedItem = item;
     this.dragState.draggedFromSlot = fromSlot ?? -1;
     this.dragState.draggedFromAvailable = fromAvailable ?? -1;
-    if (event.dataTransfer) { event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', item.id); }
-    item.isDragging = true; item.animationState = 'bounce';
+    if (ev.dataTransfer) {
+      ev.dataTransfer.effectAllowed = 'move';
+      ev.dataTransfer.setData('text/plain', item.id);
+    }
+    item.isDragging = true;
+    item.animationState = 'bounce';
   }
 
-  onDragEnd(event: DragEvent, item: LetterTile) { item.isDragging = false; item.animationState = 'idle'; }
-  onDragOver(event: DragEvent) { event.preventDefault(); if(event.dataTransfer) event.dataTransfer.dropEffect='move'; }
+  onDragEnd(_: DragEvent, item: LetterTile) { item.isDragging = false; item.animationState = 'idle'; }
 
-  onDropToSlot(event: DragEvent, slotIndex: number) {
-    event.preventDefault();
-    if (!this.dragState.draggedItem) return;
-    const targetSlot = this.wordSlots[slotIndex];
+  onDragOver(ev: DragEvent) { ev.preventDefault(); if (ev.dataTransfer) ev.dataTransfer.dropEffect = 'move'; }
+
+  onDropToSlot(ev: DragEvent, slotIndex: number) {
+    ev.preventDefault();
+    const dragged = this.dragState.draggedItem;
+    if (!dragged) return;
+
+    const target = this.wordSlots[slotIndex];
+
     if (this.dragState.draggedFromAvailable >= 0) {
-      if (targetSlot) { this.wordSlots[slotIndex] = this.dragState.draggedItem; this.availableLetters[this.dragState.draggedFromAvailable] = targetSlot; }
-      else { this.wordSlots[slotIndex] = this.dragState.draggedItem; this.availableLetters.splice(this.dragState.draggedFromAvailable, 1); }
+      // place from available -> if target existed, swap back to available slot
+      if (target) this.availableLetters[this.dragState.draggedFromAvailable] = target;
+      else this.availableLetters.splice(this.dragState.draggedFromAvailable, 1);
+
+      this.wordSlots[slotIndex] = dragged;
     } else if (this.dragState.draggedFromSlot >= 0) {
+      // swap slots
       this.wordSlots[slotIndex] = this.wordSlots[this.dragState.draggedFromSlot];
-      this.wordSlots[this.dragState.draggedFromSlot] = targetSlot;
+      this.wordSlots[this.dragState.draggedFromSlot] = target;
     }
+
     this.dragState = { draggedItem: null, draggedFromSlot: -1, draggedFromAvailable: -1 };
   }
 
-  onDropToAvailable(event: DragEvent, availableIndex?: number) {
-    event.preventDefault();
+  onDropToAvailable(ev: DragEvent, availableIndex?: number) {
+    ev.preventDefault();
     if (!this.dragState.draggedItem || this.dragState.draggedFromSlot < 0) return;
-    const insertIndex = availableIndex ?? this.availableLetters.length;
-    this.availableLetters.splice(insertIndex, 0, this.dragState.draggedItem);
+    const insert = availableIndex ?? this.availableLetters.length;
+    this.availableLetters.splice(insert, 0, this.dragState.draggedItem);
     this.wordSlots[this.dragState.draggedFromSlot] = null;
     this.dragState = { draggedItem: null, draggedFromSlot: -1, draggedFromAvailable: -1 };
   }
 
-  // ===== Game Logic =====
+  // ---------- Game logic ----------
   async checkWord() {
     if (!this._currentWord) return;
     this.gameStats.attempts++;
-    const formedWord = this.wordSlots.map(slot => slot?.letter||'').join('');
-    if (formedWord === this._currentWord.correct) {
-      this.stopTimer();
-      this.gameState.questionsCorrectInLevel++;
+    const formed = this.wordSlots.map(s => s?.letter || '').join('');
+
+    if (formed === this._currentWord.correct) {
+      this.cleanupTimer();
+      this.state.questionsCorrectInLevel++;
       this.showSuccess = true;
       this.audioService.playCorrectSound();
 
-      // --- SAVE PROGRESS: only when it's the first attempt for this question ---
       if (this.gameStats.firstAttempt) {
-        // don't block UI; fire-and-forget but log failures
-        this.supabaseService.savePlayerProgress(this.GAME_ID, this.gameState.level, this.gameState.currentQuestion)
-          .then(saved => {
-            if (!saved) console.warn('Failed to save player progress for game', this.GAME_ID);
-          }).catch(err => {
-            console.error('savePlayerProgress exception:', err);
-          });
+        // fire-and-forget save; log on failure
+        safeSaveProgress(this.supabaseService, this.GAME_ID, this.state.level, this.state.currentQuestion).catch(err => console.error('save', err));
       }
 
       setTimeout(() => { this.showSuccess = false; this.nextWord(); }, GAME_CONFIG.SUCCESS_DELAY);
-    } else {
-      this.shakeAnimation = true;
-      this.showWrong = true;
-      this.audioService.playWrongSound();
-      this.gameStats.firstAttempt = false;
-      setTimeout(() => { this.shakeAnimation = false; this.showWrong = false; }, GAME_CONFIG.WRONG_MESSAGE_DURATION);
+      return;
     }
+
+    // wrong answer
+    this.shakeAnimation = true;
+    this.showWrong = true;
+    this.audioService.playWrongSound();
+    this.gameStats.firstAttempt = false;
+
+    setTimeout(() => { this.shakeAnimation = false; this.showWrong = false; }, GAME_CONFIG.WRONG_MESSAGE_DURATION);
   }
 
   private nextWord() {
-    // increment the question counter
-    this.gameState.currentQuestion++;
-
+    this.state.currentQuestion++;
     this.currentWordIndex++;
-    const currentLevelQuestions = this.questionsByLevel[this.gameState.level];
-    if (this.currentWordIndex >= currentLevelQuestions.length) this.completeLevel();
-    else this.resetForNewWord();
+
+    const levelQs = this.questionsByLevel[this.state.level] ?? [];
+    if (this.currentWordIndex >= levelQs.length) {
+      this.completeLevel();
+    } else {
+      this.resetForNewWord();
+    }
   }
 
-private completeLevel() {
-  this.celebrationData = {
-    level: this.gameState.level,
-    questionsCorrect: this.gameState.questionsCorrectInLevel,
-    totalQuestions: this.questionsByLevel[this.gameState.level]?.length || GAME_CONFIG.QUESTIONS_PER_LEVEL,
-    timeElapsed: this.gameState.timeElapsed,
-    difficulty: this.currentWord?.difficulty ||  'facile'
-  };
+  private async completeLevel() {
+    this.celebrationData = {
+      level: this.state.level,
+      questionsCorrect: this.state.questionsCorrectInLevel,
+      totalQuestions: this.questionsByLevel[this.state.level]?.length ?? GAME_CONFIG.QUESTIONS_PER_LEVEL,
+      timeElapsed: this.state.timeElapsed,
+      difficulty: this.currentWord?.difficulty ?? 'facile'
+    };
 
-  this.gameState.showLevelCompleteModal = true;
+    this.state.showLevelCompleteModal = true;
 
-  // Prepare for the next level
-  this.gameState.level++;
-  this.currentWordIndex = 0;
-  this.gameState.currentQuestion = 1;
-  this.gameState.questionsCorrectInLevel = 0;
+    // advance and save
+    const next = Math.min(this.maxLevels, this.state.level + 1);
+    await this.setLevel(next, true);
 
-  // 🔥 Save start of new level
-  this.supabaseService.savePlayerProgress(this.GAME_ID, this.gameState.level, this.gameState.currentQuestion)
-    .catch(err => console.error('Failed to save new level start:', err));
+    // stop timer if no questions loaded for new level
+    if (!this.questionsByLevel[this.state.level]) this.cleanupTimer();
+  }
 
-  if (!this.questionsByLevel[this.gameState.level]) {
-    this.stopTimer();
+  // ---------- Template helpers ----------
+  trackByLetterId(_: number, item: LetterTile) { return item.id; }
+
+  onCloseCelebration() { this.state.showLevelCompleteModal = false; }
+
+  continueToNextLevel(nextLevel: number) {
+    this.setLevel(nextLevel, true).then(() => {
+      this.resetForNewWord();
+      this.state.showLevelCompleteModal = false;
+    }).catch(err => console.error('continueToNextLevel', err));
   }
 }
 
+// ---------- Utility functions (kept outside class for brevity) ----------
 
-  // ===== Template Functions =====
-  trackByLetterId(index: number, item: LetterTile): string { return item.id; }
+function clamp(v: number, min: number, max: number) { return Math.max(min, Math.min(max, v)); }
 
-  onCloseCelebration() {
-    this.gameState.showLevelCompleteModal = false;
+function scramble(word: string) {
+  const letters = word.split('');
+  for (let i = letters.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [letters[i], letters[j]] = [letters[j], letters[i]];
   }
+  return letters;
+}
 
-  continueToNextLevel(nextLevel: number) {
-    this.gameState.level = nextLevel;
-    this.currentWordIndex = 0;
-    this.gameState.questionsCorrectInLevel = 0; // reset counter
-    this.resetForNewWord();
-    this.gameState.showLevelCompleteModal = false;
-  }
+function createTiles(letters: string[]) {
+  return letters.map((l, i) => ({
+    id: `l-${i}-${Date.now()}-${Math.random().toString(36).slice(2,9)}`,
+    letter: l,
+    color: GAME_CONFIG.LETTER_COLORS[Math.floor(Math.random() * GAME_CONFIG.LETTER_COLORS.length)],
+    isDragging: false,
+    used: false,
+    animationState: 'idle' as const
+  }));
+}
 
-  private playCorrectSound() {
-    this.audioService.playCorrectSound();
-  }
-
-  private playWrongSound() {
-    this.audioService.playWrongSound();
+async function safeSaveProgress(svc: SupabaseService, gameId: number, level: number, question: number) {
+  try {
+    const ok = await svc.savePlayerProgress(gameId, level, question);
+    if (!ok) console.warn('savePlayerProgress returned falsy');
+    return ok;
+  } catch (err) {
+    console.error('safeSaveProgress error', err);
+    throw err;
   }
 }

@@ -1,14 +1,87 @@
-<div *ngIf="show" @fadeIn class="celebration-overlay">
-  <div class="celebration-box">
-    <h2>🎉 Bravo ! Niveau {{ data?.level }} terminé 🎉</h2>
+<!-- celebration.component.html -->
+<div *ngIf="show" @fadeIn class="celebration-overlay" (clickOutside)="onClose()">
+  <!-- confetti only when passed -->
+  <div class="confetti-wrap" aria-hidden="true" *ngIf="isPassed">
+    <div class="burst burst-1"></div>
+    <div class="burst burst-2"></div>
 
-    <p>✔️ Réponses correctes : {{ data?.questionsCorrect }} / {{ data?.totalQuestions }}</p>
-    <p>⏱️ Temps : {{ formatTime(data?.timeElapsed || 0) }}</p>
-    <p>🎯 Difficulté : {{ data?.difficulty }}</p>
+    <ng-container *ngFor="let piece of confettiPieces">
+      <span class="confetti-piece"
+            [ngStyle]="{
+              left: piece.left + '%',
+              width: piece.size + 'px',
+              height: piece.size * 0.6 + 'px',
+              transform: 'rotate(' + piece.rotate + 'deg)',
+              background: piece.color,
+              animationDelay: piece.delay + 's'
+            }"></span>
+    </ng-container>
+  </div>
+
+  <!-- sad decoration when failed (no confetti) -->
+  <div class="sad-wrap" aria-hidden="true" *ngIf="!isPassed">
+    <ng-container *ngFor="let drop of sadPieces">
+      <span class="teardrop" [ngStyle]="{ left: drop.left + '%', width: drop.size + 'px', height: drop.size * 1.4 + 'px', animationDelay: drop.delay + 's' }"></span>
+    </ng-container>
+  </div>
+
+  <div class="celebration-box" role="dialog" aria-live="polite" (click)="$event.stopPropagation()" [ngClass]="{ 'sad': !isPassed }">
+    <div class="badge" aria-hidden="true" [ngClass]="{ 'sad-badge': !isPassed }">
+      <i class="bi" [ngClass]="isPassed ? 'bi-trophy-fill' : 'bi-emoji-frown-fill'" style="font-size:1.3rem;"></i>
+    </div>
+
+    <h2 class="title">
+      <!-- french only -->
+      <ng-container *ngIf="isPassed; else failedText">
+        Félicitations ! Niveau {{ data?.level }} terminé
+      </ng-container>
+      <ng-template #failedText>
+        Dommage… Niveau {{ data?.level }} non validé
+      </ng-template>
+    </h2>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-label">Réponses correctes</div>
+        <div class="stat-value">
+          <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+          {{ data?.questionsCorrect }} / {{ data?.totalQuestions }}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Temps</div>
+        <div class="stat-value">
+          <i class="bi bi-clock-fill" aria-hidden="true"></i>
+          {{ formatTime(data?.timeElapsed || 0) }}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Difficulté</div>
+        <div class="stat-value">
+          <i class="bi bi-bullseye" aria-hidden="true"></i>
+          {{ data?.difficulty }}
+        </div>
+      </div>
+    </div>
 
     <div class="buttons">
-      <button (click)="onClose()">Fermer</button>
-      <button (click)="onNextLevel()">Niveau suivant →</button>
+      <button class="btn btn-muted" (click)="onClose()">
+        <i class="bi bi-x-lg me-2" aria-hidden="true"></i>
+        Fermer
+      </button>
+
+      <button class="btn btn-primary" (click)="onNextLevel()">
+        <ng-container>
+          Niveau suivant
+          <i class="bi bi-arrow-right-short ms-2" aria-hidden="true"></i>
+        </ng-container>
+        <!-- <ng-template #retryText>
+          Réessayer
+          <i class="bi bi-arrow-repeat ms-2" aria-hidden="true"></i>
+        </ng-template> -->
+      </button>
     </div>
   </div>
 </div>

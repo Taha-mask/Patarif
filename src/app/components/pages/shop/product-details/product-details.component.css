@@ -206,12 +206,12 @@ body {
     font-weight: 900;
     font-family: var(--mainFont);
 }
-
 .details .price .offer {
     background-color: #34c759d3;
     width: fit-content;
     border-radius: 50px;
     padding: 4px 12px;
+    animation: offerPulse 2s infinite ease-in-out;
 }
 
 .details .price .offer p {
@@ -221,6 +221,25 @@ body {
     font-family: var(--comic);
     margin: 0;
 }
+
+@keyframes offerPulse {
+    0% {
+        transform: scale(0.8);
+        background-color: #34c759d3;
+        box-shadow: 0 0 0px rgba(52, 199, 89, 0.3);
+    }
+    50% {
+        transform: scale(1);
+        background-color: #28a745;
+        box-shadow: 0 0 25px rgba(52, 199, 89, 0.6);
+    }
+    100% {
+        transform: scale(0.8);
+        background-color: #34c759d3;
+        box-shadow: 0 0 0px rgba(52, 199, 89, 0.3);
+    }
+}
+
 
 .details .colors p,
 .details .sizes p {
@@ -371,6 +390,36 @@ body {
         background-position: 0% 50%;
     }
 }
+
+/* already .main-img is position: relative in your CSS; keep that */
+.magnifier {
+  position: absolute; /* relative to .main-img */
+  pointer-events: none; /* so it doesn't block mouse events */
+  border-radius: 50%; /* عين دائرية — غيّر لـ 8px لو عايز مربع */
+  border: 3px solid rgba(255,255,255,0.95);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  overflow: hidden;
+  display: none; /* يظهِر عن طريق ngStyle */
+  background-repeat: no-repeat;
+  z-index: 50;
+  transform: translateZ(0); /* تسريع الرسم */
+}
+
+/* اختياري — تعتيم داخلي مثل عدسة */
+.magnifier::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.05);
+  pointer-events: none;
+}
+
+/* اخفاء العدسة على الشاشات الصغيرة (اختياري) */
+@media (max-width: 767px) {
+  .magnifier { display: none !important; }
+}
+
 
 @media (max-width: 767px) {
     .content {

@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductsService } from '../../../../services/products.service';
 import { CommonModule } from '@angular/common';
@@ -266,5 +266,72 @@ addToCart() {
 
       this.isFavourite = !this.isFavourite;
     }
+  }
+
+  @ViewChild('mainImg') mainImgRef!: ElementRef<HTMLImageElement>;
+  @ViewChild('mainImgWrapper') mainWrapperRef!: ElementRef<HTMLDivElement>;
+
+  // قابل للتعديل:
+  magnifierSize = 220; // px قطر العدسة
+  zoom = 2.5; // عامل التكبير
+
+  magnifierStyle: any = { display: 'none' }; // تستخدمها ngStyle
+
+  // استدعي هذه الدوال من الـ template كما في الأعلى
+  onImageEnter() {
+    this.magnifierStyle = { ...this.magnifierStyle, display: 'block' };
+  }
+
+  onImageLeave() {
+    this.magnifierStyle = { display: 'none' };
+  }
+
+  onImageMouseMove(event: MouseEvent) {
+    const imgEl = this.mainImgRef?.nativeElement;
+    const wrapperEl = this.mainWrapperRef?.nativeElement;
+    if (!imgEl || !wrapperEl) return;
+
+    const rect = imgEl.getBoundingClientRect();
+
+    // إحداثيات الماوس بالنسبة للصورة
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // لو برا الصورة نخفي العدسة
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+      this.onImageLeave();
+      return;
+    }
+
+    // حجم الخلفية للمساحة المكبرة
+    const bgWidth = rect.width * this.zoom;
+    const bgHeight = rect.height * this.zoom;
+
+    // حساب موقع الخلفية بحيث يكون نقطة الماوس في مركز العدسة
+    const bgPosX = -(x * this.zoom - this.magnifierSize / 2);
+    const bgPosY = -(y * this.zoom - this.magnifierSize / 2);
+
+    // نريد وضع العدسة جنب الماوس — نحسب موضع العدسة داخل wrapper
+    // left و top تكون نسبة للأحجام المعروضة (الـ rect)
+    let left = (x + 20); // 20px فاصلة عن المؤشر باتجاه يمين الصورة
+    let top = (y - this.magnifierSize / 2);
+
+    // نتأكد العدسة لا تخرج من حدود الwrapper (حتى لو قربنا من الحواف)
+    left = Math.min(left, rect.width - this.magnifierSize);
+    left = Math.max(left, 0);
+    top = Math.min(Math.max(top, 0), rect.height - this.magnifierSize);
+
+    // نحول الموقع من إحداثيات داخل الصورة إلى px بالنسبة للـ .main-img (wrapper)
+    // لأن rect.left هي بداية الصورة، والأرقام فوق هي بالنسبة للصورة فعلاً
+    this.magnifierStyle = {
+      display: 'block',
+      width: `${this.magnifierSize}px`,
+      height: `${this.magnifierSize}px`,
+      left: `${left}px`,
+      top: `${top}px`,
+      backgroundImage: `url(${this.selectedImage})`, // استخدم الصورة الحالية
+      backgroundSize: `${bgWidth}px ${bgHeight}px`,
+      backgroundPosition: `${bgPosX}px ${bgPosY}px`,
+    };
   }
 }

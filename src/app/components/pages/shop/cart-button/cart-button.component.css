@@ -16,28 +16,29 @@
     color: #FB5664;
     font-family: var(--comic);
     color: FB5664;
-    width: 50px;
-    height: 50px;
+  width: 55px;
+    height: 55px;
     border-radius: 50%;
     position: fixed;
     transform: translateY(-50%);
-    top: 70%;
+    top: 80%;
     right: 5%;
     z-index: 100;
     padding: 16px;
     background: #ffffff;
     /* box-shadow: offset-x offset-y blur-radius spread-radius color inset; */
-    box-shadow: 0 8px 16px 0 #FB5664;
     border: none;
     transition: all 0.3s ease-in-out;
+        box-shadow: 0 8px 16px 0 transparent;
+
 }
 .cart {
-    width: 50px;
-    height: 50px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
     position: fixed;
     transform: translateY(-50%);
-    top: 70%;
+    top: 80%;
     right: 5%;
     z-index: 1000;
     padding: 16px;
@@ -45,9 +46,13 @@
     /* box-shadow: offset-x offset-y blur-radius spread-radius color inset; */
     box-shadow: 0 8px 16px 0 #FB5664;
     border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .super:hover .count{
-    top: 62%;
+    box-shadow: 0 8px 16px 0 #FB5664;
+    top: 72%;
 }
 .cart img {
     object-fit: contain;

@@ -47,17 +47,16 @@ export class SearchModalComponent implements OnInit {
   async ngOnInit() {
     try {
       const products = await this.supabase.getProductsTitles();
-
       const games: SearchItem[] = [
-        { title: 'Guess Emoji', category: 'game', route: '/guess-eemoji' },
-        { title: 'Matching Words', category: 'game', route: '/matchint-words' },
-        { title: 'Sort Words', category: 'game', route: '/sort-words' },
-        { title: 'Gallery', category: 'game', route: '/gallery' },
-        { title: 'Letters Game', category: 'game', route: '/letters-game' },
-        { title: 'Country Guessing', category: 'game', route: '/country-guessing' },
-        { title: 'Fact Game', category: 'game', route: '/fact-game' },
-        { title: 'Math Ladder', category: 'game', route: '/math-ladder' },
-        { title: 'Geo Quiz', category: 'game', route: '/geo-quiz' }
+        { title: 'Trier les lettres', category: 'game', route: '/letters-game' },
+        { title: 'Deviner le pays', category: 'game', route: '/country-guessing' },
+        { title: 'Vrai ou Faux', category: 'game', route: '/true-or-false' },
+        { title: 'Peinture', category: 'game', route: '/painting' },
+        { title: 'Trier les mots', category: 'game', route: '/sort-words' },
+        { title: 'Deviner l\'emoji', category: 'game', route: '/guess-emoji' },
+        { title: 'Mot à Image', category: 'game', route: '/word-to-image' },
+        { title: 'Escalier Mathématique', category: 'game', route: '/math-ladder' },
+        { title: 'Quiz Géographie', category: 'game', route: '/geo-quiz' }
       ];
 
 
