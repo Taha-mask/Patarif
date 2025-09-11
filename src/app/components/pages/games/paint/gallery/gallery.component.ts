@@ -39,7 +39,7 @@ export class GalleryComponent implements OnInit {
 
   selectionnerImage(image: Carte): void {
     this.imageSelectionneeUrl = image.img; // mettre à jour la sélection
-    this.router.navigate(['../canvas'], { 
+    this.router.navigate(['../drawing-page'], { 
       relativeTo: this.route,
       queryParams: { imageUrl: encodeURIComponent(image.img) }
     });

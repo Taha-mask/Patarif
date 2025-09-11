@@ -36,7 +36,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { AdminProfileComponent } from './admin-dashboard/admin-profile/admin-profile.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
-
+import { DrawingPageComponent } from './components/pages/games/paint/drawing-page/drawing-page.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   // auth
@@ -56,6 +56,7 @@ export const routes: Routes = [
   { path: 'fact-game', component: FactGameComponent },
   { path: 'math-ladder', component: MathLadderComponent },
   { path: 'geo-quiz', component: GeoQuizComponent },
+  { path: 'drawing-page', component: DrawingPageComponent },
 
   // Account
   { path: 'profile', component: ProfileComponent },

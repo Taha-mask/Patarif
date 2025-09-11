@@ -1,0 +1,41 @@
+/* put this in a global stylesheet or drawing-page component css */
+.main-container {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* canvas column takes remaining space */
+  .canvas-column {
+    flex: 1 1 auto;
+    min-width: 300px; /* prevent collapsing */
+  }
+  
+  /* toolbar column fixed width so it is always visible */
+  .toolbar-column {
+    width: 88px; /* enough space for toolbar (adjust as needed) */
+    flex: 0 0 88px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    box-sizing: border-box;
+    padding-top: 12px;
+  }
+  
+  /* ensure toolbar itself is visible and on top */
+  .right-toolbar {
+    width: 72px; /* match toolbar.component.css */
+    position: sticky; /* keep visible while scrolling */
+    top: 16px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: transparent; /* or set a subtle bg if you want */
+  }
+  
+  /* temporary debug helper - remove later */
+  .toolbar-column.debug { outline: 2px dashed rgba(0,0,0,0.08); }
+  

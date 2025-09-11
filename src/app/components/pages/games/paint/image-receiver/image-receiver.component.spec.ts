@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CanvasComponent } from './canvas.component';
+import { ImageReceiverComponent } from './image-receiver.component';
 
-describe('CanvasComponent', () => {
-  let component: CanvasComponent;
-  let fixture: ComponentFixture<CanvasComponent>;
+describe('ImageReceiverComponent', () => {
+  let component: ImageReceiverComponent;
+  let fixture: ComponentFixture<ImageReceiverComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CanvasComponent]
+      imports: [ImageReceiverComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CanvasComponent);
+    fixture = TestBed.createComponent(ImageReceiverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

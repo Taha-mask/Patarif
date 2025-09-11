@@ -1,0 +1,37 @@
+<div class="right-toolbar">
+    <button class="tool-btn" (click)="downloadPNG()" title="Download PNG"><i class="fas fa-file-image"></i></button>
+    <button class="tool-btn" (click)="downloadPDF()" title="Download PDF"><i class="fas fa-file-pdf"></i></button>
+  
+    <button class="tool-btn" [class.active]="currentTool === 'eraser'" (click)="selectTool('eraser')" title="Eraser">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="tool-btn" [class.active]="currentTool === 'brush'" (click)="selectTool('brush')" title="Brush">
+      <i class="fas fa-paint-brush"></i>
+    </button>
+  
+    <div class="zoom-controls">
+      <button class="tool-btn" (click)="zoomIn()" title="Zoom In">+</button>
+      <button class="tool-btn" (click)="zoomOut()" title="Zoom Out">-</button>
+      <div class="zoom-display">{{ zoomPercent }}%</div>
+    </div>
+  
+    <div class="line-size-wrapper">
+      <div class="size-label" (click)="$event.stopPropagation()">
+        <i class="fas fa-circle" [style.color]="color" [style.fontSize.px]="size/2 + 12"></i>
+      </div>
+      <div class="size-presets">
+        <div *ngFor="let s of [8,16,32]" class="size-option" [class.active]="size === s" (click)="setSize(s)">
+          <i class="fas fa-circle" [style.fontSize.px]="s/2 + 4" [style.color]="color"></i>
+        </div>
+      </div>
+    </div>
+  
+    <div class="bottom-palette">
+      <div class="color-swatches">
+        <div *ngFor="let c of basicColors" class="color-swatch" [style.background]="c" (click)="setColor(c)" [class.active]="color===c"></div>
+      </div>
+      <div class="color-picker-btn" (click)="openColorPicker()"><div class="rainbow-circle"></div></div>
+      <input type="color" (input)="setColor($any($event.target).value)" style="display:none" />
+    </div>
+  </div>
+  

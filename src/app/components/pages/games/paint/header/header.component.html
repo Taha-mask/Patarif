@@ -1,0 +1,18 @@
+<div class="header d-flex justify-content-between px-3 py-2">
+    <div class="logo">
+      <img src="/images/logo-patarif.png" alt="logo" style="width:100px;height:100px;" />
+    </div>
+  
+    <div class="actions d-flex gap-3 mt-4">
+      <button class="tool-btn" (click)="undo()" [disabled]="!canUndo" title="Undo">
+        <i class="fas fa-undo"></i>
+      </button>
+      <button class="tool-btn" (click)="redo()" [disabled]="!canRedo" title="Redo">
+        <i class="fas fa-redo"></i>
+      </button>
+      <button class="tool-btn" (click)="goBack()" title="Back">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
+  </div>
+  
