@@ -19,8 +19,11 @@ export class GameTemplateComponent implements OnInit, OnDestroy {
   @Input() noCardBackground: boolean = false;
   @Input() nogamecontent: boolean = false;
   @Input() isLastQuestion: boolean = false;
+  @Input() disableGameContentHeight: boolean = false;
 
   @Input() level: number = 1;
+  @Input() showGameContent: boolean = true;
+
   @Input() questionsCorrectInLevel: number = 0;
   @Input() currentQuestion: number = 1;
   @Input() timeElapsed: number = 0;
@@ -32,23 +35,13 @@ export class GameTemplateComponent implements OnInit, OnDestroy {
   @Input() questionText: string = 'Quel est le mot correct ?';
   @Input() totalQuestions: number = 6;
 
-  private _stars: number = 0;
-  starsArray: {filled: boolean, animated: boolean}[] = [];
-
-  @Input()
-  set stars(value: number) {
-    this._stars = Math.min(Math.max(0, value), 3);
-    this.updateStarsAnimation();
-  }
-  get stars(): number { return this._stars; }
-
+  
   @Output() nextWord = new EventEmitter<void>();
   @Output() retry = new EventEmitter<void>();
   @Output() toggleFullScreenEvent = new EventEmitter<void>();
 
   constructor(private router: Router, public audioService: AudioService) {
     // إعداد النجوم
-    this.starsArray = Array(3).fill(0).map(() => ({ filled: false, animated: false }));
   }
 
   shouldShowGameHeader(): boolean {
@@ -80,17 +73,6 @@ export class GameTemplateComponent implements OnInit, OnDestroy {
   onRetry() { this.retry.emit(); }
   closeGame() { this.router.navigate(['/games']); }
 
-  private updateStarsAnimation() {
-    this.starsArray = this.starsArray.map((_, index) => ({ filled: index < this._stars, animated: false }));
-    this.starsArray.forEach((_, index) => {
-      if (index < this._stars) {
-        setTimeout(() => {
-          this.starsArray[index].animated = true;
-          setTimeout(() => this.starsArray[index].animated = false, 1000);
-        }, index * 300);
-      }
-    });
-  }
 
   ngOnInit(): void {
     // يمكن تهيئة أي إعدادات إضافية هنا

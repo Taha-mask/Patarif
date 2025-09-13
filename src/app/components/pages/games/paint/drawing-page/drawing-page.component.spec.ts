@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CanvasComponent } from './canvas.component';
+import { DrawingPageComponent } from './drawing-page.component';
 
-describe('CanvasComponent', () => {
-  let component: CanvasComponent;
-  let fixture: ComponentFixture<CanvasComponent>;
+describe('DrawingPageComponent', () => {
+  let component: DrawingPageComponent;
+  let fixture: ComponentFixture<DrawingPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CanvasComponent]
+      imports: [DrawingPageComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CanvasComponent);
+    fixture = TestBed.createComponent(DrawingPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -84,7 +84,9 @@ overflow-y: auto;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content:  center;
+  align-items: center;
+  
   width: 100%;
   min-height: 320px;
   gap: 5px;
